@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+\node[draw, rounded corners, node font=\sffamily] (node1) at (2.1,2) {Working Memory};
+\node[draw, rounded corners, node font=\sffamily] (node2) at (2.09,0.5) {Long-Term Memory};
+
+\node[draw, align=center, node font=\sffamily, rounded corners, label={above:{System 1}}, minimum height=1pt] at (-1.2,4.14) {
+\footnotesize Logic Transformer\\
+(neural network)};
+
+\node[draw, align=center, rounded corners, label={above:{System 2}}, node font=\sffamily] at (2.08,4.14) {
+\footnotesize Rete Engine\\
+(forward-chaining)
+};
+
+\node[draw, rounded corners, label={above:{System 3}}, align=center, node font=\sffamily] at (5.49,4.14) {
+\footnotesize
+ProbLog Engine\\
+(backward-chaining)
+};
+  \draw[arrows=Latex-Latex] (node1.south) -- (node2.north);
+  \draw[arrows=Latex-Latex] (adornment_main_path_2_2.south) -- (node1.north west);
+  \draw[arrows=Latex-Latex] (adornment_main_path_3_2.south) -- (node1.north);
+  \draw[arrows=Latex-Latex] (adornment_main_path_4_2.south) -- (node1.north east);
+\end{tikzpicture}
