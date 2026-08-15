@@ -18,6 +18,7 @@ from experta import Fact
 from spacy_logical_form import SpacyLogicalFormParser
 from train_pot_dln_pointer import DLNPointerDecoder
 from preprocess_gsm8k import extract_propositions
+from ontology import resolve_event_class
 
 # ==========================================
 # GWT Unified Fact Representation
@@ -140,11 +141,37 @@ def system2_step(current_wm, cycle, _=None):
     engine.reset()
     
     # Import the actual classes to avoid dynamic dummy class generation!
-    from system2_poc import Predicate, Agent, Recipient, Patient, Name, Quantity, Inventory, Belief, EventProcessed
+    from system2_poc import (
+        Predicate,
+        Agent,
+        Recipient,
+        Patient,
+        Name,
+        Quantity,
+        Inventory,
+        Belief,
+        EventProcessed,
+        Event,
+        TransferEvent,
+        CreationEvent,
+        LossEvent,
+        ComparisonEvent,
+    )
     CLASS_MAP = {
-        "Predicate": Predicate, "Agent": Agent, "Recipient": Recipient, 
-        "Patient": Patient, "Name": Name, "Quantity": Quantity, 
-        "Inventory": Inventory, "Belief": Belief, "EventProcessed": EventProcessed
+        "Predicate": Predicate,
+        "Agent": Agent,
+        "Recipient": Recipient,
+        "Patient": Patient,
+        "Name": Name,
+        "Quantity": Quantity,
+        "Inventory": Inventory,
+        "Belief": Belief,
+        "EventProcessed": EventProcessed,
+        "Event": Event,
+        "TransferEvent": TransferEvent,
+        "CreationEvent": CreationEvent,
+        "LossEvent": LossEvent,
+        "ComparisonEvent": ComparisonEvent,
     }
     
     for node in current_wm:
@@ -153,6 +180,10 @@ def system2_step(current_wm, cycle, _=None):
         if not fact_class:
             fact_class = type(node.concept, (Fact,), {})
         engine.declare(fact_class(**kwargs))
+        if node.concept == "Predicate":
+            verb = str(kwargs.get("arg1", "")).strip()
+            if verb:
+                engine.declare(resolve_event_class(verb)(**kwargs))
             
     engine.run()
     

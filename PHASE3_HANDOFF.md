@@ -21,3 +21,9 @@ If the test set says *"John dropped 3 apples"*, System 2 fails because "drop" is
 3. **BFO (Basic Formal Ontology):** Optionally map these lexical entities into BFO classifications (Continuants vs. Occurrents) for stricter neurosymbolic grounding.
 
 Good luck with Phase 3! The core neurosymbolic loop is fully functional and ready for this upper ontology.
+
+## Phase 3 Progress Update
+The prototype now has an `forward-engine/ontology.py` helper with event-class hierarchy support and optional WordNet-backed verb resolution. `forward-engine/system2_poc.py` now matches `TransferEvent`, `CreationEvent`, `LossEvent`, and `ComparisonEvent` facts directly, and `cognitive_loop.py` resolves predicate verbs into ontology event facts before handing them to System 2.
+
+## Phase 3 Synthetic Test
+Run `forward-engine/phase3_synthetic_test.py` to compare a hardcoded verb baseline against the ontology-backed resolver on held-out verbs. The script reports both event-class accuracy and inventory state accuracy, which makes it a small end-to-end check for whether the ontology helps System 1/System 2 cooperation.

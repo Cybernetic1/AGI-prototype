@@ -20,9 +20,17 @@ Run the proof-of-concept to see the basic mechanics of perception handling, conf
 python system2_poc.py
 ```
 
+Run the small phase-3 synthetic ontology test:
+
+```bash
+python phase3_synthetic_test.py
+```
+
 ## Architecture
 
 - `system2_poc.py`: Contains the core `System2Engine` utilizing `experta`. 
+- `ontology.py`: Lightweight event ontology and verb-class resolver for Phase 3.
+- `phase3_synthetic_test.py`: Small held-out verb benchmark for ontology generalization.
 - **System 1 Integration**: System 1 declares `Perception` facts directly into the Experta engine.
 - **System 3 Integration**: Rules that require high-level deliberation trigger outputs that are pushed to System 3 (e.g., via the `inbox_entries` queue or ProbLog direct integration).
 

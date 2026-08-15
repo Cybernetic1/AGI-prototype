@@ -3,10 +3,18 @@ import collections.abc
 collections.Mapping = collections.abc.Mapping
 from experta import *
 
+from ontology import (
+    ComparisonEvent,
+    CreationEvent,
+    LossEvent,
+    Event as OntologyEvent,
+    TransferEvent,
+)
+
 # =======================================================
 # Neo-Davidsonian Semantic Classes
 # =======================================================
-class Event(Fact): pass
+Event = OntologyEvent
 class Predicate(Fact): pass
 class Agent(Fact): pass
 class Recipient(Fact): pass
@@ -33,25 +41,18 @@ class EventProcessed(Fact): pass
 class System2Engine(KnowledgeEngine):
     
     # ----------------------------------------------------
-    # AXIOM 1: Transfer & Consumption (Add/Subtract)
+    # AXIOM 1: Transfer (Add/Subtract)
     # ----------------------------------------------------
     @Rule(
-        # 1. Match transfer events (give, hand, pass)
-        Predicate(arg0=MATCH.e, arg1=MATCH.verb),
+        TransferEvent(arg0=MATCH.e, arg1=MATCH.verb),
         NOT(EventProcessed(id=MATCH.e)),
-        
-        # 2. Match the participants
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.giver),
-        
         Recipient(arg0=MATCH.e, arg1=MATCH.r_var),
         Name(arg0=MATCH.r_var, arg1=MATCH.receiver),
-        
         Patient(arg0=MATCH.e, arg1=MATCH.p_var),
         Name(arg0=MATCH.p_var, arg1=MATCH.item),
         Quantity(arg0=MATCH.p_var, arg1=MATCH.q_str),
-        
-        # 3. Match the current state of their inventories
         AS.giver_inv << Inventory(owner=MATCH.giver, item=MATCH.item, qty=MATCH.g_qty),
         AS.rec_inv << Inventory(owner=MATCH.receiver, item=MATCH.item, qty=MATCH.r_qty)
     )
@@ -70,16 +71,13 @@ class System2Engine(KnowledgeEngine):
     # AXIOM 2: Generation/Creation (Add)
     # ----------------------------------------------------
     @Rule(
-        Predicate(arg0=MATCH.e, arg1=MATCH.verb & P(lambda x: x in ["buy", "find", "pick", "bake", "create"])),
+        CreationEvent(arg0=MATCH.e, arg1=MATCH.verb),
         NOT(EventProcessed(id=MATCH.e)),
-        
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.agent),
-        
         Patient(arg0=MATCH.e, arg1=MATCH.p_var),
         Name(arg0=MATCH.p_var, arg1=MATCH.item),
         Quantity(arg0=MATCH.p_var, arg1=MATCH.q_str),
-        
         AS.agent_inv << Inventory(owner=MATCH.agent, item=MATCH.item, qty=MATCH.a_qty)
     )
     def execute_generation(self, e, verb, agent, item, q_str, agent_inv, a_qty):
@@ -95,16 +93,13 @@ class System2Engine(KnowledgeEngine):
     # AXIOM 3: Destruction/Loss (Subtract)
     # ----------------------------------------------------
     @Rule(
-        Predicate(arg0=MATCH.e, arg1=MATCH.verb & P(lambda x: x in ["eat", "lose", "break", "consume"])),
+        LossEvent(arg0=MATCH.e, arg1=MATCH.verb),
         NOT(EventProcessed(id=MATCH.e)),
-        
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.agent),
-        
         Patient(arg0=MATCH.e, arg1=MATCH.p_var),
         Name(arg0=MATCH.p_var, arg1=MATCH.item),
         Quantity(arg0=MATCH.p_var, arg1=MATCH.q_str),
-        
         AS.agent_inv << Inventory(owner=MATCH.agent, item=MATCH.item, qty=MATCH.a_qty)
     )
     def execute_destruction(self, e, verb, agent, item, q_str, agent_inv, a_qty):
@@ -117,30 +112,17 @@ class System2Engine(KnowledgeEngine):
         self.declare(EventProcessed(id=e))
 
     # ----------------------------------------------------
-    # AXIOM 4: Multiplier/Relational (Multiply/Divide)
+    # AXIOM 4: Comparison/Relational (Multiply/Divide)
     # ----------------------------------------------------
     @Rule(
         # Matches logic like "Mary has twice as many apples as John"
-        Predicate(arg0=MATCH.e, arg1="have"),
+        ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb),
         NOT(EventProcessed(id=MATCH.e)),
-        
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.agent),
-        
         Patient(arg0=MATCH.e, arg1=MATCH.p_var),
         Name(arg0=MATCH.p_var, arg1=MATCH.item),
-        
-        # Look for the multiplier modifier (e.g. "twice")
         Modifier(arg0=MATCH.e, arg1=MATCH.multiplier & P(lambda x: x in ["twice", "double", "triple", "half"])),
-        
-        # Look for the reference person (e.g. "as John")
-        # In Neo-Davidsonian from spaCy, this often attaches via a preposition or modifier
-        # We assume System 1 aligns it as a reference argument
-        # (This rule assumes System 1 is trained to output Reference for comparisons)
-        # Reference(arg0=MATCH.e, arg1=MATCH.ref_var),
-        # Name(arg0=MATCH.ref_var, arg1=MATCH.reference),
-        
-        # Inventory(owner=MATCH.reference, item=MATCH.item, qty=MATCH.ref_qty),
         AS.agent_inv << Inventory(owner=MATCH.agent, item=MATCH.item, qty=MATCH.a_qty)
     )
     def execute_multiplier(self, e, agent, item, multiplier, agent_inv, a_qty):

@@ -22,6 +22,8 @@
 * **Goal:** Give the AGI a structured understanding of reality.
 * **Milestones:**
   * Introduce WordNet/ConceptNet.
+  * Replace hard-coded verb lists in System 2 with ontology-backed event classes.
+  * Add a synthetic held-out verb benchmark to compare ontology-backed inference against a hardcoded baseline.
   * Implement Hyperbolic Embeddings in System 1 to dynamically map unknown nouns into System 2's logic hierarchy.
   * Refine the Working Memory decay mechanism for large-scale fact retention.
 
