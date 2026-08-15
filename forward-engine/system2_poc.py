@@ -4,78 +4,158 @@ collections.Mapping = collections.abc.Mapping
 from experta import *
 
 # =======================================================
-# ONTOLOGY DEFINITION (Hierarchical via Class Inheritance)
+# Neo-Davidsonian Semantic Classes
 # =======================================================
-
-class Entity(Fact):
-    """Base class for all physical things"""
-    pass
-
-class Animal(Entity):
-    """Any animal"""
-    pass
-
-class Dog(Animal):
-    """A specific type of animal"""
-    pass
-
-class Person(Entity):
-    """A human entity"""
-    pass
-
-class Perception(Fact):
-    """Sensory input received from System 1 (Neural/Fast)"""
-    pass
-
-class Belief(Fact):
-    """A deduced System 2 fact with a probability/certainty factor"""
-    pass
+class Event(Fact): pass
+class Predicate(Fact): pass
+class Agent(Fact): pass
+class Recipient(Fact): pass
+class Patient(Fact): pass
+class Name(Fact): pass
+class Quantity(Fact): pass
+class Type(Fact): pass
+class Tense(Fact): pass
+class Entity(Fact): pass
+class Location(Fact): pass
+class Time(Fact): pass
+class Modifier(Fact): pass
 
 # =======================================================
-# SYSTEM 2 ENGINE
+# State and Belief Classes
 # =======================================================
+class Belief(Fact): pass
+class Inventory(Fact): pass
+class EventProcessed(Fact): pass
 
+# =======================================================
+# SYSTEM 2 ENGINE (Math & State Tracker)
+# =======================================================
 class System2Engine(KnowledgeEngine):
-    # LHS: Ontology Match
-    # This rule looks for ANY Animal. Because Dog inherits from Animal, 
-    # Experta will automatically match the Dog fact!
+    
+    # ----------------------------------------------------
+    # AXIOM 1: Transfer & Consumption (Add/Subtract)
+    # ----------------------------------------------------
     @Rule(
-        Animal(state="barking", prob=MATCH.p & P(lambda x: x > 0.8))
+        # 1. Match transfer events (give, hand, pass)
+        Predicate(arg0=MATCH.e, arg1=MATCH.verb),
+        NOT(EventProcessed(id=MATCH.e)),
+        
+        # 2. Match the participants
+        Agent(arg0=MATCH.e, arg1=MATCH.a_var),
+        Name(arg0=MATCH.a_var, arg1=MATCH.giver),
+        
+        Recipient(arg0=MATCH.e, arg1=MATCH.r_var),
+        Name(arg0=MATCH.r_var, arg1=MATCH.receiver),
+        
+        Patient(arg0=MATCH.e, arg1=MATCH.p_var),
+        Name(arg0=MATCH.p_var, arg1=MATCH.item),
+        Quantity(arg0=MATCH.p_var, arg1=MATCH.q_str),
+        
+        # 3. Match the current state of their inventories
+        AS.giver_inv << Inventory(owner=MATCH.giver, item=MATCH.item, qty=MATCH.g_qty),
+        AS.rec_inv << Inventory(owner=MATCH.receiver, item=MATCH.item, qty=MATCH.r_qty)
     )
-    def react_to_loud_animal(self, p):
-        print(f"[System 2] FAST REACTION: A loud animal is nearby! (Confidence: {p:.2f})")
-        self.declare(Belief(label="distraction_present", prob=p))
+    def execute_transfer(self, e, verb, giver, receiver, item, q_str, giver_inv, g_qty, rec_inv, r_qty):
+        q = int(q_str)
+        print(f"\n[System 2] AXIOM 1 TRIGGERED: Transfer")
+        print(f"  -> Event {e}: {giver} {verb}s {q} {item}(s) to {receiver}.")
+        print(f"  -> {giver}'s inventory: {g_qty} - {q} = {g_qty - q}")
+        print(f"  -> {receiver}'s inventory: {r_qty} + {q} = {r_qty + q}\n")
+        
+        self.modify(giver_inv, qty=g_qty - q)
+        self.modify(rec_inv, qty=r_qty + q)
+        self.declare(EventProcessed(id=e))
 
-    # LHS: Match only if probability thresholds are met using Python lambdas
+    # ----------------------------------------------------
+    # AXIOM 2: Generation/Creation (Add)
+    # ----------------------------------------------------
     @Rule(
-        Person(state="walking", prob=MATCH.p1 & P(lambda x: x > 0.7)),
-        Perception(label="motion_detected", prob=MATCH.p2 & P(lambda x: x > 0.5))
+        Predicate(arg0=MATCH.e, arg1=MATCH.verb & P(lambda x: x in ["buy", "find", "pick", "bake", "create"])),
+        NOT(EventProcessed(id=MATCH.e)),
+        
+        Agent(arg0=MATCH.e, arg1=MATCH.a_var),
+        Name(arg0=MATCH.a_var, arg1=MATCH.agent),
+        
+        Patient(arg0=MATCH.e, arg1=MATCH.p_var),
+        Name(arg0=MATCH.p_var, arg1=MATCH.item),
+        Quantity(arg0=MATCH.p_var, arg1=MATCH.q_str),
+        
+        AS.agent_inv << Inventory(owner=MATCH.agent, item=MATCH.item, qty=MATCH.a_qty)
     )
-    def deduce_human_activity(self, p1, p2):
-        # RHS: Execute Python code to calculate rudimentary joint probability
-        confidence = p1 * p2
-        print(f"[System 2] DEDUCED: Human activity confirmed via motion. (Confidence: {confidence:.2f})")
-        self.declare(Belief(label="human_activity", prob=confidence))
+    def execute_generation(self, e, verb, agent, item, q_str, agent_inv, a_qty):
+        q = int(q_str)
+        print(f"\n[System 2] AXIOM 2 TRIGGERED: Generation")
+        print(f"  -> Event {e}: {agent} {verb}s {q} {item}(s).")
+        print(f"  -> {agent}'s inventory: {a_qty} + {q} = {a_qty + q}\n")
+        
+        self.modify(agent_inv, qty=a_qty + q)
+        self.declare(EventProcessed(id=e))
 
-    # LHS: React to the newly created Belief
+    # ----------------------------------------------------
+    # AXIOM 3: Destruction/Loss (Subtract)
+    # ----------------------------------------------------
     @Rule(
-        Belief(label="human_activity", prob=MATCH.p & P(lambda x: x > 0.5)),
-        Belief(label="distraction_present", prob=MATCH.p2)
+        Predicate(arg0=MATCH.e, arg1=MATCH.verb & P(lambda x: x in ["eat", "lose", "break", "consume"])),
+        NOT(EventProcessed(id=MATCH.e)),
+        
+        Agent(arg0=MATCH.e, arg1=MATCH.a_var),
+        Name(arg0=MATCH.a_var, arg1=MATCH.agent),
+        
+        Patient(arg0=MATCH.e, arg1=MATCH.p_var),
+        Name(arg0=MATCH.p_var, arg1=MATCH.item),
+        Quantity(arg0=MATCH.p_var, arg1=MATCH.q_str),
+        
+        AS.agent_inv << Inventory(owner=MATCH.agent, item=MATCH.item, qty=MATCH.a_qty)
     )
-    def escalate_to_system3(self, p, p2):
-        print(f"[System 2] -> ESCALATING to System 3: Complex social scene detected (Human + Distraction). Requires deliberative analysis.")
-        # Here you would push this data to a queue for ProbLog / System 3
+    def execute_destruction(self, e, verb, agent, item, q_str, agent_inv, a_qty):
+        q = int(q_str)
+        print(f"\n[System 2] AXIOM 3 TRIGGERED: Destruction")
+        print(f"  -> Event {e}: {agent} {verb}s {q} {item}(s).")
+        print(f"  -> {agent}'s inventory: {a_qty} - {q} = {a_qty - q}\n")
+        
+        self.modify(agent_inv, qty=a_qty - q)
+        self.declare(EventProcessed(id=e))
+
+    # ----------------------------------------------------
+    # AXIOM 4: Multiplier/Relational (Multiply/Divide)
+    # ----------------------------------------------------
+    @Rule(
+        # Matches logic like "Mary has twice as many apples as John"
+        Predicate(arg0=MATCH.e, arg1="have"),
+        NOT(EventProcessed(id=MATCH.e)),
+        
+        Agent(arg0=MATCH.e, arg1=MATCH.a_var),
+        Name(arg0=MATCH.a_var, arg1=MATCH.agent),
+        
+        Patient(arg0=MATCH.e, arg1=MATCH.p_var),
+        Name(arg0=MATCH.p_var, arg1=MATCH.item),
+        
+        # Look for the multiplier modifier (e.g. "twice")
+        Modifier(arg0=MATCH.e, arg1=MATCH.multiplier & P(lambda x: x in ["twice", "double", "triple", "half"])),
+        
+        # Look for the reference person (e.g. "as John")
+        # In Neo-Davidsonian from spaCy, this often attaches via a preposition or modifier
+        # We assume System 1 aligns it as a reference argument
+        # (This rule assumes System 1 is trained to output Reference for comparisons)
+        # Reference(arg0=MATCH.e, arg1=MATCH.ref_var),
+        # Name(arg0=MATCH.ref_var, arg1=MATCH.reference),
+        
+        # Inventory(owner=MATCH.reference, item=MATCH.item, qty=MATCH.ref_qty),
+        AS.agent_inv << Inventory(owner=MATCH.agent, item=MATCH.item, qty=MATCH.a_qty)
+    )
+    def execute_multiplier(self, e, agent, item, multiplier, agent_inv, a_qty):
+        # NOTE: Simplified for now since spaCy's default logic doesn't cleanly separate "reference"
+        # without custom LT training. We will rely on LT to emit a Multiplier fact.
+        print(f"\n[System 2] AXIOM 4 TRIGGERED: Multiplier")
+        
+        mult_val = 2 if multiplier in ["twice", "double"] else 3 if multiplier == "triple" else 0.5
+        # q = int(ref_qty * mult_val)
+        
+        # print(f"  -> Event {e}: {agent} has {multiplier} as many {item}(s) as {reference}.")
+        # print(f"  -> {agent}'s inventory: {a_qty} -> {q}\n")
+        
+        # self.modify(agent_inv, qty=q)
+        self.declare(EventProcessed(id=e))
 
 if __name__ == "__main__":
-    print("--- Starting System 2 Cognitive Engine ---")
-    engine = System2Engine()
-    engine.reset()  # Prepares the engine
-    
-    # Simulated input coming from System 1
-    # Notice we are asserting a 'Dog', not an 'Animal'
-    engine.declare(Dog(name="Fido", state="barking", prob=0.90))
-    engine.declare(Person(name="Alice", state="walking", prob=0.99))
-    engine.declare(Perception(label="motion_detected", prob=0.60))
-    
-    engine.run()    # Fires the rules
-    print("--- Execution Complete ---")
+    print("System 2 Axioms Ready.")
