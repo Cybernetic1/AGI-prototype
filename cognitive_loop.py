@@ -79,17 +79,17 @@ def load_dln():
         return
         
     print("[System 1] Loading Trained Logic Transformer (DLNPointerDecoder)...")
-    vocab_path = BASE_DIR / "gsm8k-tests" / "lt_core" / "data" / "toy_vocab.json"
-    ckpt_path = BASE_DIR / "gsm8k-tests" / "lt_core" / "models" / "dln_toy_checkpoint.pt"
+    vocab_path = BASE_DIR / "gsm8k-tests" / "lt_core" / "data" / "gsm8k_vocab.json"
+    ckpt_path = BASE_DIR / "gsm8k-tests" / "lt_core" / "models" / "dln_gsm8k_best.pt"
     
     with open(vocab_path, "r") as f:
         _dln_vocab = json.load(f)
         
     _dln_model = DLNPointerDecoder(
         input_vocab=len(_dln_vocab), 
-        max_positions=64, 
-        hidden_dim=64, 
-        num_rules=8
+        max_positions=256, 
+        hidden_dim=128, 
+        num_rules=16
     )
     checkpoint = torch.load(ckpt_path)
     _dln_model.load_state_dict(checkpoint["model_state"])
