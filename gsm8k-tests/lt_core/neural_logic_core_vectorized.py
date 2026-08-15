@@ -82,9 +82,16 @@ class VectorizedLogicNetwork(nn.Module):
         
         # Step 4: Compute match scores with premise constants
         # premises: (M, J, L), selected: (B, M, J, L)
-        # Distance: (B, M, J)
-        diff = selected_avg - self.premise_constants.unsqueeze(0)
-        match_scores = -(diff ** 2).sum(dim=-1)  # (B, M, J) - negative distance
+        import sys
+        from pathlib import Path
+        sys.path.append(str(Path(__file__).resolve().parent.parent.parent / 'logic-transformer'))
+        from lorentz_math import project_to_hyperboloid, lorentz_distance
+        
+        hyper_constants = project_to_hyperboloid(self.premise_constants)
+        hyper_selected = project_to_hyperboloid(selected_avg)
+        
+        distances = lorentz_distance(hyper_selected, hyper_constants.unsqueeze(0))
+        match_scores = -distances  # (B, M, J) - negative distance
         
         # Step 5: Softmax over premises: (B, M, J)
         premise_attention = F.softmax(match_scores / temperature, dim=-1)

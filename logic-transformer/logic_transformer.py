@@ -66,11 +66,19 @@ class LogicTransformer(nn.Module):
         # selected_avg: (B, M, J, L)
         selected_avg = selected_slots.mean(dim=3)
         
-        # 3. Fuzzy Matching (L2 distance to rule constants)
+        # 3. Fuzzy Matching (Lorentz distance to rule constants)
         # diff: (B, M, J, L)
-        diff = selected_avg - self.premise_constants.unsqueeze(0)
-        # match_scores: (B, M, J)
-        match_scores = -(diff ** 2).sum(dim=-1) 
+        from lorentz_math import project_to_hyperboloid, lorentz_distance
+        
+        # Ensure both premise constants and selected embeddings are strictly on the hyperboloid
+        hyper_constants = project_to_hyperboloid(self.premise_constants)
+        hyper_selected = project_to_hyperboloid(selected_avg)
+        
+        # match_scores is the negative distance (higher is better match)
+        # hyper_selected: (B, M, J, L)
+        # hyper_constants: (1, M, J, L)
+        distances = lorentz_distance(hyper_selected, hyper_constants.unsqueeze(0))
+        match_scores = -distances
         
         # 4. Premise Attention
         # premise_attention: (B, M, J)
