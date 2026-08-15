@@ -33,10 +33,12 @@
   * **Rule Crystallization:** Detect when System 1's fuzzy rules become highly confident ("stable") in the hyperbolic space, and automatically extract them into discrete System 2 Experta rules.
   * **ILP Learning:** Implement an Inductive Logic Programming module in System 2 to discover new discrete rules over crystallized facts, bypassing gradient descent for purely logical patterns.
   
-## Phase 5: System 3 & Deep Planning
-* **Goal:** Enable the AGI to handle uncertainty, ask "why", and formulate multi-step plans.
+## Phase 5: System 3, Belief Revision & Deep Planning
+* **Goal:** Enable the AGI to detect contradictions, revise its beliefs, handle uncertainty, and formulate multi-step plans.
 * **Milestones:**
-  * Integrate ProbLog for problems that involve uncertainty or incomplete information.
+  * **Contradiction Detection & TMS:** Implement a Truth Maintenance System (TMS) in System 2 to flag logical contradictions and prediction errors (e.g., negative physical inventory, mutually exclusive states).
+  * **Belief Revision:** Allow System 2 and System 3 to resolve prediction errors and contradictions by rolling back unstable beliefs and adjusting System 1's priors.
+  * Integrate ProbLog for problems that involve uncertainty, probabilistic incoherence, or incomplete information.
   * Define high-level goal states and backward-chaining searches.
 
 ## Phase 6: Embodiment & Agency
