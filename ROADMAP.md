@@ -37,7 +37,8 @@
 * **Goal:** Enable the AGI to detect contradictions, revise its beliefs, handle uncertainty, and formulate multi-step plans.
 * **Milestones:**
   * **Contradiction Detection & TMS:** Implement a Truth Maintenance System (TMS) in System 2 to flag logical contradictions and prediction errors (e.g., negative physical inventory, mutually exclusive states).
-  * **Belief Revision:** Allow System 2 and System 3 to resolve prediction errors and contradictions by rolling back unstable beliefs and adjusting System 1's priors.
+  * **AGM Belief Revision (System 3):** When a contradiction is flagged, escalate to System 3 to evaluate the belief set using the AGM (Alchourrón-Gärdenfors-Makinson) framework to decide on Expansion, Contraction, or Revision.
+  * **TMS Execution (System 2):** System 3 passes the AGM resolution back to System 2 to execute the actual Truth Maintenance (retracting/updating facts in Working Memory).
   * Integrate ProbLog for problems that involve uncertainty, probabilistic incoherence, or incomplete information.
   * Define high-level goal states and backward-chaining searches.
 
