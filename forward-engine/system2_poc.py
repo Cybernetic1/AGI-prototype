@@ -34,11 +34,53 @@ class Modifier(Fact): pass
 class Belief(Fact): pass
 class Inventory(Fact): pass
 class EventProcessed(Fact): pass
+class Contradiction(Fact): pass
 
 # =======================================================
 # SYSTEM 2 ENGINE (Math & State Tracker)
 # =======================================================
 class System2Engine(KnowledgeEngine):
+    
+    # ----------------------------------------------------
+    # PHASE 5: CONTRADICTION DETECTION & TMS
+    # ----------------------------------------------------
+    @Rule(
+        AS.inv << Inventory(owner=MATCH.owner, item=MATCH.item, qty=MATCH.qty & P(lambda x: int(x) < 0))
+    )
+    def detect_negative_inventory(self, owner, item, qty, inv):
+        """
+        TMS Rule: Physical inventories cannot be negative.
+        If a sequence of events results in a negative inventory, System 1 has hallucinated 
+        an impossible transfer or loss, or the premises are contradictory.
+        """
+        print(f"\n[System 2 TMS] CONTRADICTION DETECTED: Negative Inventory")
+        print(f"  -> {owner} has {qty} {item}(s), which is impossible.")
+        print(f"  -> Escalating to System 3 for Belief Revision...\n")
+        self.declare(Contradiction(
+            type="negative_inventory", 
+            owner=owner, 
+            item=item, 
+            qty=qty
+        ))
+        
+    @Rule(
+        AS.c1 << ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb1),
+        AS.c2 << ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb2 & P(lambda x: x != MATCH.verb1)),
+        TEST(lambda verb1, verb2: verb1 < verb2) # Prevent permutation duplicates
+    )
+    def detect_mutually_exclusive_events(self, e, verb1, verb2, c1, c2):
+        """
+        TMS Rule: An event cannot simultaneously be two mutually exclusive relation types 
+        (e.g., event e1 cannot be both 'double' and 'half').
+        """
+        print(f"\n[System 2 TMS] CONTRADICTION DETECTED: Mutually Exclusive Event Types")
+        print(f"  -> Event {e} is classified as both '{verb1}' and '{verb2}'.")
+        print(f"  -> Escalating to System 3 for Belief Revision...\n")
+        self.declare(Contradiction(
+            type="mutually_exclusive_event", 
+            event=e, 
+            conflict=(verb1, verb2)
+        ))
     
     # ----------------------------------------------------
     # AXIOM 1: Transfer (Add/Subtract)
