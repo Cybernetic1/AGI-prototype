@@ -3,8 +3,8 @@ import torch.nn as nn
 from pathlib import Path
 from tqdm import tqdm
 from train_pot_seq import load_rows, split_rows
-from evaluate_lt_vs_gru import build_vocab, collate_seq
 from train_pot_dln_pointer import DLNPointerDecoder
+import train_pot_clause as tpc
 import json
 
 def train_gsm8k_overnight(epochs=40):
@@ -17,20 +17,25 @@ def train_gsm8k_overnight(epochs=40):
     train_rows = load_rows(train_path)
     test_rows = load_rows(test_path)
     
-    vocab = build_vocab(train_rows + test_rows)
+    # Filter rows that can't be represented as a pointer sequence
+    train_rows = [r for r in train_rows if tpc.build_target_positions(r) is not None]
+    test_rows = [r for r in test_rows if tpc.build_target_positions(r) is not None]
+    
+    vocab = tpc.build_input_vocab(train_rows + test_rows)
     vocab_size = len(vocab)
-    print(f"Train size: {len(train_rows)}, Test size: {len(test_rows)}, Vocab size: {vocab_size}")
+    max_positions = max(len(r["input_props"]) for r in (train_rows + test_rows))
+    print(f"Train size: {len(train_rows)}, Test size: {len(test_rows)}, Vocab size: {vocab_size}, Max Length: {max_positions}")
     
     with open("data/gsm8k_vocab.json", "w") as f:
         json.dump(vocab, f)
         
     model = DLNPointerDecoder(
         input_vocab=vocab_size, 
-        max_positions=256, 
+        max_positions=max_positions, 
         hidden_dim=128, 
         num_rules=16
     )
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
     
     batch_size = 16
     train_batches = [train_rows[i:i + batch_size] for i in range(0, len(train_rows), batch_size)]
@@ -44,27 +49,27 @@ def train_gsm8k_overnight(epochs=40):
         total_loss = 0
         
         for step, batch in enumerate(train_batches):
-            b_in, b_out = collate_seq(batch, vocab)
             optimizer.zero_grad()
+            batch_loss = 0
             
-            outputs = model(b_in, b_out)
-            copy_logits = outputs[0] if isinstance(outputs, tuple) else outputs
-            
-            # CrossEntropyLoss expects (N, C) and target (N)
-            # The output of DLNPointerDecoder is concatenation of copy logits and eos logits.
-            # To get real gradients we should calculate loss over the target sequence
-            # Note: For full GSM8K training, the data needs to have 'target_props' that map back to the input_props positions just like in train_pot_dln_pointer.py
-            
-            # Since the current collate_seq from evaluate_lt_vs_gru just builds a token sequence instead of pointer indices,
-            # this training loop needs to be updated to use the pointer indices if it wants to use DLNPointerDecoder properly.
-            # For now I will leave it to be updated before the overnight run.
-            
-            target_one_hot = torch.zeros_like(copy_logits)
-            loss = nn.MSELoss()(copy_logits, target_one_hot)
-            
-            loss.backward()
+            # Since sequence lengths vary, we accumulate loss per example in the batch
+            # (or pad them carefully, but for this prototype sequential batching is safer)
+            for row in batch:
+                input_ids = torch.tensor([tpc.encode_input(row, vocab)], dtype=torch.long)
+                target_positions = tpc.build_target_positions(row)
+                decoder_input_ids = torch.tensor([tpc.encode_decoder_inputs(target_positions, max_positions + 1)], dtype=torch.long)
+                
+                logits = model(input_ids, decoder_input_ids)
+                targets = torch.tensor([target_positions + [input_ids.size(1)]], dtype=torch.long)
+                
+                loss = nn.CrossEntropyLoss()(logits.reshape(-1, logits.size(-1)), targets.reshape(-1))
+                batch_loss += loss
+                
+            batch_loss = batch_loss / len(batch)
+            batch_loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
-            total_loss += loss.item()
+            total_loss += batch_loss.item()
             
         avg_train_loss = total_loss / len(train_batches)
         
@@ -73,13 +78,18 @@ def train_gsm8k_overnight(epochs=40):
         val_loss = 0
         with torch.no_grad():
             for batch in test_batches:
-                b_in, b_out = collate_seq(batch, vocab)
-                outputs = model(b_in, b_out)
-                copy_logits = outputs[0] if isinstance(outputs, tuple) else outputs
-                
-                target_one_hot = torch.zeros_like(copy_logits)
-                loss = nn.MSELoss()(copy_logits, target_one_hot)
-                val_loss += loss.item()
+                batch_loss = 0
+                for row in batch:
+                    input_ids = torch.tensor([tpc.encode_input(row, vocab)], dtype=torch.long)
+                    target_positions = tpc.build_target_positions(row)
+                    decoder_input_ids = torch.tensor([tpc.encode_decoder_inputs(target_positions, max_positions + 1)], dtype=torch.long)
+                    
+                    logits = model(input_ids, decoder_input_ids)
+                    targets = torch.tensor([target_positions + [input_ids.size(1)]], dtype=torch.long)
+                    
+                    loss = nn.CrossEntropyLoss()(logits.reshape(-1, logits.size(-1)), targets.reshape(-1))
+                    batch_loss += loss
+                val_loss += (batch_loss / len(batch)).item()
                 
         avg_val_loss = val_loss / len(test_batches)
         
