@@ -1,19 +1,19 @@
 import torch
 import torch.nn as nn
 from pathlib import Path
-from tqdm import tqdm
 from train_pot_seq import load_rows, split_rows
 from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
 import json
+import sys
 
 def train_gsm8k_overnight(epochs=40):
-    print("--- Overnight Training: Logic Transformer on Full GSM8K Dataset ---")
+    print("--- Overnight Training: Logic Transformer on Full GSM8K Dataset ---", flush=True)
     
     train_path = Path("data/gsm8k_train_lt.jsonl")
     test_path = Path("data/gsm8k_test_lt.jsonl")
     
-    print("Loading datasets...")
+    print("Loading datasets...", flush=True)
     train_rows = load_rows(train_path)
     test_rows = load_rows(test_path)
     
@@ -24,7 +24,7 @@ def train_gsm8k_overnight(epochs=40):
     vocab = tpc.build_input_vocab(train_rows + test_rows)
     vocab_size = len(vocab)
     max_positions = max(len(r["input_props"]) for r in (train_rows + test_rows))
-    print(f"Train size: {len(train_rows)}, Test size: {len(test_rows)}, Vocab size: {vocab_size}, Max Length: {max_positions}")
+    print(f"Train size: {len(train_rows)}, Test size: {len(test_rows)}, Vocab size: {vocab_size}, Max Length: {max_positions}", flush=True)
     
     with open("data/gsm8k_vocab.json", "w") as f:
         json.dump(vocab, f)
@@ -41,7 +41,7 @@ def train_gsm8k_overnight(epochs=40):
     train_batches = [train_rows[i:i + batch_size] for i in range(0, len(train_rows), batch_size)]
     test_batches = [test_rows[i:i + batch_size] for i in range(0, len(test_rows), batch_size)]
     
-    print(f"\nStarting {epochs} Epochs of Training...")
+    print(f"\nStarting {epochs} Epochs of Training...", flush=True)
     best_loss = 9999.0
     
     for epoch in range(1, epochs + 1):
@@ -52,8 +52,6 @@ def train_gsm8k_overnight(epochs=40):
             optimizer.zero_grad()
             batch_loss = 0
             
-            # Since sequence lengths vary, we accumulate loss per example in the batch
-            # (or pad them carefully, but for this prototype sequential batching is safer)
             for row in batch:
                 input_ids = torch.tensor([tpc.encode_input(row, vocab)], dtype=torch.long)
                 target_positions = tpc.build_target_positions(row)
@@ -70,6 +68,10 @@ def train_gsm8k_overnight(epochs=40):
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
             total_loss += batch_loss.item()
+            
+            # Print batch progress every 50 steps so we can track it!
+            if step % 50 == 0:
+                print(f"  Epoch {epoch:02d} | Batch {step:03d}/{len(train_batches)} | Loss: {batch_loss.item():.4f}", flush=True)
             
         avg_train_loss = total_loss / len(train_batches)
         
@@ -93,15 +95,16 @@ def train_gsm8k_overnight(epochs=40):
                 
         avg_val_loss = val_loss / len(test_batches)
         
-        print(f"Epoch {epoch:02d} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
+        print(f"=== Epoch {epoch:02d} Summary | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} ===", flush=True)
         
         if avg_val_loss < best_loss:
             best_loss = avg_val_loss
             save_path = Path("models")
             save_path.mkdir(exist_ok=True)
             torch.save({'model_state': model.state_dict(), 'vocab': vocab}, save_path / "dln_gsm8k_best.pt")
+            print("  [Saved new best model]", flush=True)
             
-    print("\nTraining complete! Best model saved.")
+    print("\nTraining complete! Best model saved.", flush=True)
 
 if __name__ == "__main__":
     train_gsm8k_overnight(40)

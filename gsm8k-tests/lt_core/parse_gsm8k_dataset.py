@@ -72,14 +72,14 @@ def convert_dataset(input_jsonl, output_jsonl, limit=None):
     print(f"Wrote {len(out_rows)} examples to {output_jsonl}")
 
 if __name__ == "__main__":
-    # We will just parse a tiny subset first to verify the pipeline
+    # Parse the full dataset for the overnight run
     convert_dataset(
         "../data/gsm8k/main_test.jsonl", 
         "data/gsm8k_test_lt.jsonl",
-        limit=20
+        limit=None
     )
     convert_dataset(
         "../data/gsm8k/main_train.jsonl", 
         "data/gsm8k_train_lt.jsonl",
-        limit=100
+        limit=None
     )
