@@ -20,6 +20,13 @@ Run the proof-of-concept to see the basic mechanics of perception handling, conf
 python system2_poc.py
 ```
 
+Install the phase-3 dependencies:
+
+```bash
+pip install -r forward-engine/requirements.txt
+python -m nltk.downloader wordnet omw-1.4
+```
+
 Run the small phase-3 synthetic ontology test:
 
 ```bash

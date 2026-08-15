@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import collections
+import collections.abc
 import re
 from functools import lru_cache
 from typing import Dict, Type
+
+collections.Mapping = collections.abc.Mapping
 
 from experta import Fact
 
@@ -68,13 +72,13 @@ _VERB_ALIASES: Dict[str, str] = {
 }
 
 _TRANSFER_VERBS = {
-    "give", "hand", "pass", "send", "transfer", "deliver", "offer",
+    "give", "hand", "pass", "send", "transfer", "deliver", "offer", "donate", "gift", "convey",
 }
 _CREATION_VERBS = {
-    "buy", "find", "pick", "bake", "create", "make", "get", "receive", "acquire", "gain", "obtain",
+    "buy", "find", "pick", "bake", "create", "make", "get", "receive", "acquire", "gain", "obtain", "purchase", "collect", "procure",
 }
 _LOSS_VERBS = {
-    "eat", "lose", "break", "consume", "drop", "spend", "sell", "discard", "remove", "throw", "shed",
+    "eat", "lose", "break", "consume", "drop", "spend", "sell", "discard", "remove", "throw", "shed", "destroy", "damage", "shatter", "ruin",
 }
 _COMPARISON_VERBS = {
     "have", "double", "twice", "triple", "half", "more", "less", "fewer", "compare",
@@ -108,6 +112,7 @@ def _wordnet_category(lemma: str):
     for syn in synsets:
         for hyper in syn.closure(lambda s: s.hypernyms()):
             hypernym_names.update(name.split(".")[0] for name in hyper.lemma_names())
+        hypernym_names.update(name.split(".")[0] for syn in synsets for name in syn.lemma_names())
 
     if hypernym_names & _TRANSFER_VERBS:
         return TransferEvent

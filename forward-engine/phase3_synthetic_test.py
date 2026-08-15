@@ -31,12 +31,12 @@ TRAIN_VERB_CLASSES = {
 }
 
 EXAMPLES: List[Example] = [
-    Example("John gave Mary 3 apples.", "gave", "john", "mary", 3, "transfer"),
-    Example("John sent Mary 2 apples.", "sent", "john", "mary", 2, "transfer"),
-    Example("Mary bought 4 apples.", "bought", "mary", "", 4, "creation"),
-    Example("Mary received 4 apples.", "received", "mary", "", 4, "creation"),
-    Example("John dropped 2 apples.", "dropped", "john", "", 2, "loss"),
-    Example("John discarded 1 apple.", "discarded", "john", "", 1, "loss"),
+    Example("John donated 3 apples to Mary.", "donated", "john", "mary", 3, "transfer"),
+    Example("John gifted 2 apples to Mary.", "gifted", "john", "mary", 2, "transfer"),
+    Example("Mary purchased 4 apples.", "purchased", "mary", "", 4, "creation"),
+    Example("Mary acquired 1 apple.", "acquired", "mary", "", 1, "creation"),
+    Example("John shattered 2 apples.", "shattered", "john", "", 2, "loss"),
+    Example("John destroyed 1 apple.", "destroyed", "john", "", 1, "loss"),
     Example("Mary has twice as many apples as John.", "twice", "mary", "john", 2, "comparison"),
     Example("Mary has half as many apples as John.", "half", "mary", "john", 2, "comparison"),
 ]
