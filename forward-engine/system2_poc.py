@@ -45,7 +45,7 @@ class System2Engine(KnowledgeEngine):
     # PHASE 5: CONTRADICTION DETECTION & TMS
     # ----------------------------------------------------
     @Rule(
-        AS.inv << Inventory(owner=MATCH.owner, item=MATCH.item, qty=MATCH.qty & P(lambda x: int(x) < 0))
+        AS.inv << Inventory(owner=MATCH.owner, item=MATCH.item, qty=MATCH.qty & P(lambda x: int(x) < 0), frozen=~MATCH.f)
     )
     def detect_negative_inventory(self, owner, item, qty, inv):
         """
@@ -62,10 +62,11 @@ class System2Engine(KnowledgeEngine):
             item=item, 
             qty=qty
         ))
+        self.modify(inv, frozen=True)
         
     @Rule(
-        AS.c1 << ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb1),
-        AS.c2 << ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb2 & P(lambda x: x != MATCH.verb1)),
+        AS.c1 << ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb1, frozen=False),
+        AS.c2 << ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb2 & P(lambda x: x != MATCH.verb1), frozen=False),
         TEST(lambda verb1, verb2: verb1 < verb2) # Prevent permutation duplicates
     )
     def detect_mutually_exclusive_events(self, e, verb1, verb2, c1, c2):
@@ -81,12 +82,14 @@ class System2Engine(KnowledgeEngine):
             event=e, 
             conflict=(verb1, verb2)
         ))
+        self.modify(c1, frozen=True)
+        self.modify(c2, frozen=True)
     
     # ----------------------------------------------------
     # AXIOM 1: Transfer (Add/Subtract)
     # ----------------------------------------------------
     @Rule(
-        TransferEvent(arg0=MATCH.e, arg1=MATCH.verb),
+        TransferEvent(arg0=MATCH.e, arg1=MATCH.verb, frozen=~MATCH.f),
         NOT(EventProcessed(id=MATCH.e)),
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.giver),
@@ -113,7 +116,7 @@ class System2Engine(KnowledgeEngine):
     # AXIOM 2: Generation/Creation (Add)
     # ----------------------------------------------------
     @Rule(
-        CreationEvent(arg0=MATCH.e, arg1=MATCH.verb),
+        CreationEvent(arg0=MATCH.e, arg1=MATCH.verb, frozen=~MATCH.f),
         NOT(EventProcessed(id=MATCH.e)),
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.agent),
@@ -135,7 +138,7 @@ class System2Engine(KnowledgeEngine):
     # AXIOM 3: Destruction/Loss (Subtract)
     # ----------------------------------------------------
     @Rule(
-        LossEvent(arg0=MATCH.e, arg1=MATCH.verb),
+        LossEvent(arg0=MATCH.e, arg1=MATCH.verb, frozen=~MATCH.f),
         NOT(EventProcessed(id=MATCH.e)),
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.agent),
@@ -158,7 +161,7 @@ class System2Engine(KnowledgeEngine):
     # ----------------------------------------------------
     @Rule(
         # Matches logic like "Mary has twice as many apples as John"
-        ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb),
+        ComparisonEvent(arg0=MATCH.e, arg1=MATCH.verb, frozen=~MATCH.f),
         NOT(EventProcessed(id=MATCH.e)),
         Agent(arg0=MATCH.e, arg1=MATCH.a_var),
         Name(arg0=MATCH.a_var, arg1=MATCH.agent),
