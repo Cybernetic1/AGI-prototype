@@ -1,0 +1,46 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+*.log
+*.npy
+*.pk
+*.dict
+results/
+*_models/
+venv/
+
+# Data directory (large datasets - can be re-downloaded)
+data/
+
+# Model checkpoints (large files - can be retrained)
+models/
+
+# Downloaded datasets
+bAbI-tasks/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.local
