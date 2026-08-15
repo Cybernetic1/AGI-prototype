@@ -119,6 +119,7 @@ def main():
     parser.add_argument("--num-rules", type=int, default=8)
     parser.add_argument("--holdout", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--pretrained-embs", type=str, default="", help="Path to pre-aligned hyperbolic embeddings")
     parser.add_argument("--agreement-only", action="store_true")
     parser.add_argument("--deterministic", action="store_true")
     args = parser.parse_args()
@@ -142,6 +143,13 @@ def main():
     max_positions = max(len(row["input_props"]) for row in rows)
     
     model = DLNPointerDecoder(len(input_vocab), max_positions, args.hidden, args.num_rules)
+    
+    if args.pretrained_embs:
+        print(f"Loading pre-aligned hyperbolic embeddings from {args.pretrained_embs}...")
+        emb_state = torch.load(args.pretrained_embs)
+        model.input_embed.load_state_dict(emb_state)
+        # Freeze or use small learning rate for input embeddings? We will just let them fine-tune.
+
     optim = torch.optim.AdamW(model.parameters(), lr=1e-3)
     scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=10, gamma=0.5)
 
