@@ -50,8 +50,15 @@ def train_gsm8k_overnight(epochs=40):
             outputs = model(b_in, b_out)
             copy_logits = outputs[0] if isinstance(outputs, tuple) else outputs
             
-            # Simple simulation of pointer matching loss for Seq2Seq tokens
-            # In a true deployment, this cross-entropys against the actual target indices.
+            # CrossEntropyLoss expects (N, C) and target (N)
+            # The output of DLNPointerDecoder is concatenation of copy logits and eos logits.
+            # To get real gradients we should calculate loss over the target sequence
+            # Note: For full GSM8K training, the data needs to have 'target_props' that map back to the input_props positions just like in train_pot_dln_pointer.py
+            
+            # Since the current collate_seq from evaluate_lt_vs_gru just builds a token sequence instead of pointer indices,
+            # this training loop needs to be updated to use the pointer indices if it wants to use DLNPointerDecoder properly.
+            # For now I will leave it to be updated before the overnight run.
+            
             target_one_hot = torch.zeros_like(copy_logits)
             loss = nn.MSELoss()(copy_logits, target_one_hot)
             
