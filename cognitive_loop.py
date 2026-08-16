@@ -1,6 +1,5 @@
 import concurrent.futures
 import time
-from dataclasses import dataclass
 from typing import Any
 import sys
 import os
@@ -9,62 +8,15 @@ import json
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-sys.path.append(str(BASE_DIR / 'forward-engine'))
-sys.path.append(str(BASE_DIR / 'gsm8k-tests'))
-sys.path.append(str(BASE_DIR / 'gsm8k-tests' / 'lt_core'))
+sys.path.append(str(BASE_DIR / 'forward_engine'))
+sys.path.append(str(BASE_DIR / 'logic_transformer'))
 
+from working_memory.working_memory import WMNode, WorkingMemory
 from system2_poc import System2Engine
 from experta import Fact
 from spacy_logical_form import SpacyLogicalFormParser
 from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
-
-# ==========================================
-# GWT Unified Fact Representation
-# ==========================================
-@dataclass(frozen=True)
-class WMNode:
-    concept: str
-    attrs: frozenset
-
-    @classmethod
-    def create(cls, concept: str, **kwargs):
-        return cls(concept, frozenset(sorted(kwargs.items())))
-    
-    def to_dict(self):
-        return dict(self.attrs)
-
-# ==========================================
-# Working Memory (Global Workspace)
-# ==========================================
-class WorkingMemory:
-    def __init__(self, default_ttl=3):
-        self.facts = {}
-        self.default_ttl = default_ttl
-
-    def update(self, new_facts):
-        if new_facts:
-            for fact in new_facts:
-                if fact.concept == "Inventory":
-                    d = fact.to_dict()
-                    to_remove = [
-                        f for f in self.facts 
-                        if f.concept == "Inventory" 
-                        and f.to_dict().get("owner") == d.get("owner") 
-                        and f.to_dict().get("item") == d.get("item")
-                    ]
-                    for f in to_remove:
-                        del self.facts[f]
-                self.facts[fact] = self.default_ttl
-
-    def decay(self):
-        expired = []
-        for fact in self.facts:
-            self.facts[fact] -= 1
-            if self.facts[fact] <= 0:
-                expired.append(fact)
-        for fact in expired:
-            del self.facts[fact]
 
 # ==========================================
 # Sub-Systems
@@ -73,14 +25,15 @@ _dln_model = None
 _dln_vocab = None
 _rev_vocab = None
 
-def load_dln():
+def load_dln(quiet=False):
     global _dln_model, _dln_vocab, _rev_vocab
     if _dln_model is not None:
         return
         
-    print("[System 1] Loading Trained Logic Transformer (DLNPointerDecoder)...")
-    vocab_path = BASE_DIR / "gsm8k-tests" / "lt_core" / "data" / "gsm8k_vocab.json"
-    ckpt_path = BASE_DIR / "gsm8k-tests" / "lt_core" / "models" / "dln_gsm8k_best.pt"
+    if not quiet:
+        print("[System 1] Loading Trained Logic Transformer (DLNPointerDecoder)...")
+    vocab_path = BASE_DIR / "logic_transformer" / "data" / "gsm8k_vocab.json"
+    ckpt_path = BASE_DIR / "logic_transformer" / "models" / "dln_gsm8k_best.pt"
     
     with open(vocab_path, "r") as f:
         _dln_vocab = json.load(f)
@@ -96,12 +49,12 @@ def load_dln():
     _dln_model.load_state_dict(checkpoint["model_state"])
     _dln_model.eval()
 
-def system1_step(current_wm, cycle, input_text=None):
+def system1_step(current_wm, cycle, input_text=None, quiet=False):
     global _dln_model, _dln_vocab, _rev_vocab
     new_facts = set()
     
     if cycle == 1 and input_text:
-        load_dln()
+        load_dln(quiet)
         
         # 1. Parse raw structural features via SpacyLogicalFormParser
         parser = SpacyLogicalFormParser()
@@ -146,7 +99,8 @@ def system1_step(current_wm, cycle, input_text=None):
                 
                 dec_ids = torch.cat([dec_ids, torch.tensor([[next_pos]])], dim=1)
                 
-        print(f"[System 1] DLN Latent Processing Complete. Extracted {len(out_clauses)} semantic logic predicates.")
+        if not quiet:
+            print(f"[System 1] DLN Latent Processing Complete. Extracted {len(out_clauses)} semantic logic predicates.")
         
         # Map the output strings back to WMNodes
         from spacy_logical_form import parse_clause_line
@@ -161,7 +115,7 @@ def system1_step(current_wm, cycle, input_text=None):
             
     return new_facts
 
-def system2_step(current_wm, cycle, _=None):
+def system2_step(current_wm, cycle, _=None, quiet=False):
     engine = System2Engine()
     engine.reset()
     
@@ -190,34 +144,36 @@ def system2_step(current_wm, cycle, _=None):
             
     return new_facts
 
-def system3_step(current_wm, cycle, _=None):
+def system3_step(current_wm, cycle, _=None, quiet=False):
     return set()
 
 # ==========================================
 # Main Cognitive Orchestrator
 # ==========================================
-def run_cognitive_loop(input_text, max_cycles=4):
+def run_cognitive_loop(input_text, max_cycles=4, quiet=False):
     wm = WorkingMemory(default_ttl=5)
     
     # Initialize World State
     wm.facts[WMNode.create("Inventory", owner="john", item="apple", qty=10)] = 5
     wm.facts[WMNode.create("Inventory", owner="mary", item="apple", qty=0)] = 5
     
-    print(f"--- Booting AGI Synchronous Loop (DLN GSM8K Inference) ---")
-    print(f"Initial State: John has 10 apples, Mary has 0 apples.")
-    print(f"Input: '{input_text}'\n")
+    if not quiet:
+        print(f"--- Booting AGI Synchronous Loop (DLN GSM8K Inference) ---")
+        print(f"Initial State: John has 10 apples, Mary has 0 apples.")
+        print(f"Input: '{input_text}'\n")
     
     with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
         for cycle in range(1, max_cycles + 1):
-            print(f"\n[Cycle {cycle}] Current State in WM:")
-            for fact, ttl in wm.facts.items():
-                if fact.concept in ["Inventory", "Belief"]:
-                    print(f"  - {fact.concept}({', '.join(f'{k}={v}' for k, v in fact.to_dict().items())})")
+            if not quiet:
+                print(f"\n[Cycle {cycle}] Current State in WM:")
+                for fact, ttl in wm.facts.items():
+                    if fact.concept in ["Inventory", "Belief"]:
+                        print(f"  - {fact.concept}({', '.join(f'{k}={v}' for k, v in fact.to_dict().items())})")
             
             current_wm_snapshot = set(wm.facts.keys())
-            f1 = executor.submit(system1_step, current_wm_snapshot, cycle, input_text)
-            f2 = executor.submit(system2_step, current_wm_snapshot, cycle, None)
-            f3 = executor.submit(system3_step, current_wm_snapshot, cycle, None)
+            f1 = executor.submit(system1_step, current_wm_snapshot, cycle, input_text, quiet)
+            f2 = executor.submit(system2_step, current_wm_snapshot, cycle, None, quiet)
+            f3 = executor.submit(system3_step, current_wm_snapshot, cycle, None, quiet)
             
             out1, out2, out3 = f1.result(), f2.result(), f3.result()
             
@@ -225,9 +181,14 @@ def run_cognitive_loop(input_text, max_cycles=4):
             wm.update(out2)
             wm.update(out3)
             wm.decay()
-            time.sleep(0.5)
+            
+            if not quiet:
+                time.sleep(0.5)
 
-    print(f"\n--- Halt ---")
+    if not quiet:
+        print(f"\n--- Halt ---")
+        
+    return wm
 
 if __name__ == "__main__":
     gsm8k_problem = "John gave Mary 5 apples."
