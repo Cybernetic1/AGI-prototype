@@ -10,6 +10,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.append(str(BASE_DIR / 'forward_engine'))
 sys.path.append(str(BASE_DIR / 'logic_transformer'))
+sys.path.append(str(BASE_DIR / 'ilp_learner'))
 
 from working_memory.working_memory import WMNode, WorkingMemory
 from system2_poc import System2Engine
@@ -17,6 +18,7 @@ from experta import Fact
 from spacy_logical_form import SpacyLogicalFormParser
 from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
+from abductive_ilp import KnowledgeBase, OntologicalReasoner, OntologicalILPLearner
 
 # ==========================================
 # Sub-Systems
@@ -102,7 +104,7 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
         if not quiet:
             print(f"[System 1] DLN Latent Processing Complete. Extracted {len(out_clauses)} semantic logic predicates.")
         
-        # Map the output strings back to WMNodes
+        # Map the output strings back to WMNodes with soft activation (0.85)
         from spacy_logical_form import parse_clause_line
         for clause in out_clauses:
             parsed = parse_clause_line(clause)
@@ -111,7 +113,8 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
                 concept = pred.capitalize()
                 if concept in ["Event", "Predicate", "Agent", "Patient", "Recipient", "Name", "Quantity", "Location", "Time", "Modifier"]:
                     kwargs = {f"arg{j}": arg for j, arg in enumerate(args)}
-                    new_facts.add(WMNode.create(concept, **kwargs))
+                    # System 1 outputs fuzzy beliefs with soft salience (0.85)
+                    new_facts.add(WMNode.create(concept, activation=0.85, **kwargs))
             
     return new_facts
 
@@ -140,12 +143,104 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
     for f in engine.facts.values():
         if type(f).__name__ in ["Belief", "Inventory", "EventProcessed"]:
             clean_attrs = {k: v for k, v in f.items() if not str(k).startswith("__")}
-            new_facts.add(WMNode.create(type(f).__name__, **clean_attrs))
+            
+            # Preserving the original node's activation/salience score from Working Memory
+            concept = type(f).__name__
+            temp_node = WMNode.create(concept, **clean_attrs)
+            original = next((n for n in current_wm if n == temp_node), None)
+            activation = original.activation if original is not None else 1.0
+            
+            new_facts.add(WMNode.create(concept, activation=activation, **clean_attrs))
             
     return new_facts
 
 def system3_step(current_wm, cycle, _=None, quiet=False):
-    return set()
+    new_facts = set()
+    
+    # 1. Search for any Query node currently in Working Memory
+    query_node = next((n for n in current_wm if n.concept == "Query"), None)
+    if not query_node:
+        return new_facts
+        
+    q_attrs = query_node.to_dict()
+    goal_pred = q_attrs.get("goal")
+    goal_args = list(q_attrs.get("args", []))
+    expected_value = q_attrs.get("expected_value")
+    
+    if not goal_pred or not goal_args:
+        return new_facts
+    
+    # 2. Generate background KB dynamically from current Working Memory!
+    kb = KnowledgeBase()
+    for node in current_wm:
+        # Declare all factual relationships from GWT as logical KB facts
+        attrs = node.to_dict()
+        pred = node.concept.lower()
+        
+        # Pull args safely
+        args = [attrs.get(f"arg{i}") for i in range(len(attrs))]
+        args = [a for a in args if a is not None]
+        if args:
+            kb.declare_fact(pred, *args)
+            
+    # Always possess baseline reasoning rules
+    kb.declare_rule(
+        head_pred="daily_profit",
+        head_args=["?p", "?item", "?ans"],
+        body=[
+            ("sells", ["?p", "?item", "?price"]),
+            ("sold_qty", ["?p", "?item", "?qty"])
+        ],
+        calc_expr="qty * price",
+        calc_target="?ans"
+    )
+    
+    # 3. Load dynamically induced rules currently stored in Working Memory!
+    for node in current_wm:
+        if node.concept == "Inducedrule":
+            r = node.to_dict()
+            kb.declare_rule(
+                head_pred=r["head_pred"],
+                head_args=list(r["head_args"]),
+                body=[(b[0], list(b[1])) for b in r["body"]],
+                calc_expr=r["calc"],
+                calc_target=r["target"]
+            )
+        
+    # Solve general query
+    reasoner = OntologicalReasoner(kb)
+    solutions = reasoner.solve(goal_pred, goal_args)
+    
+    success = False
+    if solutions:
+        for sol in solutions:
+            ans_val = sol.get("ans")
+            if ans_val is not None:
+                success = True
+                # Add solved belief with maximum activation/salience (1.0)
+                new_facts.add(WMNode.create("Belief", label=goal_pred, value=ans_val, activation=1.0))
+                if not quiet:
+                    print(f"[System 3] Solved query via reasoning: {goal_pred} = {ans_val}")
+                    
+    if not success and expected_value is not None:
+        # If proof failed, execute Abductive ILP to learn rule!
+        learner = OntologicalILPLearner(kb)
+        induced = learner.abduce_and_induce([(goal_pred, goal_args, expected_value)])
+        if induced:
+            # Broadcast the induced rule to Working Memory as a Rule Node!
+            new_facts.add(WMNode.create(
+                "Inducedrule",
+                activation=1.0,
+                head_pred=induced["head"][0],
+                head_args=tuple(induced["head"][1]),
+                body=tuple((b[0], tuple(b[1])) for b in induced["body"]),
+                calc=induced["calc"],
+                target=induced["target"]
+            ))
+            if not quiet:
+                print(f"[System 3] Successfully induced general rule online! Saved to Working Memory.")
+                
+    return new_facts
 
 # ==========================================
 # Main Cognitive Orchestrator
