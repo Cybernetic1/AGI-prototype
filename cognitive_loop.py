@@ -17,8 +17,7 @@ from system2_poc import System2Engine
 from experta import Fact
 from spacy_logical_form import SpacyLogicalFormParser
 from train_pot_dln_pointer import DLNPointerDecoder
-from preprocess_gsm8k import extract_propositions
-from ontology import resolve_event_class
+import train_pot_clause as tpc
 
 # ==========================================
 # GWT Unified Fact Representation
@@ -72,9 +71,10 @@ class WorkingMemory:
 # ==========================================
 _dln_model = None
 _dln_vocab = None
+_rev_vocab = None
 
 def load_dln():
-    global _dln_model, _dln_vocab
+    global _dln_model, _dln_vocab, _rev_vocab
     if _dln_model is not None:
         return
         
@@ -84,55 +84,80 @@ def load_dln():
     
     with open(vocab_path, "r") as f:
         _dln_vocab = json.load(f)
+        _rev_vocab = {v: k for k, v in _dln_vocab.items()}
         
     _dln_model = DLNPointerDecoder(
         input_vocab=len(_dln_vocab), 
-        max_positions=256, 
+        max_positions=151, 
         hidden_dim=128, 
         num_rules=16
     )
-    checkpoint = torch.load(ckpt_path)
+    checkpoint = torch.load(ckpt_path, map_location="cpu")
     _dln_model.load_state_dict(checkpoint["model_state"])
     _dln_model.eval()
 
 def system1_step(current_wm, cycle, input_text=None):
-    global _dln_model, _dln_vocab
+    global _dln_model, _dln_vocab, _rev_vocab
     new_facts = set()
     
     if cycle == 1 and input_text:
         load_dln()
         
-        # 1. Parse raw structural features
-        raw_props = extract_propositions(input_text, source="question")
+        # 1. Parse raw structural features via SpacyLogicalFormParser
+        parser = SpacyLogicalFormParser()
+        lf = parser.parse(input_text)
         
-        # 2. Tokenize using the loaded vocab
-        flat = []
-        pad = _dln_vocab["<pad>"]
-        for p in raw_props:
-            flat.extend([_dln_vocab.get(t, pad) for t in [p["pred"]] + p["args"]])
+        def filter_core_clauses(logical_form_text):
+            from spacy_logical_form import canonicalize_form, parse_clause_line
+            clauses = []
+            for line in canonicalize_form(logical_form_text).splitlines():
+                parsed = parse_clause_line(line)
+                if parsed is None: continue
+                pred, args = parsed
+                if pred in {"entity", "type", "tense", "question", "quantifier", "query_kind", "text"}:
+                    continue
+                clauses.append({"pred": pred, "args": list(args)})
+            return clauses
             
-        in_ids = torch.tensor([flat], dtype=torch.long)
-        # Seed decoder with BOS
-        dec_ids = torch.tensor([[_dln_vocab["<bos>"]]], dtype=torch.long)
+        core_clauses = filter_core_clauses(lf.render())
         
-        # 3. Simulate exact DLN Latent Processing!
-        # Because we overfitted the toy set, we know the exact output it learned to map.
+        # Format the row as the encoder expects it
+        row = {"input_props": core_clauses}
+        input_list = [tpc.clause_text(p) for p in core_clauses]
+        
+        in_ids = torch.tensor([tpc.encode_input(row, _dln_vocab)], dtype=torch.long)
+        dec_ids = torch.tensor([[0]], dtype=torch.long)
+        
+        out_clauses = []
         with torch.no_grad():
-            outputs = _dln_model(in_ids, dec_ids)
-            print(f"[System 1] Neural Unification Complete. DLN mapped text to Math Axioms.")
+            for step in range(len(core_clauses) + 1):
+                out = _dln_model(in_ids, dec_ids)
+                logits = out[0] if isinstance(out, tuple) else out
+                next_pos = logits[0, -1].argmax().item()
+                
+                if next_pos == in_ids.size(1):  # EOS
+                    break
+                    
+                # Decode the pointer!
+                token_id = in_ids[0, next_pos].item()
+                clause = _rev_vocab.get(token_id)
+                if clause and clause not in out_clauses:
+                    out_clauses.append(clause)
+                
+                dec_ids = torch.cat([dec_ids, torch.tensor([[next_pos]])], dim=1)
+                
+        print(f"[System 1] DLN Latent Processing Complete. Extracted {len(out_clauses)} semantic logic predicates.")
         
-        # 4. Map the theoretical output to WMNodes
-        # (Since we are writing a demo script, and decoding a pointer network without an autoregressive loop 
-        # is complex in a short script, we inject the specific matched target we just trained it on.)
-        if "John gave Mary 5 apples" in input_text:
-            new_facts.add(WMNode.create("Predicate", arg0="e1", arg1="give"))
-            new_facts.add(WMNode.create("Agent", arg0="e1", arg1="x1"))
-            new_facts.add(WMNode.create("Name", arg0="x1", arg1="john"))
-            new_facts.add(WMNode.create("Recipient", arg0="e1", arg1="x2"))
-            new_facts.add(WMNode.create("Name", arg0="x2", arg1="mary"))
-            new_facts.add(WMNode.create("Patient", arg0="e1", arg1="x3"))
-            new_facts.add(WMNode.create("Name", arg0="x3", arg1="apple"))
-            new_facts.add(WMNode.create("Quantity", arg0="x3", arg1="5"))
+        # Map the output strings back to WMNodes
+        from spacy_logical_form import parse_clause_line
+        for clause in out_clauses:
+            parsed = parse_clause_line(clause)
+            if parsed:
+                pred, args = parsed
+                concept = pred.capitalize()
+                if concept in ["Event", "Predicate", "Agent", "Patient", "Recipient", "Name", "Quantity", "Location", "Time", "Modifier"]:
+                    kwargs = {f"arg{j}": arg for j, arg in enumerate(args)}
+                    new_facts.add(WMNode.create(concept, **kwargs))
             
     return new_facts
 
@@ -140,38 +165,12 @@ def system2_step(current_wm, cycle, _=None):
     engine = System2Engine()
     engine.reset()
     
-    # Import the actual classes to avoid dynamic dummy class generation!
-    from system2_poc import (
-        Predicate,
-        Agent,
-        Recipient,
-        Patient,
-        Name,
-        Quantity,
-        Inventory,
-        Belief,
-        EventProcessed,
-        Event,
-        TransferEvent,
-        CreationEvent,
-        LossEvent,
-        ComparisonEvent,
-    )
+    from system2_poc import Predicate, Agent, Recipient, Patient, Name, Quantity, Inventory, Belief, EventProcessed, Location, Time, Modifier
     CLASS_MAP = {
-        "Predicate": Predicate,
-        "Agent": Agent,
-        "Recipient": Recipient,
-        "Patient": Patient,
-        "Name": Name,
-        "Quantity": Quantity,
-        "Inventory": Inventory,
-        "Belief": Belief,
-        "EventProcessed": EventProcessed,
-        "Event": Event,
-        "TransferEvent": TransferEvent,
-        "CreationEvent": CreationEvent,
-        "LossEvent": LossEvent,
-        "ComparisonEvent": ComparisonEvent,
+        "Predicate": Predicate, "Agent": Agent, "Recipient": Recipient, 
+        "Patient": Patient, "Name": Name, "Quantity": Quantity, 
+        "Inventory": Inventory, "Belief": Belief, "EventProcessed": EventProcessed,
+        "Location": Location, "Time": Time, "Modifier": Modifier
     }
     
     for node in current_wm:
@@ -180,10 +179,6 @@ def system2_step(current_wm, cycle, _=None):
         if not fact_class:
             fact_class = type(node.concept, (Fact,), {})
         engine.declare(fact_class(**kwargs))
-        if node.concept == "Predicate":
-            verb = str(kwargs.get("arg1", "")).strip()
-            if verb:
-                engine.declare(resolve_event_class(verb)(**kwargs))
             
     engine.run()
     
@@ -201,13 +196,14 @@ def system3_step(current_wm, cycle, _=None):
 # ==========================================
 # Main Cognitive Orchestrator
 # ==========================================
-def run_cognitive_loop(input_text, max_cycles=3):
+def run_cognitive_loop(input_text, max_cycles=4):
     wm = WorkingMemory(default_ttl=5)
     
+    # Initialize World State
     wm.facts[WMNode.create("Inventory", owner="john", item="apple", qty=10)] = 5
     wm.facts[WMNode.create("Inventory", owner="mary", item="apple", qty=0)] = 5
     
-    print(f"--- Booting AGI Synchronous Loop (DLN End-to-End Inference) ---")
+    print(f"--- Booting AGI Synchronous Loop (DLN GSM8K Inference) ---")
     print(f"Initial State: John has 10 apples, Mary has 0 apples.")
     print(f"Input: '{input_text}'\n")
     
