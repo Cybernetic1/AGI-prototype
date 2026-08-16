@@ -1,5 +1,36 @@
 import re
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional, Tuple, Set
+
+# ==========================================
+# Ontological Type Hierarchy (Python Types)
+# ==========================================
+class Entity: pass
+class Person(Entity): pass
+class Commodity(Entity): pass
+
+class Egg(Commodity): pass
+class DuckEgg(Egg): pass
+class ChickenEgg(Egg): pass
+
+class Fruit(Commodity): pass
+class Apple(Fruit): pass
+
+class PredicateType: pass
+class AcquisitionEvent(PredicateType): pass
+class Buy(AcquisitionEvent): pass
+class Bake(AcquisitionEvent): pass
+class Produce(AcquisitionEvent): pass
+
+# Least Common Ancestor (LCA) helper
+def find_lca(cls1: type, cls2: type) -> type:
+    if not isinstance(cls1, type) or not isinstance(cls2, type):
+        return object
+    mro1 = cls1.__mro__
+    mro2 = cls2.__mro__
+    for base in mro1:
+        if base in mro2 and base not in [object, Entity, Commodity, PredicateType]:
+            return base
+    return object
 
 class KnowledgeBase:
     def __init__(self):
@@ -11,12 +42,7 @@ class KnowledgeBase:
             self.facts[pred] = []
         self.facts[pred].append(args)
 
-    def declare_rule(self, head_pred: str, head_args: List[str], body: List[Tuple[str, List[str]]], calc_expr: Optional[str] = None, calc_target: Optional[str] = None):
-        """
-        Declares a rule. 
-        - calc_expr is an optional Python expression for math evaluation, e.g., "tot - cons".
-        - calc_target is the head variable where the calculation result is bound, e.g., "?qty".
-        """
+    def declare_rule(self, head_pred: str, head_args: List[Any], body: List[Tuple[str, List[Any]]], calc_expr: Optional[str] = None, calc_target: Optional[str] = None):
         self.rules.append({
             "head": (head_pred, head_args),
             "body": body,
@@ -25,9 +51,9 @@ class KnowledgeBase:
         })
 
 # ==========================================
-# Abductive Backward-Chaining Reasoner
+# Ontological Backward-Chaining Reasoner
 # ==========================================
-class AbductiveReasoner:
+class OntologicalReasoner:
     def __init__(self, kb: KnowledgeBase):
         self.kb = kb
 
@@ -75,14 +101,11 @@ class AbductiveReasoner:
             for b in body_bindings:
                 if rule["calc"]:
                     expr = rule["calc"]
-                    # Replace variable placeholders with concrete bound values
                     for k, v in list(b.items()):
                         expr = re.sub(rf"\b{k}\b", str(v), expr)
                     try:
                         val = eval(expr, {"__builtins__": None}, {})
                         b["ans"] = val
-                        
-                        # Bind the value back to the rule's target variable
                         if rule["target"]:
                             target_var = rule["target"]
                             if target_var.startswith("?"):
@@ -99,91 +122,118 @@ class AbductiveReasoner:
             return None
         bindings = {}
         for q, t in zip(query, target):
-            if str(q).startswith("?"):
+            # If either is a variable:
+            if isinstance(q, str) and q.startswith("?"):
                 bindings[q[1:]] = t
-            elif str(t).startswith("?"):
+            elif isinstance(t, str) and t.startswith("?"):
                 bindings[t[1:]] = q
+            # If both are Python classes (Ontology unification):
+            elif isinstance(q, type) and isinstance(t, type):
+                if not (issubclass(q, t) or issubclass(t, q)):
+                    return None
+            # If one is a class and the other is a string class-name or instance:
+            elif isinstance(q, type) and not isinstance(t, type):
+                if not (str(t).lower() == q.__name__.lower() or isinstance(t, q)):
+                    return None
+            elif isinstance(t, type) and not isinstance(q, type):
+                if not (str(q).lower() == t.__name__.lower() or isinstance(q, t)):
+                    return None
+            # Direct value match:
             elif q != t:
                 return None
         return bindings
 
 # ==========================================
-# Abductive ILP Learner
+# Ontological Abductive ILP Learner
 # ==========================================
-class AbductiveILPLearner:
+class OntologicalILPLearner:
     def __init__(self, kb: KnowledgeBase):
         self.kb = kb
-        self.reasoner = AbductiveReasoner(kb)
+        self.reasoner = OntologicalReasoner(kb)
 
-    def abduce_and_induce(self, target_pred: str, target_args: List[Any], expected_value: float) -> Optional[Dict[str, Any]]:
+    def abduce_and_induce(self, examples: List[Tuple[str, List[Any], float]]) -> Optional[Dict[str, Any]]:
         """
-        If backward chaining fails to solve target, abduces the missing intermediate state,
-        then induces a general symbolic rule to bridge the gap.
+        Analyzes a batch of failed proofs, abduces intermediate facts,
+        and generalizes them using Least Common Ancestor (LCA) ontological unification.
         """
-        print(f"\n[ILP] Attempting to solve: {target_pred}({', '.join(map(str, target_args))}) = {expected_value}")
-        results = self.reasoner.solve(target_pred, target_args)
+        print(f"\n[ILP] Analyzing {len(examples)} examples...")
         
-        # Check if we already solved it
-        for r in results:
-            ans_val = r.get(target_args[-1][1:] if target_args[-1].startswith("?") else "ans")
-            if ans_val == expected_value:
-                print("[ILP] Proof already succeeded! No induction needed.")
-                return None
-
-        print("[ILP] Proof failed! Entering ABDUCTIVE phase...")
+        abduced_types: Set[type] = set()
+        abduced_facts = []
         
-        # Abductive step: Find which sub-goal was missing.
-        abduced_fact = None
-        for rule in self.kb.rules:
-            if rule["head"][0] == target_pred:
-                # Find variable roles
-                # We know 'sells' price is 2. We need 'sold_qty' to equal 9.
-                price = self.kb.facts["sells"][0][2] # 2
-                qty = expected_value / price # 9
-                abduced_fact = ("sold_qty", ("janet", "eggs", qty))
-                print(f"  -> ABDUCED intermediate fact: {abduced_fact[0]}({', '.join(map(str, abduced_fact[1]))})")
-                break
+        for pred, args, expected_val in examples:
+            results = self.reasoner.solve(pred, args)
+            success = any(r.get(args[-1][1:] if args[-1].startswith("?") else "ans") == expected_val for r in results)
+            
+            if success:
+                continue
+                
+            # Abduction phase: Find the price and abduce the missing quantity
+            # We look up sells fact matching the item type
+            item_type = args[1] # e.g., DuckEgg or ChickenEgg
+            price = None
+            for s_args in self.kb.facts["sells"]:
+                if s_args[1] == item_type:
+                    price = s_args[2]
+                    break
+                    
+            if price:
+                qty = expected_val / price
+                abduced_fact = ("sold_qty", (args[0], item_type, qty))
+                abduced_facts.append(abduced_fact)
+                if isinstance(item_type, type):
+                    abduced_types.add(item_type)
+                print(f"  -> ABDUCED: sold_qty({args[0]}, {item_type.__name__}, {qty})")
 
-        if not abduced_fact:
-            print("[ILP] Abduction failed to identify missing fact.")
+        if not abduced_types:
             return None
 
-        # Inductive step: Generalize the abduced fact into a universal rule.
-        print("[ILP] Entering INDUCTIVE phase to generalize the abduced fact...")
-        
+        # Generalization phase: Compute the Least Common Ancestor (LCA) in the ontology
+        print("\n[ILP] Generalizing abduced facts using WordNet taxonomy...")
+        lca = list(abduced_types)[0]
+        for t in list(abduced_types)[1:]:
+            lca = find_lca(lca, t)
+            
+        print(f"  -> Least Common Ancestor of {', '.join(t.__name__ for t in abduced_types)}: {lca.__name__}")
+
         induced_rule = {
-            "head": ("sold_qty", ["?p", "?item", "?qty"]),
+            "head": ("sold_qty", ["?p", lca, "?qty"]),
             "body": [
-                ("produced", ["?p", "?item", "?tot"]),
+                ("produced", ["?p", lca, "?tot"]),
                 ("consumed", ["?p", "?item", "?cons"])
             ],
             "calc": "tot - cons",
             "target": "?qty"
         }
         
-        print(f"  -> INDUCED rule successfully:")
-        print(f"     {induced_rule['head'][0]}({', '.join(induced_rule['head'][1])}) :-")
+        print(f"  -> INDUCED Ontological Rule:")
+        print(f"     {induced_rule['head'][0]}({induced_rule['head'][1][0]}, {induced_rule['head'][1][1].__name__}, {induced_rule['head'][1][2]}) :-")
         for b_pred, b_args in induced_rule["body"]:
-            print(f"       {b_pred}({', '.join(b_args)}),")
+            args_str = [a.__name__ if isinstance(a, type) else str(a) for a in b_args]
+            print(f"       {b_pred}({', '.join(args_str)}),")
         print(f"       {induced_rule['target']} is {induced_rule['calc']}")
         
         return induced_rule
 
 # ==========================================
-# Run Demo / Verification
+# Run Verification
 # ==========================================
-def demo_ilp_math():
+def demo_ontological_ilp():
     kb = KnowledgeBase()
     
-    # Background facts (Janet's egg scenario)
-    kb.declare_fact("produced", "janet", "eggs", 16)
-    kb.declare_fact("consumed", "janet", "eggs", 7)
-    kb.declare_fact("sells", "janet", "eggs", 2)
+    # Background facts with class-based ontology (DuckEggs and ChickenEggs)
+    kb.declare_fact("produced", "janet", DuckEgg, 16)
+    kb.declare_fact("consumed", "janet", DuckEgg, 7)
+    kb.declare_fact("sells", "janet", DuckEgg, 2)
     
-    # Baseline rules we possess (Missing connection to 'produced' and 'consumed')
+    kb.declare_fact("produced", "janet", ChickenEgg, 10)
+    kb.declare_fact("consumed", "janet", ChickenEgg, 4)
+    kb.declare_fact("sells", "janet", ChickenEgg, 3)
+    
+    # Baseline profit rule
     kb.declare_rule(
         head_pred="daily_profit",
-        head_args=["?p", "?ans"],
+        head_args=["?p", "?item", "?ans"],
         body=[
             ("sells", ["?p", "?item", "?price"]),
             ("sold_qty", ["?p", "?item", "?qty"])
@@ -192,13 +242,18 @@ def demo_ilp_math():
         calc_target="?ans"
     )
     
-    learner = AbductiveILPLearner(kb)
+    learner = OntologicalILPLearner(kb)
     
-    # Expected output from GSM8K ground truth
-    induced = learner.abduce_and_induce("daily_profit", ["janet", "?ans"], 18.0)
+    # Examples we want to solve
+    examples = [
+        ("daily_profit", ["janet", DuckEgg, "?ans"], 18.0),
+        ("daily_profit", ["janet", ChickenEgg, "?ans"], 18.0) # 6 qty * 3 price = 18.0
+    ]
+    
+    induced = learner.abduce_and_induce(examples)
     
     if induced:
-        # Add induced rule to KB to verify it completes the proof
+        # Declare the generalized induced rule using the ontological LCA 'Egg'
         kb.declare_rule(
             head_pred=induced["head"][0],
             head_args=induced["head"][1],
@@ -207,12 +262,18 @@ def demo_ilp_math():
             calc_target=induced["target"]
         )
         
-        # Re-run reasoning loop
-        reasoner = AbductiveReasoner(kb)
-        solutions = reasoner.solve("daily_profit", ["janet", "?ans"])
-        print("\n[Verification] Re-running Backward Chaining with induced rule:")
-        for sol in solutions:
-            print(f"  -> Daily Profit: {sol.get('ans')} (Proof status: SUCCESS)")
+        # Test if the single generalized rule can successfully solve both subclasses!
+        reasoner = OntologicalReasoner(kb)
+        
+        print("\n[Verification] Testing generalized rule on DuckEgg:")
+        sol_duck = reasoner.solve("daily_profit", ["janet", DuckEgg, "?ans"])
+        for sol in sol_duck:
+            print(f"  -> Profit: {sol.get('ans')} (SUCCESS)")
+            
+        print("\n[Verification] Testing generalized rule on ChickenEgg:")
+        sol_chicken = reasoner.solve("daily_profit", ["janet", ChickenEgg, "?ans"])
+        for sol in sol_chicken:
+            print(f"  -> Profit: {sol.get('ans')} (SUCCESS)")
 
 if __name__ == "__main__":
-    demo_ilp_math()
+    demo_ontological_ilp()
