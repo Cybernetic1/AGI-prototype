@@ -1,5 +1,5 @@
 ======================================================================
-JANET'S EGGS COGNITIVE WORKOUT: QWEN FOCUS-REGISTER & ACTION-MAP TRACE
+JANET'S EGGS COGNITIVE WORKOUT: MANUAL COREF RULES & SPACY ANALYSIS
 ======================================================================
 
 The Problem:
@@ -11,68 +11,87 @@ does she make every day at the farmers' market?"
 Expected Answer: 18
 
 ----------------------------------------------------------------------
-1. THE NEW COGNITIVE SHORTCUTS: FOCUS REGISTER & ACTION MAPPINGS
+1. DESIGNING COREF RULES FOR SYSTEM 2 (TEMPORARY MANUAL INSTALL)
 ----------------------------------------------------------------------
-To avoid complex, combinatorially explosive coreference resolution, we introduce 
-two powerful inductive biases into our ILP learner:
+To resolve coreferences deterministically inside System 2 (Experta/Rete) 
+without relying on System 1 learning them, we install three explicit symbolic 
+coref axioms:
 
-i) The Global Focus Register
-- System maintains an active entity under analysis: `focus_register = duck_egg`.
-- Any unlinked pronominal patients (like "three", "four", or "the remainder") 
-  are assumed to refer directly to the active `focus_register`.
+Rule 1: Set Active Focus
+- When an event produces or establishes a major commodity, we register it as 
+  the active focus.
+  * Axiom: `Event(type=produce, target=X) ⟶ Focus(item=X)`
 
-ii) Hierarchical Action-to-Math Compiling Rules
-- Rather than trying to learn arithmetic from scratch, the system possesses 
-  ontological action mappings:
-  * Taxonomy: `eat ∈ consume`, `bake ∈ consume`
-  * Action Map: `consume ⟶ subtract` (Quantity_new = Quantity_old - Value)
-  * Taxonomy: `lay ∈ produce`
-  * Action Map: `produce ⟶ add` (Quantity_new = Quantity_old + Value)
+Rule 2: Unlinked / Pronominal Quantity Resolution
+- If an event consumes a quantity `N` but has an unlinked patient (like the word 
+  "three" or "four" occurring alone without a noun), we resolve it to the active focus.
+  * Axiom: `Action(type=consume, qty=N, patient=P), Focus(item=X) ⟶ Action(type=consume, qty=N, patient=X)`
+
+Rule 3: "Remainder" Variable Resolution
+- If an action targets "the remainder", we query System 2's current state 
+  for the active focus's remaining inventory.
+  * Axiom: `Action(type=sell, target=remainder), Focus(item=X), Inventory(item=X, qty=Q) ⟶ Action(type=sell, target=X, qty=Q)`
 
 ----------------------------------------------------------------------
-2. STEP-BY-STEP ACTION-MAP COMPILATION
+2. ANALYSIS OF SPACY'S "WEIRD" QUESTION PARSING
+----------------------------------------------------------------------
+For the question:
+"How much in dollars does she make every day at the farmers' market?"
+
+spaCy produced the following logical forms:
+`event(?e5). predicate(?e5, make). agent(?e5, ?x4). patient(?e5, ?x16). name(?x16, much). query(?e5, ?x17).`
+
+Why is this "weird"?
+Yes! This is a structural limitation on spaCy's part. In English, "How much" 
+acts as a WH-determiner/adverb. 
+1. **The Patient Error**: spaCy's dependency parser made the word "much" (`?x16`) 
+   the actual direct object (`patient`) of the verb "make". It literally thinks 
+   Janet is "making much".
+2. **Missing query_kind**: In `spacy_logical_form.py`, our parser only has a static 
+   rule to emit `query_kind(event, quantity)` if it strictly sees the words "how" 
+   and "many". Because it saw "how" and "much" instead, it did not emit any 
+   `query_kind` or `currency` specifier!
+
+How to Resolve This:
+To get our "Query" target without hardcoding, System 2 needs a query-compiling rule:
+- If a query event `?e5` has `predicate(?e5, make)` and `patient(?e5, ?x16)` where 
+  `name(?x16, much)` and we see `name(?x15, dollar)` in the same sentence, we compile 
+  it to:
+  * Axiom: `query(make, ?ans, unit=dollar)`
+
+----------------------------------------------------------------------
+3. THE COMPILED EXECUTION TRACE
 ----------------------------------------------------------------------
 
 Sentence 1: "Janet’s ducks lay 16 eggs per day."
-- Grounded Event: `lay` (Quantity=16, Entity=egg)
+- Event: `lay` (Quantity=16, Entity=egg)
 - State Resolution:
-  * Set `focus_register = egg`.
+  * Rule 1 fires ⟶ Register `Focus(item=egg)`.
   * `lay ∈ produce` ⟶ `Action(egg, add, 16)`.
-- Resulting State: `Inventory(egg) = 16`.
+- State: `Inventory(egg) = 16`, `Focus(egg)`.
 
 Sentence 2: "She eats three..."
-- Grounded Event: `eat` (Quantity=three)
+- Event: `eat` (Quantity=three ⟶ 3, Patient=unlinked)
 - State Resolution:
-  * Word ontology maps `three ⟶ 3`.
-  * Patient is unlinked ⟶ default to `focus_register` (egg).
+  * Rule 2 fires ⟶ Links unlinked `three` to `Focus(egg)`.
   * `eat ∈ consume` ⟶ `consume ⟶ subtract` ⟶ `Action(egg, subtract, 3)`.
-- Resulting State: `Inventory(egg) = 16 - 3 = 13`.
+- State: `Inventory(egg) = 13`, `Focus(egg)`.
 
 Sentence 3: "...and bakes muffins... with four."
-- Grounded Event: `bake` (Quantity=four)
+- Event: `bake` (Quantity=four ⟶ 4, Patient=unlinked)
 - State Resolution:
-  * Word ontology maps `four ⟶ 4`.
-  * Patient is unlinked ⟶ default to `focus_register` (egg).
+  * Rule 2 fires ⟶ Links unlinked `four` to `Focus(egg)`.
   * `bake ∈ consume` ⟶ `consume ⟶ subtract` ⟶ `Action(egg, subtract, 4)`.
-- Resulting State: `Inventory(egg) = 13 - 4 = 9`.
+- State: `Inventory(egg) = 9`, `Focus(egg)`.
 
 Sentence 4: "She sells the remainder... for $2."
-- Grounded Event: `sell` (Price=2, Patient=remainder)
+- Event: `sell` (Price=2, Patient=remainder)
 - State Resolution:
-  * "the remainder" matches current state of `focus_register` (egg) ⟶ 9.
+  * Rule 3 fires ⟶ Looks up `Focus(egg)` and `Inventory(egg) = 9` ⟶ Binds `remainder ⟶ 9`.
   * `sell ∈ transfer_for_value` ⟶ `Action(egg, multiply, 2)`.
-- Resulting State: `Profit = 9 * 2 = 18`.
+- State: `Profit = 9 * 2 = 18`.
 
-----------------------------------------------------------------------
-3. THE INDUCTIVE LEARNABILITY ADVANTAGE
-----------------------------------------------------------------------
-By decomposing the problem into a "Focus Register" and "Action Mappings", 
-the ILP learner's job is restricted to learning two tiny, highly constrained 
-sub-tasks:
-
-1. **Mapping Verbs to Action Classes**: Learning `eat ⟶ consume` (1 rule).
-2. **Action Class to Math mapping**: Learning `consume ⟶ subtract` (1 rule).
-
-This prevents "unnatural" rules (like $(16 - 3 - 4) \times 2 = 18$) from overfitting, 
-and instead learns a completely general, common-sense model of physical events 
-and transactions that successfully scales to all of GSM8K.
+Sentence 5: "How much in dollars does she make..."
+- Goal: `query(make, ?ans, unit=dollar)`
+- Resolution:
+  * Target resolved! `?ans = Profit = 18`.
