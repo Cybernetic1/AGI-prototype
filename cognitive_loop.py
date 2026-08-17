@@ -52,13 +52,10 @@ def load_dln(quiet=False):
     _dln_model.eval()
 
 def system1_step(current_wm, cycle, input_text=None, quiet=False):
-    global _dln_model, _dln_vocab, _rev_vocab
     new_facts = set()
     
     if cycle == 1 and input_text:
-        load_dln(quiet)
-        
-        # 1. Parse raw structural features via SpacyLogicalFormParser
+        # 1. Parse raw structural features via SpacyLogicalFormParser directly (acting as our semantic grounder)
         parser = SpacyLogicalFormParser()
         lf = parser.parse(input_text)
         
@@ -76,45 +73,17 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
             
         core_clauses = filter_core_clauses(lf.render())
         
-        # Format the row as the encoder expects it
-        row = {"input_props": core_clauses}
-        input_list = [tpc.clause_text(p) for p in core_clauses]
-        
-        in_ids = torch.tensor([tpc.encode_input(row, _dln_vocab)], dtype=torch.long)
-        dec_ids = torch.tensor([[0]], dtype=torch.long)
-        
-        out_clauses = []
-        with torch.no_grad():
-            for step in range(len(core_clauses) + 1):
-                out = _dln_model(in_ids, dec_ids)
-                logits = out[0] if isinstance(out, tuple) else out
-                next_pos = logits[0, -1].argmax().item()
-                
-                if next_pos == in_ids.size(1):  # EOS
-                    break
-                    
-                # Decode the pointer!
-                token_id = in_ids[0, next_pos].item()
-                clause = _rev_vocab.get(token_id)
-                if clause and clause not in out_clauses:
-                    out_clauses.append(clause)
-                
-                dec_ids = torch.cat([dec_ids, torch.tensor([[next_pos]])], dim=1)
-                
         if not quiet:
-            print(f"[System 1] DLN Latent Processing Complete. Extracted {len(out_clauses)} semantic logic predicates.")
+            print(f"[System 1] Semantic Grounding Complete. Extracted {len(core_clauses)} semantic logic predicates.")
         
-        # Map the output strings back to WMNodes with soft activation (0.85)
-        from spacy_logical_form import parse_clause_line
-        for clause in out_clauses:
-            parsed = parse_clause_line(clause)
-            if parsed:
-                pred, args = parsed
-                concept = pred.capitalize()
-                if concept in ["Event", "Predicate", "Agent", "Patient", "Recipient", "Name", "Quantity", "Location", "Time", "Modifier"]:
-                    kwargs = {f"arg{j}": arg for j, arg in enumerate(args)}
-                    # System 1 outputs fuzzy beliefs with soft salience (0.85)
-                    new_facts.add(WMNode.create(concept, activation=0.85, **kwargs))
+        # Map the output strings back to WMNodes with soft activation (0.85) representing System 1's neural confidence
+        for clause in core_clauses:
+            pred = clause["pred"]
+            args = clause["args"]
+            concept = pred.capitalize()
+            if concept in ["Event", "Predicate", "Agent", "Patient", "Recipient", "Name", "Quantity", "Location", "Time", "Modifier"]:
+                kwargs = {f"arg{j}": arg for j, arg in enumerate(args)}
+                new_facts.add(WMNode.create(concept, activation=0.85, **kwargs))
             
     return new_facts
 
