@@ -122,6 +122,13 @@ class SpacyLogicalFormParser:
     def __init__(self, model_name: str = "en_core_web_sm"):
         try:
             self.nlp = spacy.load(model_name)
+            # Add custom entity ruler to recognize WH-question patterns natively
+            ruler = self.nlp.add_pipe("entity_ruler", before="ner")
+            patterns = [
+                {"label": "QUERY_QUANTITY", "pattern": [{"LOWER": "how"}, {"LOWER": "many"}]},
+                {"label": "QUERY_CURRENCY", "pattern": [{"LOWER": "how"}, {"LOWER": "much"}]}
+            ]
+            ruler.add_patterns(patterns)
         except OSError as exc:
             raise RuntimeError(
                 f"Missing spaCy model '{model_name}'. Install it with: "
@@ -239,8 +246,12 @@ class SpacyLogicalFormParser:
                 if any(tok.lower_ in {"how", "what", "who", "which"} for tok in sent):
                     query_var = self._entity_var(lf, f"query_{event_var}")
                     lf.clauses.append(Clause("query", (event_var, query_var)))
-                    if any(tok.lower_ == "how" for tok in sent) and any(tok.lower_ == "many" for tok in sent):
+                    has_qty_query = any(tok.ent_type_ == "QUERY_QUANTITY" for tok in sent) or (any(tok.lower_ == "how" for tok in sent) and any(tok.lower_ == "many" for tok in sent))
+                    has_curr_query = any(tok.ent_type_ == "QUERY_CURRENCY" for tok in sent) or (any(tok.lower_ == "how" for tok in sent) and any(tok.lower_ == "much" for tok in sent))
+                    if has_qty_query:
                         lf.clauses.append(Clause("query_kind", (event_var, "quantity")))
+                    elif has_curr_query:
+                        lf.clauses.append(Clause("query_kind", (event_var, "currency")))
 
         if not lf.clauses:
             lf.clauses.append(Clause("text", (_sanitize_atom(text[:32] or "empty"),)))
