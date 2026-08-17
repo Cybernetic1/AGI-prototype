@@ -55,6 +55,10 @@ class WorkingMemory:
                     del self.facts[f]
 
             # 2. Competitive Selection (Salience/Activation check)
+            # NOTE: If we migrate to Online Reinforcement Learning, do not delete/merge 
+            # System 1's soft WMEs with System 2/3's hard WMEs, otherwise System 1 will 
+            # lose gradient feedback (Credit Assignment failure). Instead, maintain origin 
+            # labels or backpointers to reward System 1 for correct predictions.
             # If an structurally identical fact already exists:
             existing_match = next((f for f in self.facts if f == fact), None)
             if existing_match is not None:
