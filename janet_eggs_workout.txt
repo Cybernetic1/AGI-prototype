@@ -2,96 +2,799 @@
 JANET'S EGGS COGNITIVE WORKOUT: MANUAL COREF RULES & SPACY ANALYSIS
 ======================================================================
 
-The Problem:
-"Janet’s ducks lay 16 eggs per day. She eats three for breakfast every morning 
-and bakes muffins for her friends every day with four. She sells the remainder 
-at the farmers' market daily for $2 per fresh duck egg. How much in dollars 
-does she make every day at the farmers' market?"
+Purpose
+-------
+This document is a step-by-step trace of how our tri-system neurosymbolic
+architecture (System 1: Neural / System 2: Rete / System 3: ILP) solves
+a single GSM8K word problem.  It is the *canonical worked example* used
+to verify that all three systems, Working Memory (Global Workspace), the
+spaCy logical-form parser, and the ontological ILP learner compose
+correctly before we scale to the full benchmark.
+
+Every line of output below is pinned to a specific source file and line
+number so we can audit regressions.
+
+Source map
+  WMNode / WorkingMemory  -> working_memory/working_memory.py
+  System 1 (spaCy parser) -> logic_transformer/spacy_logical_form.py
+  System 1 (DLN output)   -> logic_transformer/train_pot_dln_pointer.py
+  System 2 (Rete engine)  -> forward_engine/system2_poc.py
+  Verb ontology           -> forward_engine/ontology.py
+  System 3 (ILP)          -> ilp_learner/abductive_ilp.py
+  Cognitive orchestrator  -> cognitive_loop.py
+  This workout            -> janet_eggs_workout.txt
+  Integration test        -> test_integrated_ilp.py
+
+======================================================================
+The Problem
+======================================================================
+"Janet's ducks lay 16 eggs per day. She eats three for breakfast every
+morning and bakes muffins for her friends every day with four. She sells
+the remainder at the farmers' market daily for $2 per fresh duck egg.
+How much in dollars does she make every day at the farmers' market?"
+
+Chain of thought (provided by GSM8K):
+  Janet sells 16 - 3 - 4 = <<16-3-4=9>>9 duck eggs a day.
+  She makes 9 * 2 = $<<9*2=18>>18 every day at the farmer’s market.
 
 Expected Answer: 18
 
-----------------------------------------------------------------------
+Decomposition (gold labels):
+  Sentence 1:  produced(janet, DuckEgg, 16)
+  Sentence 2:  consumed(janet, DuckEgg, 3)
+  Sentence 3:  consumed(janet, DuckEgg, 4)
+  Sentence 4:  sells(janet, DuckEgg, 2)   -- remainder = 16 - 3 - 4 = 9
+  Sentence 5:  query(daily_profit, (janet, DuckEgg, ?ans), expected=18)
+
+======================================================================
+Questions from the human author (YKY)
+======================================================================
+1. Should ILP be triggered by backward-chaining, or simply always runs?
+2. How to make use of the intermediate steps provided by GSM8K?
+3. How did PoT training succeed and how to replicate success here?
+4. Allow human teacher interaction to guide ILP? Asking questions as
+   logic programs, learn to ask different questions?  Maybe even ask LLMs?
+5.
+
+======================================================================
+0. ARCHITECTURE OVERVIEW (WHY THREE SYSTEMS?)
+======================================================================
+
+System 1 (Neural) -- "Search in continuous parametric space"
+  Role:   It provides a fallback mechanism when ILP fails.
+          Deep learning is known to succeed in complex problems.
+          spaCy replaces LT/DLN to generate logical forms, simplifying
+          our problem.
+  Output: WMNode objects with activation=0.85 (soft confidence).
+  Code:   cognitive_loop.py:54-88, spacy_logical_form.py:121-259
+
+System 2 (Forward-chaining / Rete)
+  Role:   Forward-chaining state tracker.  Applies deterministic
+          axioms (Transfer, Generation, Destruction, Comparison) to
+          update inventory quantities.  Also detects contradictions
+          (negative inventory, mutually exclusive event types).
+  Output: WMNode objects with activation=1.0 (deterministic).
+  Code:   cognitive_loop.py:90-124, system2_poc.py:42-186
+
+System 3 (ILP / Abductive) -- "Slow, exact, global"
+  Role:   Backward-chaining reasoner + abductive rule learner.
+          When System 2's axioms cannot prove a query, System 3
+          attempts ILP: it abduces missing facts, generalises them
+          using ontological LCA (Least Common Ancestor), and broadcasts
+          the induced rule back into Working Memory for future cycles.
+  Output: WMNode objects (Belief or Inducedrule) with activation=1.0.
+  Code:   cognitive_loop.py:126-212, abductive_ilp.py:56-279
+
+Working Memory (Global Workspace) -- "The blackboard"
+  Role:   Shared fact store.  All systems read from and write to it.
+          Facts are WMNode objects keyed by (concept, attrs) with a
+          TTL (time-to-live) that decays each cycle.  Structural
+          equality ignores activation, enabling competitive selection:
+          when two systems propose the same semantic fact, the one
+          with higher activation wins.
+  Code:   working_memory/working_memory.py:7-83
+
+Synchronous cycle:
+  1. Snapshot WM
+  2. Run S1, S2, S3 in parallel (ProcessPoolExecutor, max_workers=3)
+  3. Merge all outputs into WM (update)
+  4. Decay TTLs
+  5. Repeat for max_cycles iterations
+
+======================================================================
 1. DESIGNING COREF RULES FOR SYSTEM 2 (TEMPORARY MANUAL INSTALL)
-----------------------------------------------------------------------
-To resolve coreferences deterministically inside System 2 (Experta/Rete) 
-without relying on System 1 learning them, we install three explicit symbolic 
-coref axioms:
+======================================================================
 
+Problem: System 2's Experta rules operate on explicit, fully-grounded
+facts.  But natural language is full of pronouns ("she"), zero-mentions
+("bakes muffins ... with four"), and bridging anaphora ("the remainder").
+System 1 (the parser) does not reliably resolve these.
+
+Solution: We install three temporary manual coref axioms that System 2
+evaluates *before* firing its state-change rules.  These are stopgaps;
+the long-term plan is for System 1's DLN to learn coref resolution.
+
+----------------------------------------------------------------------
 Rule 1: Set Active Focus
-- When an event produces or establishes a major commodity, we register it as 
-  the active focus.
-  * Axiom: `Event(type=produce, target=X) ⟶ Focus(item=X)`
+----------------------------------------------------------------------
+Trigger: An event that produces or establishes a major commodity.
+Purpose: Track what "thing" the paragraph is currently about, so that
+         subsequent zero-pronoun events can be linked back to it.
 
+Formal Axiom:
+  Event(type=produce, target=X) -> Focus(item=X)
+
+Experta implementation (system2_poc.py):
+  This is not a separate Experta rule.  Instead, it is enforced at
+  the orchestrator level: after System 1 emits the first set of
+  Event/Patient/Quantity clauses, the orchestrator registers a Focus
+  fact in Working Memory before feeding it to System 2.
+
+  In the current codebase this is implicit: the first ProductionEvent
+  (lay) is recognized as the commodity-establishing event by the verb
+  ontology (ontology.py:77-78, "lay" -> _CREATION_VERBS via "create"
+  hypernym -> CreationEvent), and the Patient (egg) becomes the focus.
+
+Execution trace:
+  Sentence 1: "Janet's ducks lay 16 eggs per day."
+  -> predicate(?e1, lay), patient(?e1, ?x3), name(?x3, egg),
+     quantity(?x3, 16), agent(?e1, ?x1), name(?x1, janet)
+  -> Verb ontology: lay -> _CREATION_VERBS -> CreationEvent
+     (ontology.py:77-78, resolve_event_class at line 146)
+  -> Focus registered: Focus(item=egg)
+
+----------------------------------------------------------------------
 Rule 2: Unlinked / Pronominal Quantity Resolution
-- If an event consumes a quantity `N` but has an unlinked patient (like the word 
-  "three" or "four" occurring alone without a noun), we resolve it to the active focus.
-  * Axiom: `Action(type=consume, qty=N, patient=P), Focus(item=X) ⟶ Action(type=consume, qty=N, patient=X)`
+----------------------------------------------------------------------
+Trigger: An event consumes a quantity N but has an unlinked patient
+         (the number stands alone without an accompanying noun).
+Purpose: In English we say "eats three" (not "eats three eggs") when
+         the referent is obvious from context.
 
+Formal Axiom:
+  Action(type=consume, qty=N, patient=P),
+  Focus(item=X)
+  -> Action(type=consume, qty=N, patient=X)
+
+How spaCy triggers this:
+  For "She eats three for breakfast every morning":
+    - spaCy parser produces:
+        predicate(?e2, eat), agent(?e2, ?x1), quantity(?x2, three)
+    - There is NO patient(?e2, ?x3) clause because "three" is parsed
+      as a standalone numeral, not a noun phrase.
+    - Rule 2 detects: event ?e2 has quantity but no patient.
+      It binds patient -> Focus(item=egg).
+
+  For "...bakes muffins ... with four":
+    - spaCy parser produces:
+        predicate(?e3, bake), patient(?e3, ?x4), name(?x4, muffin),
+        instrument(?e3, ?x5), quantity(?x5, four)
+    - "four" is attached to "muffins" via "with" -> instrument, but
+      the *intended* meaning is that four eggs are used.
+    - Rule 2 fires again: the instrument has a quantity but no
+      proper patient, so it resolves to Focus(item=egg).
+
+Note: In the current codebase, this rule is not yet hard-coded into
+system2_poc.py.  It lives in the test harness (test_integrated_ilp.py)
+where the orchestrator manually injects pre-resolved facts:
+  wm.facts[WMNode.create("Produced", arg0="janet", arg1=DuckEgg, arg2=16)]
+  wm.facts[WMNode.create("Consumed", arg0="janet", arg1=DuckEgg, arg2=7)]
+This skips the coref problem entirely.  The workout below shows what
+*would* happen if we ran the full pipeline.
+
+----------------------------------------------------------------------
 Rule 3: "Remainder" Variable Resolution
-- If an action targets "the remainder", we query System 2's current state 
-  for the active focus's remaining inventory.
-  * Axiom: `Action(type=sell, target=remainder), Focus(item=X), Inventory(item=X, qty=Q) ⟶ Action(type=sell, target=X, qty=Q)`
-
 ----------------------------------------------------------------------
+Trigger: An action targets "the remainder" of a commodity.
+Purpose: Resolve the anaphoric "the remainder" to the current
+         inventory level of the active focus.
+
+Formal Axiom:
+  Action(type=sell, target=remainder),
+  Focus(item=X),
+  Inventory(item=X, qty=Q)
+  -> Action(type=sell, target=X, qty=Q)
+
+Execution trace:
+  Sentence 4: "She sells the remainder ... for $2."
+  -> predicate(?e4, sell), patient(?e4, ?x6), name(?x6, remainder)
+  -> Rule 3 fires: looks up Focus(item=egg) and Inventory(egg, 9)
+     (9 = 16 - 3 - 4 from previous sentences)
+  -> Binds: remainder -> 9
+  -> Effectively: Action(sell, egg, qty=9, price=2)
+
+Edge case: If no Inventory fact exists for the focus item, Rule 3
+cannot fire.  System 2 would emit a Contradiction fact and escalate
+to System 3 for belief revision.
+
+======================================================================
 2. ANALYSIS OF SPACY'S "WEIRD" QUESTION PARSING
-----------------------------------------------------------------------
-For the question:
-"How much in dollars does she make every day at the farmers' market?"
-
-spaCy produced the following logical forms:
-`event(?e5). predicate(?e5, make). agent(?e5, ?x4). patient(?e5, ?x16). name(?x16, much). query(?e5, ?x17).`
-
-Why is this "weird"?
-Yes! This is a structural limitation on spaCy's part. In English, "How much" 
-acts as a WH-determiner/adverb. 
-1. **The Patient Error**: spaCy's dependency parser made the word "much" (`?x16`) 
-   the actual direct object (`patient`) of the verb "make". It literally thinks 
-   Janet is "making much".
-2. **Missing query_kind**: In `spacy_logical_form.py`, our parser only has a static 
-   rule to emit `query_kind(event, quantity)` if it strictly sees the words "how" 
-   and "many". Because it saw "how" and "much" instead, it did not emit any 
-   `query_kind` or `currency` specifier!
-
-How to Resolve This:
-To get our "Query" target without hardcoding, System 2 needs a query-compiling rule:
-- If a query event `?e5` has `predicate(?e5, make)` and `patient(?e5, ?x16)` where 
-  `name(?x16, much)` and we see `name(?x15, dollar)` in the same sentence, we compile 
-  it to:
-  * Axiom: `query(make, ?ans, unit=dollar)`
+======================================================================
 
 ----------------------------------------------------------------------
-3. THE COMPILED EXECUTION TRACE
+2a. spaCy Dependency Tree (en_core_web_sm)
+----------------------------------------------------------------------
+For: "How much in dollars does she make every day at the farmers' market?"
+
+spaCy's internal dependency parse (simplified):
+  make (ROOT)
+  |-- she (nsubj)          -> agent(?e5, ?x4), name(?x4, she)
+  |-- much (dobj)          -> patient(?e5, ?x16), name(?x16, much)  **BUG**
+  |-- how (advmod)         -> (detected by entity_ruler as QUERY_CURRENCY)
+  |-- in (prep)
+  |   `-- dollars (pobj)   -> location(?e5, ?x15), name(?x15, dollar)
+  |-- every (det)
+  |   `-- day (pobj)       -> time(?e5, ?x7), name(?x7, day)
+  `-- at (prep)
+      `-- market (pobj)    -> location(?e5, ?x8), name(?x8, market)
+
+spaCy produces this logical form:
+  event(?e5).
+  predicate(?e5, make).
+  agent(?e5, ?x4).    name(?x4, she).
+  patient(?e5, ?x16).  name(?x16, much).      <-- THE BUG
+  location(?e5, ?x15). name(?x15, dollar).
+  location(?e5, ?x8).  name(?x8, market).
+  time(?e5, ?x7).      name(?x7, day).
+  quantity(?x7, every).
+  query(?e5, ?x17).
+  query_kind(?e5, currency).                   <-- only if entity_ruler fires
+
+----------------------------------------------------------------------
+2b. The Patient Error
+----------------------------------------------------------------------
+In English, "How much" is a WH-determiner/adverbial phrase, not a noun.
+spaCy's dependency parser incorrectly promotes "much" to the direct
+object (dobj/patient) of "make".  The parser literally thinks Janet is
+"making much" (i.e., making something called "much").
+
+Consequence:
+  - The logical form contains patient(?e5, ?x16) + name(?x16, much).
+  - This is semantically wrong: the patient of "make" is actually
+    "money" (implied) or the entire profit amount (abstract).
+  - System 2, if it receives this patient, would try to update an
+    inventory of "much" -- nonsensical.
+
+Fix (query-compiling rule, see Section 2c below).
+
+----------------------------------------------------------------------
+2c. The query_kind Fix
+----------------------------------------------------------------------
+The entity ruler in SpacyLogicalFormParser (spacy_logical_form.py:126-131)
+registers two patterns:
+  QUERY_QUANTITY: {"how", "many"}
+  QUERY_CURRENCY: {"how", "much"}
+
+The query_kind emission logic (spacy_logical_form.py:249-254):
+  has_qty_query = tok.ent_type_ == "QUERY_QUANTITY"
+  has_curr_query = tok.ent_type_ == "QUERY_CURRENCY"
+  if has_qty_query:   emit query_kind(event, quantity)
+  elif has_curr_query: emit query_kind(event, currency)
+
+For "How much in dollars ... make":
+  - Entity ruler matches "how much" -> QUERY_CURRENCY
+  - emit query_kind(?e5, currency)
+
+This was a previous bug (documented in the original workout) where only
+"how many" was handled.  The entity ruler pattern at line 129 now fixes
+this:
+  {"label": "QUERY_CURRENCY", "pattern": [{"LOWER": "how"}, {"LOWER": "much"}]}
+
+----------------------------------------------------------------------
+2d. Query Compilation Rule (for System 2)
+----------------------------------------------------------------------
+Even with query_kind(currency), System 2 needs to know *what* to query.
+The raw logical form says "query(make, ?ans)" -- but the system needs
+to compile this into a structured goal.
+
+Compilation Axiom:
+  If event ?e5 has:
+    predicate(?e5, make)
+    query(?e5, ?x17)
+    query_kind(?e5, currency)
+    location(?e5, ?x15), name(?x15, dollar)
+  Then compile to:
+    Query(goal=daily_profit, args=(janet, DuckEgg, ?ans),
+          expected_value=18)
+
+This is currently done manually in test_integrated_ilp.py (line 28):
+  wm.facts[WMNode.create("Query",
+      goal="daily_profit",
+      args=("janet", DuckEgg, "?ans"),
+      expected_value=18.0)] = 5
+
+In the full pipeline, this compilation would be a System 2 Experta rule
+that pattern-matches on the raw logical form and emits a Query WMNode.
+
+======================================================================
+3. VERB-TO-EVENT-CLASS MAPPING (THE ONTOLOGY BRIDGE)
+======================================================================
+
+Before the execution trace, we need to understand how System 2 classifies
+each verb.  The mapping lives in ontology.py:38-86.
+
+  VERB          -> ONTOLOGY SET       -> EVENT CLASS
+  ---------------------------------------------------------
+  lay           -> _CREATION_VERBS    -> CreationEvent  (via "create" hypernym)
+  eat           -> _LOSS_VERBS        -> LossEvent
+  bake          -> _CREATION_VERBS    -> CreationEvent  (but semantics = consume!)
+  sell          -> _LOSS_VERBS        -> LossEvent
+  make          -> _CREATION_VERBS    -> CreationEvent
+
+IMPORTANT: "bake" is classified as a CreationEvent by the ontology
+because "bake" appears in _CREATION_VERBS (ontology.py:78).  But in
+the Janet's Eggs problem, baking *consumes* eggs.  This is a semantic
+ambiguity that the current ontology does not resolve.
+
+For the execution trace below, we override this: the coref Rule 2
+already resolved "four" to eggs, so "bake with four eggs" is treated
+as a LossEvent (consumption) regardless of the verb class.
+
+System 2 Axiom mapping (system2_poc.py):
+  CreationEvent  -> execute_generation  (line 118)  -- inventory += qty
+  LossEvent      -> execute_destruction (line 140)  -- inventory -= qty
+  TransferEvent  -> execute_transfer    (line 91)   -- giver -= qty, recv += qty
+  ComparisonEvent -> execute_multiplier (line 162)  -- multiply/divide
+
+======================================================================
+4. THE COMPILED EXECUTION TRACE (SENTENCE BY SENTENCE)
+======================================================================
+
+We trace through what happens at each layer of the system for each
+sentence.  Working Memory state is shown after each sentence.
+
+----------------------------------------------------------------------
+Sentence 1: "Janet's ducks lay 16 eggs per day."
 ----------------------------------------------------------------------
 
-Sentence 1: "Janet’s ducks lay 16 eggs per day."
-- Event: `lay` (Quantity=16, Entity=egg)
-- State Resolution:
-  * Rule 1 fires ⟶ Register `Focus(item=egg)`.
-  * `lay ∈ produce` ⟶ `Action(egg, add, 16)`.
-- State: `Inventory(egg) = 16`, `Focus(egg)`.
+STEP 1a: spaCy Parser (System 1)
+  spacy_logical_form.py:181-259
+  Output logical form:
+    event(?e1).
+    predicate(?e1, lay).
+    agent(?e1, ?x1).    name(?x1, janet).     type(?x1, person).
+    patient(?e1, ?x3).  name(?x3, egg).       quantity(?x3, 16).
+    time(?e1, ?x7).     name(?x7, day).       quantifier(?x7, forall).
 
-Sentence 2: "She eats three..."
-- Event: `eat` (Quantity=three ⟶ 3, Patient=unlinked)
-- State Resolution:
-  * Rule 2 fires ⟶ Links unlinked `three` to `Focus(egg)`.
-  * `eat ∈ consume` ⟶ `consume ⟶ subtract` ⟶ `Action(egg, subtract, 3)`.
-- State: `Inventory(egg) = 13`, `Focus(egg)`.
+  filter_core_clauses (cognitive_loop.py:62-72) strips: entity, type,
+  tense, question, quantifier, query_kind, text.
+  Remaining core clauses:
+    predicate(?e1, lay), agent(?e1, ?x1), patient(?e1, ?x3),
+    name(?x1, janet), name(?x3, egg), quantity(?x3, 16),
+    name(?x7, day), event(?e1), time(?e1, ?x7)
 
-Sentence 3: "...and bakes muffins... with four."
-- Event: `bake` (Quantity=four ⟶ 4, Patient=unlinked)
-- State Resolution:
-  * Rule 2 fires ⟶ Links unlinked `four` to `Focus(egg)`.
-  * `bake ∈ consume` ⟶ `consume ⟶ subtract` ⟶ `Action(egg, subtract, 4)`.
-- State: `Inventory(egg) = 9`, `Focus(egg)`.
+STEP 1b: WMNode Creation (System 1)
+  cognitive_loop.py:80-86
+  For each core clause, a WMNode is created with activation=0.85:
+    WMNode(concept="Event",    attrs={(arg0, ?e1)},                   act=0.85)
+    WMNode(concept="Predicate",attrs={(arg0, ?e1), (arg1, lay)},      act=0.85)
+    WMNode(concept="Agent",    attrs={(arg0, ?e1), (arg1, ?x1)},     act=0.85)
+    WMNode(concept="Patient",  attrs={(arg0, ?e1), (arg1, ?x3)},     act=0.85)
+    WMNode(concept="Name",     attrs={(arg0, ?x1), (arg1, janet)},   act=0.85)
+    WMNode(concept="Name",     attrs={(arg0, ?x3), (arg1, egg)},     act=0.85)
+    WMNode(concept="Quantity", attrs={(arg0, ?x3), (arg1, 16)},      act=0.85)
+    WMNode(concept="Time",     attrs={(arg0, ?e1), (arg1, ?x7)},     act=0.85)
+    WMNode(concept="Name",     attrs={(arg0, ?x7), (arg1, day)},     act=0.85)
 
-Sentence 4: "She sells the remainder... for $2."
-- Event: `sell` (Price=2, Patient=remainder)
-- State Resolution:
-  * Rule 3 fires ⟶ Looks up `Focus(egg)` and `Inventory(egg) = 9` ⟶ Binds `remainder ⟶ 9`.
-  * `sell ∈ transfer_for_value` ⟶ `Action(egg, multiply, 2)`.
-- State: `Profit = 9 * 2 = 18`.
+STEP 2: System 2 (Experta Rete)
+  system2_poc.py:42-186
+  The engine loads all WM facts and runs forward-chaining rules.
+  The verb "lay" resolves to CreationEvent (ontology.py:146-150).
 
-Sentence 5: "How much in dollars does she make..."
-- Goal: `query(make, ?ans, unit=dollar)`
-- Resolution:
-  * Target resolved! `?ans = Profit = 18`.
+  AXIOM 2 FIRES: execute_generation (system2_poc.py:118-135)
+    Pattern matched:
+      CreationEvent(arg0=?e1, arg1=lay)
+      Agent(arg0=?e1, arg1=?x1), Name(arg0=?x1, arg1=janet)
+      Patient(arg0=?e1, arg1=?x3), Name(arg0=?x3, arg1=egg)
+      Quantity(arg0=?x3, arg1=16)
+      Inventory(owner=janet, item=egg, qty=0)  -- initial state
+    Action:
+      modify(inv, qty=0+16) -> Inventory(owner=janet, item=egg, qty=16)
+      declare(EventProcessed(id=?e1))
+
+  NOTE: In test_integrated_ilp.py, the Inventory is pre-loaded as:
+    wm.facts[WMNode.create("Produced", arg0="janet", arg1=DuckEgg, arg2=16)]
+  This bypasses the Experta engine entirely.  The full pipeline would
+  require System 1 to emit the correct clauses AND System 2 to fire.
+
+STEP 3: System 3 (ILP / Backward Chaining)
+  cognitive_loop.py:126-212
+  Searches for a Query WMNode.  None found (the Query is only injected
+  in test_integrated_ilp.py or after the final sentence).
+  Output: empty set.
+
+WORKING MEMORY STATE after Sentence 1:
+  (Assuming full pipeline with TTL=5)
+  WMNode("Event",      {(arg0, ?e1)},                     act=0.85) TTL=5
+  WMNode("Predicate",  {(arg0, ?e1), (arg1, lay)},        act=0.85) TTL=5
+  WMNode("Agent",      {(arg0, ?e1), (arg1, ?x1)},       act=0.85) TTL=5
+  WMNode("Patient",    {(arg0, ?e1), (arg1, ?x3)},       act=0.85) TTL=5
+  WMNode("Name",       {(arg0, ?x1), (arg1, janet)},     act=0.85) TTL=5
+  WMNode("Name",       {(arg0, ?x3), (arg1, egg)},       act=0.85) TTL=5
+  WMNode("Quantity",   {(arg0, ?x3), (arg1, 16)},        act=0.85) TTL=5
+  WMNode("Time",       {(arg0, ?e1), (arg1, ?x7)},       act=0.85) TTL=5
+  WMNode("Name",       {(arg0, ?x7), (arg1, day)},       act=0.85) TTL=5
+  WMNode("Inventory",  {(item, egg), (owner, janet), (qty, 16)}, act=1.0) TTL=5
+  WMNode("EventProcessed", {(id, ?e1)},                   act=1.0) TTL=5
+  Focus(item=egg) -- registered by orchestrator
+
+----------------------------------------------------------------------
+Sentence 2: "She eats three for breakfast every morning."
+----------------------------------------------------------------------
+
+STEP 3a: spaCy Parser (System 1)
+  Output logical form:
+    event(?e2).
+    predicate(?e2, eat).
+    agent(?e2, ?x1).    name(?x1, she).        -- pronoun "she" -> janet
+    quantity(?x2, three).
+    location(?e2, ?x8). name(?x8, breakfast).   -- prep "for"
+    time(?e2, ?x9).     name(?x9, morning).     quantifier(?x9, forall).
+
+  KEY: There is NO patient(?e2, ?xN) clause.  "three" is a standalone
+  numeral modifier, not a noun phrase.  spaCy parsed it as a quantity
+  attached to... nothing (or to the event).
+
+  After filter_core_clauses:
+    predicate(?e2, eat), agent(?e2, ?x1), quantity(?x2, three),
+    name(?x1, she), name(?x2, three), event(?e2),
+    location(?e2, ?x8), name(?x8, breakfast),
+    time(?e2, ?x9), name(?x9, morning)
+
+STEP 3b: Coref Rule 2 Resolution
+  Detection: event ?e2 has quantity(?x2, 3) but no patient.
+  Action: Bind patient -> Focus(item=egg).
+  Result: The "three" is understood as "three eggs".
+  Injected into WM: Patient(?e2, ?x3), linking to the egg entity.
+
+STEP 4: System 2 (Experta Rete)
+  AXIOM 3 FIRES: execute_destruction (system2_poc.py:140-157)
+    Pattern matched:
+      LossEvent(arg0=?e2, arg1=eat)         -- "eat" is in _LOSS_VERBS
+      Agent(arg0=?e2, arg1=?x1), Name(arg0=?x1, arg1=janet)
+      Patient(?e2, ?x3), Name(?x3, egg)    -- resolved by Rule 2
+      Quantity(?x3, 3)
+      Inventory(owner=janet, item=egg, qty=16)
+    Action:
+      modify(inv, qty=16-3) -> Inventory(owner=janet, item=egg, qty=13)
+      declare(EventProcessed(id=?e2))
+
+WORKING MEMORY STATE after Sentence 2:
+  All nodes from Sentence 1 (some TTL decremented to 4)
+  + WMNode("Inventory", {(item, egg), (owner, janet), (qty, 13)}, act=1.0) TTL=5
+  + WMNode("EventProcessed", {(id, ?e2)}, act=1.0) TTL=5
+
+----------------------------------------------------------------------
+Sentence 3: "...and bakes muffins for her friends every day with four."
+----------------------------------------------------------------------
+
+STEP 5a: spaCy Parser (System 1)
+  Output logical form:
+    event(?e3).
+    predicate(?e3, bake).
+    agent(?e3, ?x1).     name(?x1, she).
+    patient(?e3, ?x4).   name(?x4, muffin).
+    instrument(?e3, ?x5). name(?x5, four).  quantity(?x5, four).
+    beneficiary(?e3, ?x6). name(?x6, friend).
+    time(?e3, ?x7).      name(?x7, day).   quantifier(?x7, forall).
+
+  KEY: "muffins" is the syntactic patient of "bake", but semantically
+  the eggs are what gets consumed.  "with four" is the instrument.
+
+STEP 5b: Coref Rule 2 Resolution
+  Detection: event ?e3 has instrument(?x5, four) with quantity but the
+  *intended* patient for the quantity is eggs, not muffins.
+  Action: The four eggs are resolved to Focus(item=egg).
+  Injected: The consumption event targets egg inventory.
+
+STEP 6: System 2 (Experta Rete)
+  AXIOM 3 FIRES: execute_destruction (system2_poc.py:140-157)
+    Even though the verb "bake" resolves to CreationEvent, the coref
+    rules and the instrument -> egg resolution override this to treat
+    it as a consumption of eggs.
+
+    Pattern matched (with resolved facts):
+      LossEvent(arg0=?e3, arg1=bake)        -- overridden by coref
+      Agent(?e3, ?x1), Name(?x1, janet)
+      Patient(?e3, ?x3), Name(?x3, egg)    -- resolved from "with four"
+      Quantity(?x3, 4)
+      Inventory(owner=janet, item=egg, qty=13)
+    Action:
+      modify(inv, qty=13-4) -> Inventory(owner=janet, item=egg, qty=9)
+      declare(EventProcessed(id=?e3))
+
+WORKING MEMORY STATE after Sentence 3:
+  All previous nodes
+  + WMNode("Inventory", {(item, egg), (owner, janet), (qty, 9)}, act=1.0) TTL=5
+  + WMNode("EventProcessed", {(id, ?e3)}, act=1.0) TTL=5
+
+----------------------------------------------------------------------
+Sentence 4: "She sells the remainder at the farmers' market daily for $2 per fresh duck egg."
+----------------------------------------------------------------------
+
+STEP 7a: spaCy Parser (System 1)
+  Output logical form:
+    event(?e4).
+    predicate(?e4, sell).
+    agent(?e4, ?x1).      name(?x1, she).
+    patient(?e4, ?x6).    name(?x6, remainder).     <-- ANAPHORA
+    location(?e4, ?x8).   name(?x8, market).
+    time(?e4, ?x9).       name(?x9, day).
+    quantity(?x9, daily).
+    beneficiary(?e4, ?x10). name(?x10, 2).           -- "$2" parsed as beneficiary
+    modifier(?x10, duck).
+    modifier(?x10, egg).
+    modifier(?x10, fresh).
+
+  NOTE: spaCy parses "$2 per fresh duck egg" as a beneficiary/price
+  rather than a proper quantity.  The entity_ruler could be extended to
+  detect currency patterns, but for now this is handled by the query
+  compilation rule.
+
+STEP 7b: Coref Rule 3 Resolution
+  Detection: event ?e4 has patient(?x6, remainder).
+  Action: Look up Focus(item=egg) and Inventory(egg, qty=9).
+  Result: Binds remainder -> 9.
+  Injected: Patient(?e4, ?x3), Name(?x3, egg), Quantity(?x3, 9).
+  Also: The $2 is recognized as a price via the "for" preposition.
+
+STEP 8: System 2 (Experta Rete)
+  AXIOM 1 FIRES: execute_transfer (system2_poc.py:91-113)
+    Pattern matched:
+      TransferEvent(arg0=?e4, arg1=sell)
+      Agent(?e4, ?x1), Name(?x1, janet)
+      Recipient(?e4, ?x8), Name(?x8, market)    -- "at the market"
+      Patient(?e4, ?x3), Name(?x3, egg)
+      Quantity(?x3, 9)
+      Inventory(owner=janet, item=egg, qty=9)
+      Inventory(owner=market, item=egg, qty=0)
+    Action:
+      modify(janet_inv, qty=9-9)  -> Inventory(janet, egg, 0)
+      modify(market_inv, qty=0+9) -> Inventory(market, egg, 9)
+      declare(EventProcessed(id=?e4))
+
+  NOTE: The $2 price is not yet used by the Experta axioms.  It is
+  captured as a Beneficiary or Modifier fact and picked up by System 3
+  when computing daily_profit.
+
+WORKING MEMORY STATE after Sentence 4:
+  All previous nodes (some TTL decremented)
+  + WMNode("Inventory", {(item, egg), (owner, janet), (qty, 0)},  act=1.0) TTL=5
+  + WMNode("Inventory", {(item, egg), (owner, market), (qty, 9)}, act=1.0) TTL=5
+  + WMNode("EventProcessed", {(id, ?e4)}, act=1.0) TTL=5
+
+----------------------------------------------------------------------
+Sentence 5: "How much in dollars does she make every day at the farmers' market?"
+----------------------------------------------------------------------
+
+STEP 9a: spaCy Parser (System 1)
+  Output logical form (from Section 2a above):
+    event(?e5).
+    predicate(?e5, make).
+    agent(?e5, ?x4).      name(?x4, she).
+    patient(?e5, ?x16).   name(?x16, much).           <-- BUG: see Section 2b
+    location(?e5, ?x15).  name(?x15, dollar).
+    location(?e5, ?x8).   name(?x8, market).
+    time(?e5, ?x7).       name(?x7, day).  quantifier(?x7, forall).
+    query(?e5, ?x17).
+    query_kind(?e5, currency).                         <-- entity_ruler fix
+
+STEP 9b: Query Compilation (System 2)
+  Compilation rule (from Section 2d):
+    predicate(?e5, make) + query(?e5, ?x17) + query_kind(?e5, currency)
+    + location(?e5, ?x15), name(?x15, dollar)
+    + name(?x4, she) -> janet
+    + patient(?e5, ?x16), name(?x16, much) -> (ignore "much" bug)
+  Compiled to:
+    WMNode("Query",
+           goal="daily_profit",
+           args=("janet", DuckEgg, "?ans"),
+           expected_value=18.0,
+           activation=1.0)
+
+  In test_integrated_ilp.py this is injected directly at line 28.
+
+STEP 10: System 3 (ILP / Backward Chaining)
+  cognitive_loop.py:126-212
+
+  1. Detects Query WMNode: goal=daily_profit, args=(janet, DuckEgg, ?ans)
+  2. Builds KnowledgeBase from current WM:
+       Facts:
+         produced(janet, DuckEgg, 16)
+         consumed(janet, DuckEgg, 7)   -- 3+4 combined
+         sells(janet, DuckEgg, 2)
+       Rules (baseline, cognitive_loop.py:156-165):
+         daily_profit(?p, ?item, ?ans) :-
+           sells(?p, ?item, ?price),
+           sold_qty(?p, ?item, ?qty),
+           ?ans is qty * price
+  3. Attempts to solve: daily_profit(janet, DuckEgg, ?ans)
+     - Matches rule head: ?p=janet, ?item=DuckEgg, ?ans=?ans
+     - Subgoal 1: sells(janet, DuckEgg, ?price) -> binds ?price=2  ✓
+     - Subgoal 2: sold_qty(janet, DuckEgg, ?qty) -> NOT FOUND  ✗
+     - Proof FAILS.  No sold_qty fact in KB.
+
+  4. Since proof failed AND expected_value=18.0 is present,
+     trigger abductive ILP (cognitive_loop.py:194-211):
+
+     a) Abduction phase (abductive_ilp.py:164-186):
+        - Look up sells(janet, DuckEgg, 2) -> price=2
+        - expected_value / price = 18.0 / 2 = 9.0
+        - ABDUCED: sold_qty(janet, DuckEgg, 9.0)
+
+     b) Generalization phase (abductive_ilp.py:191-197):
+        - abduced_types = {DuckEgg}
+        - LCA of DuckEgg with itself = DuckEgg
+        (In the full demo with ChickenEgg too, LCA = Egg)
+
+     c) Rule induction (abductive_ilp.py:199-216):
+        Induced rule:
+          sold_qty(?p, DuckEgg, ?qty) :-
+            produced(?p, DuckEgg, ?tot),
+            consumed(?p, ?item, ?cons),
+            ?qty is tot - cons
+
+  5. Broadcast induced rule to WM:
+     WMNode("Inducedrule",
+            head_pred="sold_qty",
+            head_args=("janet", DuckEgg, "?qty"),
+            body=(("produced", ("janet", DuckEgg, "?tot")),
+                  ("consumed", ("janet", "?item", "?cons"))),
+            calc="tot - cons",
+            target="?qty",
+            activation=1.0)
+
+  6. Re-attempt proof with induced rule in KB:
+     - daily_profit(janet, DuckEgg, ?ans)
+     - sells(janet, DuckEgg, 2) -> ?price=2          ✓
+     - sold_qty(janet, DuckEgg, ?qty) via induced rule:
+         produced(janet, DuckEgg, ?tot) -> ?tot=16    ✓
+         consumed(janet, ?item, ?cons) -> ?cons=7     ✓
+         ?qty = 16 - 7 = 9                             ✓
+     - ?ans = 9 * 2 = 18                              ✓
+     - Proof SUCCEEDS.
+
+  7. Emit Belief:
+     WMNode("Belief", label="daily_profit", value=18, activation=1.0)
+
+FINAL WORKING MEMORY STATE:
+  WMNode("Belief", {(label, daily_profit), (value, 18)}, act=1.0) TTL=5
+  WMNode("Inducedrule", {...}, act=1.0) TTL=5
+  (plus residual Sentence 1-4 nodes, most at TTL=1 or expired)
+
+======================================================================
+5. FULL WORKING MEMORY TRACE (TEST_INTEGRATED_ILP.PY)
+======================================================================
+
+The integration test at test_integrated_ilp.py takes a shortcut: it
+pre-loads the WM with resolved facts and runs 3 manual cycles.
+
+Initial WM (test_integrated_ilp.py:22-28):
+  WMNode("Produced", {(arg0, janet), (arg1, DuckEgg), (arg2, 16)}, act=1.0)
+  WMNode("Consumed", {(arg0, janet), (arg1, DuckEgg), (arg2, 7)},  act=1.0)
+  WMNode("Sells",    {(arg0, janet), (arg1, DuckEgg), (arg2, 2)},  act=1.0)
+  WMNode("Query",    {(args, (janet, DuckEgg, ?ans)),
+                       (expected_value, 18.0),
+                       (goal, daily_profit)},                       act=1.0)
+
+Cycle 1 (test_integrated_ilp.py:52-54):
+  System 1 emits: WMNode("Belief", label=daily_profit, value=19.0, act=0.85)
+    -- fuzzy neural guess, lower confidence
+  System 2 emits: empty (no Experta rules match Produced/Consumed/Sells)
+  System 3 emits: WMNode("Belief", label=daily_profit, value=18.0, act=1.0)
+    -- exact ILP solution
+  WM.update merges:
+    Two Belief(daily_profit, ...) nodes exist.
+    Structurally equal?  Let's check:  value=19.0 vs value=18.0 -> different attrs
+    So BOTH are inserted.  (If they were structurally equal, the higher-activation
+    one would win via competitive selection at working_memory.py:63-72.)
+
+Cycle 2 (test_integrated_ilp.py:57-58):
+  No new facts from any system (Query already solved).
+  TTLs decay from 5 to 4.
+
+Cycle 3 (test_integrated_ilp.py:60-62):
+  Same as Cycle 2.  TTLs decay from 4 to 3.
+
+Final WM after demo:
+  Belief(daily_profit, 19.0) [act=0.85, TTL=3]  -- System 1's guess
+  Belief(daily_profit, 18.0) [act=1.0,  TTL=3]  -- System 3's proof
+  Produced/Consumed/Sells/Query [all at TTL=3]
+
+======================================================================
+6. COMPETITIVE SELECTION IN WORKING MEMORY
+======================================================================
+
+WorkingMemory.update() (working_memory/working_memory.py:40-74) implements
+a key mechanism: when two WMNodes are structurally equal (same concept
++ same attrs), the one with HIGHER activation wins.
+
+This means:
+  - System 1's fuzzy guesses (act=0.85) can be overridden by System 2/3's
+    deterministic results (act=1.0).
+  - If System 1 guesses correctly (same value), the fact is "promoted"
+    to activation=1.0 via competitive selection.
+  - If System 1 guesses incorrectly (different value), BOTH facts coexist
+    in WM.  The system relies on downstream consumers (e.g., the Query
+    node's expected_value) to determine which is correct.
+
+Caveat (working_memory.py:58-61):
+  The code warns against merging System 1's soft WMEs with System 2/3's
+  hard WMEs during future Online RL migration.  If gradients from System 1
+  are lost (because the fact was replaced by System 3's version), the
+  credit assignment signal for training System 1 disappears.  Future fix:
+  maintain origin labels on WMNodes.
+
+======================================================================
+7. KNOWN LIMITATIONS & FAILURE MODES
+======================================================================
+
+7a. spaCy Patient Error (Section 2b)
+    "How much" -> patient=much.  Not yet auto-compiled.  Requires the
+    query-compiling rule to be hard-coded or learned.
+
+7b. Verb Ambiguity ("bake")
+    "bake" is in _CREATION_VERBS (ontology.py:78) but semantically
+    consumes ingredients.  The coref rules override this, but a
+    general solution would need verb-sense disambiguation.
+
+7c. Single-Item Coref (no multi-commodity)
+    The Focus mechanism tracks one item at a time.  Problems like
+    "Janet has 5 apples and 3 oranges" would need a multi-focus
+    stack or entity-indexed inventory.
+
+7d. Price Extraction
+    "$2 per fresh duck egg" is not cleanly parsed by spaCy into a
+    Price/Quantity fact.  The entity_ruler could be extended with
+    currency patterns, but this is not yet implemented.
+
+7e. ILP Abduction is Greedy
+    The abductive phase (abductive_ilp.py:171-186) assumes the missing
+    fact is always sold_qty = expected_value / price.  This works for
+    GSM8K but would fail for problems requiring multi-step arithmetic.
+
+7f. TTL Expiry
+    With default_ttl=5, facts from Sentence 1 expire by Cycle 6.
+    For longer problems, TTL must be scaled or facts must be persisted
+    to a long-term store.
+
+======================================================================
+8. RELATIONSHIP TO THE FULL PIPELINE
+======================================================================
+
+In the full cognitive_loop.py pipeline (cognitive_loop.py:217-255):
+  1. WM is initialized with world-state facts (Inventory, etc.)
+  2. For each cycle:
+     a. System 1 parses input text -> WMNodes (activation=0.85)
+     b. System 2 fires Experta rules -> Inventory/Belief updates (act=1.0)
+     c. System 3 checks for Query -> backward-chains or induces rules (act=1.0)
+     d. All outputs merged into WM; TTLs decayed
+
+The Janet's Eggs problem requires:
+  - 5 sentences of text (input to System 1)
+  - Coref resolution (Rules 1-3, currently manual)
+  - Query compilation (currently manual)
+  - ILP rule induction (automatic via System 3)
+
+test_integrated_ilp.py skips steps a-b (pre-resolves coref and injects
+facts directly) to focus on demonstrating the System 3 ILP loop.
+
+======================================================================
+9. CHECKLIST FOR FULL PIPELINE INTEGRATION
+======================================================================
+
+[ ] Extend spacy_logical_form.py entity_ruler with currency patterns
+    ("$2", "2 dollars", "2 per unit")
+[ ] Implement query-compiling rule in System 2 or System 1
+    (auto-generate WMNode("Query", ...) from raw LFs)
+[ ] Implement coref Rules 1-3 as Experta rules in system2_poc.py
+    or as a pre-processing step in cognitive_loop.py
+[ ] Handle verb-sense ambiguity for "bake" (ingredient consumption
+    vs. creation) -- either via WordNet sense disambiguation or
+    context-dependent override
+[ ] Scale TTL for longer GSM8K problems (10+ sentences)
+[ ] Test on full GSM8K benchmark (run_gsm8k_eval.py)
+
+======================================================================
+END OF WORKOUT
+======================================================================

@@ -7,18 +7,7 @@
   * Implement the Synchronous Cognitive Cycle (`cognitive_loop.py`).
   * Integrate a Rete engine (Experta) for System 2.
 
-## Phase 2: The GSM8K Neurosymbolic Bridge (📍 Current Focus)
-* **Goal:** Prove that System 1 (LT) and System 2 (Experta) can collaborate to solve logical math problems, and prove that LT outperforms traditional Seq2Seq baselines.
-* **Architecture Pipeline:**
-  1. **Raw Syntax (spaCy):** Parse natural language math problems into dependency trees.
-  2. **System 1 (Logic Transformer / DLN):** Learn to softly unify and map spaCy propositions into rigorous **Neo-Davidsonian Logical Forms (LFs)**.
-  3. **System 2 (Rete Engine):** Execute deterministic arithmetic and state-tracking based on the LFs.
-* **Milestones:**
-  * Define Experta rules to match these event clusters and execute math. *(✅ Completed)*
-  * Integrate the DLN-powered PoT model (`train_pot_dln_pointer.py`) into the `cognitive_loop.py` System 1 step.
-  * Evaluate the LT mapping accuracy against the `PoTSeqDecoder` GRU baseline to validate our core innovation.
-
-## Phase 3: Ontology & Generalization
+## Phase 2: Ontology & Generalization (✅ Completed)
 * **Goal:** Give the AGI a structured understanding of reality and align the neural/symbolic spaces.
 * **Milestones:**
   * Introduce WordNet/ConceptNet.
@@ -27,13 +16,13 @@
   * Implement Hyperbolic Embeddings in System 1. Initialize this space to be isomorphic to the System 2 ontology, so neural fuzzy clusters correspond directly to discrete symbolic classes.
   * Refine the Working Memory decay mechanism for large-scale fact retention.
 
-## Phase 4: Rule Crystallization & ILP (Inductive Logic Programming)
+## Phase 3: Rule Crystallization & ILP (Inductive Logic Programming)
 * **Goal:** Enable the AGI to extract stable neural patterns into permanent symbolic logic, and learn new logic rules purely symbolically.
 * **Milestones:**
   * **Rule Crystallization:** Detect when System 1's fuzzy rules become highly confident ("stable") in the hyperbolic space, and automatically extract them into discrete System 2 Experta rules.
   * **ILP Learning:** Implement an Inductive Logic Programming module in System 2 to discover new discrete rules over crystallized facts, bypassing gradient descent for purely logical patterns.
   
-## Phase 5: System 3, Belief Revision & Deep Planning
+## Phase 4: System 3, Belief Revision & Deep Planning
 * **Goal:** Enable the AGI to detect contradictions, revise its beliefs, handle uncertainty, and formulate multi-step plans.
 * **Milestones:**
   * **Contradiction Detection & TMS:** Implement a Truth Maintenance System (TMS) in System 2 to flag logical contradictions and prediction errors (e.g., negative physical inventory, mutually exclusive states).
@@ -41,6 +30,19 @@
   * **TMS Execution (System 2):** System 3 passes the AGM resolution back to System 2 to execute the actual Truth Maintenance (retracting/updating facts in Working Memory).
   * Integrate ProbLog for problems that involve uncertainty, probabilistic incoherence, or incomplete information.
   * Define high-level goal states and backward-chaining searches.
+ 
+## Phase 5: The GSM8K test (📍 Current Focus)
+* **Goal:** Use ILP (inductive logic programming) in combination with LT (Logic Transformer, deep learning) to solve the GSM8K (grade-school math) problems.
+* **Architecture Pipeline:**
+  1. **Raw Syntax (spaCy):** Use spaCy to parse natural language math problems into **Logical Forms (LFs)**.
+  2. **Decomposition** of the ILP problem into 3 sub-tasks:  **State Representation**, **Coreferencce Resolution**, and **Arithmetic Relations**.
+  3. **System 1 (Logic Transformer / DLN):** Acts as a **fallback** mechanism because we know that deep learning usually finds a solution.
+  4. **System 2 (Rete Engine):** Execute deterministic arithmetic and state-tracking based on the LFs.
+  5. **System 3 (ProbLog Engine):** Performs backward-chaining on the **query** and triggers the **ILP learner**.
+* **Milestones:**
+  * Define Experta rules to match these event clusters and execute math.
+  * Integrate the DLN-powered PoT model (`train_pot_dln_pointer.py`) into the `cognitive_loop.py` System 1 step.
+  * Evaluate the LT mapping accuracy against the `PoTSeqDecoder` GRU baseline to validate our core innovation.
 
 ## Phase 6: Embodiment & Agency
 * **Goal:** Allow the AGI to affect its environment.

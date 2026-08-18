@@ -1,0 +1,12 @@
+{"id": "1", "question": "If you have 3 apples and get 2 more, how many apples do you have?", "cot": "Start with 3 apples. Add 2 more. 3 + 2 = 5.", "answer": "5"}
+{"id": "1-4716", "question": "If you have 2 apples and get 3 more, how many apples do you have?", "cot": "Start with 2 apples. Add 3 more. 2 + 3 = 5.", "answer": "5"}
+{"id": "1-4981", "question": "If you have 2 apples and get 3 more, how many apples do you have?", "cot": "Start with 2 apples. Add 3 more. 2 + 3 = 5.", "answer": "5"}
+{"id": "1-8609", "question": "If you have 3 apples and get 3 more, how many apples do you have?", "cot": "Start with 3 apples. Add 3 more. 3 + 3 = 6.", "answer": "6"}
+{"id": "1-1944", "question": "If you have 2 apples and get 1 more, how many apples do you have?", "cot": "Start with 2 apples. Add 1 more. 2 + 1 = 3.", "answer": "3"}
+{"id": "1-5668", "question": "If you have 2 apples and get 2 more, how many apples do you have?", "cot": "Start with 2 apples. Add 2 more. 2 + 2 = 4.", "answer": "4"}
+{"id": "2", "question": "John has 10 marbles and gives away 4, how many remain?", "cot": "Start with 10 marbles. Subtract 4. 10 - 4 = 6.", "answer": "6"}
+{"id": "2-2016", "question": "John has 10 marbles and gives away 3, how many remain?", "cot": "Start with 10 marbles. Subtract 3. 10 - 3 = 7.", "answer": "7"}
+{"id": "2-2095", "question": "John has 10 marbles and gives away 5, how many remain?", "cot": "Start with 10 marbles. Subtract 5. 10 - 5 = 5.", "answer": "5"}
+{"id": "2-5507", "question": "John has 11 marbles and gives away 4, how many remain?", "cot": "Start with 11 marbles. Subtract 4. 11 - 4 = 7.", "answer": "7"}
+{"id": "2-1459", "question": "John has 9 marbles and gives away 4, how many remain?", "cot": "Start with 9 marbles. Subtract 4. 9 - 4 = 5.", "answer": "5"}
+{"id": "2-8667", "question": "John has 11 marbles and gives away 3, how many remain?", "cot": "Start with 11 marbles. Subtract 3. 11 - 3 = 8.", "answer": "8"}

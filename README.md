@@ -1,8 +1,12 @@
 # Tri-System Neurosymbolic Architecture
 
-This document describes the broader cognitive architecture into which modules like the Logic Transformer (LT) can be integrated.
+This document describes a novel tri-system AGI cognitive architecture, consisting of:
 
-The architecture aims to combine neural learning with symbolic reasoning by separating cognition into three distinct systems, all unified by a **Shared Working Memory (Global Workspace)**.
+1. Logic Transformer (a differentiable neural network mimicking operations of a symbolic logic engine such as unification and rules matching; a variant of the conventional Transformer) 
+2. Forward-chaining symbolic logic engine (Rete algorithm, implemented using Experta)
+3. Backward-chaining symbolic logic engine (implemented using ProbLog)
+
+The architecture aims to combine neural learning with symbolic reasoning by separating cognition into three distinct systems, all unified by a **Shared Working Memory (Global Workspace or Blackboard)**.
 
 ## Architecture Overview
 
@@ -11,6 +15,7 @@ Based on Global Workspace Theory (GWT), the architecture utilizes a central, sha
 
 ### Synchronous Cognitive Cycle
 To maximize efficiency and avoid complex distributed race conditions, the engine operates on a discrete, synchronous **Cognitive Cycle** (similar to the LIDA cognitive model):
+
 1. **Broadcast:** At the start of a "tick", the current state of the Working Memory is broadcast to all three systems simultaneously.
 2. **Compute & Wait:** System 1, 2, and 3 run in parallel (on separate CPU cores). The Orchestrator waits for all three systems to return their single-step deductions.
 3. **Update:** The Orchestrator merges the outputs from all three systems back into the Working Memory, ready for the next cycle.
