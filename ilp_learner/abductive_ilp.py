@@ -167,7 +167,7 @@ class OntologicalILPLearner:
             
             if success:
                 continue
-                
+
             # Abduction phase: Find the price and abduce the missing quantity
             # We look up sells fact matching the item type
             item_type = args[1] # e.g., DuckEgg or ChickenEgg
@@ -176,7 +176,7 @@ class OntologicalILPLearner:
                 if s_args[1] == item_type:
                     price = s_args[2]
                     break
-                    
+
             if price:
                 qty = expected_val / price
                 abduced_fact = ("sold_qty", (args[0], item_type, qty))
@@ -193,7 +193,7 @@ class OntologicalILPLearner:
         lca = list(abduced_types)[0]
         for t in list(abduced_types)[1:]:
             lca = find_lca(lca, t)
-            
+
         print(f"  -> Least Common Ancestor of {', '.join(t.__name__ for t in abduced_types)}: {lca.__name__}")
 
         induced_rule = {
