@@ -49,12 +49,34 @@ Decomposition (gold labels):
 ======================================================================
 Questions from the human author (YKY)
 ======================================================================
-1. Should ILP be triggered by backward-chaining, or simply always runs?
-2. How to make use of the intermediate steps provided by GSM8K?
-3. How did PoT training succeed and how to replicate success here?
-4. Allow human teacher interaction to guide ILP? Asking questions as
+1. The success of "mock GSM8K" (in the backup directory) -- demonstrates
+   that DLN can induce arithmetic rules and also evaluate them in PyTorch.
+   How to replicate this success in the broader picture?
+2. DLN can "drift" rules in continuous parametric space;  We should
+   observe whether DLN rules tend to converge to coincide with ILP rules.
+3. We got false impression that ILP rules are very powerful but forgot
+   that they are hard to inductively learn.  We need to keep alive many
+   candidates and let them compete and settle.  This is not much different
+   from DLN.
+4. How to make use of the intermediate steps provided by GSM8K?
+5. Should ILP be triggered by backward-chaining, or simply always runs?
+6. Allow human teacher interaction to guide ILP?  Asking questions as
    logic programs, learn to ask different questions?  Maybe even ask LLMs?
-5.
+7. Ultimately there are only 2 routes: it's either distill or learn it
+   yourself. If self-learn, there might be a short-cut: logic coherence,
+   or belief revision, which can raise doubts about false information,
+   utilize training data more effectively, but this seems to be an ability
+   only in the advanced stages of learning?  Not necessarily.
+8. Belief revision is closely related to learning theory: the former
+   focuses on consistency while the latter focuses on truth.  Current
+   LLMs are most likely inconsistent, but they don't suffer EFSQ because
+   they are predictive rather than logical.  Can BR (consistency) help
+   make learning more efficient?  Maybe.  Is DLN currently logical? No,
+   because it doesn't suffer EFSQ.  System 2 suffers EFSQ, therefore it
+   is more efficient.
+9. 但这里有个迷思：既然 DLN 和 ILP 都输出 离散 rules，它们实际上有什么分别？ 答案
+   是在于（除了连续 vs 离散空间的搜寻）输出之真值，如果是二值逻辑的话，它必需恒真，
+   不然就要用 exceptions，或概率逻辑。
 
 ======================================================================
 0. ARCHITECTURE OVERVIEW (WHY THREE SYSTEMS?)
