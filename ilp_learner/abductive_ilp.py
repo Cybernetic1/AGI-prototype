@@ -229,7 +229,7 @@ def demo_ontological_ilp():
     kb.declare_fact("produced", "janet", ChickenEgg, 10)
     kb.declare_fact("consumed", "janet", ChickenEgg, 4)
     kb.declare_fact("sells", "janet", ChickenEgg, 3)
-    
+
     # Baseline profit rule
     kb.declare_rule(
         head_pred="daily_profit",

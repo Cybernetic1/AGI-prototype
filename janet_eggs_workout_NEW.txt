@@ -26,72 +26,97 @@ Expected Answer: 18
 ======================================================================
 Some of My Thoughts (Disorganized)
 ======================================================================
-1. The success of "mock GSM8K" (in the backup directory) -- demonstrates
+A. The success of "mock GSM8K" (in the backup directory) -- demonstrates
    that DLN can induce arithmetic rules and also evaluate them in PyTorch.
    How to replicate this success for the real GSM8K?
-2. DLN can "drift" rules in continuous parametric space;  We should
+B. DLN can "drift" rules in continuous parametric space;  We should
    observe whether DLN rules tend to converge to coincide with ILP rules.
-3. We got false impression that ILP rules are very powerful but forgot
+C. We got false impression that ILP rules are very powerful but forgot
    that they are hard to inductively learn.  We need to keep alive many
    candidates and let them compete and settle.  This is not much different
    from DLN.
-4. How to make use of the intermediate steps provided by GSM8K?
-5. Allow human teacher interaction to guide ILP?  Asking questions as
+D. How to make use of the intermediate steps provided by GSM8K?
+E. Allow human teacher interaction to guide ILP?  Asking questions as
    logic programs, learn to ask different questions?  Maybe even ask LLMs?
-6. Ultimately there are only 2 routes: it's either distill or learn it
+F. Ultimately there are only 2 routes: it's either distill or learn it
    yourself. If self-learn, there might be a short-cut: logic coherence,
    or belief revision, which can raise doubts about false information,
    utilize training data more effectively, but this seems to be an ability
    only in the advanced stages of learning?  Not necessarily.
-7. Belief revision is closely related to learning theory: the former
+G. Belief revision is closely related to learning theory: the former
    focuses on consistency while the latter focuses on truth.  Current
    LLMs are most likely inconsistent, but they don't suffer EFSQ because
    they are predictive rather than logical.  Can BR (consistency) help
    make learning more efficient?  Maybe.  Is DLN currently logical? No,
    because it doesn't suffer EFSQ.  System 2 suffers EFSQ, therefore it
    is more efficient.
-8. But there's something weird here: if both DLN and ILP output discrete
+H. But there's something weird here: if both DLN and ILP output discrete
    rules, how are they different?  The answer must be (besides continuous
    vs discrete search space) the output truth values.  Binary logic must
    output either true, or use exceptions, or probabilities.  If probabilistic,
    then it has the same tolerance as DLN, so Systems 1&2 are still the
    same, except for the search manner.
-9. If Systems 2&3 are fuzzy-probabilistic, then BR/consistency probably
+I. If Systems 2&3 are fuzzy-probabilistic, then BR/consistency probably
    won't help learning faster.
-A. But if BR allows the system to question dubious input and resolve
+J. But if BR allows the system to question dubious input and resolve
    conflicts, then perhaps compress faster? 而那是因为高度抽象的思维规则很少例外？
-B. 其实 GSM8K 的难处仍然是 common sense 知识，例如 “bake” 会消耗鸡蛋。 那么之前
+K. 其实 GSM8K 的难处仍然是 common sense 知识，例如 “bake” 会消耗鸡蛋。 那么之前
    说 NL⟶LF 有特殊压缩作用是怎么回事？ 因为 LF 可以使用变量。这种泛化功能其实 传统
    Transformer 也有，不过 DNL 将之变成显式而已。因为即使变成了显式的逻辑公式，也
    不一定代表公式是永恒的，它仍然有可能是错误的，但它搜寻的空间被柱体结构约束了，所以
    会更快？ 但或许其实传统 Transformer 已经具有隐式的柱体结构？ 只是它不够准确，
    所以浪费参数、较慢。
-C. DLN 有偏好让堕入柱体结构，ILP 也有这种偏好，虽然传统 LLM 也有，但似乎不准确。
-D. Should ILP be triggered by backward-chaining, or simply always runs?
+L. DLN 有偏好让堕入柱体结构，ILP 也有这种偏好，虽然传统 LLM 也有，但似乎不准确。
+M. Should ILP be triggered by backward-chaining, or simply always runs?
    推导过程如何改变学习？ 学习其实是从一堆随机的 rules 开始进行推导，当这些 rules
    得出结果之后，才得到 error 讯息，然后加以惩罚或奖励。 那么在推导过程中突然生产新
    rules 学习，亦无不可，因为反向推导失败嘛。 问题是 ILP 的流程一向不熟悉。
-E.
-
+N. The ability to reason about knowledge allows the AGI to learn on its
+   own.
+O. 「人都会死」是一个在 frequentist 角度 100％ 正确的命题，但现在有不少人相信科技
+   可以让人长生不老，而我觉得后者也是有理的。理由是因为科学能解释几乎所有在世界上发生
+   的事物，而「人都会死」只是一个暂时 100％ 正确的经验事实。 也就是说，因为科学理论
+   *压缩* 了大量的经验事实，所以在科学背后的 支持 (support) 比单一的经验事实，其实
+   更多。 另一个说法是，经验事实也可以有背后的解释。例如魔术师将美女切成两半，但我们
+   将这经验解释为障眼法。这也是一种 "explaining away."  而人类可以战胜死亡也是一种
+   以科学解释如何做到 life extension 的一种 explaining away.
 
 ======================================================================
 MAIN POINTS ABOUT THE SYSTEM
 ======================================================================
 
-1. System 2 is initialized with a simple coreference resolution 'trick'
+A. System 2 is initialized with a simple coreference resolution 'trick'
 suggested by Qwen.  This can be later modified or generalized by learning.
 
-2. The ILP task is decomposed into 3 sub-tasks:
+B. The ILP task is decomposed into 3 sub-tasks:
    A) State representation
    B) Coreference resolution
    C) Numerical relations
    Each sub-task is artificially restricted by domain knowledge to make
    learning easier.
 
-3. The hope is that by priming ILP with some seeds it will be able to
+C. The hope is that by priming ILP with some seeds it will be able to
    learn "natural" rules similar to the human mind.
 
-4.
+D. LT/DLN and ILP are homomorphic to each other.  LT/DLN is essentially
+   the continuous relaxation of ILP in parameter space.  Some of our
+   early experiments show that LT/DLN may out-perform tradtional
+   Transformers/LLMs due to the explicit (first-order) logic structure
+   that more directly conforms to human logic / natural language, using
+   3-4 times fewer parameters to reach comparable benchmarks.
+
+E.
+
+======================================================================
+
+"Janet's ducks lay 16 eggs per day. She eats three for breakfast every
+morning and bakes muffins for her friends every day with four. She sells
+the remainder at the farmers' market daily for $2 per fresh duck egg.
+How much in dollars does she make every day at the farmers' market?"
+
+Chain of thought (provided by GSM8K):
+  Janet sells 16 - 3 - 4 = <<16-3-4=9>>9 duck eggs a day.
+  She makes 9 * 2 = $<<9*2=18>>18 every day at the farmer’s market.
 
 
 ======================================================================
@@ -101,13 +126,13 @@ suggested by Qwen.  This can be later modified or generalized by learning.
 Before the execution trace, we need to understand how System 2 classifies
 each verb.  The mapping lives in ontology.py:38-86.
 
-  VERB          -> ONTOLOGY SET       -> EVENT CLASS
+  VERB      -> ONTOLOGY SET       -> EVENT CLASS
   ---------------------------------------------------------
-  lay           -> _CREATION_VERBS    -> CreationEvent  (via "create" hypernym)
-  eat           -> _LOSS_VERBS        -> LossEvent
-  bake          -> _CREATION_VERBS    -> CreationEvent  (but semantics = consume!)
-  sell          -> _LOSS_VERBS        -> LossEvent
-  make          -> _CREATION_VERBS    -> CreationEvent
+  lay       -> _CREATION_VERBS    -> CreationEvent  (via "create" hypernym)
+  eat       -> _LOSS_VERBS        -> LossEvent
+  bake      -> _CREATION_VERBS    -> CreationEvent  (but semantics = consume!)
+  sell      -> _LOSS_VERBS        -> LossEvent
+  make      -> _CREATION_VERBS    -> CreationEvent
 
 IMPORTANT: "bake" is classified as a CreationEvent by the ontology
 because "bake" appears in _CREATION_VERBS (ontology.py:78).  But in
@@ -119,10 +144,10 @@ already resolved "four" to eggs, so "bake with four eggs" is treated
 as a LossEvent (consumption) regardless of the verb class.
 
 System 2 Axiom mapping (system2_poc.py):
-  CreationEvent  -> execute_generation  (line 118)  -- inventory += qty
-  LossEvent      -> execute_destruction (line 140)  -- inventory -= qty
-  TransferEvent  -> execute_transfer    (line 91)   -- giver -= qty, recv += qty
-  ComparisonEvent -> execute_multiplier (line 162)  -- multiply/divide
+  CreationEvent -> execute_generation  (line 118)  -- inventory += qty
+  LossEvent     -> execute_destruction (line 140)  -- inventory -= qty
+  TransferEvent -> execute_transfer    (line 91)   -- giver -= qty, recv += qty
+  ComparisonEvent -> execute_multiplier (line 162) -- multiply/divide
 
 ======================================================================
 4. THE COMPILED EXECUTION TRACE (SENTENCE BY SENTENCE)
@@ -154,8 +179,8 @@ STEP 1a: spaCy Parser (System 1)
 STEP 1b: WMNode Creation (System 1)
   cognitive_loop.py:80-86
   For each core clause, a WMNode is created with activation=0.85:
-    WMNode(concept="Event",    attrs={(arg0, ?e1)},                   act=0.85)
-    WMNode(concept="Predicate",attrs={(arg0, ?e1), (arg1, lay)},      act=0.85)
+    WMNode(concept="Event",    attrs={(arg0, ?e1)},                  act=0.85)
+    WMNode(concept="Predicate",attrs={(arg0, ?e1), (arg1, lay)},     act=0.85)
     WMNode(concept="Agent",    attrs={(arg0, ?e1), (arg1, ?x1)},     act=0.85)
     WMNode(concept="Patient",  attrs={(arg0, ?e1), (arg1, ?x3)},     act=0.85)
     WMNode(concept="Name",     attrs={(arg0, ?x1), (arg1, janet)},   act=0.85)
@@ -193,8 +218,8 @@ STEP 3: System 3 (ILP / Backward Chaining)
 
 WORKING MEMORY STATE after Sentence 1:
   (Assuming full pipeline with TTL=5)
-  WMNode("Event",      {(arg0, ?e1)},                     act=0.85) TTL=5
-  WMNode("Predicate",  {(arg0, ?e1), (arg1, lay)},        act=0.85) TTL=5
+  WMNode("Event",      {(arg0, ?e1)},                    act=0.85) TTL=5
+  WMNode("Predicate",  {(arg0, ?e1), (arg1, lay)},       act=0.85) TTL=5
   WMNode("Agent",      {(arg0, ?e1), (arg1, ?x1)},       act=0.85) TTL=5
   WMNode("Patient",    {(arg0, ?e1), (arg1, ?x3)},       act=0.85) TTL=5
   WMNode("Name",       {(arg0, ?x1), (arg1, janet)},     act=0.85) TTL=5
@@ -203,7 +228,7 @@ WORKING MEMORY STATE after Sentence 1:
   WMNode("Time",       {(arg0, ?e1), (arg1, ?x7)},       act=0.85) TTL=5
   WMNode("Name",       {(arg0, ?x7), (arg1, day)},       act=0.85) TTL=5
   WMNode("Inventory",  {(item, egg), (owner, janet), (qty, 16)}, act=1.0) TTL=5
-  WMNode("EventProcessed", {(id, ?e1)},                   act=1.0) TTL=5
+  WMNode("EventProcessed", {(id, ?e1)},                  act=1.0) TTL=5
   Focus(item=egg) -- registered by orchestrator
 
 ----------------------------------------------------------------------
