@@ -74,12 +74,31 @@ M. Should ILP be triggered by backward-chaining, or simply always runs?
 N. The ability to reason about knowledge allows the AGI to learn on its
    own.
 O. 「人都会死」是一个在 frequentist 角度 100％ 正确的命题，但现在有不少人相信科技
-   可以让人长生不老，而我觉得后者也是有理的。理由是因为科学能解释几乎所有在世界上发生
+   可以让人长生不老，而我觉得后者是合理的。理由是因为科学能解释几乎所有在世界上发生
    的事物，而「人都会死」只是一个暂时 100％ 正确的经验事实。 也就是说，因为科学理论
    *压缩* 了大量的经验事实，所以在科学背后的 支持 (support) 比单一的经验事实，其实
    更多。 另一个说法是，经验事实也可以有背后的解释。例如魔术师将美女切成两半，但我们
    将这经验解释为障眼法。这也是一种 "explaining away."  而人类可以战胜死亡也是一种
-   以科学解释如何做到 life extension 的一种 explaining away.
+   以科学解释如何做到 life extension 的一种 explaining away. Explaining and
+   the idea of compressivity are actually one and the same: explaining
+   is the act of using (high-confidence) abstract rules to compress
+   information. 科学的力量存在于「解释」里，也就是一些科学的 rules. 正因为这些
+   rules 的存在，才有科学的解释。我们寻求最佳压缩，其实也等于寻求解释，或者说，寻求
+   解释就是 “grokking.” 寻求解释之后，就能纳入 长期记忆/知识库里。
+P. 每次接受一个新的事实（命题），它会出现在 工作记忆的 contexts 里，这 context
+   可以导致不同的反应，比如说：接受其进入长期记忆、或训斥为荒谬。 这些反应可以说是
+   某种 meta-cognitive program, 不一定可以用逻辑表达，因为牵涉到 actions 的问题。
+   但其实从逻辑的角度看，似乎不太需要额外的”程序“，因为各种逻辑的运作已经被很好地
+   公理化了。 我们只需要用 backward-chaining 寻找解释，然后决定是否接受新命题。
+Q. OK，现在更厘清了 grokking 的意义：那就是在特定的 context 之下的解释，解释的结果
+   决定是否纳入知识库。 但在 grokking 的过程中可能 trigger actions，其受强化学习
+   的奖励指导，因此有价值判断（比如说，"trust Wikipedia"），形成性格 (personality).
+   但，一种关于真理的核心 (core beliefs)，在广泛的初始条件下，是一定会收敛到的。
+   大功告成。
+R. 发现到，加速学习的最厉害武器，似乎是一种自我学习的「程式」，甚至包括上网查阅资料。
+   还有，解释时可以产生指引 ILP 的 directives。 那就是 ILP 的「导航」本身以逻辑
+   形式写入 WM。举个例来说，「学习 coreference 消解」
+S. 在某个 context 之下可以进行 looping。
 
 ======================================================================
 MAIN POINTS ABOUT THE SYSTEM

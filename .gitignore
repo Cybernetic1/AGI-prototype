@@ -44,3 +44,4 @@ Thumbs.db
 # Environment variables
 .env
 .env.localgsm8k-tests-backup/
+node_modules/
