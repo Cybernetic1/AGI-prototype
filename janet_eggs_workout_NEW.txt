@@ -143,7 +143,8 @@ D. 压缩比: 更确切地说是 "压缩度".  如何量度一条 rule 的压缩
    的总数?  那又引申出一个问题: rule 能推导另一些 rules 吗?  Rule 推出命题、而
    命题再触发 rules. 压缩度似乎应该是下游的压缩度的 aggregate?  每个原子命题的
    压缩度也未必是 1, 因为命题也可以 imply 其他命题, 甚至可以循环. 压缩度似乎是
-   rule 与 rule 之间的关系.  或者从 explanation power 的角度看?
+   rule 与 rule 之间的关系.  或者从 explanation power 的角度看?  但无论是
+   base step 还是 recursive step 都觉得很难入手。
 E. 发现到，加速学习的最厉害武器，似乎是一种自我学习的「程式」，甚至包括上网查阅资料。
    还有，解释时可以产生指引 ILP 的 directives。 那就是 ILP 的「导航」本身以逻辑
    形式写入 WM。举个例来说，「学习 coreference 消解」
