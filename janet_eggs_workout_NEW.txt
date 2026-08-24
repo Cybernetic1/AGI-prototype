@@ -10,7 +10,7 @@ a single GSM8K word problem.  I want to outline the kind of logic rules
 that should be learned by ILP.
 
 ======================================================================
-The Problem
+THE PROBLEM
 ======================================================================
 "Janet's ducks lay 16 eggs per day. She eats three for breakfast every
 morning and bakes muffins for her friends every day with four. She sells
@@ -24,7 +24,33 @@ Chain of thought (provided by GSM8K):
 Expected Answer: 18
 
 ======================================================================
-Some of My Thoughts (Disorganized)
+MAIN POINTS ABOUT THE SYSTEM
+======================================================================
+
+A. System 2 is initialized with a simple coreference resolution 'trick'
+suggested by Qwen.  This can be later modified or generalized by learning.
+
+B. The ILP task is decomposed into 3 sub-tasks:
+   A) State representation
+   B) Coreference resolution
+   C) Numerical relations
+   Each sub-task is artificially restricted by domain knowledge to make
+   learning easier.
+
+C. The hope is that by priming ILP with some seeds it will be able to
+   learn "natural" rules similar to the human mind.
+
+D. LT/DLN and ILP are homomorphic to each other.  LT/DLN is essentially
+   the continuous relaxation of ILP in parameter space.  Some of our
+   early experiments show that LT/DLN may out-perform tradtional
+   Transformers/LLMs due to the explicit (first-order) logic structure
+   that more directly conforms to human logic / natural language, using
+   3-4 times fewer parameters to reach comparable benchmarks.
+
+E.
+
+======================================================================
+SOME OF MY THOUGHTS (DISORGANIZED)
 ======================================================================
 A. The success of "mock GSM8K" (in the backup directory) -- demonstrates
    that DLN can induce arithmetic rules and also evaluate them in PyTorch.
@@ -73,7 +99,12 @@ M. Should ILP be triggered by backward-chaining, or simply always runs?
    rules 学习，亦无不可，因为反向推导失败嘛。 问题是 ILP 的流程一向不熟悉。
 N. The ability to reason about knowledge allows the AGI to learn on its
    own.
-O. 「人都会死」是一个在 frequentist 角度 100％ 正确的命题，但现在有不少人相信科技
+
+======================================================================
+WHAT IS "GROKKING"?  AND ITS RELATION TO EXPLAINING
+======================================================================
+
+A. 「人都会死」是一个在 frequentist 角度 100％ 正确的命题，但现在有不少人相信科技
    可以让人长生不老，而我觉得后者是合理的。理由是因为科学能解释几乎所有在世界上发生
    的事物，而「人都会死」只是一个暂时 100％ 正确的经验事实。 也就是说，因为科学理论
    *压缩* 了大量的经验事实，所以在科学背后的 支持 (support) 比单一的经验事实，其实
@@ -85,46 +116,38 @@ O. 「人都会死」是一个在 frequentist 角度 100％ 正确的命题，�
    information. 科学的力量存在于「解释」里，也就是一些科学的 rules. 正因为这些
    rules 的存在，才有科学的解释。我们寻求最佳压缩，其实也等于寻求解释，或者说，寻求
    解释就是 “grokking.” 寻求解释之后，就能纳入 长期记忆/知识库里。
-P. 每次接受一个新的事实（命题），它会出现在 工作记忆的 contexts 里，这 context
+
+B. 每次接受一个新的事实（命题），它会出现在 工作记忆的 contexts 里，这 context
    可以导致不同的反应，比如说：接受其进入长期记忆、或训斥为荒谬。 这些反应可以说是
    某种 meta-cognitive program, 不一定可以用逻辑表达，因为牵涉到 actions 的问题。
    但其实从逻辑的角度看，似乎不太需要额外的”程序“，因为各种逻辑的运作已经被很好地
    公理化了。 我们只需要用 backward-chaining 寻找解释，然后决定是否接受新命题。
-Q. OK，现在更厘清了 grokking 的意义：那就是在特定的 context 之下的解释，解释的结果
+
+C. OK，现在更厘清了 grokking 的意义：那就是在特定的 context 之下的解释，解释的结果
    决定是否纳入知识库。 但在 grokking 的过程中可能 trigger actions，其受强化学习
    的奖励指导，因此有价值判断（比如说，"trust Wikipedia"），形成性格 (personality).
    但，一种关于真理的核心 (core beliefs)，在广泛的初始条件下，是一定会收敛到的。
    大功告成。
-R. 发现到，加速学习的最厉害武器，似乎是一种自我学习的「程式」，甚至包括上网查阅资料。
+
+======================================================================
+ACCELERATING LEARNING (ESPECIALLY ILP LEARNING)
+======================================================================
+A. 学习的本质是什么? 将遇到或推导到的命题纳入 长期记忆 或 法则记忆 里.
+B. 学习的加速意味着什么? 自动化是很重要的一环. 同样重要是从矛盾中选择 "better" 的
+   能力.  这显然就是 belief revision 的课题, 但现在需要的是 fuzzy-probabilistic
+   的版本.  AGM 框架似乎没有告诉我们怎么评分, 它只是提供融洽性的保证.  那评分的
+   标准是什么?  应该是 压缩比 和 准确度 吧?  二者怎么量度?
+C. 准确度: 如何量度一条 rule 的准确度?  每次使用时累计的 正确和错误 次数. 这就是
+   frequentist 的准确度.  但似乎还有 Bayesian 的量度方法 -- 问问 AI.
+D. 压缩比: 更确切地说是 "压缩度".  如何量度一条 rule 的压缩度?  它推导出来的东东
+   的总数?  那又引申出一个问题: rule 能推导另一些 rules 吗?  Rule 推出命题、而
+   命题再触发 rules. 压缩度似乎应该是下游的压缩度的 aggregate?  每个原子命题的
+   压缩度也未必是 1, 因为命题也可以 imply 其他命题, 甚至可以循环. 压缩度似乎是
+   rule 与 rule 之间的关系.  或者从 explanation power 的角度看?
+E. 发现到，加速学习的最厉害武器，似乎是一种自我学习的「程式」，甚至包括上网查阅资料。
    还有，解释时可以产生指引 ILP 的 directives。 那就是 ILP 的「导航」本身以逻辑
    形式写入 WM。举个例来说，「学习 coreference 消解」
-S. 在某个 context 之下可以进行 looping。
-
-======================================================================
-MAIN POINTS ABOUT THE SYSTEM
-======================================================================
-
-A. System 2 is initialized with a simple coreference resolution 'trick'
-suggested by Qwen.  This can be later modified or generalized by learning.
-
-B. The ILP task is decomposed into 3 sub-tasks:
-   A) State representation
-   B) Coreference resolution
-   C) Numerical relations
-   Each sub-task is artificially restricted by domain knowledge to make
-   learning easier.
-
-C. The hope is that by priming ILP with some seeds it will be able to
-   learn "natural" rules similar to the human mind.
-
-D. LT/DLN and ILP are homomorphic to each other.  LT/DLN is essentially
-   the continuous relaxation of ILP in parameter space.  Some of our
-   early experiments show that LT/DLN may out-perform tradtional
-   Transformers/LLMs due to the explicit (first-order) logic structure
-   that more directly conforms to human logic / natural language, using
-   3-4 times fewer parameters to reach comparable benchmarks.
-
-E.
+F. 在某个 context 之下可以进行 looping。
 
 ======================================================================
 
