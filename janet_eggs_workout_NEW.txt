@@ -130,6 +130,27 @@ C. OK，现在更厘清了 grokking 的意义：那就是在特定的 context �
    大功告成。
 
 ======================================================================
+WHAT IS "GROKKING"?
+======================================================================
+A. Grokking is the incorporation of newly recieved WMEs into either
+   the rule base or LTM.
+B. It seems to be the fastest learning method in our arsenal.
+C. Incorporation is as either a rule or a fact. If fact, ILP tries to
+   generalize rules from it and other similar facts. If rule, it means
+   the LF sentence itself translates to a rule.
+
+======================================================================
+LONG-TERM MEMORY
+======================================================================
+A. 遗忘与价值的关系. 太多重复则可以遗忘. 低价值(但稀有的事)也可以遗忘.
+B. 但事件的价值从何而来? So far, most LLM corpus inputs are human contents.
+C. In RL, rewards should be associated with events (LF/WMEs) but for an
+   AI agent, rewards are only awarded after successful completion of
+   tasks, usually the answering of questions.  In auto-regression,
+   successful prediction is a reward, but in our logical system,
+   successful explanation may be enough for reward.
+
+======================================================================
 ACCELERATING LEARNING (ESPECIALLY ILP LEARNING)
 ======================================================================
 A. 学习的本质是什么? 将遇到或推导到的命题纳入 长期记忆 或 法则记忆 里.
@@ -149,6 +170,15 @@ E. 发现到，加速学习的最厉害武器，似乎是一种自我学习的�
    还有，解释时可以产生指引 ILP 的 directives。 那就是 ILP 的「导航」本身以逻辑
    形式写入 WM。举个例来说，「学习 coreference 消解」
 F. 在某个 context 之下可以进行 looping。
+
+**********************************************************************
+A. 重新审视学习加速的问题, 特别是所谓 “grokking” 学习法. 它可以将 NL 描述的 rule
+   直接变成可应用的知识. 这对于 training 显然有用, 但需要人类教师. 这个可以称为
+   learn by telling (rule version).
+B. 我们的首要考虑是如何最快速地达到 competency?
+   SpaCy + ontology + grokking + LTM + ILP.
+C. ILP 应该在 LF syntax space 内发生.
+
 
 ======================================================================
 
