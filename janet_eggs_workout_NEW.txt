@@ -141,7 +141,8 @@ C. Incorporation is as either a rule or a fact. If fact, ILP tries to
 D. Fact grokking 对于我来说是新的, 属于 LTM, 相对容易.
 E. Rule grokking means NL → LF → rule base, 第二步其实更难. 它牵涉到 rule
    是由 LF 形式 macro-expand 的问题. 所以 rule 并不存在于 LF 空间, 而是什么空间?
-   那是 graph 的空间, 但它跟 LF 有什么分别?
+   那是 graph 的空间, 但它跟 LF 有什么分别? 作为例子, 考虑 love(X,Y) ^ love(Y,X)
+   它其实就是 first-order logic 的形式, 但我们同时可以 access modifiers.
 
 ======================================================================
 LONG-TERM MEMORY
