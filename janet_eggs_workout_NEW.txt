@@ -130,7 +130,7 @@ C. OK，现在更厘清了 grokking 的意义：那就是在特定的 context �
    大功告成。
 
 ======================================================================
-WHAT IS "GROKKING"?
+WHAT EXACTLY IS "GROKKING"?
 ======================================================================
 A. Grokking is the incorporation of newly recieved WMEs into either
    the rule base or LTM.
@@ -138,6 +138,10 @@ B. It seems to be the fastest learning method in our arsenal.
 C. Incorporation is as either a rule or a fact. If fact, ILP tries to
    generalize rules from it and other similar facts. If rule, it means
    the LF sentence itself translates to a rule.
+D. Fact grokking 对于我来说是新的, 属于 LTM, 相对容易.
+E. Rule grokking means NL → LF → rule base, 第二步其实更难. 它牵涉到 rule
+   是由 LF 形式 macro-expand 的问题. 所以 rule 并不存在于 LF 空间, 而是什么空间?
+   那是 graph 的空间, 但它跟 LF 有什么分别?
 
 ======================================================================
 LONG-TERM MEMORY
@@ -149,6 +153,14 @@ C. In RL, rewards should be associated with events (LF/WMEs) but for an
    tasks, usually the answering of questions.  In auto-regression,
    successful prediction is a reward, but in our logical system,
    successful explanation may be enough for reward.
+D. 究竟 explanation 跟 AR 有什么分别？ Explanations 能够帮助 AR predict，
+   但它可能比 AR 更容易，因为 AR 需要 exact prediction，而我们试过用 “semantic”
+   AR 去改善这问题。 但 explanations 似乎可以减省 prediction 这一步，在 predict
+   之前已经加分。
+E. 究竟现在哪里快了？ Grokking 是不是 LLM 所没有的能力？ 现在 LLM 有 persistent
+   记忆，这记忆里甚至可以包含 facts & rules，所以实在很难说我们有什么突破。 还是
+   聚焦在快速 bootstrap 这方面吧，因为这显然现在仍没有。
+F.
 
 ======================================================================
 ACCELERATING LEARNING (ESPECIALLY ILP LEARNING)
