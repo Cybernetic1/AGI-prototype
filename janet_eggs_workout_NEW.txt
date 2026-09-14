@@ -139,10 +139,37 @@ C. Incorporation is as either a rule or a fact. If fact, ILP tries to
    generalize rules from it and other similar facts. If rule, it means
    the LF sentence itself translates to a rule.
 D. Fact grokking 对于我来说是新的, 属于 LTM, 相对容易.
-E. Rule grokking means NL → LF → rule base, 第二步其实更难. 它牵涉到 rule
-   是由 LF 形式 macro-expand 的问题. 所以 rule 并不存在于 LF 空间, 而是什么空间?
-   那是 graph 的空间, 但它跟 LF 有什么分别? 作为例子, 考虑 love(X,Y) ^ love(Y,X)
-   它其实就是 first-order logic 的形式, 但我们同时可以 access modifiers.
+E. Rule grokking means NL → LF → rule base, 第二步其实更难.
+F. 这牵涉到 rule 是由 LF 形式 macro-expand 的问题. 所以 rule 并不存在于 LF 空间,
+   而是什么空间? 那是 graph 的空间, 但它跟 LF 有什么分别? 作为例子, 考虑 love(X,Y)
+   ⋀ love(Y,X). 它其实就是 first-order logic 的形式, 但我们同时可以 access
+   modifiers. 这种语言很特别, 值得探索一下.
+G. 如果有 first-order relation 的时候, 则使用之. 但如果有 modifiers 则使用 nDS.
+   例如说, X loves Y obsessively 则有 love(?e) ⋀ obsessive(?e). 它可不可以
+   简化为 obsessive(love) 这样的形式? 似乎可以. 如果它是 tree 则它必定可以写成
+   线性形式. 问题是这个形式是不是更短? 但它是 tree 形式却不可以写成谓词逻辑的形式?
+   因为线性形式仍然不等于谓词形式. 虽然, tree 形式必然可以表示为谓词形式. 其实 nDS
+   还有一个功能是将命题变成 instance 并给予 index. 我们简单的 tree→FOL 做法忽略了
+   这一点. MutualLove 例子中, 2个命题变成了6个, 或者说 1个命题变成3个.
+H. 换句话说, 保留 naïve first-order relations 有压缩效果. 在 nDS 里其实有没有
+   可能保留 FO 关系呢? 这样会增加 WMEs 的个数, 但或许仍然值得. 不然就是每个 rule
+   要 macro expand, 那似乎更麻烦. 但问题是 FO 关系没有了 instance 讯息, 这有
+   问题吗? John loves Mary 是成立的. 会不会导致歧义呢? 我指的歧义当然就是指一个
+   instance 的关系跟另一个 instance 混肴了. 因为我们不再知道这个关系属于 instance1.
+   John loves Mary, but the other John hates Mary.
+
+======================================================================
+EXPONENTIAL OBJECTS AND REFLECTION
+======================================================================
+A. 另一样我想明白的概念是 exponential objects, 特别是 rule→rule 的 application.
+   这对于符号引擎来说是不难的, 如果它们有完备的推导法则. 问题是我以前想将 rule embed
+   在向量空间, 然后将 rule 好像 fact 那样被 map 到新位置. 这是一种 uniform
+   vector-space representation 才有的问题. 其实很简单就是 exponential object
+   在向量空间不存在.
+B. 也就是说: rule→rule 不可能在系统1 实现. 但其实我们也有考虑过 rule 在向量空间的
+   崁入, 它有没有几何诠释? 根据 hyperdoctrine 的说法, 它类似命题逻辑, 也是
+   diagrammatic, 但这种图像算不算是几何呢? 它确实是有几何图像, 但这种图像太类似于
+   真实世界 (上帝视角), 以致于它的压缩力很弱, 是没用的.
 
 ======================================================================
 LONG-TERM MEMORY
