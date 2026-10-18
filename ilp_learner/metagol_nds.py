@@ -111,11 +111,142 @@ def score_hypothesis(clauses, pos_examples, neg_examples, background):
     # simple score: positives - penalty * false positives
     return covered - 2 * false_pos
 
-# --- Simple embedding/prior heuristic ---
-# use string similarity to prefer heads that are close to body preds
+# --- Embedding / Lorentz prior adapter ---
+# Prefer candidates whose predicate embeddings are close in Lorentz space.
+import os
+try:
+    import torch
+    from logic_transformer.lorentz_math import project_to_hyperboloid, lorentz_distance
+except Exception:
+    torch = None
 
-def embedding_prior(head_pred, body_preds):
-    # average sequence-similarity between head and body preds
+_EMB_STATE = None
+
+def _load_aligned_embeddings(emb_path='/tmp/aligned_hyperbolic_embeddings.pt', vocab_source='/tmp/pot_lt_pairs.jsonl'):
+    """Attempt to load aligned embeddings and vocabulary mapping.
+    Returns a dict with keys 'weights' (Tensor) and 'vocab' (dict token->idx) on success, else None.
+    """
+    global _EMB_STATE
+    if _EMB_STATE is not None:
+        return _EMB_STATE
+    if torch is None:
+        _EMB_STATE = None
+        return None
+    try:
+        if not os.path.exists(emb_path):
+            _EMB_STATE = None
+            return None
+        emb_state = torch.load(emb_path, map_location='cpu')
+        # emb_state might be a state_dict like {'weight': Tensor}
+        weights = None
+        if isinstance(emb_state, dict):
+            # try common keys
+            for k in ('weight', 'embeddings.weight', 'emb.weight'):
+                if k in emb_state:
+                    weights = emb_state[k]
+                    break
+            if weights is None:
+                # fallback to first tensor-like value
+                for v in emb_state.values():
+                    if hasattr(v, 'ndim'):
+                        weights = v
+                        break
+        else:
+            weights = emb_state
+        if weights is None:
+            _EMB_STATE = None
+            return None
+        # build vocab from vocab_source via train_pot_clause if available
+        vocab = None
+        try:
+            from logic_transformer.train_pot_clause import load_rows, build_input_vocab
+            rows = load_rows(Path(vocab_source)) if Path(vocab_source).exists() else []
+            if rows:
+                vocab = build_input_vocab(rows)
+        except Exception:
+            vocab = None
+        # project weights onto hyperboloid if possible
+        projected = None
+        try:
+            projected = project_to_hyperboloid(weights)
+        except Exception:
+            projected = weights
+        _EMB_STATE = { 'weights': weights, 'projected': projected, 'vocab': vocab }
+        return _EMB_STATE
+    except Exception:
+        _EMB_STATE = None
+        return None
+
+import hashlib
+import numpy as _np
+from pathlib import Path
+
+def _synthetic_lorentz(pred, dim=16):
+    """Deterministic synthetic vector generator on the Lorentz hyperboloid.
+    Uses SHA256 of predicate name to seed a pseudo-random vector, then projects.
+    """
+    # create reproducible pseudo-random vector from hash
+    h = hashlib.sha256(pred.encode('utf-8')).digest()
+    arr = _np.frombuffer(h, dtype=_np.uint8).astype(_np.float32)
+    # expand or truncate to dim-1 spatial dims
+    spatial = _np.zeros(dim-1, dtype=_np.float32)
+    spatial[:min(len(arr), dim-1)] = arr[:min(len(arr), dim-1)] / 255.0
+    # ensure not all zeros
+    if _np.allclose(spatial, 0.0):
+        spatial[0] = 1e-3
+    # compute time-like coordinate
+    t = _np.sqrt(1.0 + _np.sum(spatial**2) + 1e-6)
+    vec = _np.concatenate([_np.array([t], dtype=_np.float32), spatial])
+    if torch is not None:
+        return torch.from_numpy(vec)
+    else:
+        return vec
+
+def embedding_prior(head_pred, body_preds, emb_path='/tmp/aligned_hyperbolic_embeddings.pt', vocab_source='/tmp/pot_lt_pairs.jsonl'):
+    """Return a prior score (higher is better) for head_pred given body_preds.
+    Tries to use pre-aligned embeddings; falls back to deterministic synthetic Lorentz vectors.
+    """
+    state = _load_aligned_embeddings(emb_path, vocab_source)
+    head_emb = None
+    body_embs = []
+    # helper to get embedding for a predicate name
+    def get_emb(pred):
+        # try aligned weights/vocab if available
+        if state and state.get('vocab'):
+            # find a vocab token starting with pred + '('
+            for tok, idx in state['vocab'].items():
+                if tok.startswith(pred + '('):
+                    try:
+                        vec = state['projected'][idx]
+                        return vec
+                    except Exception:
+                        try:
+                            return state['weights'][idx]
+                        except Exception:
+                            break
+        # fallback synthetic
+        return _synthetic_lorentz(pred, dim=state['projected'].size(1) if (state and state.get('projected') is not None and hasattr(state['projected'], 'size')) else 16)
+
+    try:
+        head_emb = get_emb(head_pred)
+        for b in body_preds:
+            body_embs.append(get_emb(b))
+        if torch is not None and 'lorentz_distance' in globals():
+            # compute mean Lorentz distance (smaller is closer) and convert to similarity
+            dists = []
+            for be in body_embs:
+                try:
+                    d = lorentz_distance(head_emb.unsqueeze(0), be.unsqueeze(0)).item()
+                except Exception:
+                    # fallback numeric
+                    d = float('inf')
+                dists.append(d)
+            mean_d = sum(dists) / max(1, len(dists))
+            # convert to prior in [0, 1] (arbitrary): higher when closer
+            return 1.0 / (1.0 + mean_d)
+    except Exception:
+        pass
+    # final fallback: string similarity as before
     s = 0.0
     for b in body_preds:
         s += SequenceMatcher(None, head_pred, b).ratio()
