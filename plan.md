@@ -38,4 +38,9 @@ I committed the fix and the short-run artifacts; tell me which of the recommende
   - running the ILP learner to induce a clause mapping event predicates -> class label.
 - Ran the generator on the first 30 examples (skipping neutral cases). Results saved to ilp_learner/gsm8k_ilp_results.json.
 
+2026-10-19 GSM8K ILP full-run (timing)
+- The current LT export file (gsm8k_train_lt.jsonl) contains 100 examples (not 1779). I ran the full-run script over the available file.
+- Result: scanned 100 examples, processed 43 labeled examples, total runtime 8.97s (≈0.21s per processed example, ≈0.09s per scanned example).
+- Output saved to ilp_learner/gsm8k_ilp_results_full.json.
+
 Next: expand the GSM8K ILP benchmark (more examples), sweep hyperparameters (beam, prior weight), and aggregate coverage/FP metrics across tasks. #2 from earlier (expand ontology mappings) remains a planned follow-up.
