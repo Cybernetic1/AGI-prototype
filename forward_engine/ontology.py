@@ -73,12 +73,18 @@ _VERB_ALIASES: Dict[str, str] = {
 
 _TRANSFER_VERBS = {
     "give", "hand", "pass", "send", "transfer", "deliver", "offer", "donate", "gift", "convey",
+    # economic/transactional verbs often seen in GSM8K
+    "pay", "charge", "sell", "receive", "grant", "provide", "transfer", "offer",
 }
 _CREATION_VERBS = {
     "buy", "find", "pick", "bake", "create", "make", "get", "receive", "acquire", "gain", "obtain", "purchase", "collect", "procure",
+    # earning / saving / gaining resources
+    "earn", "save", "gain",
 }
 _LOSS_VERBS = {
     "eat", "lose", "break", "consume", "drop", "spend", "sell", "discard", "remove", "throw", "shed", "destroy", "damage", "shatter", "ruin",
+    # other depletion verbs
+    "use", "consume", "pay",
 }
 _COMPARISON_VERBS = {
     "have", "double", "twice", "triple", "half", "more", "less", "fewer", "compare",
