@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from pathlib import Path
+import re
 
 # Add paths to import ontology and tpc
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -16,9 +17,32 @@ import train_pot_clause as tpc
 from lorentz_math import project_to_hyperboloid, lorentz_distance
 
 def get_predicate(clause_str):
+    """Return the verb/predicate lemma for a proposition token.
+    Handles tokens like:
+      - "predicate(?e1, buy)." -> "buy"
+      - "predicate(?e2, have)." -> "have"
+    Returns None for non-verb propositions (agent, patient, quantity, variables).
+    """
     if "(" not in clause_str:
         return None
-    return clause_str.split("(")[0].strip()
+
+    # If this is a predicate(...) wrapper, try to extract the inner verb argument
+    m = re.match(r"predicate\s*\(\s*[^,]+\s*,\s*([^\)\.]*)[\)\.]?", clause_str)
+    if m:
+        verb = m.group(1).strip()
+        # skip variables like ?x1
+        if verb.startswith("?") or verb == "":
+            return None
+        # remove quotes or trailing punctuation
+        verb = verb.strip(" '\".")
+        return verb
+
+    # Fall back: return the outer functor only if it looks like a verb (not agent/patient)
+    functor = clause_str.split("(")[0].strip()
+    # common non-verb functors used in LT exports
+    if functor in {"agent", "patient", "quantity", "event", "query", "name", "location", "beneficiary", "recipient", "manner"}:
+        return None
+    return functor
 
 def align_embeddings(data_path, output_path, hidden_dim=128, epochs=500, lr=0.01, margin=2.0):
     rows = tpc.load_rows(Path(data_path))
