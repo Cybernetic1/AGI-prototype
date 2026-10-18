@@ -122,10 +122,11 @@ except Exception:
 
 _EMB_STATE = None
 
-def _load_aligned_embeddings(emb_path='/tmp/aligned_hyperbolic_embeddings.pt', vocab_source='/tmp/pot_lt_pairs.jsonl'):
-    """Attempt to load aligned embeddings and vocabulary mapping.
-    Returns a dict with keys 'weights' (Tensor) and 'vocab' (dict token->idx) on success, else None.
+def _load_aligned_embeddings(emb_path='logic_transformer/checkpoints/aligned_hyperbolic_embeddings_full.pt', vocab_source='logic_transformer/checkpoints/aligned_hyperbolic_embeddings_full_vocab.json'):
+    """Attempt to load aligned embeddings and vocabulary mapping from checkpoints by default.
+    Returns a dict with keys 'weights' (Tensor), 'projected' (Tensor) and 'vocab' (dict token->idx) on success, else None.
     """
+    import json
     global _EMB_STATE
     if _EMB_STATE is not None:
         return _EMB_STATE
@@ -137,10 +138,9 @@ def _load_aligned_embeddings(emb_path='/tmp/aligned_hyperbolic_embeddings.pt', v
             _EMB_STATE = None
             return None
         emb_state = torch.load(emb_path, map_location='cpu')
-        # emb_state might be a state_dict like {'weight': Tensor}
+        # emb_state is likely a state_dict like {'weight': Tensor}
         weights = None
         if isinstance(emb_state, dict):
-            # try common keys
             for k in ('weight', 'embeddings.weight', 'emb.weight'):
                 if k in emb_state:
                     weights = emb_state[k]
@@ -156,13 +156,12 @@ def _load_aligned_embeddings(emb_path='/tmp/aligned_hyperbolic_embeddings.pt', v
         if weights is None:
             _EMB_STATE = None
             return None
-        # build vocab from vocab_source via train_pot_clause if available
+        # load vocab json if present
         vocab = None
         try:
-            from logic_transformer.train_pot_clause import load_rows, build_input_vocab
-            rows = load_rows(Path(vocab_source)) if Path(vocab_source).exists() else []
-            if rows:
-                vocab = build_input_vocab(rows)
+            if os.path.exists(vocab_source):
+                with open(vocab_source, 'r', encoding='utf-8') as fh:
+                    vocab = json.load(fh)
         except Exception:
             vocab = None
         # project weights onto hyperboloid if possible
