@@ -30,3 +30,12 @@ I committed the fix and the short-run artifacts; tell me which of the recommende
 - Created logic_transformer/local_checkpoints/ and copied existing .pt artifacts there to keep local-only copies.
 - Added local_checkpoints/ to .gitignore and stopped tracking large .pt files in logic_transformer/checkpoints/ (files remain in history).
 - Ran a longer GSM8K alignment (300 epochs) with the predicate extractor fix and saved the long-run embedding to local_checkpoints.
+
+2026-10-19 GSM8K ILP benchmark
+- Added ilp_learner/generate_and_run_gsm8k_ilp.py which converts GSM8K LT examples into ILP tasks by:
+  - extracting the query event and its predicate verb,
+  - building background atoms (predicate_VERB(e), role(e,arg)) and a class label (class_transfer/creation/loss/comparison) via ontology_classify,
+  - running the ILP learner to induce a clause mapping event predicates -> class label.
+- Ran the generator on the first 30 examples (skipping neutral cases). Results saved to ilp_learner/gsm8k_ilp_results.json.
+
+Next: expand the GSM8K ILP benchmark (more examples), sweep hyperparameters (beam, prior weight), and aggregate coverage/FP metrics across tasks. #2 from earlier (expand ontology mappings) remains a planned follow-up.
