@@ -123,10 +123,14 @@ except Exception:
 _EMB_STATE = None
 
 def _load_aligned_embeddings(emb_path='logic_transformer/checkpoints/aligned_hyperbolic_embeddings_full.pt', vocab_source='logic_transformer/checkpoints/aligned_hyperbolic_embeddings_full_vocab.json'):
-    """Attempt to load aligned embeddings and vocabulary mapping from checkpoints by default.
+    """Attempt to load aligned embeddings and vocabulary mapping.
+    Behavior:
+      - If logic_transformer/local_checkpoints/{basename(emb_path)} exists, prefer it (local-only artifacts).
+      - Otherwise fall back to emb_path.
     Returns a dict with keys 'weights' (Tensor), 'projected' (Tensor) and 'vocab' (dict token->idx) on success, else None.
     """
     import json
+    from pathlib import Path
     global _EMB_STATE
     if _EMB_STATE is not None:
         return _EMB_STATE
@@ -134,10 +138,27 @@ def _load_aligned_embeddings(emb_path='logic_transformer/checkpoints/aligned_hyp
         _EMB_STATE = None
         return None
     try:
-        if not os.path.exists(emb_path):
+        # prefer local_checkpoints if present
+        local_dir = Path('logic_transformer') / 'local_checkpoints'
+        emb_path_p = Path(emb_path)
+        if local_dir.exists():
+            local_emb = local_dir / emb_path_p.name
+            local_vocab = local_dir / Path(vocab_source).name
+            if local_emb.exists():
+                emb_path_use = str(local_emb)
+                vocab_use = str(local_vocab) if local_vocab.exists() else vocab_source
+            else:
+                emb_path_use = emb_path
+                vocab_use = vocab_source
+        else:
+            emb_path_use = emb_path
+            vocab_use = vocab_source
+
+        if not os.path.exists(emb_path_use):
             _EMB_STATE = None
             return None
-        emb_state = torch.load(emb_path, map_location='cpu')
+
+        emb_state = torch.load(emb_path_use, map_location='cpu')
         # emb_state is likely a state_dict like {'weight': Tensor}
         weights = None
         if isinstance(emb_state, dict):
@@ -159,8 +180,8 @@ def _load_aligned_embeddings(emb_path='logic_transformer/checkpoints/aligned_hyp
         # load vocab json if present
         vocab = None
         try:
-            if os.path.exists(vocab_source):
-                with open(vocab_source, 'r', encoding='utf-8') as fh:
+            if os.path.exists(vocab_use):
+                with open(vocab_use, 'r', encoding='utf-8') as fh:
                     vocab = json.load(fh)
         except Exception:
             vocab = None
