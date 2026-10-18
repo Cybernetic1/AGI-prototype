@@ -45,3 +45,6 @@ Thumbs.db
 .env
 .env.localgsm8k-tests-backup/
 node_modules/
+
+# Local-only checkpoints (do not commit large .pt files)
+logic_transformer/local_checkpoints/
