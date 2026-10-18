@@ -25,3 +25,8 @@ Recommended immediate next steps
 4) Decide whether to keep large .pt files in repo checkpoints or store them externally and reference by checksum (to control repo size).
 
 I committed the fix and the short-run artifacts; tell me which of the recommended next steps to start and I'll proceed.
+
+2026-10-19 local checkpoints and alignment
+- Created logic_transformer/local_checkpoints/ and copied existing .pt artifacts there to keep local-only copies.
+- Added local_checkpoints/ to .gitignore and stopped tracking large .pt files in logic_transformer/checkpoints/ (files remain in history).
+- Ran a longer GSM8K alignment (300 epochs) with the predicate extractor fix and saved the long-run embedding to local_checkpoints.
