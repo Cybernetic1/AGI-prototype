@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GSM8K ILP Validation Reviewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 980px; margin: 18px auto; }
+    pre { background:#f7f7f7; padding:10px; border-radius:6px; overflow:auto }
+    .neg { border:1px solid #ddd; padding:8px; margin:6px 0; border-radius:6px }
+    label { display:inline-block; margin-right:12px }
+    .controls { margin-top:12px }
+    .nav { margin-top:16px }
+    .small { font-size:0.9em; color:#444 }
+    textarea { width:100%; height:54px }
+    button { padding:8px 12px; margin-right:8px }
+  </style>
+</head>
+<body>
+  <h2>GSM8K ILP Validation Reviewer</h2>
+  <p class="small">Load the scaffold JSONL (choose file) or click "Load default" if serving the repo via HTTP (e.g. python -m http.server).</p>
+
+  <input type="file" id="fileInput" accept=".jsonl,.json" />
+  <button id="loadDefault">Load default scaffold</button>
+  <span id="status" class="small"></span>
+
+  <div id="viewer" style="display:none">
+    <h3>Example <span id="index"></span> / <span id="total"></span></h3>
+    <div><strong>ID:</strong> <span id="exid"></span> &nbsp; <strong>Verb:</strong> <span id="verb"></span> &nbsp; <strong>Class:</strong> <span id="cls"></span></div>
+    <h4>Background facts</h4>
+    <pre id="background"></pre>
+    <h4>Positive head</h4>
+    <pre id="pos"></pre>
+    <h4>Negative candidates</h4>
+    <div id="negs"></div>
+
+    <div class="nav">
+      <button id="prev">◀ Prev</button>
+      <button id="next">Next ▶</button>
+      <button id="download">Download annotations</button>
+      <button id="resetAnn">Reset annotations</button>
+    </div>
+    <div class="controls small">
+      Keyboard: ←/→ to navigate. Save downloads JSON file with annotated entries.
+    </div>
+  </div>
+
+<script>
+let items = [];
+let idx = 0;
+
+function parseJsonlText(txt) {
+  const lines = txt.split(/\r?\n/).filter(Boolean);
+  return lines.map(l => JSON.parse(l));
+}
+
+function loadItems(arr) {
+  items = arr.map(it => {
+    return Object.assign({}, it, { _anns: (it.neg_candidates||[]).map(n => ({ decision: null, notes: '' })) });
+  });
+  idx = 0;
+  document.getElementById('total').textContent = items.length;
+  showViewer();
+}
+
+function showViewer() {
+  if (!items.length) return;
+  document.getElementById('viewer').style.display = 'block';
+  document.getElementById('index').textContent = idx+1;
+  const it = items[idx];
+  document.getElementById('exid').textContent = it.id || '';
+  document.getElementById('verb').textContent = it.verb || '';
+  document.getElementById('cls').textContent = it.class || '';
+  const bg = it.background || [];
+  document.getElementById('background').textContent = bg.map(b => b.pred + '(' + (b.args||[]).join(',') + ')').join('\n');
+  document.getElementById('pos').textContent = (it.pos? it.pos.pred + '(' + (it.pos.args||[]).join(',') + ')' : '') ;
+  renderNegs(it);
+}
+
+function renderNegs(it) {
+  const container = document.getElementById('negs');
+  container.innerHTML = '';
+  const negs = it.neg_candidates || [];
+  if (!negs.length) {
+    container.textContent = 'No negative candidates.';
+    return;
+  }
+  negs.forEach((n, i) => {
+    const div = document.createElement('div'); div.className = 'neg';
+    const title = document.createElement('div'); title.innerHTML = '<strong>Type:</strong> '+n.type + ' &nbsp; <span class="small">'+ (n.reason||'') +'</span>';
+    const atom = document.createElement('pre'); atom.textContent = (n.atom.pred || '') + '(' + (n.atom.args||[]).join(',') + ')';
+    const radios = document.createElement('div');
+    ['correct_negative','incorrect_negative','ambiguous'].forEach(opt => {
+      const id = 'r_'+i+'_'+opt;
+      const lab = document.createElement('label');
+      const r = document.createElement('input'); r.type = 'radio'; r.name = 'decision_'+i; r.value = opt; r.id = id;
+      if (it._anns[i] && it._anns[i].decision === opt) r.checked = true;
+      r.addEventListener('change', e => { it._anns[i].decision = e.target.value; });
+      lab.appendChild(r);
+      lab.appendChild(document.createTextNode(' '+opt));
+      radios.appendChild(lab);
+    });
+    const notes = document.createElement('div');
+    const ta = document.createElement('textarea'); ta.placeholder = 'Optional notes...'; ta.value = it._anns[i].notes || '';
+    ta.addEventListener('input', e => { it._anns[i].notes = e.target.value; });
+    notes.appendChild(ta);
+    div.appendChild(title); div.appendChild(atom); div.appendChild(radios); div.appendChild(notes);
+    container.appendChild(div);
+  });
+}
+
+// navigation
+function goto(n) {
+  if (n < 0 || n >= items.length) return;
+  idx = n; showViewer();
+}
+
+document.getElementById('prev').addEventListener('click', () => goto(idx-1));
+document.getElementById('next').addEventListener('click', () => goto(idx+1));
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') goto(idx-1);
+  if (e.key === 'ArrowRight') goto(idx+1);
+});
+
+// file input
+document.getElementById('fileInput').addEventListener('change', (ev) => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const arr = parseJsonlText(reader.result);
+      loadItems(arr);
+      document.getElementById('status').textContent = 'Loaded from file.';
+    } catch (e) { alert('Failed to parse file: '+e); }
+  };
+  reader.readAsText(f);
+});
+
+// load default via fetch (if served)
+document.getElementById('loadDefault').addEventListener('click', async () => {
+  try {
+    const resp = await fetch('ilp_learner/gsm8k_validation_scaffold.jsonl');
+    if (!resp.ok) throw new Error('HTTP '+resp.status);
+    const txt = await resp.text();
+    const arr = parseJsonlText(txt);
+    loadItems(arr);
+    document.getElementById('status').textContent = 'Loaded default scaffold (HTTP).';
+  } catch (e) {
+    document.getElementById('status').textContent = 'Failed to fetch default: '+e.message;
+  }
+});
+
+// download annotations
+function downloadAnnotations() {
+  const out = items.map(it => ({ id: it.id, neg_candidates: (it.neg_candidates||[]).map((n,i)=> Object.assign({}, n, { annotation: it._anns[i] })) }));
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'gsm8k_validation_annotations.json'; document.body.appendChild(a); a.click(); a.remove();
+}
+
+document.getElementById('download').addEventListener('click', downloadAnnotations);
+
+document.getElementById('resetAnn').addEventListener('click', () => {
+  if (!confirm('Reset all annotation decisions for this example?')) return;
+  const it = items[idx];
+  it._anns = (it.neg_candidates||[]).map(n => ({ decision: null, notes: '' }));
+  renderNegs(it);
+});
+
+// auto-load default when served
+(async function tryAutoLoad(){
+  try {
+    const resp = await fetch('ilp_learner/gsm8k_validation_scaffold.jsonl');
+    if (resp.ok) {
+      const txt = await resp.text(); const arr = parseJsonlText(txt); loadItems(arr); document.getElementById('status').textContent = 'Auto-loaded scaffold (HTTP).';
+    }
+  } catch(e) {}
+})();
+
+</script>
+</body>
+</html>
