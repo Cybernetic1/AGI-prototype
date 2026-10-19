@@ -61,3 +61,19 @@ Next diagnostic suggestions
 - Add negative examples or a held-out validation set to measure false-positive rates and use them to tune prior_weight (coverage alone isn't informative here).
 - Expand prior_weight grid (e.g., 0.0–2.0) and test on harder tasks where multiple candidate clauses compete.
 - Improve ontology labeling or use clustering to create richer positive/negative pairs for align_ontology so priors better discriminate.
+
+2026-10-20 decision: validation scaffold & next actions
+- Keep current auto-labeled validation scaffold and autofill defaults. Use it as a held-out validation set for periodic precision/recall checks rather than as a training target.
+- Rationale: autoregressive end-to-end training will supply abundant implicit negatives; scaffold is useful for targeted debugging and regression tests.
+
+Recommended priority work before large-scale runs
+1) End-to-end autoregressive ILP/DLN training on a faster machine (primary next run). Evaluate on the scaffold.
+2) Improve modules most likely to affect GSM8K success: semantic parsing / LT encoder (better extraction of quantities, roles, and event structure), numeric grounding/scratchpad arithmetic (for multi-step algebra), and aligned embeddings quality (longer align_ontology training and vocab coverage).
+3) Add targeted hard-negative generation and a small human-verified validation set (use the reviewer UI / CLI output already produced).
+4) If evaluation shows low precision, tune prior_weight and expand metarules/search breadth.
+
+Assessment: prospects for GSM8K
+- The current ILP prototype is a useful symbolic scaffold but unlikely to solve GSM8K end-to-end with high accuracy without improvements in: (a) reliable semantic parsing to extract exact numeric facts, (b) explicit numeric reasoning / scratchpad integration, and (c) richer supervision or negatives to calibrate priors.
+- With focused work on those modules plus end-to-end autoregressive training and larger LT exports, meaningful gains are achievable.
+
+If you agree, schedule: run end-to-end training on faster machine (week-long or GPU instance), then evaluate on scaffold and iterate on numeric grounding and parser accuracy.
