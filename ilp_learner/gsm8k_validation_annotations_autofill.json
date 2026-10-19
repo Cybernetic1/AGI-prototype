@@ -1,0 +1,5302 @@
+[
+  {
+    "id": "1271",
+    "verb": "have",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1109)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1561)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "226",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1404)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "36",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=119)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1458)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1451",
+    "verb": "have",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=140)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=445)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "555",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1733)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=941)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "471",
+    "verb": "have",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1109)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=445)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "441",
+    "verb": "twice",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=861)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1733)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "298",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=558)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=714)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1446",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=641)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=445)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "207",
+    "verb": "twice",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=6)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1319",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=712)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1715)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1774",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1037)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=42)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "310",
+    "verb": "make",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=107)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=996)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1404",
+    "verb": "get",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=107)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=861)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "140",
+    "verb": "get",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=369)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=445)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "139",
+    "verb": "get",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=298)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=441)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "323",
+    "verb": "buy",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1271)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1446)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "712",
+    "verb": "get",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=36)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=690)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "771",
+    "verb": "make",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=730)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1671",
+    "verb": "get",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=555)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1238)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "119",
+    "verb": "make",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=6)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=822)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "641",
+    "verb": "make",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=298)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1387",
+    "verb": "get",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=340)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1271)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "714",
+    "verb": "make",
+    "class": "creation",
+    "auto_pred": "creation",
+    "pos": {
+      "pred": "class_creation",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1109)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1037",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1020)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=139)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1458",
+    "verb": "eat",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=822)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "730",
+    "verb": "lose",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=139)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=712)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "verb": "eat",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=641)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=690)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "469",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=42)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=690)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1715",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=861)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=32)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "996",
+    "verb": "eat",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=323)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=471)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "814",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=298)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=861)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "445",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=107)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1020)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "587",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=441)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=714)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "369",
+    "verb": "spend",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=471)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=712)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "340",
+    "verb": "lose",
+    "class": "loss",
+    "auto_pred": "loss",
+    "pos": {
+      "pred": "class_loss",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=822)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1020)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "861",
+    "verb": "give",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1458)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=139)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "107",
+    "verb": "pass",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=298)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=310)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "822",
+    "verb": "give",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1671)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1271)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1561",
+    "verb": "give",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1451)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=323)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1109",
+    "verb": "give",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=140)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=587)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "558",
+    "verb": "send",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1774)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=340)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "32",
+    "verb": "hand",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=298)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=369)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "941",
+    "verb": "give",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=712)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=445)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1020",
+    "verb": "hand",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=587)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=469)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1645",
+    "verb": "gift",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=814)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=771)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1733",
+    "verb": "donate",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=587)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=714)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "42",
+    "verb": "hand",
+    "class": "transfer",
+    "auto_pred": "transfer",
+    "pos": {
+      "pred": "class_transfer",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1271)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=340)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "1238",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=1037)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=310)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  },
+  {
+    "id": "690",
+    "verb": "half",
+    "class": "comparison",
+    "auto_pred": "comparison",
+    "pos": {
+      "pred": "class_comparison",
+      "args": [
+        "?e1"
+      ]
+    },
+    "neg_candidates": [
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "same_event_mislabel",
+        "atom": {
+          "pred": "class_transfer",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "different class on same event",
+        "needs_review": true
+      },
+      {
+        "type": "role_corrupt",
+        "atom": {
+          "pred": "class_comparison",
+          "args": [
+            "?x4"
+          ]
+        },
+        "reason": "true class applied to different event in same example",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_creation",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=641)",
+        "needs_review": true
+      },
+      {
+        "type": "cross_task",
+        "atom": {
+          "pred": "class_loss",
+          "args": [
+            "?e1"
+          ]
+        },
+        "reason": "class from other example (id=340)",
+        "needs_review": true
+      }
+    ],
+    "annotations": [
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      },
+      {
+        "decision": "correct_negative",
+        "notes": "auto-filled"
+      }
+    ]
+  }
+]
