@@ -48,3 +48,16 @@ I committed the fix and the short-run artifacts; tell me which of the recommende
 - Output saved to ilp_learner/gsm8k_ilp_results_full.json.
 
 Next: expand the GSM8K ILP benchmark (more examples), sweep hyperparameters (beam, prior weight), and aggregate coverage/FP metrics across tasks. #2 from earlier (expand ontology mappings) remains a planned follow-up.
+
+2026-10-19 Hyperparameter sweep (GSM8K ILP)
+- Ran hyperparameter sweep over beam=[1,3,6,10], max_clauses=[1,2,3], prior_weight=[0.0,0.5,1.0] on 1291 labeled GSM8K LT tasks.
+- Sweep saved to ilp_learner/hyperparam_sweep_results.json.
+- Observations:
+  * Coverage (pos example inferred) was 1.00 for all parameter combinations — the learner covers the labeled target in every task.
+  * Average score increases with prior_weight (expected: prior adds to score). Beam and max_clauses had negligible effect on coverage in this benchmark.
+  * Sweep runtime: ~11–12s per combo; total run saved in results file.
+
+Next diagnostic suggestions
+- Add negative examples or a held-out validation set to measure false-positive rates and use them to tune prior_weight (coverage alone isn't informative here).
+- Expand prior_weight grid (e.g., 0.0–2.0) and test on harder tasks where multiple candidate clauses compete.
+- Improve ontology labeling or use clustering to create richer positive/negative pairs for align_ontology so priors better discriminate.

@@ -274,7 +274,7 @@ def embedding_prior(head_pred, body_preds, emb_path='/tmp/aligned_hyperbolic_emb
 
 # --- Beam search learner ---
 
-def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples, beam=5, max_clauses=3):
+def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples, beam=5, max_clauses=3, prior_weight=0.5):
     # initial empty hypothesis
     beam_hypos = [([], 0.0)]  # list of (clauses_list, score)
     for step in range(max_clauses):
@@ -288,7 +288,7 @@ def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples,
                         new_hyp = hy + [clause]
                         sc = score_hypothesis(new_hyp, pos_examples, neg_examples, background)
                         prior = embedding_prior(q_pred, [p_pred, role_pred])
-                        total = sc + 0.5 * prior
+                        total = sc + prior_weight * prior
                         candidates.append((new_hyp, total))
         # keep top beam
         candidates.sort(key=lambda x: x[1], reverse=True)
