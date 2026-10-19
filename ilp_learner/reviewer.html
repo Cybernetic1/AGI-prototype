@@ -26,7 +26,7 @@
 
   <div id="viewer" style="display:none">
     <h3>Example <span id="index"></span> / <span id="total"></span></h3>
-    <div><strong>ID:</strong> <span id="exid"></span> &nbsp; <strong>Verb:</strong> <span id="verb"></span> &nbsp; <strong>Class:</strong> <span id="cls"></span></div>
+    <div><strong>ID:</strong> <span id="exid"></span> &nbsp; <strong>Verb:</strong> <span id="verb"></span> &nbsp; <strong>Class:</strong> <span id="cls"></span> &nbsp; <strong>Auto:</strong> <span id="auto_pred"></span></div>
     <h4>Background facts</h4>
     <pre id="background"></pre>
     <h4>Positive head</h4>
@@ -63,6 +63,29 @@ function loadItems(arr) {
   showViewer();
 }
 
+// merge autofill annotations (optional) by id; fetch path relative to same dir
+async function tryLoadAutofill() {
+  try {
+    const resp = await fetch('gsm8k_validation_annotations_autofill.json');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    const map = new Map();
+    data.forEach(d => { if (d && d.id !== undefined) map.set(String(d.id), d); });
+    // merge
+    items.forEach(it => {
+      const entry = map.get(String(it.id));
+      if (entry) {
+        if (entry.auto_pred) it._auto_pred = entry.auto_pred;
+        if (entry.annotations && entry.annotations.length === (it.neg_candidates||[]).length) {
+          it._anns = entry.annotations.map(a => ({ decision: (a.decision !== undefined ? a.decision : (a.annotation && a.annotation.decision) || null), notes: (a.notes !== undefined ? a.notes : (a.annotation && a.annotation.notes) || '') }));
+        }
+      }
+    });
+  } catch(e) {
+    // ignore
+  }
+}
+
 function showViewer() {
   if (!items.length) return;
   document.getElementById('viewer').style.display = 'block';
@@ -71,6 +94,7 @@ function showViewer() {
   document.getElementById('exid').textContent = it.id || '';
   document.getElementById('verb').textContent = it.verb || '';
   document.getElementById('cls').textContent = it.class || '';
+  document.getElementById('auto_pred').textContent = it._auto_pred || '';
   const bg = it.background || [];
   document.getElementById('background').textContent = bg.map(b => b.pred + '(' + (b.args||[]).join(',') + ')').join('\n');
   document.getElementById('pos').textContent = (it.pos? it.pos.pred + '(' + (it.pos.args||[]).join(',') + ')' : '') ;
@@ -128,10 +152,13 @@ document.getElementById('fileInput').addEventListener('change', (ev) => {
   const f = ev.target.files[0];
   if (!f) return;
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     try {
       const arr = parseJsonlText(reader.result);
       loadItems(arr);
+      // try to overlay autofill annotations if present
+      await tryLoadAutofill();
+      showViewer();
       document.getElementById('status').textContent = 'Loaded from file.';
     } catch (e) { alert('Failed to parse file: '+e); }
   };
@@ -146,6 +173,9 @@ document.getElementById('loadDefault').addEventListener('click', async () => {
     const txt = await resp.text();
     const arr = parseJsonlText(txt);
     loadItems(arr);
+    // attempt to overlay autofill annotations
+    await tryLoadAutofill();
+    showViewer();
     document.getElementById('status').textContent = 'Loaded default scaffold (HTTP).';
   } catch (e) {
     document.getElementById('status').textContent = 'Failed to fetch default: '+e.message;
@@ -175,6 +205,7 @@ document.getElementById('resetAnn').addEventListener('click', () => {
     const resp = await fetch('gsm8k_validation_scaffold.jsonl');
     if (resp.ok) {
       const txt = await resp.text(); const arr = parseJsonlText(txt); loadItems(arr); document.getElementById('status').textContent = 'Auto-loaded scaffold (HTTP).';
+      try { await tryLoadAutofill(); showViewer(); } catch(e) {}
     }
   } catch(e) {}
 })();
