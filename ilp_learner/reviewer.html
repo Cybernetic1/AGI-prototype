@@ -141,7 +141,7 @@ document.getElementById('fileInput').addEventListener('change', (ev) => {
 // load default via fetch (if served)
 document.getElementById('loadDefault').addEventListener('click', async () => {
   try {
-    const resp = await fetch('ilp_learner/gsm8k_validation_scaffold.jsonl');
+    const resp = await fetch('gsm8k_validation_scaffold.jsonl');
     if (!resp.ok) throw new Error('HTTP '+resp.status);
     const txt = await resp.text();
     const arr = parseJsonlText(txt);
@@ -172,7 +172,7 @@ document.getElementById('resetAnn').addEventListener('click', () => {
 // auto-load default when served
 (async function tryAutoLoad(){
   try {
-    const resp = await fetch('ilp_learner/gsm8k_validation_scaffold.jsonl');
+    const resp = await fetch('gsm8k_validation_scaffold.jsonl');
     if (resp.ok) {
       const txt = await resp.text(); const arr = parseJsonlText(txt); loadItems(arr); document.getElementById('status').textContent = 'Auto-loaded scaffold (HTTP).';
     }
