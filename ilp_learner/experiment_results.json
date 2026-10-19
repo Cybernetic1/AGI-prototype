@@ -1,0 +1,218 @@
+[
+  {
+    "beam": 1,
+    "max_clauses": 1,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 1,
+    "max_clauses": 2,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 1,
+    "max_clauses": 3,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 3,
+    "max_clauses": 1,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 3,
+    "max_clauses": 2,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 3,
+    "max_clauses": 3,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 6,
+    "max_clauses": 1,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 6,
+    "max_clauses": 2,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 6,
+    "max_clauses": 3,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 10,
+    "max_clauses": 1,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 10,
+    "max_clauses": 2,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  },
+  {
+    "beam": 10,
+    "max_clauses": 3,
+    "score": 1.163662796664143,
+    "num_clauses": 1,
+    "clauses": [
+      "predicate_help(E) :- predicate_love(E), patient(E, X)"
+    ],
+    "inferred": [
+      "agent(e1, p1)",
+      "agent(e2, p3)",
+      "patient(e1, p2)",
+      "patient(e2, p4)",
+      "predicate_admire(e2)",
+      "predicate_help(e1)",
+      "predicate_love(e1)"
+    ]
+  }
+]
