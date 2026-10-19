@@ -14,6 +14,10 @@ Next steps:
 - Generate synthetic nDS datasets from pot-demo and run systematic ILP experiments.
 - Integrate ILP learner into the LT/DLN evaluation harness when the prior and datasets are ready.
 
+LT examples (what "LT" means)
+- "LT" stands for Logic Transformer. LT exports are structured examples prepared to train or evaluate the Logic Transformer: they are produced by exporter/parsing scripts (e.g., pot-demo/export_lt_examples.py or the GSM8K preprocessor), not by the LT model itself.
+- LT exports normalize natural-language + CoT or parsed logical forms into proposition tokens (for example, "predicate(?e1, buy).", "agent(?e1, ?x1)"). These tokens are the canonical input used by align_ontology, the ILP generator, and the LT training pipeline.
+
 2026-10-19 update: align_ontology predicate extraction fix
 - Problem: align_ontology was feeding outer functors (e.g. "predicate(?e1, buy)." -> "predicate") into ontology_classify, producing no labeled tokens and NaN contrastive loss.
 - Fix: align_ontology now extracts inner verb tokens from "predicate(..., VERB)" and ignores non-verb functors (agent, patient, quantity, etc.). A short 50-epoch run on GSM8K produced non-NaN loss and saved aligned embeddings.
