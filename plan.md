@@ -106,3 +106,8 @@ Immediate next actions
 2) Add a second validation example for mixed state transitions (e.g. partial spend + remaining + rate-time) to make the next regression set harder and more representative.
 3) Re-run the compact family benchmark after each change and do not broaden to full GSM8K sweeps until the failure families are stable.
 4) Commit only once the remaining family is fixed and the benchmark stays green across the targeted slice.
+
+2026-10-21 repo status update
+- The ratio-binding fix and semantic benchmark pass are committed and pushed to the main branch.
+- The next target is the remaining ambiguity family: percent-of-remaining and mixed state transitions in the compiler.
+- The repo is still in the semantic grounding / variable-binding phase; broad GSM8K solvability remains a later milestone, not the current one.
