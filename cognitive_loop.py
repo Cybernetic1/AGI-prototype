@@ -1429,6 +1429,11 @@ SEMANTIC_FAILURE_FAMILIES = [
         "question": "A worker earns $15 per hour for 4 hours.",
         "expected": 60.0,
     },
+    {
+        "family": "ratio_state_percent",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 25% of the remaining apples are eaten. How many apples are left?",
+        "expected": 11.25,
+    },
 ]
 
 

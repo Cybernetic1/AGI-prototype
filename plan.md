@@ -113,6 +113,11 @@ Immediate next actions
 3) Only when the broader mixed-state slice remains stable should we consider a larger GSM8K sweep or a broader semantic proposer.
 4) Commit at the next clean checkpoint after the harder benchmark is green, not during active semantic churn.
 
+2026-10-21 mixed-state benchmark expansion
+- Added a combined ratio + give-away + remaining-percent family to the compact benchmark to stress the next layer of semantic binding.
+- The goal is to ensure the compiler preserves reference-owner difference, remaining-state tracking, and percent-of-remaining composition together in one example.
+- If this pattern remains stable, the next step is a slightly broader mixed-state slice; if it fails, we tighten the state-transition contract before any broader GSM8K widening.
+
 2026-10-21 repo status update
 - The ratio-binding fix and semantic benchmark pass are committed and pushed to the main branch.
 - The next target is the remaining ambiguity family: percent-of-remaining and mixed state transitions in the compiler.
