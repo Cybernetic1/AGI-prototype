@@ -201,9 +201,25 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
 def system3_step(current_wm, cycle, _=None, quiet=False):
     new_facts = set()
     
-    # 1. Search for any Query node currently in Working Memory
-    query_node = next((n for n in current_wm if n.concept == "Query"), None)
-    if not query_node:
+    # 1. Search for any Query node currently in Working Memory.
+    # A single problem can legitimately produce multiple query candidates (e.g. ratio
+    # sub-questions plus a final combined total), so prefer the most specific final
+    # query and fall back to the first candidate only when necessary.
+    query_nodes = [n for n in current_wm if n.concept == "Query"]
+    if query_nodes:
+        preferred = None
+        for node in query_nodes:
+            goal = node.to_dict().get("goal")
+            if goal in {"total_quantity", "remaining_quantity", "final_price", "alternate_price_total"}:
+                preferred = node
+                break
+        if preferred is None:
+            preferred = query_nodes[0]
+        q_attrs = preferred.to_dict()
+        goal_pred = q_attrs.get("goal")
+        goal_args = list(q_attrs.get("args", []))
+        expected_value = q_attrs.get("expected_value")
+    else:
         # If no explicit query fact is present but there is an explicit graph query node,
         # still try to read its answer directly from the equation graph.
         graph_query = next((n for n in current_wm if n.concept == "GraphNode" and n.to_dict().get("kind") == "query"), None)
@@ -212,11 +228,6 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
         q_attrs = graph_query.to_dict()
         goal_pred = q_attrs.get("goal") or q_attrs.get("label")
         goal_args = [q_attrs.get("goal")] if q_attrs.get("goal") else [q_attrs.get("label")]
-        expected_value = q_attrs.get("expected_value")
-    else:
-        q_attrs = query_node.to_dict()
-        goal_pred = q_attrs.get("goal")
-        goal_args = list(q_attrs.get("args", []))
         expected_value = q_attrs.get("expected_value")
     
     if not goal_pred or not goal_args:
@@ -902,11 +913,19 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         factor = 2.0 if factor_text in {"twice", "double"} else 0.5 if factor_text == "half" else float(factor_text)
         ratio_edges.append((owner, item, ref, factor))
 
+    def _is_ambiguous_owner_name(name):
+        n = (name or "").lower()
+        return any(token in n for token in ["have", "together", "if", "how", "many", "times", "do", "as"])
+
     qty_by_owner_item = {}
     for m in re.finditer(r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*)", text, re.I):
         owner = m.group(1).strip().lower()
         qty = float(m.group(2))
         item = m.group(3).strip().lower()
+        if _is_ambiguous_owner_name(owner):
+            continue
+        if any(token in item for token in ["times", "as", "many", "together", "if", "how", "do", "have"]):
+            continue
         qty_by_owner_item[(owner, item)] = qty
 
     def resolve_ratio(owner, item, seen=None):
@@ -955,7 +974,32 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 outputs=[("answer", result)],
                 goal="ratio_compose",
             )
-            return wm
+
+        if re.search(r"together|total|combined|altogether", text, re.I):
+            target_item = next((item for _, item, _, _ in ratio_edges), None)
+            if target_item is not None:
+                combined_values = []
+                seen = set()
+                for owner, item, ref, factor in ratio_edges:
+                    if item != target_item:
+                        continue
+                    key = (owner, item)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    resolved = resolve_ratio(owner, item)
+                    if resolved is not None:
+                        combined_values.append(resolved)
+                for (owner, item), qty in qty_by_owner_item.items():
+                    if item == target_item and (owner, item) not in seen:
+                        combined_values.append(qty)
+                if combined_values:
+                    total = float(sum(combined_values))
+                    add_fact("Total", owner="combined", item=target_item, qty=total)
+                    add_fact("Quantity", owner="combined", item=target_item, qty=total)
+                    add_fact("Query", goal="total_quantity", args=("combined", target_item, "?ans"), expected_value=total)
+                    return wm
+        return wm
 
     dozen_match = re.search(r"(\d+(?:\.\d+)?)\s+dozen\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
     if dozen_match:
@@ -1001,7 +1045,8 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         return wm
 
     # Pattern: A has 2x as many X as B; B has 3x as many X as C; C has 10 X.
-    # Resolve these ratios recursively instead of relying on one giant regex.
+    # Resolve these ratios recursively in a single pass so the semantic graph does not get
+    # polluted by duplicate ratio declarations from repeated regex passes.
     ratio_edges = []
     for m in re.finditer(
         r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(twice|double|half|(\d+(?:\.\d+)?)\s*(?:times|x))\s+as\s+many\s+([A-Za-z][A-Za-z\s-]*)\s+as\s+([A-Za-z][A-Za-z\s-]*)",
@@ -1012,6 +1057,8 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         factor_text = m.group(3) if m.group(3) else m.group(2)
         item = m.group(4).strip().lower()
         ref = m.group(5).strip().lower()
+        if _is_ambiguous_owner_name(owner) or _is_ambiguous_owner_name(ref):
+            continue
         factor = 2.0 if factor_text in {"twice", "double"} else 0.5 if factor_text == "half" else float(factor_text)
         ratio_edges.append((owner, item, ref, factor))
 
@@ -1020,6 +1067,10 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         owner = m.group(1).strip().lower()
         qty = float(m.group(2))
         item = m.group(3).strip().lower()
+        if _is_ambiguous_owner_name(owner):
+            continue
+        if any(token in item for token in ["times", "as", "many", "together", "if", "how", "do", "have"]):
+            continue
         qty_by_owner_item[(owner, item)] = qty
 
     def resolve_ratio(owner, item, seen=None):
@@ -1048,6 +1099,28 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
             add_fact("Quantity", owner=ref, item=item, qty=base_value)
             add_fact("Multiply", lhs=base_value, rhs=factor, result=compounds)
             add_fact("Query", goal="ratio_compose", args=(owner, item, "?ans"), expected_value=compounds)
+
+    if re.search(r"together|total|combined|altogether", text, re.I) and ratio_edges:
+        target_item = next((item for _, item, _, _, _ in chain_values if item), ratio_edges[0][1])
+        combined_values = []
+        seen = set()
+        for owner, item, ref, factor in ratio_edges:
+            key = (owner, item)
+            if key in seen:
+                continue
+            seen.add(key)
+            resolved = resolve_ratio(owner, item)
+            if resolved is not None:
+                combined_values.append(resolved)
+        for (owner, item), qty in qty_by_owner_item.items():
+            if item == target_item and (owner, item) not in seen:
+                combined_values.append(qty)
+        if combined_values:
+            total = float(sum(combined_values))
+            add_fact("Total", owner="combined", item=target_item, qty=total)
+            add_fact("Quantity", owner="combined", item=target_item, qty=total)
+            add_fact("Query", goal="total_quantity", args=("combined", target_item, "?ans"), expected_value=total)
+            return wm
 
     if chain_values:
         return wm
