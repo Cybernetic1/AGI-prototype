@@ -23,7 +23,7 @@ python system2_poc.py
 Install the phase-3 dependencies:
 
 ```bash
-pip install -r forward-engine/requirements.txt
+pip install -r forward_engine/requirements.txt
 python -m nltk.downloader wordnet omw-1.4
 ```
 

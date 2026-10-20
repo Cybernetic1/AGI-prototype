@@ -31,6 +31,39 @@ class ComparisonEvent(Event):
     pass
 
 
+# -------------------------------------------------------------------
+# Lightweight GSM8K reasoning vocabulary used by the symbolic WM layer.
+# These are intentionally compact but canonical, so the compiler can map
+# text to a stable fact schema instead of ad hoc one-off predicates.
+# -------------------------------------------------------------------
+class Quantity(Fact):
+    pass
+
+
+class Item(Fact):
+    pass
+
+
+class Rate(Fact):
+    pass
+
+
+class Price(Fact):
+    pass
+
+
+class Has(Fact):
+    pass
+
+
+class Total(Fact):
+    pass
+
+
+class Remaining(Fact):
+    pass
+
+
 class NeutralEvent(Event):
     pass
 

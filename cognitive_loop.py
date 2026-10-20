@@ -765,45 +765,47 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         )
         return wm
 
-    # Pattern: percent-of-remainder (e.g. “25% of the remaining apples were eaten”).
-    remainder_percent_match = re.search(r"(?:there\s+were|there\s+are|had)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)\.?\s+(?:.*?)(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+([A-Za-z][A-Za-z\s-]*?)(?:\s+were|\s+was)\s+(?:eaten|used|spent|lost|left)", text, re.I)
+    # Pattern: percent-of-remainder (e.g. “25% of the remaining 12 apples were eaten”).
+    remainder_percent_match = re.search(r"(?:there\s+were|there\s+are|had)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)\.?\s+(?:.*?)(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)(?:\s+were|\s+was)\s+(?:eaten|used|spent|lost|left)", text, re.I)
     if remainder_percent_match:
         total = float(remainder_percent_match.group(1))
         item = remainder_percent_match.group(2).strip().lower()
         pct = float(remainder_percent_match.group(3)) / 100.0
-        remaining_item = remainder_percent_match.group(4).strip().lower() or item
-        remaining = total * (1.0 - pct)
-        eaten = total * pct
+        remaining_qty = float(remainder_percent_match.group(4))
+        remaining_item = remainder_percent_match.group(5).strip().lower() or item
+        eaten = remaining_qty * pct
+        remaining = remaining_qty - eaten
         add_fact("Quantity", owner="unknown", item=item, qty=total)
-        add_fact("Consumed", owner="unknown", item=item, qty=eaten)
+        add_fact("Quantity", owner="unknown", item=remaining_item, qty=remaining_qty)
+        add_fact("Consumed", owner="unknown", item=remaining_item, qty=eaten)
         add_fact("Percent", owner="unknown", item=remaining_item, pct=pct)
-        add_fact("Multiply", lhs=total, rhs=pct, result=eaten)
-        add_fact("Subtract", lhs=total, rhs=eaten, result=remaining)
-        add_fact("Quantity", owner="unknown", item=remaining_item, qty=remaining)
-        add_fact("Query", goal="remaining_quantity", args=("unknown", item, "?ans"), expected_value=remaining)
+        add_fact("Multiply", lhs=remaining_qty, rhs=pct, result=eaten)
+        add_fact("Subtract", lhs=remaining_qty, rhs=eaten, result=remaining)
+        add_fact("Query", goal="remaining_quantity", args=("unknown", remaining_item, "?ans"), expected_value=remaining)
         add_equation_graph(
             "eq:remaining_percent",
             "subtract",
             "remaining_quantity",
-            inputs=[("total", total), ("eaten", eaten)],
+            inputs=[("remaining_qty", remaining_qty), ("eaten", eaten)],
             outputs=[("remaining", remaining)],
-            item=item,
+            item=remaining_item,
         )
         return wm
 
-    remainder_percent_simple = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining", text, re.I)
+    remainder_percent_simple = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+(?:students|people|items|eggs|apples)", text, re.I)
     if remainder_percent_simple:
         pct = float(remainder_percent_simple.group(1)) / 100.0
-        total = num(r"(\d+(?:\.\d+)?)\s+(?:students|people|items|eggs|apples)", default=20.0)
-        remaining = total * (1.0 - pct)
-        eaten = total * pct
-        add_fact("Quantity", owner="unknown", item="apples", qty=total)
-        add_fact("Consumed", owner="unknown", item="apples", qty=eaten)
-        add_fact("Percent", owner="unknown", item="remaining", pct=pct)
-        add_fact("Quantity", owner="unknown", item="remaining", qty=remaining)
-        add_fact("Multiply", lhs=total, rhs=pct, result=eaten)
-        add_fact("Subtract", lhs=total, rhs=eaten, result=remaining)
-        add_fact("Query", goal="remaining_quantity", args=("unknown", "apples", "?ans"), expected_value=remaining)
+        remaining_qty = float(remainder_percent_simple.group(2))
+        current_item = re.search(r"(?:students|people|items|eggs|apples)", text, re.I)
+        item_name = current_item.group(0).lower() if current_item else "apples"
+        eaten = remaining_qty * pct
+        remaining = remaining_qty - eaten
+        add_fact("Quantity", owner="unknown", item=item_name, qty=remaining_qty)
+        add_fact("Consumed", owner="unknown", item=item_name, qty=eaten)
+        add_fact("Percent", owner="unknown", item=item_name, pct=pct)
+        add_fact("Multiply", lhs=remaining_qty, rhs=pct, result=eaten)
+        add_fact("Subtract", lhs=remaining_qty, rhs=eaten, result=remaining)
+        add_fact("Query", goal="remaining_quantity", args=("unknown", item_name, "?ans"), expected_value=remaining)
         return wm
 
     # Pattern: repeated event totals and overtime wages.
@@ -887,46 +889,73 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_fact("Query", goal="percent_increase", args=(owner, item, "?ans"), expected_value=result)
         return wm
 
-    ratio_match = re.search(r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(twice|double|half|(\d+(?:\.\d+)?)\s*(?:times|x))\s+as\s+many\s+([A-Za-z][A-Za-z\s-]*)\s+as\s+([A-Za-z][A-Za-z\s-]*)", text, re.I)
-    if ratio_match:
-        left = ratio_match.group(1).strip().lower()
-        factor_text = ratio_match.group(2).lower()
-        if factor_text in {"twice", "double"}:
-            factor = 2.0
-        elif factor_text == "half":
-            factor = 0.5
-        else:
-            num_match = re.search(r"(\d+(?:\.\d+)?)", factor_text)
-            factor = float(num_match.group(1)) if num_match else 1.0
-        item = ratio_match.group(4).strip().lower()
-        ref = ratio_match.group(5).strip().lower()
-        base = num(rf"{re.escape(ref)}\s+has\s+(\d+(?:\.\d+)?)\s+{re.escape(item)}", default=1.0)
-        if base is None:
-            base = num(rf"(\d+(?:\.\d+)?)\s+{re.escape(item)}", default=1.0)
-        result = base * factor
-        add_fact("Ratio", owner=left, item=item, factor=factor, base_owner=ref)
-        add_fact("Quantity", owner=ref, item=item, qty=base)
-        add_fact("Multiply", lhs=base, rhs=factor, result=result)
-        add_equation_graph(
-            "eq:ratio_compose",
-            "multiply",
-            "ratio_compose",
-            inputs=[("base", base), ("factor", factor)],
-            outputs=[("result", result)],
-            item=item,
-            ref=ref,
-            owner=left,
-        )
-        add_fact("Query", goal="ratio_compose", args=(left, item, "?ans"), expected_value=result)
-        add_equation_graph(
-            "eq:query:ratio_compose",
-            "query",
-            "ratio_query",
-            inputs=[("result", result)],
-            outputs=[("answer", result)],
-            goal="ratio_compose",
-        )
-        return wm
+    ratio_edges = []
+    for m in re.finditer(
+        r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(twice|double|half|(\d+(?:\.\d+)?)\s*(?:times|x))\s+as\s+many\s+([A-Za-z][A-Za-z\s-]*)\s+as\s+([A-Za-z][A-Za-z\s-]*)",
+        text,
+        re.I,
+    ):
+        owner = m.group(1).strip().lower()
+        factor_text = m.group(3) if m.group(3) else m.group(2)
+        item = m.group(4).strip().lower()
+        ref = m.group(5).strip().lower()
+        factor = 2.0 if factor_text in {"twice", "double"} else 0.5 if factor_text == "half" else float(factor_text)
+        ratio_edges.append((owner, item, ref, factor))
+
+    qty_by_owner_item = {}
+    for m in re.finditer(r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*)", text, re.I):
+        owner = m.group(1).strip().lower()
+        qty = float(m.group(2))
+        item = m.group(3).strip().lower()
+        qty_by_owner_item[(owner, item)] = qty
+
+    def resolve_ratio(owner, item, seen=None):
+        if seen is None:
+            seen = set()
+        key = (owner, item)
+        if key in seen:
+            return None
+        seen.add(key)
+        if (owner, item) in qty_by_owner_item:
+            return qty_by_owner_item[(owner, item)]
+        for owner_i, item_i, ref_i, factor_i in ratio_edges:
+            if owner_i == owner and item_i == item:
+                ref_val = resolve_ratio(ref_i, item, seen)
+                if ref_val is not None:
+                    return ref_val * factor_i
+        return None
+
+    if ratio_edges:
+        for left, item, ref, factor in ratio_edges:
+            base = resolve_ratio(ref, item)
+            if base is None:
+                base = num(rf"{re.escape(ref)}\s+has\s+(\d+(?:\.\d+)?)\s+{re.escape(item)}", default=1.0)
+            if base is None:
+                base = num(rf"(\d+(?:\.\d+)?)\s+{re.escape(item)}", default=1.0)
+            result = base * factor
+            add_fact("Ratio", owner=left, item=item, factor=factor, base_owner=ref)
+            add_fact("Quantity", owner=ref, item=item, qty=base)
+            add_fact("Multiply", lhs=base, rhs=factor, result=result)
+            add_equation_graph(
+                "eq:ratio_compose",
+                "multiply",
+                "ratio_compose",
+                inputs=[("base", base), ("factor", factor)],
+                outputs=[("result", result)],
+                item=item,
+                ref=ref,
+                owner=left,
+            )
+            add_fact("Query", goal="ratio_compose", args=(left, item, "?ans"), expected_value=result)
+            add_equation_graph(
+                "eq:query:ratio_compose",
+                "query",
+                "ratio_query",
+                inputs=[("result", result)],
+                outputs=[("answer", result)],
+                goal="ratio_compose",
+            )
+            return wm
 
     dozen_match = re.search(r"(\d+(?:\.\d+)?)\s+dozen\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
     if dozen_match:
@@ -971,25 +1000,56 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         )
         return wm
 
-    # Pattern: A has twice as many X as B; B has 4 times as many X as C; C has 20 sheep.
-    ratio_chain_match = re.search(r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(twice|double|half|(\d+(?:\.\d+)?)\s*(?:times|x))\s+as\s+many\s+([A-Za-z][A-Za-z\s-]*)\s+as\s+([A-Za-z][A-Za-z\s-]*)", text, re.I)
-    if ratio_chain_match:
-        left = ratio_chain_match.group(1).strip().lower()
-        factor_text = ratio_chain_match.group(3) if ratio_chain_match.group(3) else ratio_chain_match.group(2)
-        if factor_text in {"twice", "double"}:
-            factor = 2.0
-        elif factor_text == "half":
-            factor = 0.5
-        else:
-            factor = float(factor_text)
-        item = ratio_chain_match.group(4).strip().lower()
-        ref = ratio_chain_match.group(5).strip().lower()
-        base = num(r"(\d+(?:\.\d+)?)\s+" + re.escape(item.replace(' ', r'\s+')) + r"", default=1.0)
-        result = base * factor
-        add_fact("Ratio", owner=ref, item=item, factor=factor)
-        add_fact("Quantity", owner=ref, item=item, qty=base)
-        add_fact("Multiply", lhs=base, rhs=factor, result=result)
-        add_fact("Query", goal="ratio_compose", args=(ref, item, "?ans"), expected_value=result)
+    # Pattern: A has 2x as many X as B; B has 3x as many X as C; C has 10 X.
+    # Resolve these ratios recursively instead of relying on one giant regex.
+    ratio_edges = []
+    for m in re.finditer(
+        r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(twice|double|half|(\d+(?:\.\d+)?)\s*(?:times|x))\s+as\s+many\s+([A-Za-z][A-Za-z\s-]*)\s+as\s+([A-Za-z][A-Za-z\s-]*)",
+        text,
+        re.I,
+    ):
+        owner = m.group(1).strip().lower()
+        factor_text = m.group(3) if m.group(3) else m.group(2)
+        item = m.group(4).strip().lower()
+        ref = m.group(5).strip().lower()
+        factor = 2.0 if factor_text in {"twice", "double"} else 0.5 if factor_text == "half" else float(factor_text)
+        ratio_edges.append((owner, item, ref, factor))
+
+    qty_by_owner_item = {}
+    for m in re.finditer(r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*)", text, re.I):
+        owner = m.group(1).strip().lower()
+        qty = float(m.group(2))
+        item = m.group(3).strip().lower()
+        qty_by_owner_item[(owner, item)] = qty
+
+    def resolve_ratio(owner, item, seen=None):
+        if seen is None:
+            seen = set()
+        key = (owner, item)
+        if key in seen:
+            return None
+        seen.add(key)
+        if (owner, item) in qty_by_owner_item:
+            return qty_by_owner_item[(owner, item)]
+        for owner_i, item_i, ref_i, factor_i in ratio_edges:
+            if owner_i == owner and item_i == item:
+                ref_val = resolve_ratio(ref_i, item, seen)
+                if ref_val is not None:
+                    return ref_val * factor_i
+        return None
+
+    chain_values = []
+    for owner, item, ref, factor in ratio_edges:
+        base_value = resolve_ratio(ref, item)
+        if base_value is not None:
+            compounds = base_value * factor
+            chain_values.append((owner, item, base_value, factor, compounds))
+            add_fact("Ratio", owner=owner, item=item, factor=factor, base_owner=ref)
+            add_fact("Quantity", owner=ref, item=item, qty=base_value)
+            add_fact("Multiply", lhs=base_value, rhs=factor, result=compounds)
+            add_fact("Query", goal="ratio_compose", args=(owner, item, "?ans"), expected_value=compounds)
+
+    if chain_values:
         return wm
 
     # Weekly repetition pattern: "3 sprints 3 times a week, 60 meters each"
@@ -1140,21 +1200,87 @@ def benchmark_dataset(data_path, limit=None, max_cycles=4, quiet=True):
     }
 
 
+SEMANTIC_FAILURE_FAMILIES = [
+    {
+        "family": "ratio_single",
+        "question": "A has twice as many apples as B. B has 10 apples.",
+        "expected": 20.0,
+    },
+    {
+        "family": "ratio_chained",
+        "question": "A has 2 times as many apples as B. B has 3 times as many apples as C. C has 10 apples.",
+        "expected": 60.0,
+    },
+    {
+        "family": "remaining_quantity",
+        "question": "A has 20 apples and gives away 5.",
+        "expected": 15.0,
+    },
+    {
+        "family": "percent_remaining",
+        "question": "There were 20 apples. 25% of the remaining 12 apples were eaten. How many apples are left?",
+        "expected": 9.0,
+    },
+    {
+        "family": "sales_total",
+        "question": "A bakery sells 40 cupcakes at $2 each.",
+        "expected": 80.0,
+    },
+    {
+        "family": "rate_time",
+        "question": "A worker earns $15 per hour for 4 hours.",
+        "expected": 60.0,
+    },
+]
+
+
+def benchmark_failure_families(families=None, max_cycles=4, quiet=True):
+    """Run a compact validation set covering the current semantic binding failure families."""
+    items = families or SEMANTIC_FAILURE_FAMILIES
+    results = []
+    solved = 0
+    for item in items:
+        result = benchmark_single_problem(
+            item["question"],
+            item["expected"],
+            max_cycles=max_cycles,
+            quiet=quiet,
+        )
+        result["family"] = item["family"]
+        if result["solved"]:
+            solved += 1
+        results.append(result)
+
+    return {
+        "total": len(results),
+        "solved": solved,
+        "results": results,
+    }
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run the AGI cognitive loop against a GSM8K dataset slice.")
-    parser.add_argument("--data-path", default="logic_transformer/data/gsm8k/main_test.jsonl")
+    parser = argparse.ArgumentParser(description="Run the AGI cognitive loop against a GSM8K dataset slice or a semantic benchmark set.")
+    parser.add_argument("--data-path", default=None)
     parser.add_argument("--limit", type=int, default=5)
     parser.add_argument("--cycles", type=int, default=4)
     parser.add_argument("--quiet", action="store_true")
+    parser.add_argument("--family-benchmark", action="store_true", help="Run the compact semantic failure benchmark instead of a GSM8K dataset file.")
     args = parser.parse_args()
 
-    path = Path(args.data_path)
-    if not path.exists():
-        raise FileNotFoundError(f"Missing dataset: {path}")
+    if args.family_benchmark or args.data_path is None:
+        report = benchmark_failure_families(max_cycles=args.cycles, quiet=args.quiet)
+        print(f"Semantic benchmark: {report['solved']} / {report['total']} families solved.")
+        if not args.quiet:
+            for item in report["results"]:
+                print(f"[{item['family']}] expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")
+    else:
+        path = Path(args.data_path)
+        if not path.exists():
+            raise FileNotFoundError(f"Missing dataset: {path}")
 
-    report = benchmark_dataset(str(path), limit=args.limit, max_cycles=args.cycles, quiet=args.quiet)
-    print(f"GSM8K benchmark on {report['total']} examples: {report['solved']} solved, {report['total'] - report['solved']} unsolved.")
-    if not args.quiet:
-        for item in report["results"]:
-            print(f"Q: {item['question']}")
-            print(f"  expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")
+        report = benchmark_dataset(str(path), limit=args.limit, max_cycles=args.cycles, quiet=args.quiet)
+        print(f"GSM8K benchmark on {report['total']} examples: {report['solved']} solved, {report['total'] - report['solved']} unsolved.")
+        if not args.quiet:
+            for item in report["results"]:
+                print(f"Q: {item['question']}")
+                print(f"  expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")

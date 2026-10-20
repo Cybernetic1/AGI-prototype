@@ -154,7 +154,7 @@ G. 如果有 first-order relation 的时候, 则使用之. 但如果有 modifier
 H. 换句话说, 保留 naïve first-order relations 有压缩效果. 在 nDS 里其实有没有
    可能保留 FO 关系呢? 这样会增加 WMEs 的个数, 但或许仍然值得. 不然就是每个 rule
    要 macro expand, 那似乎更麻烦. 但问题是 FO 关系没有了 instance 讯息, 这有
-   问题吗? John loves Mary 是成立的. 会不会导致歧义呢? 我指的歧义当然就是指一个
+   问题吗? John loves Mary 是成立的. 会不会导致歧义呢? 我指的歧义是指, 一个
    instance 的关系跟另一个 instance 混肴了. 因为我们不再知道这个关系属于 instance1.
    John loves Mary, but the other John hates Mary.
 

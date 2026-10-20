@@ -7,10 +7,9 @@ from pathlib import Path
 import re
 
 # Add paths to import ontology and tpc
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(BASE_DIR / 'forward-engine'))
-sys.path.append(str(BASE_DIR / 'gsm8k-tests' / 'lt_core'))
-sys.path.append(str(BASE_DIR / 'logic-transformer'))
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR / 'forward_engine'))
+sys.path.append(str(BASE_DIR / 'logic_transformer'))
 
 from phase3_synthetic_test import ontology_classify
 import train_pot_clause as tpc

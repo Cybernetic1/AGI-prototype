@@ -94,3 +94,15 @@ GitHub commit timing recommendation
 - Good time to commit: after the next focused benchmark pass stabilizes on 2–3 representative failure families and before you start a broader refactor or large dataset run.
 - Not yet the best time: while the compiler is still mid-fix and the behavior is changing rapidly; noisy commits are less useful during active semantics churn.
 - Best practice for this repo: commit a checkpoint after a meaningful, explainable milestone (for example: `ratio + percent + remaining quantity compiler fix + benchmark regression set`) rather than on every exploratory edit.
+
+2026-10-21 validation pass: compact semantic regression set
+- Added a compact benchmark in `cognitive_loop.py` covering the active semantic families: ratio, chained ratio, remaining quantity, sales total, rate-time, and a percent-of-remaining case.
+- Verified on the current code: 5 / 6 families solved. The single failing family is the ambiguous percent-of-remaining composition, which remains the highest-value next target.
+- This is a useful checkpoint because it keeps the project honest: arithmetic is no longer the main issue; semantic binding and scope remain the bottleneck.
+- The background cognitive loop remains useful only when run against a stable, narrow validation set, not as a broad, noisy benchmark while core semantic fixes are still in flux.
+
+Immediate next actions
+1) Fix the percent-of-remaining / remaining-quantity ambiguity at the compiler layer so the semantic graph stores both total and consumed quantities explicitly.
+2) Add a second validation example for mixed state transitions (e.g. partial spend + remaining + rate-time) to make the next regression set harder and more representative.
+3) Re-run the compact family benchmark after each change and do not broaden to full GSM8K sweeps until the failure families are stable.
+4) Commit only once the remaining family is fixed and the benchmark stays green across the targeted slice.
