@@ -776,6 +776,41 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         )
         return wm
 
+    # Pattern: combined state transition: total -> used -> remaining -> percent-of-remaining.
+    # Example: “There were 20 apples. She gave away 8. 25% of the remaining 12 apples were eaten.”
+    mixed_remaining_percent = re.search(
+        r"(?:there\s+were|there\s+are|had|he\s+had|she\s+had)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)(?:.*?)(?:gave|give|gave away|spent|used|lost|ate|sold)\s+(\d+(?:\.\d+)?)\s+(?:.*?)(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)(?:\s+were|\s+was)\s+(?:eaten|used|spent|lost|left)",
+        text,
+        re.I,
+    )
+    if mixed_remaining_percent:
+        total = float(mixed_remaining_percent.group(1))
+        item = mixed_remaining_percent.group(2).strip().lower()
+        prior_used = float(mixed_remaining_percent.group(3))
+        pct = float(mixed_remaining_percent.group(4)) / 100.0
+        remaining_qty = float(mixed_remaining_percent.group(5))
+        remaining_item = mixed_remaining_percent.group(6).strip().lower() or item
+        remaining_after_prior = total - prior_used
+        eaten = remaining_after_prior * pct
+        remaining = remaining_after_prior - eaten
+        add_fact("Quantity", owner="unknown", item=item, qty=total)
+        add_fact("Quantity", owner="unknown", item=remaining_item, qty=remaining_after_prior)
+        add_fact("Consumed", owner="unknown", item=remaining_item, qty=prior_used)
+        add_fact("Consumed", owner="unknown", item=remaining_item, qty=eaten)
+        add_fact("Percent", owner="unknown", item=remaining_item, pct=pct)
+        add_fact("Multiply", lhs=remaining_after_prior, rhs=pct, result=eaten)
+        add_fact("Subtract", lhs=remaining_after_prior, rhs=eaten, result=remaining)
+        add_fact("Query", goal="remaining_quantity", args=("unknown", remaining_item, "?ans"), expected_value=remaining)
+        add_equation_graph(
+            "eq:remaining_percent_state",
+            "subtract",
+            "remaining_quantity",
+            inputs=[("remaining_after_prior", remaining_after_prior), ("eaten", eaten)],
+            outputs=[("remaining", remaining)],
+            item=remaining_item,
+        )
+        return wm
+
     # Pattern: percent-of-remainder (e.g. “25% of the remaining 12 apples were eaten”).
     remainder_percent_match = re.search(r"(?:there\s+were|there\s+are|had)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)\.?\s+(?:.*?)(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)(?:\s+were|\s+was)\s+(?:eaten|used|spent|lost|left)", text, re.I)
     if remainder_percent_match:
