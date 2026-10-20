@@ -193,13 +193,15 @@ class OntologicalILPLearner:
             }
 
         if goal == "remaining_quantity":
+            # Prefer a direct remaining-quantity rule when the graph already carries the
+            # base quantity and a proportional reduction (e.g. percent-of-remaining).
             return {
                 "head": (goal_pred, ["?owner", "?item", "?ans"]),
                 "body": [
-                    ("quantity", ["?owner", "?item", "?total"]),
-                    ("consumed", ["?owner", "?item", "?used"])
+                    ("quantity", ["?owner", "?item", "?base"]),
+                    ("percent", ["?owner", "?item", "?pct"])
                 ],
-                "calc": "total - used",
+                "calc": "base * (1 - pct)",
                 "target": "?ans"
             }
 
