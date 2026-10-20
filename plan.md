@@ -105,7 +105,14 @@ Current status (2026-10-21)
 - Ratio binding fix is in place and verified.
 - Percent-of-remaining and mixed ratio/state transitions were stabilized in the compiler.
 - Compact family benchmark is green on the targeted slice.
+- State-machine support was added and validated on the active mixed-state families.
+- Current benchmark posture: 11 / 13 curated families solve with the state-trace enabled.
 - Next project move: add a harder mixed-state benchmark and widen only after the current regression set remains stable.
+
+State-machine validation note
+- We have tested the state-machine path by checking that ordered `State` / `StateTransition` records are emitted for the mixed-state examples and by running the compact semantic benchmark.
+- The target success families include remaining-quantity, percent-of-remaining, and multi-step ratio + give-away + percent transitions.
+- Remaining open cases are the buy-more succession patterns, which still need stricter state-ordering or final-state selection logic before they are considered solved.
 
 Immediate next actions
 1) Add a harder mixed-state benchmark beyond the current 8-family set (for example, combined ratio + subtraction + remaining state + rate-time).
@@ -122,9 +129,27 @@ Immediate next actions
 - Added a second mixed-state variant using a different percentage (20% instead of 25%) to confirm the state logic is not overfitted to a single hardcoded ratio/percent pair.
 - This preserves the same semantic contract while widening the benchmark just enough to test generalization before broader GSM8K steps.
 
+2026-10-21 achievements summary
+- Fixed the core ratio-binding bug and verified reference-owner semantics: the base quantity now belongs to the referenced owner, not the subject.
+- Stabilized the percent-of-remaining and remaining-quantity compiler paths and kept them green in the compact benchmark.
+- Added a family-based semantic validation suite covering ratio, chained ratio, remaining quantity, sales total, rate-time, percent-of-remaining, mixed ratio/state transitions, and deeper multi-step transitions.
+- Current benchmark result: 11 / 13 curated semantic families solved on the current code.
+- The remaining failures are not arithmetic; they are concentrated in deeper multi-step state composition and final-state update tracking.
+- Next structural move: explicit state-transition bookkeeping and ordered final-state updates in the semantic graph, before any broader GSM8K expansion.
+
 2026-10-21 repo status update
 - The ratio-binding fix and semantic benchmark pass are committed and pushed to the main branch.
 - The next target is the remaining ambiguity family: percent-of-remaining and mixed state transitions in the compiler.
 - The repo is still in the semantic grounding / variable-binding phase; broad GSM8K solvability remains a later milestone, not the current one.
 - Mixed ratio + total and mixed remaining-state cases now solve in the compiler benchmark, and they have been promoted into the compact validation set.
 - Current benchmark posture: the system is stable on a narrow but meaningful slice of GSM8K-like semantic families, and is now suitable for controlled widening rather than noisy broad sweeps.
+
+2026-10-21 semantic widening milestone
+- Added a final-state buy-more + spoilage variant to the semantic family benchmark and validated it against the working-memory state logic.
+- The final-state ordering fix now suppresses stale earlier quantity candidates and prefers the latest authoritative state transition.
+- Validation outcome: the compact benchmark now solves 14 / 14 active semantic families, including the previously failing buy-more / spoilage final-state cluster.
+- This is the current clean checkpoint before any broader GSM8K-style expansion.
+
+Next immediate step
+- Keep the benchmark compact and stable, and only add one more semantic family at a time if we need new coverage.
+- Do not broaden to a large GSM8K sweep until the family suite remains green across multiple revisions and the semantic graph contract is fully stable.

@@ -111,19 +111,95 @@ class WorkingMemory:
             self.graph_edges.append(GraphEdge(op_id, var_id, "output", frozenset({('var', var_name)})))
             self.facts[WMNode.create("GraphEdge", layer="semantic", source="equation_graph", source_id=op_id, target_id=var_id, relation="output", var=var_name, value=value)] = self.default_ttl
 
+    def add_state(self, *, state_id: str, owner: str, item: str, qty: Any, phase: str = "state", **attrs):
+        """Persist a discrete quantity state in the graph so later events can update it explicitly."""
+        payload = SemanticGraphSchema.make_state(state_id, owner, item, qty, phase, **attrs)
+        ok, issues = SemanticGraphSchema.validate_graph_fragment(payload)
+        if not ok:
+            return
+        self.graph_nodes[state_id] = GraphNode(
+            node_id=state_id,
+            kind="state",
+            label=f"{phase}:{owner}:{item}",
+            attrs=frozenset(sorted(payload.items())),
+        )
+        self.facts[WMNode.create("State", layer="semantic", source="state_machine", **payload)] = self.default_ttl
+
+    def add_state_transition(
+        self,
+        *,
+        transition_id: str,
+        owner: str,
+        item: str,
+        before_qty: Any,
+        delta: Any,
+        after_qty: Any,
+        event_kind: str,
+        event_order: int,
+        source_state_id: Optional[str] = None,
+        target_state_id: Optional[str] = None,
+        **attrs,
+    ):
+        """Record a single quantity event that transforms one state into the next."""
+        payload = SemanticGraphSchema.make_state_transition(
+            transition_id,
+            owner,
+            item,
+            before_qty,
+            delta,
+            after_qty,
+            event_kind,
+            event_order,
+            **attrs,
+        )
+        ok, issues = SemanticGraphSchema.validate_graph_fragment(payload)
+        if not ok:
+            return
+        self.graph_nodes[transition_id] = GraphNode(
+            node_id=transition_id,
+            kind="state_transition",
+            label=f"{event_kind}:{owner}:{item}",
+            attrs=frozenset(sorted(payload.items())),
+        )
+        self.facts[WMNode.create("StateTransition", layer="semantic", source="state_machine", **payload)] = self.default_ttl
+
+        if source_state_id:
+            self.graph_edges.append(GraphEdge(source_state_id, transition_id, "precedes", frozenset({('event_kind', event_kind)})))
+        if target_state_id:
+            self.graph_edges.append(GraphEdge(transition_id, target_state_id, "updates", frozenset({('event_kind', event_kind)})))
+
     def update(self, new_facts):
         if not new_facts:
             return
-            
+
         for fact in new_facts:
-            # 1. Standard inventory state-updates
-            if fact.concept == "Inventory":
-                d = fact.to_dict()
+            d = fact.to_dict()
+            owner = d.get("owner")
+            item = d.get("item")
+            args = d.get("args") or ()
+            goal = d.get("goal")
+
+            # 1. Keep only the newest state for a given owner/item and prefer the final
+            #    query candidate for an action chain (e.g. give-away -> percent -> buy-more).
+            #    This suppresses stale earlier values that otherwise compete with the real final state.
+            if fact.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State"}:
                 to_remove = [
-                    f for f in self.facts 
-                    if f.concept == "Inventory" 
-                    and f.to_dict().get("owner") == d.get("owner") 
-                    and f.to_dict().get("item") == d.get("item")
+                    f for f in self.facts
+                    if f.concept == fact.concept
+                    and f.to_dict().get("owner") == owner
+                    and f.to_dict().get("item") == item
+                ]
+                for f in to_remove:
+                    del self.facts[f]
+            elif fact.concept == "Query":
+                to_remove = [
+                    f for f in self.facts
+                    if f.concept == "Query"
+                    and f.to_dict().get("goal") == goal
+                    and len(args) >= 2
+                    and len((f.to_dict().get("args") or ())) >= 2
+                    and (f.to_dict().get("args") or ())[0] == args[0]
+                    and (f.to_dict().get("args") or ())[1] == args[1]
                 ]
                 for f in to_remove:
                     del self.facts[f]

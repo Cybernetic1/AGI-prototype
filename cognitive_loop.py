@@ -207,14 +207,29 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
     # query and fall back to the first candidate only when necessary.
     query_nodes = [n for n in current_wm if n.concept == "Query"]
     if query_nodes:
-        preferred = None
-        for node in query_nodes:
-            goal = node.to_dict().get("goal")
-            if goal in {"total_quantity", "remaining_quantity", "final_price", "alternate_price_total"}:
-                preferred = node
-                break
-        if preferred is None:
-            preferred = query_nodes[0]
+        def query_score(node):
+            attrs = node.to_dict()
+            goal = attrs.get("goal")
+            args = tuple(attrs.get("args") or ())
+            owner = args[0] if len(args) > 0 else None
+            item = args[1] if len(args) > 1 else None
+            event_order = attrs.get("event_order")
+            if event_order is None:
+                event_order = 0
+            goal_priority = {
+                "total_quantity": 5,
+                "remaining_quantity": 4,
+                "final_price": 3,
+                "alternate_price_total": 3,
+                "ratio_compose": 1,
+            }.get(goal, 0)
+            return (
+                goal_priority,
+                int(event_order),
+                float(attrs.get("expected_value") or 0.0),
+                1 if (owner and item) else 0,
+            )
+        preferred = max(query_nodes, key=query_score)
         q_attrs = preferred.to_dict()
         goal_pred = q_attrs.get("goal")
         goal_args = list(q_attrs.get("args", []))
@@ -432,6 +447,41 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
 def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
     wm = WorkingMemory(default_ttl=5)
 
+    def add_quantity_state_sequence(owner, item, initial_qty, events):
+        """Emit an ordered state-trace for multi-step quantity problems.
+
+        Each event produces a new quantity state, and each transition records the
+        before/after quantity along with a monotonic event order. This keeps later
+        reasoning grounded in explicit state progression instead of competing
+        ambiguous "remaining" candidates from a flat flat fact set.
+        """
+        if not events:
+            wm.add_state(state_id=f"state:{owner}:{item}:initial", owner=owner, item=item, qty=initial_qty, phase="initial")
+            return
+
+        previous_qty = initial_qty
+        previous_state_id = f"state:{owner}:{item}:initial"
+        wm.add_state(state_id=previous_state_id, owner=owner, item=item, qty=initial_qty, phase="initial")
+
+        for idx, (event_kind, delta, after_qty) in enumerate(events, start=1):
+            transition_id = f"state_transition:{owner}:{item}:{event_kind}:{idx}"
+            new_state_id = f"state:{owner}:{item}:{event_kind}:{idx}"
+            wm.add_state_transition(
+                transition_id=transition_id,
+                owner=owner,
+                item=item,
+                before_qty=previous_qty,
+                delta=delta,
+                after_qty=after_qty,
+                event_kind=event_kind,
+                event_order=idx,
+                source_state_id=previous_state_id,
+                target_state_id=new_state_id,
+            )
+            wm.add_state(state_id=new_state_id, owner=owner, item=item, qty=after_qty, phase=event_kind)
+            previous_qty = after_qty
+            previous_state_id = new_state_id
+
     # Structured GSM8K compiler.
     # We keep a compact, canonical predicate vocabulary and map several common
     # arithmetic and state-transition families into it. This is still heuristic,
@@ -448,6 +498,13 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
             return float(val)
         except ValueError:
             return default
+
+    def normalize_owner_name(value):
+        if value is None:
+            return "unknown"
+        cleaned = re.sub(r"\b(?:then|later|afterward|afterwards|next)\b", "", str(value).lower()).strip()
+        cleaned = re.sub(r"\s+", " ", cleaned)
+        return cleaned or "unknown"
 
     def add_fact(concept, **kwargs):
         canonical = SemanticGraphSchema.canonicalize_fact(concept, **kwargs)
@@ -595,6 +652,12 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
             owner="unknown",
         )
         add_fact("Query", goal="remaining_quantity", args=("unknown", item_name, "?ans"), expected_value=left)
+        add_quantity_state_sequence(
+            "unknown",
+            item_name,
+            total,
+            [("gave_away", -used, left)],
+        )
         add_equation_graph(
             "eq:query:remaining_quantity",
             "query",
@@ -801,6 +864,15 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_fact("Multiply", lhs=remaining_after_prior, rhs=pct, result=eaten)
         add_fact("Subtract", lhs=remaining_after_prior, rhs=eaten, result=remaining)
         add_fact("Query", goal="remaining_quantity", args=("unknown", remaining_item, "?ans"), expected_value=remaining)
+        add_quantity_state_sequence(
+            "unknown",
+            remaining_item,
+            total,
+            [
+                ("gave_away", -prior_used, remaining_after_prior),
+                ("percent_of_remaining", -eaten, remaining),
+            ],
+        )
         add_equation_graph(
             "eq:remaining_percent_state",
             "subtract",
@@ -828,6 +900,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_fact("Multiply", lhs=remaining_qty, rhs=pct, result=eaten)
         add_fact("Subtract", lhs=remaining_qty, rhs=eaten, result=remaining)
         add_fact("Query", goal="remaining_quantity", args=("unknown", remaining_item, "?ans"), expected_value=remaining)
+        add_quantity_state_sequence("unknown", remaining_item, remaining_qty, [("percent_of_remaining", -eaten, remaining)])
         add_equation_graph(
             "eq:remaining_percent",
             "subtract",
@@ -851,6 +924,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_fact("Multiply", lhs=remaining_qty, rhs=pct, result=eaten)
         add_fact("Subtract", lhs=remaining_qty, rhs=eaten, result=remaining)
         add_fact("Query", goal="remaining_quantity", args=("unknown", item_name, "?ans"), expected_value=remaining)
+        add_quantity_state_sequence("unknown", item_name, remaining_qty, [("percent_of_remaining", -eaten, remaining)])
         return wm
 
     # Generic remaining-percent state: “50% of the remaining 8 oranges are used.”
@@ -867,6 +941,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_fact("Multiply", lhs=remaining_qty, rhs=pct, result=eaten)
         add_fact("Subtract", lhs=remaining_qty, rhs=eaten, result=remaining)
         add_fact("Query", goal="remaining_quantity", args=("unknown", item_name, "?ans"), expected_value=remaining)
+        add_quantity_state_sequence("unknown", item_name, remaining_qty, [("percent_of_remaining", -eaten, remaining)])
         return wm
 
     # Pattern: repeated event totals and overtime wages.
@@ -1034,7 +1109,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         )
         give_away_match = re.search(r"([A-Za-z][A-Za-z\s-]*)\s+gives?\s+away\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
         if give_away_match:
-            owner = give_away_match.group(1).strip().lower()
+            owner = normalize_owner_name(give_away_match.group(1))
             given = float(give_away_match.group(2))
             item = give_away_match.group(3).strip().lower()
             base = resolve_ratio(owner, item) or qty_by_owner_item.get((owner, item))
@@ -1046,21 +1121,24 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                     final_remaining = remaining_after_prior - sold
                     add_fact("Quantity", owner=owner, item=item, qty=base)
                     add_fact("Quantity", owner=owner, item=item, qty=remaining_after_prior)
+                    qty_by_owner_item[(owner, item)] = final_remaining
                     add_fact("Consumed", owner=owner, item=item, qty=given)
                     add_fact("Consumed", owner=owner, item=item, qty=sold)
                     add_fact("Percent", owner=owner, item=item, pct=pct)
                     add_fact("Multiply", lhs=remaining_after_prior, rhs=pct, result=sold)
                     add_fact("Subtract", lhs=remaining_after_prior, rhs=sold, result=final_remaining)
                     add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=final_remaining)
-                    return wm
-                add_fact("Quantity", owner=owner, item=item, qty=base)
-                add_fact("Quantity", owner=owner, item=item, qty=remaining_after_prior)
-                add_fact("Consumed", owner=owner, item=item, qty=given)
-                add_fact("Subtract", lhs=base, rhs=given, result=remaining_after_prior)
-                add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=remaining_after_prior)
-                return wm
+                    add_quantity_state_sequence(owner, item, base, [("gave_away", -given, remaining_after_prior), ("percent_of_remaining", -sold, final_remaining)])
+                else:
+                    add_fact("Quantity", owner=owner, item=item, qty=base)
+                    add_fact("Quantity", owner=owner, item=item, qty=remaining_after_prior)
+                    qty_by_owner_item[(owner, item)] = remaining_after_prior
+                    add_fact("Consumed", owner=owner, item=item, qty=given)
+                    add_fact("Subtract", lhs=base, rhs=given, result=remaining_after_prior)
+                    add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=remaining_after_prior)
+                    add_quantity_state_sequence(owner, item, base, [("gave_away", -given, remaining_after_prior)])
 
-        if ratio_edges and followup_pct_match:
+        if ratio_edges and followup_pct_match and not give_away_match:
             owner = ratio_edges[0][0]
             item = ratio_edges[0][1]
             base = resolve_ratio(owner, item) or qty_by_owner_item.get((owner, item))
@@ -1069,24 +1147,48 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 sold = base * pct
                 remaining = base - sold
                 add_fact("Quantity", owner=owner, item=item, qty=base)
+                qty_by_owner_item[(owner, item)] = remaining
                 add_fact("Consumed", owner=owner, item=item, qty=sold)
                 add_fact("Percent", owner=owner, item=item, pct=pct)
                 add_fact("Multiply", lhs=base, rhs=pct, result=sold)
                 add_fact("Subtract", lhs=base, rhs=sold, result=remaining)
                 add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=remaining)
-                return wm
+                add_quantity_state_sequence(owner, item, base, [("percent_of_remaining", -sold, remaining)])
 
         buy_more_match = re.search(r"([A-Za-z][A-Za-z\s-]*)\s+buys?\s+(\d+(?:\.\d+)?)\s+more\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
         if buy_more_match:
-            owner = buy_more_match.group(1).strip().lower()
+            owner = normalize_owner_name(buy_more_match.group(1))
             extra = float(buy_more_match.group(2))
             item = buy_more_match.group(3).strip().lower()
-            base = resolve_ratio(owner, item) or qty_by_owner_item.get((owner, item))
+            item = re.sub(r"\s+\b(?:and|then|after|later|more)\b.*$", "", item).strip().lower()
+            base = qty_by_owner_item.get((owner, item), resolve_ratio(owner, item))
+            if base is None:
+                base = resolve_ratio(owner, item)
             if base is not None:
                 total = base + extra
+                spoilage_match = re.search(
+                    r"(?:and|,)\s*(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)\s+(?:are|is|were|was)\s+(?:spoiled|rotten|damaged|lost|wasted)",
+                    text,
+                    re.I,
+                )
+                final_total = total
+                if spoilage_match:
+                    spoiled_item = re.sub(r"\s+\b(?:and|then|after|later|more)\b.*$", "", spoilage_match.group(2).strip().lower()).strip()
+                    if spoiled_item == item:
+                        spoiled = float(spoilage_match.group(1))
+                        final_total = total - spoiled
+                        qty_by_owner_item[(owner, item)] = final_total
+                        add_fact("Quantity", owner=owner, item=item, qty=final_total)
+                        add_fact("Consumed", owner=owner, item=item, qty=spoiled)
+                        add_fact("Subtract", lhs=total, rhs=spoiled, result=final_total)
+                        add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=final_total)
+                        add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total), ("spoiled", -spoiled, final_total)])
+                        return wm
+                qty_by_owner_item[(owner, item)] = total
                 add_fact("Quantity", owner=owner, item=item, qty=total)
                 add_fact("Add", lhs=base, rhs=extra, result=total)
                 add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=total)
+                add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total)])
                 return wm
 
         if re.search(r"together|total|combined|altogether", text, re.I):
@@ -1255,6 +1357,24 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_fact("Consumed", owner="james", item="meters", qty=0.0)
         return wm
 
+    # Generic stateful quantity relation: quantity + give-away + later remaining-percent progression.
+    # This catches natural-language variants such as “There were 20 apples. She gave away 8...”
+    # even when the earlier regexes do not match exactly.
+    generic_qty_match = re.search(r"(\d+(?:\.\d+)?)\s+(?:apples|eggs|items|students|books|balls|cups|bolts|flowers|donuts|candy|cookies|tickets)", text, re.I)
+    generic_giveaway_match = re.search(r"(?:gave|give|gives|gave away|spent|used|lost|ate|eat)\s+(\d+(?:\.\d+)?)", text, re.I)
+    if generic_qty_match and generic_giveaway_match and ("remaining" in lower or "percent" in lower):
+        qty = float(generic_qty_match.group(1))
+        let_go = float(generic_giveaway_match.group(1))
+        item_match = re.search(r"(?:apples|eggs|items|students|books|balls|cups|bolts|flowers|donuts|candy|cookies|tickets)", text, re.I)
+        item_name = item_match.group(0).lower() if item_match else "item"
+        remaining = qty - let_go
+        add_fact("Quantity", owner="unknown", item=item_name, qty=qty)
+        add_fact("Consumed", owner="unknown", item=item_name, qty=let_go)
+        add_fact("Subtract", lhs=qty, rhs=let_go, result=remaining)
+        add_fact("Query", goal="remaining_quantity", args=("unknown", item_name, "?ans"), expected_value=remaining)
+        add_quantity_state_sequence("unknown", item_name, qty, [("gave_away", -let_go, remaining)])
+        return wm
+
     # Generic quantity relation pattern: "X has Y and Z more" / "X has 20 apples and gives away 5".
     if re.search(r"(\d+(?:\.\d+)?)\s+(?:apples|eggs|items|students|books|balls|cups|bolts)", text, re.I):
         qty = num(r"(\d+(?:\.\d+)?)\s+(?:apples|eggs|items|students|books|balls|cups|bolts)")
@@ -1270,8 +1390,10 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 add_fact("Consumed", owner=owner_name, item=item_name, qty=let_go)
                 add_fact("Subtract", lhs=qty, rhs=let_go, result=remaining)
                 add_fact("Query", goal="remaining_quantity", args=(owner_name, item_name, "?ans"), expected_value=remaining)
+                add_quantity_state_sequence(owner_name, item_name, qty, [("gave_away", -let_go, remaining)])
             else:
                 add_fact("Query", goal="total_quantity", args=(owner_name, item_name, "?ans"), expected_value=qty)
+                add_quantity_state_sequence(owner_name, item_name, qty, [])
             return wm
 
     # Generic fallback: create a small inventory scenario if the text mentions transfer/give.
@@ -1453,6 +1575,11 @@ SEMANTIC_FAILURE_FAMILIES = [
         "family": "ratio_state_percent_buy_more_final_gap",
         "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?",
         "expected": 15.0,
+    },
+    {
+        "family": "ratio_state_percent_buy_more_final_gap_variant",
+        "question": "A has 4 times as many apples as B. B has 8 apples. A gives away 10 apples. 25% of the remaining apples are eaten. A then buys 6 more apples and 3 apples are spoiled. How many apples does A have?",
+        "expected": 19.5,
     },
 ]
 
