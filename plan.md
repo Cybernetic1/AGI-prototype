@@ -77,3 +77,20 @@ Assessment: prospects for GSM8K
 - With focused work on those modules plus end-to-end autoregressive training and larger LT exports, meaningful gains are achievable.
 
 If you agree, schedule: run end-to-end training on faster machine (week-long or GPU instance), then evaluate on scaffold and iterate on numeric grounding and parser accuracy.
+
+2026-10-21 status update: semantic binding fix
+- Fixed the core ratio-binding bug: the base quantity was incorrectly attached to the subject rather than the reference entity.
+- Ratio now follows the correct contract: `Ratio(owner=A, base_owner=B, item=apples, factor=2.0)` and `Quantity(owner=B, item=apples, qty=10)` -> result `A = 2 * B`.
+- Verified on targeted cases: single-letter and multi-word ratio cases now solve correctly, including half/double/3x examples.
+- Remaining next work is not broad arithmetic; it is semantic coverage and variable binding for deeper families: chained ratios, percent stacking, unit conversion, remaining-quantity ambiguity, and mixed state transitions.
+
+Current priority queue
+1) Improve semantic composer for ratio + percent + remaining quantity families in the compiler.
+2) Add a tiny validation set covering failing families and keep these as regression tests.
+3) Re-run focused benchmark families after each change to avoid drift.
+4) Only when a benchmarked slice is stable and we have a clean diff should we create a GitHub commit.
+
+GitHub commit timing recommendation
+- Good time to commit: after the next focused benchmark pass stabilizes on 2–3 representative failure families and before you start a broader refactor or large dataset run.
+- Not yet the best time: while the compiler is still mid-fix and the behavior is changing rapidly; noisy commits are less useful during active semantics churn.
+- Best practice for this repo: commit a checkpoint after a meaningful, explainable milestone (for example: `ratio + percent + remaining quantity compiler fix + benchmark regression set`) rather than on every exploratory edit.
