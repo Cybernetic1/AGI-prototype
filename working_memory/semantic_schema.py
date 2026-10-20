@@ -29,6 +29,8 @@ class SemanticGraphSchema:
         "query",
         "variable",
         "dependency",
+        "state",
+        "state_transition",
     }
 
     REQUIRED_BY_KIND = {
@@ -41,6 +43,8 @@ class SemanticGraphSchema:
         "query": {"id", "goal", "target_var"},
         "variable": {"id", "label", "value"},
         "dependency": {"source", "target", "relation"},
+        "state": {"id", "owner", "item", "qty", "phase"},
+        "state_transition": {"id", "owner", "item", "before_qty", "delta", "after_qty", "event_kind", "event_order"},
     }
 
     @classmethod
@@ -176,6 +180,54 @@ class SemanticGraphSchema:
             "rhs_var": rhs_var,
             "result_var": result_var,
         }
+
+    @classmethod
+    def make_state(
+        cls,
+        state_id: str,
+        owner: str,
+        item: str,
+        qty: Any,
+        phase: str,
+        **attrs: Any,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "state",
+            "id": state_id,
+            "owner": owner,
+            "item": item,
+            "qty": qty,
+            "phase": phase,
+        }
+        payload.update(attrs)
+        return payload
+
+    @classmethod
+    def make_state_transition(
+        cls,
+        transition_id: str,
+        owner: str,
+        item: str,
+        before_qty: Any,
+        delta: Any,
+        after_qty: Any,
+        event_kind: str,
+        event_order: int,
+        **attrs: Any,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "state_transition",
+            "id": transition_id,
+            "owner": owner,
+            "item": item,
+            "before_qty": before_qty,
+            "delta": delta,
+            "after_qty": after_qty,
+            "event_kind": event_kind,
+            "event_order": event_order,
+        }
+        payload.update(attrs)
+        return payload
 
     @classmethod
     def dependency(cls, source: str, target: str, relation: str, **attrs: Any) -> Dict[str, Any]:
