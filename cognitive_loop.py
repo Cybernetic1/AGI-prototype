@@ -1434,6 +1434,11 @@ SEMANTIC_FAILURE_FAMILIES = [
         "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 25% of the remaining apples are eaten. How many apples are left?",
         "expected": 11.25,
     },
+    {
+        "family": "ratio_state_percent_variant",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. How many apples are left?",
+        "expected": 12.0,
+    },
 ]
 
 

@@ -118,6 +118,10 @@ Immediate next actions
 - The goal is to ensure the compiler preserves reference-owner difference, remaining-state tracking, and percent-of-remaining composition together in one example.
 - If this pattern remains stable, the next step is a slightly broader mixed-state slice; if it fails, we tighten the state-transition contract before any broader GSM8K widening.
 
+2026-10-21 variant widening
+- Added a second mixed-state variant using a different percentage (20% instead of 25%) to confirm the state logic is not overfitted to a single hardcoded ratio/percent pair.
+- This preserves the same semantic contract while widening the benchmark just enough to test generalization before broader GSM8K steps.
+
 2026-10-21 repo status update
 - The ratio-binding fix and semantic benchmark pass are committed and pushed to the main branch.
 - The next target is the remaining ambiguity family: percent-of-remaining and mixed state transitions in the compiler.
