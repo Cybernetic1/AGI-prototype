@@ -96,16 +96,22 @@ GitHub commit timing recommendation
 - Best practice for this repo: commit a checkpoint after a meaningful, explainable milestone (for example: `ratio + percent + remaining quantity compiler fix + benchmark regression set`) rather than on every exploratory edit.
 
 2026-10-21 validation pass: compact semantic regression set
-- Added a compact benchmark in `cognitive_loop.py` covering the active semantic families: ratio, chained ratio, remaining quantity, sales total, rate-time, and a percent-of-remaining case.
-- Verified on the current code: 5 / 6 families solved. The single failing family is the ambiguous percent-of-remaining composition, which remains the highest-value next target.
-- This is a useful checkpoint because it keeps the project honest: arithmetic is no longer the main issue; semantic binding and scope remain the bottleneck.
-- The background cognitive loop remains useful only when run against a stable, narrow validation set, not as a broad, noisy benchmark while core semantic fixes are still in flux.
+- Added a compact benchmark in `cognitive_loop.py` covering the active semantic families: ratio, chained ratio, remaining quantity, sales total, rate-time, and percent-of-remaining cases.
+- Verified on the current code: 8 / 8 families in the current compact benchmark solve. This gives a clean, stable slice for continued iteration.
+- The remaining challenge is not arithmetic but broader semantic coverage: deeper mixed-state compositions, ambiguous entity ownership, and multi-constraint multi-step reasoning beyond the current curated patterns.
+- The background cognitive loop is useful as a benchmark harness only when run against a stable, narrow validation set; it is not yet a broad GSM8K solver.
+
+Current status (2026-10-21)
+- Ratio binding fix is in place and verified.
+- Percent-of-remaining and mixed ratio/state transitions were stabilized in the compiler.
+- Compact family benchmark is green on the targeted slice.
+- Next project move: add a harder mixed-state benchmark and widen only after the current regression set remains stable.
 
 Immediate next actions
-1) Fix the percent-of-remaining / remaining-quantity ambiguity at the compiler layer so the semantic graph stores both total and consumed quantities explicitly.
-2) Add a second validation example for mixed state transitions (e.g. partial spend + remaining + rate-time) to make the next regression set harder and more representative.
-3) Re-run the compact family benchmark after each change and do not broaden to full GSM8K sweeps until the failure families are stable.
-4) Commit only once the remaining family is fixed and the benchmark stays green across the targeted slice.
+1) Add a harder mixed-state benchmark beyond the current 8-family set (for example, combined ratio + subtraction + remaining state + rate-time).
+2) Keep the validation set narrow and stable while we widen one family at a time.
+3) Only when the broader mixed-state slice remains stable should we consider a larger GSM8K sweep or a broader semantic proposer.
+4) Commit at the next clean checkpoint after the harder benchmark is green, not during active semantic churn.
 
 2026-10-21 repo status update
 - The ratio-binding fix and semantic benchmark pass are committed and pushed to the main branch.

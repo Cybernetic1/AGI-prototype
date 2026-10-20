@@ -838,12 +838,27 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         )
         return wm
 
-    remainder_percent_simple = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+(?:students|people|items|eggs|apples)", text, re.I)
+    remainder_percent_simple = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
     if remainder_percent_simple:
         pct = float(remainder_percent_simple.group(1)) / 100.0
         remaining_qty = float(remainder_percent_simple.group(2))
-        current_item = re.search(r"(?:students|people|items|eggs|apples)", text, re.I)
-        item_name = current_item.group(0).lower() if current_item else "apples"
+        item_name = remainder_percent_simple.group(3).strip().lower()
+        eaten = remaining_qty * pct
+        remaining = remaining_qty - eaten
+        add_fact("Quantity", owner="unknown", item=item_name, qty=remaining_qty)
+        add_fact("Consumed", owner="unknown", item=item_name, qty=eaten)
+        add_fact("Percent", owner="unknown", item=item_name, pct=pct)
+        add_fact("Multiply", lhs=remaining_qty, rhs=pct, result=eaten)
+        add_fact("Subtract", lhs=remaining_qty, rhs=eaten, result=remaining)
+        add_fact("Query", goal="remaining_quantity", args=("unknown", item_name, "?ans"), expected_value=remaining)
+        return wm
+
+    # Generic remaining-percent state: “50% of the remaining 8 oranges are used.”
+    remainder_percent_generic = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
+    if remainder_percent_generic:
+        pct = float(remainder_percent_generic.group(1)) / 100.0
+        remaining_qty = float(remainder_percent_generic.group(2))
+        item_name = remainder_percent_generic.group(3).strip().lower()
         eaten = remaining_qty * pct
         remaining = remaining_qty - eaten
         add_fact("Quantity", owner="unknown", item=item_name, qty=remaining_qty)
@@ -922,7 +937,8 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
     # Semantic micro-step passes for percent, ratio, and unit-conversion phrases.
     percent_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)", text, re.I)
     relative_percent_match = re.search(r"(?:increased|decreased|discount(ed)?|reduced|off|grew)\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)", text, re.I)
-    if percent_match or relative_percent_match:
+    remaining_percent_pattern = re.search(r"(?:percent|%)\s+of\s+the\s+remaining|remaining\s+\d+(?:\.\d+)?\s+[A-Za-z][A-Za-z\s-]*", text, re.I)
+    if (percent_match or relative_percent_match) and not remaining_percent_pattern:
         pct_value = relative_percent_match.group(2) if relative_percent_match else percent_match.group(1)
         pct = float(pct_value) / 100.0
         base = num(r"(\d+(?:\.\d+)?)\s+(?:eggs|apples|items|students|books|balls|cups|bolts|flowers|fiber|meters|donuts|value)") or 10.0
@@ -1009,6 +1025,69 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 outputs=[("answer", result)],
                 goal="ratio_compose",
             )
+
+        # Generic state transitions after a person is known to have a ratio-derived quantity.
+        followup_pct_match = re.search(
+            r"(?:then\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(?:\d+(?:\.\d+)?)?\s*([A-Za-z][A-Za-z\s-]+)?(?:\s+were|\s+was|\s+are|\s+is)\s+(?:sold|eaten|used|spent|lost)",
+            text,
+            re.I,
+        )
+        give_away_match = re.search(r"([A-Za-z][A-Za-z\s-]*)\s+gives?\s+away\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
+        if give_away_match:
+            owner = give_away_match.group(1).strip().lower()
+            given = float(give_away_match.group(2))
+            item = give_away_match.group(3).strip().lower()
+            base = resolve_ratio(owner, item) or qty_by_owner_item.get((owner, item))
+            if base is not None:
+                remaining_after_prior = base - given
+                if followup_pct_match:
+                    pct = float(followup_pct_match.group(1)) / 100.0
+                    sold = remaining_after_prior * pct
+                    final_remaining = remaining_after_prior - sold
+                    add_fact("Quantity", owner=owner, item=item, qty=base)
+                    add_fact("Quantity", owner=owner, item=item, qty=remaining_after_prior)
+                    add_fact("Consumed", owner=owner, item=item, qty=given)
+                    add_fact("Consumed", owner=owner, item=item, qty=sold)
+                    add_fact("Percent", owner=owner, item=item, pct=pct)
+                    add_fact("Multiply", lhs=remaining_after_prior, rhs=pct, result=sold)
+                    add_fact("Subtract", lhs=remaining_after_prior, rhs=sold, result=final_remaining)
+                    add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=final_remaining)
+                    return wm
+                add_fact("Quantity", owner=owner, item=item, qty=base)
+                add_fact("Quantity", owner=owner, item=item, qty=remaining_after_prior)
+                add_fact("Consumed", owner=owner, item=item, qty=given)
+                add_fact("Subtract", lhs=base, rhs=given, result=remaining_after_prior)
+                add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=remaining_after_prior)
+                return wm
+
+        if ratio_edges and followup_pct_match:
+            owner = ratio_edges[0][0]
+            item = ratio_edges[0][1]
+            base = resolve_ratio(owner, item) or qty_by_owner_item.get((owner, item))
+            if base is not None:
+                pct = float(followup_pct_match.group(1)) / 100.0
+                sold = base * pct
+                remaining = base - sold
+                add_fact("Quantity", owner=owner, item=item, qty=base)
+                add_fact("Consumed", owner=owner, item=item, qty=sold)
+                add_fact("Percent", owner=owner, item=item, pct=pct)
+                add_fact("Multiply", lhs=base, rhs=pct, result=sold)
+                add_fact("Subtract", lhs=base, rhs=sold, result=remaining)
+                add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=remaining)
+                return wm
+
+        buy_more_match = re.search(r"([A-Za-z][A-Za-z\s-]*)\s+buys?\s+(\d+(?:\.\d+)?)\s+more\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
+        if buy_more_match:
+            owner = buy_more_match.group(1).strip().lower()
+            extra = float(buy_more_match.group(2))
+            item = buy_more_match.group(3).strip().lower()
+            base = resolve_ratio(owner, item) or qty_by_owner_item.get((owner, item))
+            if base is not None:
+                total = base + extra
+                add_fact("Quantity", owner=owner, item=item, qty=total)
+                add_fact("Add", lhs=base, rhs=extra, result=total)
+                add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=total)
+                return wm
 
         if re.search(r"together|total|combined|altogether", text, re.I):
             target_item = next((item for _, item, _, _ in ratio_edges), None)
@@ -1157,8 +1236,9 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
             add_fact("Query", goal="total_quantity", args=("combined", target_item, "?ans"), expected_value=total)
             return wm
 
-    if chain_values:
-        return wm
+    # Do not return here: a ratio-derived quantity may still be followed by a
+    # state transition such as giving away or buying more items. The follow-on
+    # state rules are handled immediately after this block.
 
     # Weekly repetition pattern: "3 sprints 3 times a week, 60 meters each"
     if "times a week" in lower and ("meters" in lower or "miles" in lower or "items" in lower):
