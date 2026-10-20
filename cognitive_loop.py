@@ -1320,6 +1320,11 @@ SEMANTIC_FAILURE_FAMILIES = [
         "expected": 60.0,
     },
     {
+        "family": "ratio_total",
+        "question": "A has 2 times as many apples as B. B has 3 times as many apples as C. C has 10 apples. Together they have how many apples?",
+        "expected": 100.0,
+    },
+    {
         "family": "remaining_quantity",
         "question": "A has 20 apples and gives away 5.",
         "expected": 15.0,
@@ -1328,6 +1333,11 @@ SEMANTIC_FAILURE_FAMILIES = [
         "family": "percent_remaining",
         "question": "There were 20 apples. 25% of the remaining 12 apples were eaten. How many apples are left?",
         "expected": 9.0,
+    },
+    {
+        "family": "percent_remaining_state",
+        "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?",
+        "expected": 11.25,
     },
     {
         "family": "sales_total",

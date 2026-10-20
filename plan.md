@@ -111,3 +111,5 @@ Immediate next actions
 - The ratio-binding fix and semantic benchmark pass are committed and pushed to the main branch.
 - The next target is the remaining ambiguity family: percent-of-remaining and mixed state transitions in the compiler.
 - The repo is still in the semantic grounding / variable-binding phase; broad GSM8K solvability remains a later milestone, not the current one.
+- Mixed ratio + total and mixed remaining-state cases now solve in the compiler benchmark, and they have been promoted into the compact validation set.
+- Current benchmark posture: the system is stable on a narrow but meaningful slice of GSM8K-like semantic families, and is now suitable for controlled widening rather than noisy broad sweeps.
