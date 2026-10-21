@@ -16,6 +16,7 @@ build/
 *.dict
 results/
 *_models/
+.venv/
 venv/
 
 # Data directory (large datasets - can be re-downloaded)

@@ -4,6 +4,13 @@
 - This is the current clean checkpoint for a controlled next step: keep the benchmark narrow and stable and only widen one family at a time.
 - Do not create or activate a repo-local `.venv`; continue using the shared parent environment at `/home/yky/misc-programs/.venv`.
 
+Next steps after the milestone
+1) Keep the benchmark compact and stable; add only one new semantic family at a time.
+2) Extend the state-order contract to a formal finality rule: same-owner/item latest valid event wins, earlier candidates are historical only.
+3) Add a tiny regression suite covering the known final-state buy-more/spoilage/donation edge cases and rerun it on every change.
+4) Once the compact suite stays green across multiple revisions, broaden to a modestly larger GSM8K-like slice without turning the loop into a noisy broad benchmark sweep.
+5) Revisit ILP only as a local helper once the temporal finality contract is stable and the semantic graph remains consistent.
+
 ILP reorganization note (2026-10-19)
 
 I moved the minimal Metagol-style ILP scaffold from forward-engine/ to ilp_learner/ to keep ILP experimentation code grouped.
