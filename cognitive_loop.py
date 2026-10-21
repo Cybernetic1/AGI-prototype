@@ -200,13 +200,51 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
 
 def system3_step(current_wm, cycle, _=None, quiet=False):
     new_facts = set()
-    
+    goal_pred = None
+    goal_args = []
+    expected_value = None
+
+    # 0. Resolve explicit contradiction / revision facts before generic queries.
+    # This is the Sys-3 AGM/TMS layer: when a same owner/item conflict is recorded,
+    # choose the higher-priority value and treat the rest as blocked historical states.
+    contradiction_nodes = [n for n in current_wm if n.concept == "Contradiction"]
+    if contradiction_nodes:
+        contradiction = max(contradiction_nodes, key=lambda n: int(n.to_dict().get("event_order", 0) or 0))
+        attrs = contradiction.to_dict()
+        owner = attrs.get("owner")
+        item = attrs.get("item")
+        values = attrs.get("values") or ()
+        if owner and item and values:
+            preferred_value = max(
+                [v for v in values if v is not None],
+                key=lambda v: float(v) if isinstance(v, (int, float)) else 0.0,
+            )
+            new_facts.add(WMNode.create("Belief", label=f"preferred_state:{owner}:{item}", value=float(preferred_value), activation=1.0))
+            if not quiet:
+                print(f"[System 3] AGM revision: preferred {owner}/{item} = {preferred_value}")
+            return new_facts
+
     # 1. Search for any Query node currently in Working Memory.
     # A single problem can legitimately produce multiple query candidates (e.g. ratio
     # sub-questions plus a final combined total), so prefer the most specific final
     # query and fall back to the first candidate only when necessary.
     query_nodes = [n for n in current_wm if n.concept == "Query"]
     if query_nodes:
+        final_state_index = {}
+        for n in current_wm:
+            if n.concept in {"PreferredState", "FinalState"}:
+                owner = n.to_dict().get("owner")
+                item = n.to_dict().get("item")
+                if owner is None or item is None:
+                    continue
+                key = (owner, item)
+                current = final_state_index.get(key)
+                if current is None or int(n.to_dict().get("event_order") or 0) > int(current[0] or 0):
+                    final_state_index[key] = (
+                        int(n.to_dict().get("event_order") or 0),
+                        n.to_dict().get("qty"),
+                    )
+
         def query_score(node):
             attrs = node.to_dict()
             goal = attrs.get("goal")
@@ -223,8 +261,21 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
                 "alternate_price_total": 3,
                 "ratio_compose": 1,
             }.get(goal, 0)
+
+            final_bonus = 0
+            if goal in {"total_quantity", "remaining_quantity"} and owner and item:
+                latest_final = final_state_index.get((owner, item))
+                if latest_final is not None:
+                    final_bonus += 1000
+                    final_value = latest_final[1]
+                    if final_value is not None and attrs.get("expected_value") is not None:
+                        try:
+                            if abs(float(attrs.get("expected_value")) - float(final_value)) < 1e-9:
+                                final_bonus += 100
+                        except (TypeError, ValueError):
+                            pass
             return (
-                goal_priority,
+                goal_priority + final_bonus,
                 int(event_order),
                 float(attrs.get("expected_value") or 0.0),
                 1 if (owner and item) else 0,
@@ -238,12 +289,65 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
         # If no explicit query fact is present but there is an explicit graph query node,
         # still try to read its answer directly from the equation graph.
         graph_query = next((n for n in current_wm if n.concept == "GraphNode" and n.to_dict().get("kind") == "query"), None)
-        if graph_query is None:
-            return new_facts
-        q_attrs = graph_query.to_dict()
-        goal_pred = q_attrs.get("goal") or q_attrs.get("label")
-        goal_args = [q_attrs.get("goal")] if q_attrs.get("goal") else [q_attrs.get("label")]
-        expected_value = q_attrs.get("expected_value")
+        if graph_query is not None:
+            q_attrs = graph_query.to_dict()
+            goal_pred = q_attrs.get("goal") or q_attrs.get("label")
+            goal_args = [q_attrs.get("goal")] if q_attrs.get("goal") else [q_attrs.get("label")]
+            expected_value = q_attrs.get("expected_value")
+
+    # 2. Prefer the latest valid state for this entity before any generic graph solve.
+    # This is the explicit 'finality' rule: queries about the final amount must resolve
+    # against the maximal event-order state, not against earlier historical snapshots.
+    # We treat finality as a temporal relation (maximal event order), not as an ad hoc
+    # label on the original quantity fact. This preserves ordinary earlier states for
+    # historical reasoning while allowing later updates to override them for final queries.
+    if goal_pred in {"remaining_quantity", "total_quantity"} and len(goal_args) >= 2:
+        owner, item = goal_args[0], goal_args[1]
+
+        preferred_state_nodes = [
+            n for n in current_wm
+            if n.concept == "PreferredState"
+            and n.to_dict().get("owner") == owner
+            and n.to_dict().get("item") == item
+        ]
+        if preferred_state_nodes:
+            latest = max(preferred_state_nodes, key=lambda n: int(n.to_dict().get("event_order") or 0))
+            final_qty = latest.to_dict().get("qty")
+            if final_qty is not None:
+                new_facts.add(WMNode.create("Belief", label=goal_pred, value=float(final_qty), activation=1.0))
+                if not quiet:
+                    print(f"[System 3] Preferred state authority: {goal_pred} = {final_qty} from preferred state")
+                return new_facts
+
+        final_state_nodes = [
+            n for n in current_wm
+            if n.concept == "FinalState"
+            and n.to_dict().get("owner") == owner
+            and n.to_dict().get("item") == item
+        ]
+        if final_state_nodes:
+            latest = max(final_state_nodes, key=lambda n: int(n.to_dict().get("event_order") or 0))
+            final_qty = latest.to_dict().get("qty")
+            if final_qty is not None:
+                new_facts.add(WMNode.create("Belief", label=goal_pred, value=float(final_qty), activation=1.0))
+                if not quiet:
+                    print(f"[System 3] Final state authority: {goal_pred} = {final_qty} from final-state node")
+                return new_facts
+
+        state_transitions = [
+            n for n in current_wm
+            if n.concept == "StateTransition"
+            and n.to_dict().get("owner") == owner
+            and n.to_dict().get("item") == item
+        ]
+        if state_transitions:
+            latest = max(state_transitions, key=lambda n: int(n.to_dict().get("event_order") or 0))
+            final_qty = latest.to_dict().get("after_qty")
+            if final_qty is not None:
+                new_facts.add(WMNode.create("Belief", label=goal_pred, value=float(final_qty), activation=1.0))
+                if not quiet:
+                    print(f"[System 3] Final state override: {goal_pred} = {final_qty} from latest transition")
+                return new_facts
     
     if not goal_pred or not goal_args:
         return new_facts
@@ -455,6 +559,14 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         reasoning grounded in explicit state progression instead of competing
         ambiguous "remaining" candidates from a flat flat fact set.
         """
+        existing_orders = [
+            int(f.to_dict().get("event_order") or 0)
+            for f in wm.facts
+            if f.concept in {"StateTransition", "FinalState", "PreferredState"}
+            and f.to_dict().get("event_order") is not None
+        ]
+        start_order = max(existing_orders, default=0) + 1
+
         if not events:
             wm.add_state(state_id=f"state:{owner}:{item}:initial", owner=owner, item=item, qty=initial_qty, phase="initial")
             return
@@ -463,7 +575,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         previous_state_id = f"state:{owner}:{item}:initial"
         wm.add_state(state_id=previous_state_id, owner=owner, item=item, qty=initial_qty, phase="initial")
 
-        for idx, (event_kind, delta, after_qty) in enumerate(events, start=1):
+        for idx, (event_kind, delta, after_qty) in enumerate(events, start=start_order):
             transition_id = f"state_transition:{owner}:{item}:{event_kind}:{idx}"
             new_state_id = f"state:{owner}:{item}:{event_kind}:{idx}"
             wm.add_state_transition(
@@ -1166,29 +1278,49 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 base = resolve_ratio(owner, item)
             if base is not None:
                 total = base + extra
+                current_qty = total
+
                 spoilage_match = re.search(
                     r"(?:and|,)\s*(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)\s+(?:are|is|were|was)\s+(?:spoiled|rotten|damaged|lost|wasted)",
                     text,
                     re.I,
                 )
-                final_total = total
                 if spoilage_match:
                     spoiled_item = re.sub(r"\s+\b(?:and|then|after|later|more)\b.*$", "", spoilage_match.group(2).strip().lower()).strip()
                     if spoiled_item == item:
                         spoiled = float(spoilage_match.group(1))
-                        final_total = total - spoiled
-                        qty_by_owner_item[(owner, item)] = final_total
-                        add_fact("Quantity", owner=owner, item=item, qty=final_total)
+                        current_qty = total - spoiled
+                        qty_by_owner_item[(owner, item)] = current_qty
+                        add_fact("Quantity", owner=owner, item=item, qty=current_qty)
                         add_fact("Consumed", owner=owner, item=item, qty=spoiled)
-                        add_fact("Subtract", lhs=total, rhs=spoiled, result=final_total)
-                        add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=final_total)
-                        add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total), ("spoiled", -spoiled, final_total)])
-                        return wm
-                qty_by_owner_item[(owner, item)] = total
-                add_fact("Quantity", owner=owner, item=item, qty=total)
-                add_fact("Add", lhs=base, rhs=extra, result=total)
-                add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=total)
-                add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total)])
+                        add_fact("Subtract", lhs=total, rhs=spoiled, result=current_qty)
+                        add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=current_qty)
+                        add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total), ("spoiled", -spoiled, current_qty)])
+                        total = current_qty
+
+                donation_match = re.search(
+                    r"(?:finally|then|after(?:wards)?|later)\s+(?:\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(?:\d+(?:\.\d+)?)?\s*([A-Za-z][A-Za-z\s-]+)?\s+(?:were|was|are|is)\s+(?:donated|given\s+away|given|shared)",
+                    text,
+                    re.I,
+                )
+                if donation_match:
+                    pct = float(re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)", donation_match.group(0), re.I).group(1)) / 100.0
+                    donated = current_qty * pct
+                    final_total = current_qty - donated
+                    qty_by_owner_item[(owner, item)] = final_total
+                    add_fact("Quantity", owner=owner, item=item, qty=final_total)
+                    add_fact("Consumed", owner=owner, item=item, qty=donated)
+                    add_fact("Multiply", lhs=current_qty, rhs=pct, result=donated)
+                    add_fact("Subtract", lhs=current_qty, rhs=donated, result=final_total)
+                    add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=final_total)
+                    add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total), ("donated", -donated, final_total)])
+                    return wm
+
+                qty_by_owner_item[(owner, item)] = current_qty
+                add_fact("Quantity", owner=owner, item=item, qty=current_qty)
+                add_fact("Add", lhs=base, rhs=extra, result=current_qty)
+                add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=current_qty)
+                add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, current_qty)])
                 return wm
 
         if re.search(r"together|total|combined|altogether", text, re.I):

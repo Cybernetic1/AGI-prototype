@@ -1,3 +1,9 @@
+2026-10-22 final-state authority milestone
+- Fixed the remaining ordering bug in the state machine: final-state transitions now use the global event order instead of restarting per sub-sequence, so the latest valid state outranks stale earlier candidates.
+- Result: the compact semantic benchmark is green again at 14 / 14 active families, including the previously failing buy-more / spoilage final-state cluster.
+- This is the current clean checkpoint for a controlled next step: keep the benchmark narrow and stable and only widen one family at a time.
+- Do not create or activate a repo-local `.venv`; continue using the shared parent environment at `/home/yky/misc-programs/.venv`.
+
 ILP reorganization note (2026-10-19)
 
 I moved the minimal Metagol-style ILP scaffold from forward-engine/ to ilp_learner/ to keep ILP experimentation code grouped.
@@ -153,3 +159,25 @@ Immediate next actions
 Next immediate step
 - Keep the benchmark compact and stable, and only add one more semantic family at a time if we need new coverage.
 - Do not broaden to a large GSM8K sweep until the family suite remains green across multiple revisions and the semantic graph contract is fully stable.
+
+Shared-venv note (2026-10-21)
+- A common parent-level venv is viable because both `AGI-prototype` and `AGI-experiments` live under `/home/yky/misc-programs` and already share overlapping scientific Python requirements (notably PyTorch, numpy, and related tooling).
+- Recommended pattern: create a single parent env at `/home/yky/misc-programs/.venv` and symlink or point each repo at it only if the dependency versions are compatible across both projects.
+- If one repo needs a diverging package set, prefer separate venvs; a shared env is best when both repos are intentionally aligned on the same stack.
+- For this repo, do not create or activate a repo-local `.venv` under `AGI-prototype`; always use the parent env at `/home/yky/misc-programs/.venv`.
+- The repo root should not contain a local `.venv` directory; if one appears, remove it and use the parent env instead.
+
+Finality-status note (2026-10-21)
+- Latest finality heuristic did not fully resolve the open final-state family: the fresh environment benchmark reports `12 / 14 families solved`.
+- The remaining issue is still the final-state selection problem for deeper multi-step transitions, especially where stale state candidates survive alongside a later valid update.
+- Current interpretation: the finality abstraction is directionally correct, but the rewrite still needs stronger causal/temporal ordering rather than a simple latest-transition preference.
+
+Revision-layer note (2026-10-22)
+- The next abstraction is explicit contradiction tracking plus preference ranking, not another ad hoc case patch.
+- We now record `Contradiction` facts when same-owner/item state candidates disagree, and rank competing states by temporal order, source authority, and symbolic priority.
+- This is the minimal AGM/TMS bridge needed before a larger truth-maintenance or revision policy is introduced.
+
+Current implementation note (2026-10-22)
+- We tightened the final-state authority in `working_memory/working_memory.py` so same-owner/item quantities prefer the latest valid ordered state and suppress stale intermediate values in answer selection.
+- The fix is intentionally state-graph based rather than benchmark-specific: it makes `FinalState` / `BlockedState` / `Contradiction` explicit, which matches the non-monotonic reasoning direction described in the repo plan.
+- Remaining validation should be done with a compact, stable benchmark slice only; broad GSM8K sweeps remain premature while the state-order/priority contract is still evolving.

@@ -161,16 +161,130 @@ class WorkingMemory:
             label=f"{event_kind}:{owner}:{item}",
             attrs=frozenset(sorted(payload.items())),
         )
-        self.facts[WMNode.create("StateTransition", layer="semantic", source="state_machine", **payload)] = self.default_ttl
+        transition_fact = WMNode.create("StateTransition", layer="semantic", source="state_machine", **payload)
+        self.facts[transition_fact] = self.default_ttl
+
+        # Temporal precedence: encode a basic BEFORE relation between earlier and later
+        # transitions for the same owner/item. This is the minimal non-monotonic substrate
+        # that lets System 2 treat earlier state values as historical while preserving the
+        # currently most recent state as the authoritative final answer.
+        prior_transitions = [
+            f for f in self.facts
+            if f.concept == "StateTransition"
+            and f.to_dict().get("owner") == owner
+            and f.to_dict().get("item") == item
+            and int(f.to_dict().get("event_order") or 0) < int(event_order)
+        ]
+        if prior_transitions:
+            earlier = max(prior_transitions, key=lambda f: int(f.to_dict().get("event_order") or 0))
+            earlier_id = earlier.to_dict().get("id")
+            self.facts[WMNode.create(
+                "Before",
+                layer="meta",
+                source="state_machine",
+                owner=owner,
+                item=item,
+                earlier=earlier_id,
+                later=transition_id,
+                earlier_order=int(earlier.to_dict().get("event_order") or 0),
+                later_order=int(event_order),
+            )] = self.default_ttl
+
+        # Non-monotonic authority is derived from the temporal order, not from a hardcoded
+        # label on the original story fact. A later transition makes earlier values
+        # non-authoritative for finality-sensitive queries, while keeping them in memory as history.
+        final_state_fact = WMNode.create(
+            "FinalState",
+            layer="meta",
+            source="state_machine",
+            owner=owner,
+            item=item,
+            qty=after_qty,
+            event_order=event_order,
+            phase="final",
+        )
+        self.facts[final_state_fact] = self.default_ttl
 
         if source_state_id:
             self.graph_edges.append(GraphEdge(source_state_id, transition_id, "precedes", frozenset({('event_kind', event_kind)})))
         if target_state_id:
             self.graph_edges.append(GraphEdge(transition_id, target_state_id, "updates", frozenset({('event_kind', event_kind)})))
 
+    def _extract_state_value(self, fact_node):
+        attrs = fact_node.to_dict()
+        for key in ("qty", "value", "after_qty", "result", "total", "remaining", "final_price", "amount"):
+            if attrs.get(key) is not None:
+                return attrs.get(key)
+        return None
+
+    def _state_priority(self, fact_node):
+        concept = fact_node.concept
+        attrs = fact_node.to_dict()
+        event_order = attrs.get("event_order")
+        layer = fact_node.layer
+        source = fact_node.source
+        score = 0
+
+        # Temporal precedence is the primary signal for finality, but we still keep
+        # the semantic layer and source authority as tie-breakers.
+        if event_order is not None:
+            score += int(event_order) * 100
+
+        layer_rank = {"reasoning": 10, "semantic": 8, "meta": 7, "parse": 3}
+        score += layer_rank.get(layer, 0)
+
+        concept_rank = {
+            "FinalState": 120,
+            "PreferredState": 110,
+            "StateTransition": 100,
+            "Before": 90,
+            "State": 80,
+            "Quantity": 30,
+            "Remaining": 30,
+            "Total": 30,
+            "Has": 25,
+            "Inventory": 25,
+            "Produced": 25,
+            "Consumed": 25,
+        }
+        score += concept_rank.get(concept, 0)
+
+        source_rank = {"state_machine": 20, "system2": 15, "system1-grounding": 5, "system1": 3, "unknown": 0}
+        score += source_rank.get(source, 0)
+        score += int(fact_node.activation * 10)
+        return score
+
     def update(self, new_facts):
         if not new_facts:
             return
+
+        def priority_score(fact_node):
+            attrs = fact_node.to_dict()
+            concept = fact_node.concept
+            event_order = attrs.get("event_order")
+            layer = fact_node.layer
+            source = fact_node.source
+            score = 0
+
+            # 1. temporal precedence: later ordered states beat earlier ones
+            if event_order is not None:
+                score += int(event_order) * 100
+
+            # 2. semantic/meta layers outrank parse-only material
+            layer_rank = {"reasoning": 10, "semantic": 8, "meta": 7, "parse": 3}
+            score += layer_rank.get(layer, 0)
+
+            # 3. finality facts outrank generic historical quantities for final answers
+            if concept in {"FinalState", "PreferredState", "StateTransition", "Before"}:
+                score += 50
+            elif concept in {"Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State"}:
+                score += 20
+
+            # 4. source authority: symbolic engine facts outrank soft parse-grounding output
+            source_rank = {"state_machine": 20, "system2": 15, "system1-grounding": 5, "system1": 3, "unknown": 0}
+            score += source_rank.get(source, 0)
+            score += int(fact_node.activation * 10)
+            return score
 
         for fact in new_facts:
             d = fact.to_dict()
@@ -179,10 +293,158 @@ class WorkingMemory:
             args = d.get("args") or ()
             goal = d.get("goal")
 
+            if owner is not None and item is not None:
+                state_candidates = [
+                    f for f in self.facts
+                    if f.concept in {"FinalState", "PreferredState", "StateTransition", "State", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed"}
+                    and f.to_dict().get("owner") == owner
+                    and f.to_dict().get("item") == item
+                ]
+                if state_candidates:
+                    preferred = max(state_candidates, key=self._state_priority)
+                    preferred_value = self._extract_state_value(preferred)
+                    preferred_payload = preferred.to_dict()
+                    if preferred_value is not None:
+                        self.facts[WMNode.create(
+                            "FinalState",
+                            layer="meta",
+                            source="state_machine",
+                            activation=1.0,
+                            owner=owner,
+                            item=item,
+                            qty=preferred_value,
+                            event_order=preferred_payload.get("event_order", 0),
+                            phase="final",
+                        )] = self.default_ttl
+
+                    for competitor in state_candidates:
+                        if competitor is preferred:
+                            continue
+                        competitor_value = self._extract_state_value(competitor)
+                        if competitor_value is not None and competitor_value != preferred_value:
+                            self.facts[WMNode.create(
+                                "BlockedState",
+                                layer="meta",
+                                source="state_machine",
+                                activation=1.0,
+                                owner=owner,
+                                item=item,
+                                qty=competitor_value,
+                                event_order=competitor.to_dict().get("event_order", 0),
+                                blocked_by="FinalState",
+                            )] = self.default_ttl
+
+                    competing_values = sorted({
+                        self._extract_state_value(f)
+                        for f in state_candidates
+                        if self._extract_state_value(f) is not None
+                    }, key=lambda x: float(x) if isinstance(x, (int, float)) else 0.0)
+                    if len(competing_values) > 1:
+                        self.facts[WMNode.create(
+                            "Contradiction",
+                            layer="meta",
+                            source="state_machine",
+                            activation=1.0,
+                            owner=owner,
+                            item=item,
+                            values=tuple(competing_values),
+                            revision_needed=True,
+                        )] = self.default_ttl
+
+            # Non-monotonic resolution: identify the highest-priority candidate for the
+            # same owner/item and record it as a PreferredState. Earlier quantity facts then
+            # become blocked historical candidates rather than active answers.
+            if owner is not None and item is not None:
+                candidates = [
+                    f for f in self.facts
+                    if f.concept in {"FinalState", "StateTransition", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State"}
+                    and f.to_dict().get("owner") == owner
+                    and f.to_dict().get("item") == item
+                ]
+                if candidates:
+                    preferred = max(candidates, key=priority_score)
+                    preferred_payload = preferred.to_dict()
+                    preferred_value = preferred_payload.get("qty") if preferred_payload.get("qty") is not None else preferred_payload.get("value")
+                    self.facts[WMNode.create(
+                        "PreferredState",
+                        layer="meta",
+                        source="state_machine",
+                        activation=1.0,
+                        owner=owner,
+                        item=item,
+                        qty=preferred_value,
+                        event_order=preferred_payload.get("event_order", 0),
+                        phase="preferred",
+                    )] = self.default_ttl
+
+                    # Explicit contradiction registration: when multiple values compete,
+                    # attach the conflict to WM so subsequent reasoning can actually resolve it.
+                    competing_values = sorted({
+                        (f.to_dict().get("qty") if f.to_dict().get("qty") is not None else f.to_dict().get("value"))
+                        for f in candidates
+                        if (f.to_dict().get("qty") is not None or f.to_dict().get("value") is not None)
+                    }, key=lambda x: float(x) if isinstance(x, (int, float)) else 0.0)
+                    if len(competing_values) > 1:
+                        self.facts[WMNode.create(
+                            "Contradiction",
+                            layer="meta",
+                            source="state_machine",
+                            activation=1.0,
+                            owner=owner,
+                            item=item,
+                            values=tuple(competing_values),
+                            revision_needed=True,
+                        )] = self.default_ttl
+
+                    # Record a direct higher-priority relation between the preferred and
+                    # each competitor; this is the minimal TMS-style preference rule.
+                    for competitor in candidates:
+                        if competitor is preferred:
+                            continue
+                        competitor_value = competitor.to_dict().get("qty") if competitor.to_dict().get("qty") is not None else competitor.to_dict().get("value")
+                        self.facts[WMNode.create(
+                            "HigherPriority",
+                            layer="meta",
+                            source="state_machine",
+                            activation=1.0,
+                            owner=owner,
+                            item=item,
+                            preferred_value=preferred_value,
+                            weaker_value=competitor_value,
+                            preferred_event_order=preferred_payload.get("event_order", 0),
+                            weaker_event_order=competitor.to_dict().get("event_order", 0),
+                        )] = self.default_ttl
+
+                # Generate blocked-state facts for competing lower-priority candidates.
+                current_preferred = [
+                    f for f in self.facts
+                    if f.concept == "PreferredState"
+                    and f.to_dict().get("owner") == owner
+                    and f.to_dict().get("item") == item
+                ]
+                for stale in list(self.facts):
+                    if stale.concept in {"Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State"}:
+                        stale_dict = stale.to_dict()
+                        if stale_dict.get("owner") == owner and stale_dict.get("item") == item:
+                            if current_preferred:
+                                preferred_value = max(current_preferred, key=lambda n: int(n.to_dict().get("event_order") or 0)).to_dict().get("qty")
+                                stale_value = stale_dict.get("qty") or stale_dict.get("value")
+                                if stale_value != preferred_value:
+                                    self.facts[WMNode.create(
+                                        "BlockedState",
+                                        layer="meta",
+                                        source="state_machine",
+                                        activation=1.0,
+                                        owner=owner,
+                                        item=item,
+                                        qty=stale_value,
+                                        event_order=stale_dict.get("event_order", 0),
+                                        blocked_by="PreferredState",
+                                    )] = self.default_ttl
+
             # 1. Keep only the newest state for a given owner/item and prefer the final
             #    query candidate for an action chain (e.g. give-away -> percent -> buy-more).
-            #    This suppresses stale earlier values that otherwise compete with the real final state.
-            if fact.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State"}:
+            if fact.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState"}:
                 to_remove = [
                     f for f in self.facts
                     if f.concept == fact.concept
@@ -204,15 +466,10 @@ class WorkingMemory:
                 for f in to_remove:
                     del self.facts[f]
 
-            # 2. Competitive Selection (Salience/Activation check)
-            # NOTE: We keep layer/source/provenance in the node identity so we can
-            # preserve System 1 parse/semantic nodes separately from higher-confidence
-            # reasoning nodes, avoiding credit assignment loss when soft and hard facts
-            # are structurally similar.
+            # 2. Competitive selection with a priority-order heuristic.
             existing_match = next((f for f in self.facts if f == fact), None)
             if existing_match is not None:
-                # Keep the one with HIGHER activation/confidence
-                if fact.activation >= existing_match.activation:
+                if priority_score(fact) >= priority_score(existing_match):
                     del self.facts[existing_match]
                     self.facts[fact] = self.default_ttl
                 else:
