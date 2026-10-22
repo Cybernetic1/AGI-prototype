@@ -1,0 +1,8 @@
+{"id": "holdout_1", "label": "ratio_owner_binding", "question": "A has 5 times as many oranges as B. B has 9 oranges. How many oranges does A have?", "answer": 45.0, "owner": "A", "item": "oranges", "base_owner": "B"}
+{"id": "holdout_2", "label": "ratio_owner_binding", "question": "C has 3 times as many apples as B. B has 8 apples. How many apples does C have?", "answer": 24.0, "owner": "C", "item": "apples", "base_owner": "B"}
+{"id": "holdout_3", "label": "percent_of_remaining", "question": "B had 24 apples. B used 6 apples. 25% of the remaining apples were eaten. How many apples are left?", "answer": 13.5, "owner": "B", "item": "apples"}
+{"id": "holdout_4", "label": "percent_of_remaining", "question": "A had 30 oranges. A gave away 10 oranges. 20% of the remaining oranges were donated. How many oranges are left?", "answer": 16.0, "owner": "A", "item": "oranges"}
+{"id": "holdout_5", "label": "buy_more_state_update", "question": "C had 14 apples. C bought 5 more apples. How many apples does C have now?", "answer": 19.0, "owner": "C", "item": "apples"}
+{"id": "holdout_6", "label": "final_state_precedence", "question": "A had 18 apples. Then A gave away 7 apples. How many apples does A have?", "answer": 11.0, "owner": "A", "item": "apples"}
+{"id": "holdout_7", "label": "donation_after_buy_more", "question": "B had 16 apples. B bought 4 more apples. 25% of the remaining apples were donated. How many apples does B have left?", "answer": 15.0, "owner": "B", "item": "apples"}
+{"id": "holdout_8", "label": "remaining_after_subtraction", "question": "C had 26 apples. C gave away 9 apples. How many apples does C have left?", "answer": 17.0, "owner": "C", "item": "apples"}

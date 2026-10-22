@@ -22,8 +22,14 @@ def ontology_classify(verb: str) -> str:
             return label
     return "neutral"
 
-LT_PATH = Path('gsm8k-tests/lt_core/data/gsm8k_train_lt.jsonl')
+DATA_CANDIDATES = [
+    Path('gsm8k-tests/lt_core/data/gsm8k_train_lt.jsonl'),
+    Path('logic_transformer/data/gsm8k_train_lt.jsonl'),
+    Path('gsm8k-tests-backup/lt_core/data/gsm8k_train_lt.jsonl'),
+]
+LT_PATH = next((p for p in DATA_CANDIDATES if p.exists()), DATA_CANDIDATES[0])
 OUT_PATH = Path('ilp_learner/hyperparam_sweep_with_neg_results.json')
+OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 beams = [1,3,6,10]
 max_clauses_list = [1,2,3]

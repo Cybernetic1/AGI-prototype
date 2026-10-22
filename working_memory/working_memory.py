@@ -364,7 +364,7 @@ class WorkingMemory:
                 if candidates:
                     preferred = max(candidates, key=priority_score)
                     preferred_payload = preferred.to_dict()
-                    preferred_value = preferred_payload.get("qty") if preferred_payload.get("qty") is not None else preferred_payload.get("value")
+                    preferred_value = self._extract_state_value(preferred)
                     self.facts[WMNode.create(
                         "PreferredState",
                         layer="meta",
@@ -401,7 +401,7 @@ class WorkingMemory:
                     for competitor in candidates:
                         if competitor is preferred:
                             continue
-                        competitor_value = competitor.to_dict().get("qty") if competitor.to_dict().get("qty") is not None else competitor.to_dict().get("value")
+                        competitor_value = self._extract_state_value(competitor)
                         self.facts[WMNode.create(
                             "HigherPriority",
                             layer="meta",

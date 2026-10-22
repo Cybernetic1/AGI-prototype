@@ -10,6 +10,7 @@ from typing import Any
 import torch
 
 BASE_DIR = Path(__file__).resolve().parent
+sys.path.append(str(BASE_DIR))
 sys.path.append(str(BASE_DIR / 'forward_engine'))
 sys.path.append(str(BASE_DIR / 'logic_transformer'))
 sys.path.append(str(BASE_DIR / 'ilp_learner'))
@@ -22,6 +23,7 @@ from spacy_logical_form import SpacyLogicalFormParser
 from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
 from abductive_ilp import KnowledgeBase, OntologicalReasoner, OntologicalILPLearner, DuckEgg
+from local_proposal_ranker import ProposalRanker
 
 # ==========================================
 # A compact GSM8K predicate vocabulary.
@@ -59,6 +61,20 @@ GSM8K_FACT_VOCAB = {
 _dln_model = None
 _dln_vocab = None
 _rev_vocab = None
+_local_proposal_ranker = None
+
+
+def load_local_proposal_ranker():
+    global _local_proposal_ranker
+    if _local_proposal_ranker is not None:
+        return _local_proposal_ranker
+    try:
+        from local_proposal_ranker import ProposalRanker
+        _local_proposal_ranker = ProposalRanker.load_or_train()
+    except Exception:
+        _local_proposal_ranker = None
+    return _local_proposal_ranker
+
 
 def load_dln(quiet=False):
     global _dln_model, _dln_vocab, _rev_vocab
@@ -83,6 +99,46 @@ def load_dln(quiet=False):
     checkpoint = torch.load(ckpt_path, map_location="cpu")
     _dln_model.load_state_dict(checkpoint["model_state"])
     _dln_model.eval()
+
+def _lift_semantic_candidates(input_text):
+    """Create a minimal semantic-layer proposal set from short GSM8K-like quantities.
+
+    This is intentionally heuristic and narrow: it converts high-value parse patterns
+    into canonical Quantity / Has / StateTransition facts so the symbol validator can
+    consume them without needing the entire parser stack to be fully trained.
+    """
+    facts = set()
+    if not input_text:
+        return facts
+
+    # Match bare ownership + quantity facts.
+    for owner, qty, item in re.findall(r"\b([A-Z][a-z]*)\s+had\s+(\d+(?:\.\d+)?)\s+([A-Za-z]+)\b", input_text):
+        value = float(qty)
+        facts.add(WMNode.create("Quantity", activation=0.85, layer="semantic", source="system1-grounding", provenance_id=f"sem:quantity:{owner}:{item}", owner=owner, item=item, qty=value))
+        facts.add(WMNode.create("Has", activation=0.85, layer="semantic", source="system1-grounding", provenance_id=f"sem:has:{owner}:{item}", owner=owner, item=item, qty=value))
+
+    for owner, delta, item in re.findall(r"\b([A-Z][a-z]*)\s+bought\s+(\d+(?:\.\d+)?)\s+more\s+([A-Za-z]+)\b", input_text):
+        value = float(delta)
+        facts.add(WMNode.create("StateTransition", activation=0.8, layer="semantic", source="system1-grounding", provenance_id=f"sem:trans:{owner}:{item}", owner=owner, item=item, before_qty=None, delta=value, after_qty=None, event_kind="buy", event_order=1))
+
+    for owner, delta, item in re.findall(r"\b([A-Z][a-z]*)\s+gave\s+away\s+(\d+(?:\.\d+)?)\s+([A-Za-z]+)\b", input_text):
+        value = float(delta)
+        facts.add(WMNode.create("StateTransition", activation=0.8, layer="semantic", source="system1-grounding", provenance_id=f"sem:trans:{owner}:{item}", owner=owner, item=item, before_qty=None, delta=-value, after_qty=None, event_kind="give_away", event_order=1))
+
+    # Ratio and percent-of-remaining patterns: lift canonical semantic forms so the
+    # validator can reason on them later instead of leaving them as text-only parse noise.
+    for owner, factor, item, ref_owner in re.findall(r"\b([A-Z][a-z]*)\s+has\s+(\d+(?:\.\d+)?)\s+times\s+as\s+many\s+([A-Za-z]+)\s+as\s+([A-Z][a-z]*)\b", input_text):
+        facts.add(WMNode.create("Ratio", activation=0.82, layer="semantic", source="system1-grounding", provenance_id=f"sem:ratio:{owner}:{item}", owner=owner, base_owner=ref_owner, item=item, factor=float(factor)))
+        facts.add(WMNode.create("Quantity", activation=0.82, layer="semantic", source="system1-grounding", provenance_id=f"sem:baseqty:{ref_owner}:{item}", owner=ref_owner, item=item, qty=0.0))
+
+    for owner, base_qty, item, pct, rem_item in re.findall(r"\b([A-Z][a-z]*)\s+had\s+(\d+(?:\.\d+)?)\s+([A-Za-z]+)\b.*?(\d+(?:\.\d+)?)%\s+of\s+the\s+remaining\s+([A-Za-z]+)\b", input_text):
+        if item != rem_item:
+            continue
+        facts.add(WMNode.create("Percent", activation=0.82, layer="semantic", source="system1-grounding", provenance_id=f"sem:pct:{owner}:{item}", owner=owner, item=item, pct=float(pct) / 100.0))
+        facts.add(WMNode.create("Remaining", activation=0.82, layer="semantic", source="system1-grounding", provenance_id=f"sem:rem:{owner}:{item}", owner=owner, item=item, qty=float(base_qty)))
+
+    return facts
+
 
 def system1_step(current_wm, cycle, input_text=None, quiet=False):
     new_facts = set()
@@ -109,6 +165,8 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
         
         if not quiet:
             print(f"[System 1] Semantic Grounding Complete. Extracted {len(core_clauses)} semantic logic predicates.")
+
+        proposal_ranker = load_local_proposal_ranker()
         
         # Map the output strings back to WMNodes with soft activation (0.85) representing System 1's neural confidence.
         # The layer is explicitly tagged as parse/semantic so it can be consumed by later grounding rules.
@@ -118,7 +176,12 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
             concept = pred.capitalize()
             if concept in ["Event", "Predicate", "Agent", "Patient", "Recipient", "Name", "Quantity", "Location", "Time", "Modifier"]:
                 kwargs = {f"arg{j}": arg for j, arg in enumerate(args)}
-                new_facts.add(WMNode.create(concept, activation=0.85, layer="parse", source="system1", provenance_id=f"s1:{concept.lower()}", **kwargs))
+                proposal_score = 0.75
+                if proposal_ranker is not None and input_text:
+                    proposal_text = f"{concept}({', '.join(str(a) for a in args)})"
+                    proposal_score = proposal_ranker.score(input_text, proposal_text)
+                activation = max(0.15, min(0.95, 0.35 + 0.6 * proposal_score))
+                new_facts.add(WMNode.create(concept, activation=activation, layer="parse", source="system1", provenance_id=f"s1:{concept.lower()}", **kwargs))
 
     # A second pass: take raw parse-layer clauses and lift them into the semantic layer.
     # This keeps the pipeline explicit: parse facts are not allowed to directly participate in
@@ -135,10 +198,52 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
                     **node.to_dict()
                 )
                 new_facts.add(semantic_node)
+
+        semantic_candidates = _lift_semantic_candidates(input_text)
+        new_facts.update(semantic_candidates)
             
     return new_facts
 
 def system2_step(current_wm, cycle, _=None, quiet=False):
+    new_facts = set()
+
+    # Validation pass: accept only semantic-layer candidates that satisfy the schema.
+    # This is the direct check that turns proposal facts into usable symbolic facts.
+    for node in current_wm:
+        if node.layer != "semantic":
+            continue
+        if node.concept not in {"Quantity", "Has", "StateTransition", "Ratio", "Percent", "Remaining"}:
+            continue
+        attrs = node.to_dict()
+        owner = attrs.get("owner")
+        item = attrs.get("item")
+        qty = attrs.get("qty")
+        delta = attrs.get("delta")
+        factor = attrs.get("factor")
+        pct = attrs.get("pct")
+        if not owner or not item:
+            continue
+        if node.concept in {"Quantity", "Has", "Remaining"} and qty is None:
+            continue
+        if node.concept == "StateTransition" and delta is None:
+            continue
+        if node.concept == "Ratio" and factor is None:
+            continue
+        if node.concept == "Percent" and pct is None:
+            continue
+        value = qty if qty is not None else (delta if delta is not None else (factor if factor is not None else pct))
+        new_facts.add(WMNode.create(
+            "Belief",
+            activation=0.9,
+            layer="reasoning",
+            source="system2",
+            provenance_id=f"validate:{node.provenance_id or node.concept.lower()}",
+            label="validated_semantic",
+            owner=owner,
+            item=item,
+            qty=value,
+        ))
+
     engine = System2Engine()
     engine.reset()
     
@@ -183,7 +288,7 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
             
     engine.run()
     
-    new_facts = set()
+    validated = set()
     for f in engine.facts.values():
         if type(f).__name__ in ["Belief", "Inventory", "EventProcessed"]:
             clean_attrs = {k: v for k, v in f.items() if not str(k).startswith("__") and k != "activation"}
@@ -193,9 +298,10 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
             temp_node = WMNode.create(concept, **clean_attrs)
             original = next((n for n in current_wm if n == temp_node), None)
             activation = original.activation if original is not None else 1.0
-                
-            new_facts.add(WMNode.create(concept, activation=activation, **clean_attrs))
             
+            validated.add(WMNode.create(concept, activation=activation, **clean_attrs))
+
+    new_facts.update(validated)
     return new_facts
 
 def system3_step(current_wm, cycle, _=None, quiet=False):
@@ -206,23 +312,56 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
 
     # 0. Resolve explicit contradiction / revision facts before generic queries.
     # This is the Sys-3 AGM/TMS layer: when a same owner/item conflict is recorded,
-    # choose the higher-priority value and treat the rest as blocked historical states.
+    # prefer the latest valid state, then source authority, and only then numeric size.
     contradiction_nodes = [n for n in current_wm if n.concept == "Contradiction"]
     if contradiction_nodes:
-        contradiction = max(contradiction_nodes, key=lambda n: int(n.to_dict().get("event_order", 0) or 0))
+        def value_rank(node):
+            attrs = node.to_dict()
+            event_order = int(attrs.get("event_order") or 0)
+            source_rank = {"state_machine": 3, "system2": 2, "system1-grounding": 1, "system1": 0, "unknown": 0}.get(attrs.get("source"), 0)
+            activation = float(node.activation)
+            return (event_order, source_rank, activation)
+
+        contradiction = max(contradiction_nodes, key=value_rank)
         attrs = contradiction.to_dict()
         owner = attrs.get("owner")
         item = attrs.get("item")
         values = attrs.get("values") or ()
         if owner and item and values:
-            preferred_value = max(
-                [v for v in values if v is not None],
-                key=lambda v: float(v) if isinstance(v, (int, float)) else 0.0,
-            )
-            new_facts.add(WMNode.create("Belief", label=f"preferred_state:{owner}:{item}", value=float(preferred_value), activation=1.0))
-            if not quiet:
-                print(f"[System 3] AGM revision: preferred {owner}/{item} = {preferred_value}")
-            return new_facts
+            value_candidates = [v for v in values if v is not None]
+            if value_candidates:
+                preferred_state_nodes = [
+                    n for n in current_wm
+                    if n.concept in {"PreferredState", "FinalState", "StateTransition", "Quantity", "Remaining", "Total", "State"}
+                    and n.to_dict().get("owner") == owner
+                    and n.to_dict().get("item") == item
+                    and (n.to_dict().get("qty") is not None or n.to_dict().get("value") is not None)
+                ]
+                if preferred_state_nodes:
+                    preferred = max(preferred_state_nodes, key=lambda n: (
+                        int(n.to_dict().get("event_order") or 0),
+                        {"state_machine": 3, "system2": 2, "system1-grounding": 1, "system1": 0, "unknown": 0}.get(n.source, 0),
+                        float(n.activation),
+                    ))
+                    preferred_value = preferred.to_dict().get("qty")
+                    if preferred_value is None:
+                        preferred_value = preferred.to_dict().get("after_qty")
+                    if preferred_value is None:
+                        preferred_value = preferred.to_dict().get("value")
+                    if preferred_value is not None:
+                        new_facts.add(WMNode.create("Belief", label=f"preferred_state:{owner}:{item}", value=float(preferred_value), activation=1.0))
+                        if not quiet:
+                            print(f"[System 3] AGM revision: preferred {owner}/{item} = {preferred_value}")
+                        return new_facts
+
+                preferred_value = max(
+                    value_candidates,
+                    key=lambda v: (float(v) if isinstance(v, (int, float)) else 0.0),
+                )
+                new_facts.add(WMNode.create("Belief", label=f"preferred_state:{owner}:{item}", value=float(preferred_value), activation=1.0))
+                if not quiet:
+                    print(f"[System 3] AGM revision: preferred {owner}/{item} = {preferred_value}")
+                return new_facts
 
     # 1. Search for any Query node currently in Working Memory.
     # A single problem can legitimately produce multiple query candidates (e.g. ratio
@@ -313,6 +452,10 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
         if preferred_state_nodes:
             latest = max(preferred_state_nodes, key=lambda n: int(n.to_dict().get("event_order") or 0))
             final_qty = latest.to_dict().get("qty")
+            if final_qty is None:
+                final_qty = latest.to_dict().get("after_qty")
+            if final_qty is None:
+                final_qty = latest.to_dict().get("value")
             if final_qty is not None:
                 new_facts.add(WMNode.create("Belief", label=goal_pred, value=float(final_qty), activation=1.0))
                 if not quiet:
@@ -328,6 +471,10 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
         if final_state_nodes:
             latest = max(final_state_nodes, key=lambda n: int(n.to_dict().get("event_order") or 0))
             final_qty = latest.to_dict().get("qty")
+            if final_qty is None:
+                final_qty = latest.to_dict().get("after_qty")
+            if final_qty is None:
+                final_qty = latest.to_dict().get("value")
             if final_qty is not None:
                 new_facts.add(WMNode.create("Belief", label=goal_pred, value=float(final_qty), activation=1.0))
                 if not quiet:
@@ -1280,40 +1427,53 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 total = base + extra
                 current_qty = total
 
-                spoilage_match = re.search(
-                    r"(?:and|,)\s*(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)\s+(?:are|is|were|was)\s+(?:spoiled|rotten|damaged|lost|wasted)",
+                events = []
+                for match in re.finditer(
+                    r"(?:and|,|(?:finally|then|after(?:wards)?|later))\s+(?:\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(?:\d+(?:\.\d+)?)?\s*([A-Za-z][A-Za-z\s-]+)?\s+(?:were|was|are|is)\s+(?:donated|given\s+away|given|shared)",
                     text,
                     re.I,
-                )
-                if spoilage_match:
-                    spoiled_item = re.sub(r"\s+\b(?:and|then|after|later|more)\b.*$", "", spoilage_match.group(2).strip().lower()).strip()
+                ):
+                    pct_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)", match.group(0), re.I)
+                    if pct_match is None:
+                        continue
+                    pct = float(pct_match.group(1)) / 100.0
+                    donor_item = match.group(1)
+                    if donor_item is None or donor_item.strip().lower() in {"apples", "oranges", "bananas", item}:
+                        events.append((match.start(), "donated", pct))
+                for match in re.finditer(
+                    r"(?:and|,|(?:finally|then|after(?:wards)?|later))\s*(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)\s+(?:are|is|were|was)\s+(?:spoiled|rotten|damaged|lost|wasted)",
+                    text,
+                    re.I,
+                ):
+                    spoiled_item = re.sub(r"\s+\b(?:and|then|after|later|more)\b.*$", "", match.group(2).strip().lower()).strip()
                     if spoiled_item == item:
-                        spoiled = float(spoilage_match.group(1))
-                        current_qty = total - spoiled
-                        qty_by_owner_item[(owner, item)] = current_qty
-                        add_fact("Quantity", owner=owner, item=item, qty=current_qty)
-                        add_fact("Consumed", owner=owner, item=item, qty=spoiled)
-                        add_fact("Subtract", lhs=total, rhs=spoiled, result=current_qty)
-                        add_fact("Query", goal="total_quantity", args=(owner, item, "?ans"), expected_value=current_qty)
-                        add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total), ("spoiled", -spoiled, current_qty)])
-                        total = current_qty
+                        events.append((match.start(), "spoiled", float(match.group(1))))
 
-                donation_match = re.search(
-                    r"(?:finally|then|after(?:wards)?|later)\s+(?:\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(?:\d+(?:\.\d+)?)?\s*([A-Za-z][A-Za-z\s-]+)?\s+(?:were|was|are|is)\s+(?:donated|given\s+away|given|shared)",
-                    text,
-                    re.I,
-                )
-                if donation_match:
-                    pct = float(re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)", donation_match.group(0), re.I).group(1)) / 100.0
-                    donated = current_qty * pct
-                    final_total = current_qty - donated
-                    qty_by_owner_item[(owner, item)] = final_total
-                    add_fact("Quantity", owner=owner, item=item, qty=final_total)
-                    add_fact("Consumed", owner=owner, item=item, qty=donated)
-                    add_fact("Multiply", lhs=current_qty, rhs=pct, result=donated)
-                    add_fact("Subtract", lhs=current_qty, rhs=donated, result=final_total)
-                    add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=final_total)
-                    add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, total), ("donated", -donated, final_total)])
+                if events:
+                    state_steps = [("bought_more", +extra, total)]
+                    for _, kind, value in sorted(events, key=lambda x: x[0]):
+                        if kind == "donated":
+                            before_qty = current_qty
+                            donated = before_qty * value
+                            current_qty = before_qty - donated
+                            qty_by_owner_item[(owner, item)] = current_qty
+                            add_fact("Quantity", owner=owner, item=item, qty=current_qty)
+                            add_fact("Consumed", owner=owner, item=item, qty=donated)
+                            add_fact("Multiply", lhs=before_qty, rhs=value, result=donated)
+                            add_fact("Subtract", lhs=before_qty, rhs=donated, result=current_qty)
+                            add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=current_qty)
+                            state_steps.append(("donated", -donated, current_qty))
+                        elif kind == "spoiled":
+                            before_qty = current_qty
+                            spoiled = value
+                            current_qty = before_qty - spoiled
+                            qty_by_owner_item[(owner, item)] = current_qty
+                            add_fact("Quantity", owner=owner, item=item, qty=current_qty)
+                            add_fact("Consumed", owner=owner, item=item, qty=spoiled)
+                            add_fact("Subtract", lhs=before_qty, rhs=spoiled, result=current_qty)
+                            add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=current_qty)
+                            state_steps.append(("spoiled", -spoiled, current_qty))
+                    add_quantity_state_sequence(owner, item, base, state_steps)
                     return wm
 
                 qty_by_owner_item[(owner, item)] = current_qty
@@ -1642,6 +1802,34 @@ def benchmark_dataset(data_path, limit=None, max_cycles=4, quiet=True):
     }
 
 
+FINALITY_REGRESSION_FAMILIES = [
+    {
+        "family": "buy_more_final_gap",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?",
+        "expected": 15.0,
+    },
+    {
+        "family": "buy_more_final_gap_variant",
+        "question": "A has 4 times as many apples as B. B has 8 apples. A gives away 10 apples. 25% of the remaining apples are eaten. A then buys 6 more apples and 3 apples are spoiled. How many apples does A have?",
+        "expected": 19.5,
+    },
+    {
+        "family": "donation_after_buy_more",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?",
+        "expected": 16.0,
+    },
+    {
+        "family": "buy_more_then_donation_and_spoilage",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoiled. How many apples does A have?",
+        "expected": 11.0,
+    },
+    {
+        "family": "mixed_remaining_state",
+        "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?",
+        "expected": 11.25,
+    },
+]
+
 SEMANTIC_FAILURE_FAMILIES = [
     {
         "family": "ratio_single",
@@ -1713,6 +1901,41 @@ SEMANTIC_FAILURE_FAMILIES = [
         "question": "A has 4 times as many apples as B. B has 8 apples. A gives away 10 apples. 25% of the remaining apples are eaten. A then buys 6 more apples and 3 apples are spoiled. How many apples does A have?",
         "expected": 19.5,
     },
+    {
+        "family": "ratio_state_percent_buy_more_donation",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?",
+        "expected": 16.0,
+    },
+    {
+        "family": "ratio_state_percent_buy_more_donation_variant",
+        "question": "A has 4 times as many apples as B. B has 8 apples. A gives away 10 apples. 25% of the remaining apples are eaten. A then buys 6 more apples and 20% of the remaining apples are donated. How many apples does A have?",
+        "expected": 18.0,
+    },
+    {
+        "family": "ratio_state_percent_buy_more_spoilage_variant",
+        "question": "A has 5 times as many apples as B. B has 6 apples. A gives away 10 apples. 20% of the remaining apples are eaten. A then buys 9 more apples and 4 apples are spoiled. How many apples does A have?",
+        "expected": 20.0,
+    },
+    {
+        "family": "mixed_ratio_remaining_final",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 3 apples are spoiled. How many apples does A have?",
+        "expected": 13.0,
+    },
+    {
+        "family": "ratio_state_percent_buy_more_donation_spoilage_long",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 4 apples are spoiled. How many apples does A have?",
+        "expected": 12.0,
+    },
+    {
+        "family": "ratio_state_percent_buy_more_donation_variant_2",
+        "question": "A has 2 times as many apples as B. B has 12 apples. A gives away 12 apples. 25% of the remaining apples are eaten. A then buys 10 more apples and 20% of the remaining apples are donated. How many apples does A have?",
+        "expected": 15.2,
+    },
+    {
+        "family": "ratio_state_percent_buy_more_donation_spoilage_long_variant",
+        "question": "A has 5 times as many apples as B. B has 6 apples. A gives away 10 apples. 20% of the remaining apples are eaten. A then buys 9 more apples and 25% of the remaining apples are donated. Then 6 apples are spoiled. How many apples does A have?",
+        "expected": 12.75,
+    },
 ]
 
 
@@ -1740,6 +1963,11 @@ def benchmark_failure_families(families=None, max_cycles=4, quiet=True):
     }
 
 
+def benchmark_finality_regressions(max_cycles=4, quiet=True):
+    """Run the small final-state regression set that exercises the current temporal-priority contract."""
+    return benchmark_failure_families(FINALITY_REGRESSION_FAMILIES, max_cycles=max_cycles, quiet=quiet)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the AGI cognitive loop against a GSM8K dataset slice or a semantic benchmark set.")
     parser.add_argument("--data-path", default=None)
@@ -1747,9 +1975,16 @@ if __name__ == "__main__":
     parser.add_argument("--cycles", type=int, default=4)
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--family-benchmark", action="store_true", help="Run the compact semantic failure benchmark instead of a GSM8K dataset file.")
+    parser.add_argument("--finality-regression", action="store_true", help="Run the final-state regression set for buy-more / spoilage / donation / percent-of-remaining state transitions.")
     args = parser.parse_args()
 
-    if args.family_benchmark or args.data_path is None:
+    if args.finality_regression:
+        report = benchmark_finality_regressions(max_cycles=args.cycles, quiet=args.quiet)
+        print(f"Finality regression: {report['solved']} / {report['total']} families solved.")
+        if not args.quiet:
+            for item in report["results"]:
+                print(f"[{item['family']}] expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")
+    elif args.family_benchmark or args.data_path is None:
         report = benchmark_failure_families(max_cycles=args.cycles, quiet=args.quiet)
         print(f"Semantic benchmark: {report['solved']} / {report['total']} families solved.")
         if not args.quiet:

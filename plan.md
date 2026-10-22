@@ -1,15 +1,24 @@
-2026-10-22 final-state authority milestone
-- Fixed the remaining ordering bug in the state machine: final-state transitions now use the global event order instead of restarting per sub-sequence, so the latest valid state outranks stale earlier candidates.
-- Result: the compact semantic benchmark is green again at 14 / 14 active families, including the previously failing buy-more / spoilage final-state cluster.
-- This is the current clean checkpoint for a controlled next step: keep the benchmark narrow and stable and only widen one family at a time.
+2026-10-22 final-state authority and revision milestone
+- Fixed the remaining ordering bug in the state machine: final-state transitions now use the global event order, so the latest valid state outranks stale earlier candidates.
+- Added the contradiction / revision layer in System 3 so same owner/item conflicts prefer the latest valid state and source authority before numeric size.
+- Tightened the state priority logic so `PreferredState` and `FinalState` read from `after_qty`/`value` fallbacks instead of stale `qty`-only records, removing the last stale buy-more / donation / spoilage winner.
+- Result: the compact semantic benchmark remains green on the active slice, and the finality regression set stays green.
+- This is the current clean checkpoint for a controlled next step: keep the benchmark narrow and stable, and only widen one family at a time.
 - Do not create or activate a repo-local `.venv`; continue using the shared parent environment at `/home/yky/misc-programs/.venv`.
+
+2026-10-22 proposal-validation held-out evaluation
+- Added a small held-out semantic proposal set in `logic_transformer/proposal_holdout.jsonl` covering ratio binding, percent-of-remaining, buy-more updates, final-state precedence, and donation-after-buy-more patterns.
+- Evaluated the local proposal model on both the training slice and the held-out slice.
+- Result: proposal_ranker_accuracy=0.9600, proposal_ranker_holdout_accuracy=1.0000.
+- This confirms the proposal model is a useful bootstrap for candidate generation and local scoring, while still remaining intentionally non-authoritative until System 2 validation accepts the proposal.
 
 Next steps after the milestone
 1) Keep the benchmark compact and stable; add only one new semantic family at a time.
-2) Extend the state-order contract to a formal finality rule: same-owner/item latest valid event wins, earlier candidates are historical only.
-3) Add a tiny regression suite covering the known final-state buy-more/spoilage/donation edge cases and rerun it on every change.
-4) Once the compact suite stays green across multiple revisions, broaden to a modestly larger GSM8K-like slice without turning the loop into a noisy broad benchmark sweep.
-5) Revisit ILP only as a local helper once the temporal finality contract is stable and the semantic graph remains consistent.
+2) Continue the formal finality rule: same-owner/item latest valid event wins, earlier candidates remain historical but non-authoritative.
+3) Keep the small finality regression set as a permanent guardrail for buy-more / spoilage / donation / percent-of-remaining transitions.
+4) Use the held-out proposal set as a regular smoke benchmark before broader semantic widening.
+5) Once the compact suite stays green across multiple revisions, broaden to a modestly larger GSM8K-like slice without turning the loop into a noisy broad benchmark sweep.
+6) Revisit ILP only as a local helper once the temporal finality contract is stable and the semantic graph remains consistent.
 
 ILP reorganization note (2026-10-19)
 
@@ -188,3 +197,15 @@ Current implementation note (2026-10-22)
 - We tightened the final-state authority in `working_memory/working_memory.py` so same-owner/item quantities prefer the latest valid ordered state and suppress stale intermediate values in answer selection.
 - The fix is intentionally state-graph based rather than benchmark-specific: it makes `FinalState` / `BlockedState` / `Contradiction` explicit, which matches the non-monotonic reasoning direction described in the repo plan.
 - Remaining validation should be done with a compact, stable benchmark slice only; broad GSM8K sweeps remain premature while the state-order/priority contract is still evolving.
+
+Local proposal-model note (2026-10-22)
+- Added a lightweight semantic proposal ranker at `logic_transformer/local_proposal_ranker.py` and integrated it into `System 1` in `cognitive_loop.py`.
+- The ranker scores candidate semantic fragments and emits provenance-aware activation values rather than final truth values, so it acts as a proposal generator and local learning signal rather than as the final answerer.
+- Training on the synthetic local curriculum reached ~0.805 accuracy; this is the first concrete ML signal in the hybrid loop and should be treated as a bootstrap for rule-checked proposal generation, not as a full GSM8K solver.
+- Smoke test status: the proposal path is indeed emitting candidate WMEs immediately on short GSM8K-like stories, with activations in the 0.62–0.67 range. This is the expected behavior for soft proposal facts, not final authoritative facts.
+- Next clinical step: lift those parse-layer fragments into semantic-layer candidates that System 2 can accept and validate, then expand the curriculum only in the failure families that still matter.
+
+Current validation posture (2026-10-22)
+- System 2 remains silent on the short smoke case because the current proposal stage is still producing mostly parse-layer candidates, which are intentionally ignored by the symbol validator as a deliberate separation of concerns.
+- This is expected while the proposal layer is still being bootstrapped; the next step is to transform parse-layer clauses into explicit semantic-layer nodes with enough structural constraints for validator acceptance, not to ask System 2 to consume raw parse data.
+- The immediate objective is to keep the correctness loop honest: candidate generation first, validation second, contradiction revision third.
