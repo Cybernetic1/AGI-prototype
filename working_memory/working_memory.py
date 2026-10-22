@@ -254,6 +254,53 @@ class WorkingMemory:
         score += int(fact_node.activation * 10)
         return score
 
+    def _state_fact_concepts(self):
+        return {"FinalState", "PreferredState", "StateTransition", "State", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed"}
+
+    def _latest_state_authority(self, owner, item):
+        candidates = [
+            fact for fact in self.facts
+            if fact.concept in {"FinalState", "PreferredState", "StateTransition", "State"}
+            and fact.to_dict().get("owner") == owner
+            and fact.to_dict().get("item") == item
+            and fact.to_dict().get("event_order") is not None
+        ]
+        if not candidates:
+            return None
+        return max(candidates, key=lambda fact: int(fact.to_dict().get("event_order") or 0))
+
+    def _reconcile_state_authority(self, owner, item):
+        latest = self._latest_state_authority(owner, item)
+        if latest is None:
+            return
+        latest_order = int(latest.to_dict().get("event_order") or 0)
+        for fact in list(self.facts):
+            attrs = fact.to_dict()
+            if attrs.get("owner") != owner or attrs.get("item") != item:
+                continue
+            if fact.concept in {"FinalState", "PreferredState", "StateTransition", "State"}:
+                continue
+            if fact.concept not in self._state_fact_concepts():
+                continue
+            fact_order = attrs.get("event_order")
+            value = self._extract_state_value(fact)
+            if value is None:
+                continue
+            # Any unlabeled or older same-owner/item quantity is treated as historical
+            # when a newer state transition exists. It is not authoritative for final queries.
+            if fact_order is None or int(fact_order or 0) < latest_order:
+                self.facts[WMNode.create(
+                    "BlockedState",
+                    layer="meta",
+                    source="state_machine",
+                    activation=1.0,
+                    owner=owner,
+                    item=item,
+                    qty=value,
+                    event_order=fact_order if fact_order is not None else latest_order,
+                    blocked_by="FinalState",
+                )] = self.default_ttl
+
     def update(self, new_facts):
         if not new_facts:
             return
@@ -292,6 +339,9 @@ class WorkingMemory:
             item = d.get("item")
             args = d.get("args") or ()
             goal = d.get("goal")
+
+            if owner is not None and item is not None:
+                self._reconcile_state_authority(owner, item)
 
             if owner is not None and item is not None:
                 state_candidates = [
@@ -444,12 +494,16 @@ class WorkingMemory:
 
             # 1. Keep only the newest state for a given owner/item and prefer the final
             #    query candidate for an action chain (e.g. give-away -> percent -> buy-more).
-            if fact.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState"}:
+            #    Older state facts are not just redundant; they are stale candidates that can
+            #    incorrectly win when a later update should dominate a final answer.
+            if owner is not None and item is not None and fact.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState", "StateTransition", "PreferredState"}:
+                current_order = int(fact.to_dict().get("event_order") or 0)
                 to_remove = [
                     f for f in self.facts
-                    if f.concept == fact.concept
+                    if f.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState", "StateTransition", "PreferredState"}
                     and f.to_dict().get("owner") == owner
                     and f.to_dict().get("item") == item
+                    and int(f.to_dict().get("event_order") or 0) < current_order
                 ]
                 for f in to_remove:
                     del self.facts[f]

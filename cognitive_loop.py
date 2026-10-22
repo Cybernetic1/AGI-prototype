@@ -440,8 +440,19 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
     # We treat finality as a temporal relation (maximal event order), not as an ad hoc
     # label on the original quantity fact. This preserves ordinary earlier states for
     # historical reasoning while allowing later updates to override them for final queries.
+    # Critical guard: once an authoritative final state exists for an owner/item, any same-
+    # owner/item quantity facts without a later event order are non-authoritative and must be ignored.
     if goal_pred in {"remaining_quantity", "total_quantity"} and len(goal_args) >= 2:
         owner, item = goal_args[0], goal_args[1]
+
+        blocked_same_item_values = {
+            n.to_dict().get("qty")
+            for n in current_wm
+            if n.concept == "BlockedState"
+            and n.to_dict().get("owner") == owner
+            and n.to_dict().get("item") == item
+            and n.to_dict().get("qty") is not None
+        }
 
         preferred_state_nodes = [
             n for n in current_wm
@@ -461,6 +472,26 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
                 if not quiet:
                     print(f"[System 3] Preferred state authority: {goal_pred} = {final_qty} from preferred state")
                 return new_facts
+
+        current_quantity_candidates = [
+            n for n in current_wm
+            if n.concept in {"Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed"}
+            and n.to_dict().get("owner") == owner
+            and n.to_dict().get("item") == item
+        ]
+        if current_quantity_candidates and blocked_same_item_values:
+            authoritative_values = {
+                float(n.to_dict().get("qty") or n.to_dict().get("value") or 0.0)
+                for n in current_quantity_candidates
+                if n.to_dict().get("qty") is not None or n.to_dict().get("value") is not None
+                and n.to_dict().get("event_order") is not None
+            }
+            for candidate in current_quantity_candidates:
+                candidate_value = candidate.to_dict().get("qty")
+                if candidate_value is None:
+                    candidate_value = candidate.to_dict().get("value")
+                if candidate_value is not None and float(candidate_value) in blocked_same_item_values and not authoritative_values:
+                    continue
 
         final_state_nodes = [
             n for n in current_wm
@@ -1429,7 +1460,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
 
                 events = []
                 for match in re.finditer(
-                    r"(?:and|,|(?:finally|then|after(?:wards)?|later))\s+(?:\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(?:\d+(?:\.\d+)?)?\s*([A-Za-z][A-Za-z\s-]+)?\s+(?:were|was|are|is)\s+(?:donated|given\s+away|given|shared)",
+                    r"(?:[.;]|and|,|(?:finally|then|after(?:wards)?|after\s+that|later))\s*(?:\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+remaining\s+(?:\d+(?:\.\d+)?)?\s*([A-Za-z][A-Za-z\s-]+)?\s+(?:were|was|are|is)\s+(?:donated|donate|given\s+away|given|shared)",
                     text,
                     re.I,
                 ):
@@ -1441,7 +1472,7 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                     if donor_item is None or donor_item.strip().lower() in {"apples", "oranges", "bananas", item}:
                         events.append((match.start(), "donated", pct))
                 for match in re.finditer(
-                    r"(?:and|,|(?:finally|then|after(?:wards)?|later))\s*(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)\s+(?:are|is|were|was)\s+(?:spoiled|rotten|damaged|lost|wasted)",
+                    r"(?:and|,|(?:finally|then|after(?:wards)?|after\s+that|later))\s*(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)\s+(?:are|is|were|was)\s+(?:spoiled|spoilt|rotten|damaged|lost|wasted|ruined)",
                     text,
                     re.I,
                 ):
@@ -1824,9 +1855,24 @@ FINALITY_REGRESSION_FAMILIES = [
         "expected": 11.0,
     },
     {
+        "family": "buy_more_then_donation_and_spoilt",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoilt. How many apples does A have?",
+        "expected": 11.0,
+    },
+    {
+        "family": "buy_more_then_donation_after_that_spoilage",
+        "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. After that, 5 apples are spoiled. How many apples does A have?",
+        "expected": 11.0,
+    },
+    {
         "family": "mixed_remaining_state",
         "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?",
         "expected": 11.25,
+    },
+    {
+        "family": "buy_more_then_donation_after_spoilage_long_tail",
+        "question": "A has 4 times as many apples as B. B has 9 apples. A gives away 12 apples. 30% of the remaining apples are eaten. A then buys 7 more apples and 20% of the remaining apples are donated. Then 4 apples are spoilt. How many apples does A have?",
+        "expected": 15.04,
     },
 ]
 

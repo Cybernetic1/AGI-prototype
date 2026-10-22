@@ -20,6 +20,17 @@ Next steps after the milestone
 5) Once the compact suite stays green across multiple revisions, broaden to a modestly larger GSM8K-like slice without turning the loop into a noisy broad benchmark sweep.
 6) Revisit ILP only as a local helper once the temporal finality contract is stable and the semantic graph remains consistent.
 
+Current widening pass (2026-10-22)
+- Keep the widening strategy narrow and adjacent: test a small set of buy-more / donation / spoilage variants rather than a broad GSM8K sweep.
+- A green result on the next adjacent family confirms the finality contract stays stable; a failure marks the exact next long-tail edge to fix.
+- If the next candidate family remains green, continue with one final adjacent family and then stop to preserve the benchmark floor.
+
+Root-cause note on precedence failures (2026-10-22)
+- This is not a new bug class. It is the same temporal precedence / finality bug resurfacing in more complex mixed-state compositions.
+- The failure pattern is always: same owner + item gets multiple quantity candidates from earlier and later events, and stale historical states remain active because the working-memory update path still uses heuristic salience/source ordering more than strict event ordering.
+- The real invariant is: for a given owner/item, the latest valid state transition is authoritative for final queries, while earlier quantities remain historical and non-authoritative.
+- The fix is therefore to make finality a first-class temporal rule, not just a bigger set of ad hoc override heuristics.
+
 ILP reorganization note (2026-10-19)
 
 I moved the minimal Metagol-style ILP scaffold from forward-engine/ to ilp_learner/ to keep ILP experimentation code grouped.
