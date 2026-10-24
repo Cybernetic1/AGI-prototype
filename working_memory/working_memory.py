@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional, Dict, List, Tuple
 
 from working_memory.semantic_schema import SemanticGraphSchema
+from working_memory.nl_rule_injection import NLRuleCompiler
 
 # ==========================================
 # Semantic graph support for equation/dependency tracing.
@@ -274,6 +275,24 @@ class WorkingMemory:
         if latest is None:
             return
         latest_order = int(latest.to_dict().get("event_order") or 0)
+        latest_value = self._extract_state_value(latest)
+
+        # This is the actual finality invariant: same owner/item, latest valid ordered
+        # state becomes authoritative, while earlier values are retained as historical
+        # evidence and tagged as blocked rather than silently discarded.
+        if latest_value is not None:
+            self.facts[WMNode.create(
+                "FinalState",
+                layer="meta",
+                source="state_machine",
+                activation=1.0,
+                owner=owner,
+                item=item,
+                qty=latest_value,
+                event_order=latest_order,
+                phase="final",
+            )] = self.default_ttl
+
         for fact in list(self.facts):
             attrs = fact.to_dict()
             if attrs.get("owner") != owner or attrs.get("item") != item:
@@ -286,8 +305,7 @@ class WorkingMemory:
             value = self._extract_state_value(fact)
             if value is None:
                 continue
-            # Any unlabeled or older same-owner/item quantity is treated as historical
-            # when a newer state transition exists. It is not authoritative for final queries.
+            # Older or unlabeled same-owner/item quantities are historical, not final.
             if fact_order is None or int(fact_order or 0) < latest_order:
                 self.facts[WMNode.create(
                     "BlockedState",
@@ -492,21 +510,32 @@ class WorkingMemory:
                                         blocked_by="PreferredState",
                                     )] = self.default_ttl
 
-            # 1. Keep only the newest state for a given owner/item and prefer the final
-            #    query candidate for an action chain (e.g. give-away -> percent -> buy-more).
-            #    Older state facts are not just redundant; they are stale candidates that can
-            #    incorrectly win when a later update should dominate a final answer.
+            # 1. Prefer finality metadata over destructive deletion. We keep historical state
+            #    values in memory as evidence but mark older same-owner/item states as blocked.
+            #    This preserves the provenance trail while the latest valid state remains authoritative.
             if owner is not None and item is not None and fact.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState", "StateTransition", "PreferredState"}:
                 current_order = int(fact.to_dict().get("event_order") or 0)
-                to_remove = [
-                    f for f in self.facts
-                    if f.concept in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState", "StateTransition", "PreferredState"}
-                    and f.to_dict().get("owner") == owner
-                    and f.to_dict().get("item") == item
-                    and int(f.to_dict().get("event_order") or 0) < current_order
-                ]
-                for f in to_remove:
-                    del self.facts[f]
+                for stale in list(self.facts):
+                    stale_dict = stale.to_dict()
+                    if stale_dict.get("owner") != owner or stale_dict.get("item") != item:
+                        continue
+                    if stale.concept not in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState", "StateTransition", "PreferredState"}:
+                        continue
+                    stale_order = int(stale_dict.get("event_order") or 0)
+                    if stale_order < current_order and stale is not fact:
+                        stale_value = self._extract_state_value(stale)
+                        if stale_value is not None:
+                            self.facts[WMNode.create(
+                                "BlockedState",
+                                layer="meta",
+                                source="state_machine",
+                                activation=1.0,
+                                owner=owner,
+                                item=item,
+                                qty=stale_value,
+                                event_order=stale_order,
+                                blocked_by="FinalState",
+                            )] = self.default_ttl
             elif fact.concept == "Query":
                 to_remove = [
                     f for f in self.facts
@@ -582,6 +611,70 @@ class WorkingMemory:
                 expired.append(fact)
         for fact in expired:
             del self.facts[fact]
+
+    def inject_nl_rule(self, raw_rule: str, source: str = "human", *, rule_id: Optional[str] = None):
+        """Accept a human-written rule, compile it to the canonical graph contract, and inject it into WM.
+
+        This keeps the runtime symbolic-first: the human-facing NL is only the authoring
+        frontend. The actual rule is normalized into a declarative graph payload with
+        provenance, validation, and revision metadata before it is stored in Working Memory.
+        """
+        payload = NLRuleCompiler.compile(raw_rule)
+        ok, issues = NLRuleCompiler.validate(payload)
+        if not ok:
+            return {"accepted": False, "issues": issues, "payload": payload}
+
+        final_rule_id = rule_id or payload.get("rule_id") or "rule-autogen"
+        concept = "Rule"
+        rule_node = WMNode.create(
+            concept,
+            layer="meta",
+            source=source,
+            provenance_id=final_rule_id,
+            rule_id=final_rule_id,
+            family=payload.get("family"),
+            condition=payload.get("condition"),
+            effect=payload.get("effect"),
+            priority=int(payload.get("priority", 10)),
+            rule_text=raw_rule,
+            validator="working_memory.nl_rule_injection.NLRuleCompiler.validate",
+        )
+        self.facts[rule_node] = self.default_ttl
+
+        if payload.get("family") == "prefer_latest_state":
+            self.facts[WMNode.create(
+                "PreferredStateRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="latest valid state wins for the same owner/item",
+                priority=int(payload.get("priority", 100)),
+            )] = self.default_ttl
+
+        if payload.get("family") == "remaining_quantity":
+            self.facts[WMNode.create(
+                "RemainingRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="remaining quantity is base minus reduction",
+                priority=int(payload.get("priority", 80)),
+            )] = self.default_ttl
+
+        if payload.get("family") == "state_transition":
+            self.facts[WMNode.create(
+                "StateTransitionRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="quantity updates use same-owner/item delta semantics",
+                priority=int(payload.get("priority", 90)),
+            )] = self.default_ttl
+
+        return {"accepted": True, "rule_id": final_rule_id, "family": payload.get("family"), "payload": payload}
 
 
 class EquationGraphSolver:

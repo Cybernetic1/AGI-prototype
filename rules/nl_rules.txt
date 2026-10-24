@@ -1,0 +1,5 @@
+# NL rule authoring examples for the repository.
+# These rules are intentionally narrow and compile into the existing canonical rule schema.
+If a later state exists for the same owner and item, prefer the later state.
+If the same owner and item are referenced again, bind them to the same entity identity.
+If a donation updates the state of an owner and item, subtract the donated amount from the remaining quantity.
