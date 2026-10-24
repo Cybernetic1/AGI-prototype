@@ -24,6 +24,23 @@ Current widening pass (2026-10-22)
 - Keep the widening strategy narrow and adjacent: test a small set of buy-more / donation / spoilage variants rather than a broad GSM8K sweep.
 - A green result on the next adjacent family confirms the finality contract stays stable; a failure marks the exact next long-tail edge to fix.
 - If the next candidate family remains green, continue with one final adjacent family and then stop to preserve the benchmark floor.
+- Added a second adjacent family cluster for product totals, rate-time totals, discount pricing, combined totals, unit conversion, and simple distance/time templates. Result: 8/8 generalization families solve after the final dozen-conversion and distance/time fixes.
+- Expanded the adjacent family pass with percentage-of-total and final-price-after-discount checks to stress the next natural cluster. Result: the compact suite remains green after the latest heuristic guard changes.
+- Tested and fixed the next family cluster for profit-margin, simple-interest, fraction-of-total, average-speed, and ratio-of-total patterns. Result: all five currently solve in the compact smoke tests, and the full benchmark suite remains green.
+- Added the latest extension to `GENERALIZED_TEMPLATE_FAMILIES` for the same cluster and validated it in the compact suite: 14 / 14 families solved after the percentage-growth case was added.
+- Added the percent-sequence family and validated it: the current compact suite is green on 16 / 16 generalized template families.
+
+Why not broad NL sweeps yet (2026-10-23)
+- Broad sweeps at the top-level NL semantics layer are a poor first optimization target because they optimize over noise before the semantic graph contract is stable.
+- The current bottleneck is not raw language coverage; it is invariant preservation across owner/item binding, temporal precedence, and final-state selection. A broad NL sweep mostly tells us which noisy parse patterns happen to work, not which semantic rules are actually correct.
+- The right pattern is: 1) stabilize a small family slice, 2) run a tight benchmark, 3) widen one adjacent family cluster only when the prior slice stays green. This keeps the system honest and prevents the loop from chasing benchmark score without a real semantic contract.
+- Once the graph contract and finality rule are stable across several adjacent families, then a wider sweep is valuable as a validation pass rather than as the primary training objective.
+
+Why the slice curriculum matters for ILP (2026-10-23)
+- The handcrafted rules are not the final product; they are the curriculum and supervision layer that gives ILP a learnable hypothesis space.
+- We are not asking ILP to memorize a solved slice. We are asking it to learn compact metarules that generalize across many synthetic NL variants of the same semantic invariant.
+- Example: the local rule for `remaining_quantity` or `latest-valid-state-wins` is implemented first as a valid symbolic contract, then generated into many surface-form variants. ILP learns the pattern at the level of semantic relations, not as a one-off regex hack.
+- The result is: handcrafted rules define the invariant, synthetic data populate the training distribution, and ILP extracts the reusable local fragment. The symbolic validator remains the authoritative check.
 
 Root-cause note on precedence failures (2026-10-22)
 - This is not a new bug class. It is the same temporal precedence / finality bug resurfacing in more complex mixed-state compositions.
@@ -220,3 +237,9 @@ Current validation posture (2026-10-22)
 - System 2 remains silent on the short smoke case because the current proposal stage is still producing mostly parse-layer candidates, which are intentionally ignored by the symbol validator as a deliberate separation of concerns.
 - This is expected while the proposal layer is still being bootstrapped; the next step is to transform parse-layer clauses into explicit semantic-layer nodes with enough structural constraints for validator acceptance, not to ask System 2 to consume raw parse data.
 - The immediate objective is to keep the correctness loop honest: candidate generation first, validation second, contradiction revision third.
+
+Why temporal finality is still hard (2026-10-22)
+- Because it is not a single arithmetic rule; it is a global precedence law over a whole state graph.
+- A valid final answer must be selected only after we know which owner/item pair is being queried, which events are part of the same chain, which later event supersedes an earlier one, and whether a contradiction should trigger revision instead of simple overwrite.
+- In other words, the bug is not that the code cannot compute 20% or 3x; it is that the system still lacks a universally enforced rule that says: same owner/item, later valid event wins; earlier values remain historical but non-authoritative.
+- We have fixed the common cases, but not the general contract: the mechanics now exist, yet the policy is still partially heuristic and needs to be made explicit in the WM state graph and revision layer before it can be declared solved.

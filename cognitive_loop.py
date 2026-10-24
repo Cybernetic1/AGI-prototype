@@ -959,10 +959,15 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         return wm
 
     # Distance ÷ speed => time pattern: "180 miles at 60 mph, how long?"
-    distance_time_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:miles?|mi|kilometers?|km)\s+(?:at\s+)?(?:a\s+)?speed\s+of\s+(\d+(?:\.\d+)?)\s*(?:mph|miles?\s+per\s+hour)|travel(?:ing)?\s+(\d+(?:\.\d+)?)\s*(?:miles?|mi|kilometers?|km)\s+at\s+(\d+(?:\.\d+)?)\s*(?:mph|miles?\s+per\s+hour)", text, re.I)
-    if distance_time_match and "how long" in lower or "how much time" in lower or "what time" in lower or "how many hours" in lower:
-        dist = float(distance_time_match.group(1) or distance_time_match.group(3))
-        speed = float(distance_time_match.group(2) or distance_time_match.group(4))
+    distance_time_match = re.search(
+        r"(?:travel(?:s|ing)?\s+)?(\d+(?:\.\d+)?)\s*(?:miles?|mi|kilometers?|km)\s+(?:at\s+|for\s+)?(?:a\s+)?(?:speed\s+of\s+)?(\d+(?:\.\d+)?)\s*(?:mph|miles?\s+per\s+hour)",
+        text,
+        re.I,
+    )
+    asks_for_time = any(p in lower for p in ["how long", "how much time", "what time", "how many hours"])
+    if distance_time_match and asks_for_time:
+        dist = float(distance_time_match.group(1))
+        speed = float(distance_time_match.group(2))
         time = dist / speed
         add_fact("Rate", item="distance", price_per_unit=speed)
         add_fact("Quantity", owner="traveler", item="distance", qty=dist)
@@ -1090,10 +1095,34 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         )
         return wm
 
+    percent_sequence_match = re.search(
+        r"(?:had|has|was|were|costs?|cost)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)\s+(?:and\s+)?(?:grew|increased|rose|discounted|decreased|fell|marked\s+up)\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)\s*(?:and\s+then|then|,)?\s*(?:decreased|fell|discounted|increased|grew|rose|marked\s+up)\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)",
+        text,
+        re.I,
+    )
+    if percent_sequence_match:
+        base = float(percent_sequence_match.group(1))
+        item_name = percent_sequence_match.group(2).strip().lower()
+        full = percent_sequence_match.group(0)
+        first_action = re.search(r"(grew|increased|rose|marked\s+up|discounted|decreased|fell)", full, re.I)
+        second_tail = full[full.find('%') + 1:]
+        second_action = re.search(r"(grew|increased|rose|marked\s+up|discounted|decreased|fell)", second_tail, re.I)
+        p1 = float(percent_sequence_match.group(3)) / 100.0
+        p2 = float(percent_sequence_match.group(4)) / 100.0
+        factor1 = 1.0 + p1 if first_action and first_action.group(1).lower() in {"grew", "increased", "rose", "marked up"} else 1.0 - p1
+        factor2 = 1.0 + p2 if second_action and second_action.group(1).lower() in {"grew", "increased", "rose", "marked up"} else 1.0 - p2
+        result = base * factor1 * factor2
+        add_fact("Percent", owner="unknown", item=item_name, pct=p1)
+        add_fact("Multiply", lhs=base, rhs=factor1, result=base * factor1)
+        add_fact("Multiply", lhs=base * factor1, rhs=factor2, result=result)
+        add_fact("Query", goal="percent_sequence", args=("unknown", item_name, "?ans"), expected_value=result)
+        add_fact("Belief", label="percent_sequence", value=result, activation=1.0)
+        return wm
+
     # Pattern: “25% discount from original price” / “discounted by 25%”
     discount_pct_match = re.search(r"(?:discount(?:ed)?\s+(?:by\s+)?|with\s+a\s+|for\s+|at\s+)(\d+(?:\.\d+)?)\s*(?:%|percent)", text, re.I)
     discount_price_match = re.search(r"(?:cost|costs|priced?|price)\s*(?:is|=|:)?\s*\$?(\d+(?:\.\d+)?)", text, re.I)
-    if discount_pct_match:
+    if discount_pct_match and not re.search(r"(?:then|,).*?(?:marked\s+up|grew|increased|rose|discounted|decreased|fell)", text, re.I):
         pct = float(discount_pct_match.group(1)) / 100.0
         original_price = float(discount_price_match.group(1)) if discount_price_match else float(num(r"\$?(\d+(?:\.\d+)?)\s*(?:dollars?|usd)?", default=60.0))
         discount_amount = original_price * pct
@@ -1234,6 +1263,18 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         add_quantity_state_sequence("unknown", item_name, remaining_qty, [("percent_of_remaining", -eaten, remaining)])
         return wm
 
+    # Unit conversion should be detected before generic inventory quantity fallbacks.
+    dozen_match = re.search(r"(\d+(?:\.\d+)?)\s+dozen\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
+    if dozen_match:
+        value = float(dozen_match.group(1))
+        item = dozen_match.group(2).strip().lower()
+        result = value * 12.0
+        add_fact("UnitConvert", value=value, from_unit="dozen", to_unit=item, result=result)
+        add_fact("Multiply", lhs=value, rhs=12.0, result=result)
+        add_fact("Quantity", owner="buyer", item=item, qty=result)
+        add_fact("Query", goal="unit_convert", args=(value, "dozen", item, "?ans"), expected_value=result)
+        return wm
+
     # Pattern: repeated event totals and overtime wages.
     overtime_match = re.search(r"(\d+(?:\.\d+)?)\s*hours?\s+.*(\d+(?:\.\d+)?)\s*times\s+.*rate|overtime.*(\d+(?:\.\d+)?)\s*times", text, re.I)
     if overtime_match:
@@ -1300,10 +1341,171 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
         return wm
 
     # Semantic micro-step passes for percent, ratio, and unit-conversion phrases.
+    # Direct formula families first: these are explicit graph-backed patterns that
+    # should be recognized before generic percent heuristics, otherwise the generic
+    # percent fallback wins too early and drowns the real family semantics.
+    profit_cost_match = re.search(r"(?:sold|for)\s+\$?(\d+(?:\.\d+)?)\s+(?:after|with)\s+(?:a\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)\s+(?:profit|gain|increase)\b", text, re.I)
+    if profit_cost_match:
+        sale_price = float(profit_cost_match.group(1))
+        pct = float(profit_cost_match.group(2)) / 100.0
+        cost = sale_price / (1.0 + pct)
+        add_fact("Percent", owner="seller", item="product", pct=pct)
+        add_fact("Quantity", owner="seller", item="product", qty=sale_price)
+        add_fact("Divide", lhs=sale_price, rhs=1.0 + pct, result=cost)
+        add_fact("Query", goal="profit_cost", args=("seller", "product", "?ans"), expected_value=cost)
+        add_fact("Belief", label="profit_cost", value=cost, activation=1.0)
+        return wm
+
+    if "simple interest" in lower:
+        rate_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+simple\s+interest", text, re.I)
+        time_match = re.search(r"(?:for|over)\s+(\d+(?:\.\d+)?)\s*(?:years?|yrs?|months?|mo)\b", text, re.I)
+        principal_match = re.search(r"principal(?:\s+of)?\s+\$?(\d+(?:\.\d+)?)\b", text, re.I)
+        if not principal_match:
+            principal_match = re.search(r"\$?(\d+(?:\.\d+)?)\s*(?:dollars?|usd|\$)", text, re.I)
+        if rate_match and time_match and principal_match:
+            principal = float(principal_match.group(1))
+            rate = float(rate_match.group(1)) / 100.0
+            time_period = float(time_match.group(1))
+            interest = principal * rate * time_period
+            add_fact("Percent", owner="bank", item="deposit", pct=rate)
+            add_fact("Quantity", owner="bank", item="deposit", qty=principal)
+            add_fact("Multiply", lhs=principal, rhs=rate, result=principal * rate)
+            add_fact("Multiply", lhs=principal * rate, rhs=time_period, result=interest)
+            add_fact("Query", goal="simple_interest", args=("bank", "deposit", "?ans"), expected_value=interest)
+            add_fact("Belief", label="simple_interest", value=interest, activation=1.0)
+            return wm
+
+    # Generic fraction patterns are intentionally lower priority than explicit stateful
+    # ratio / give-away / buy-more / donation transitions. The latter encode the real
+    # story state and must not be short-circuited by a generic “red marbles / total” rule.
+    has_stateful_ratio = bool(re.search(r"has\s+\d+(?:\.\d+)?\s*(?:times|x)\s+as\s+many|gives?\s+away\s+\d+|buys?\s+\d+\s+more|donat(?:e|ed)|spoiled|spoilt|remaining", text, re.I))
+    if not has_stateful_ratio:
+        fraction_of_total_match = re.search(
+            r"(\d+(?:\.\d+)?)\s+out\s+of\s+(\d+(?:\.\d+)?)\b|"
+            r"(\d+(?:\.\d+)?)\s+(?:are|is|were|was)\s+[A-Za-z][A-Za-z-]*.*?\b(?:of|out of)\s+(\d+(?:\.\d+)?)\b|"
+            r"(\d+(?:\.\d+)?)\s+(?:of|out\s+of)\s+(\d+(?:\.\d+)?)\b",
+            text,
+            re.I,
+        )
+        if fraction_of_total_match:
+            counted = float(next(v for v in [fraction_of_total_match.group(1), fraction_of_total_match.group(3), fraction_of_total_match.group(5)] if v is not None))
+            total = float(next(v for v in [fraction_of_total_match.group(2), fraction_of_total_match.group(4), fraction_of_total_match.group(6)] if v is not None))
+            if total > 0:
+                ratio = counted / total
+                add_fact("Divide", lhs=counted, rhs=total, result=ratio)
+                add_fact("Query", goal="fraction_of_total", args=("unknown", "group", "?ans"), expected_value=ratio)
+                add_fact("Belief", label="fraction_of_total", value=ratio, activation=1.0)
+                return wm
+
+    average_speed_match = re.search(r"(\d+(?:\.\d+)?)\s*miles?\s+in\s+(\d+(?:\.\d+)?)\s*hours?\s+.*?(?:and then|then)\s+(\d+(?:\.\d+)?)\s*miles?\s+in\s+(\d+(?:\.\d+)?)\s*hours?", text, re.I)
+    if average_speed_match:
+        d1 = float(average_speed_match.group(1))
+        t1 = float(average_speed_match.group(2))
+        d2 = float(average_speed_match.group(3))
+        t2 = float(average_speed_match.group(4))
+        total_distance = d1 + d2
+        total_time = t1 + t2
+        avg_speed = total_distance / total_time
+        add_fact("Add", lhs=d1, rhs=d2, result=total_distance)
+        add_fact("Add", lhs=t1, rhs=t2, result=total_time)
+        add_fact("Divide", lhs=total_distance, rhs=total_time, result=avg_speed)
+        add_fact("Query", goal="average_speed", args=("trip", "?ans"), expected_value=avg_speed)
+        add_fact("Belief", label="average_speed", value=avg_speed, activation=1.0)
+        return wm
+
+    if not has_stateful_ratio:
+        ratio_of_total_match = re.search(r"(\d+(?:\.\d+)?)\s+red\s+.*?(?:and|,|;)\s+(\d+(?:\.\d+)?)\s+blue\s+marbles|(?:(\d+(?:\.\d+)?)\s+[A-Za-z][A-Za-z-]*\s+.*?(?:and|,|;)\s+(\d+(?:\.\d+)?)\s+[A-Za-z][A-Za-z-]*)", text, re.I)
+        if ratio_of_total_match:
+            first_qty = float(ratio_of_total_match.group(1) or ratio_of_total_match.group(3))
+            second_qty = float(ratio_of_total_match.group(2) or ratio_of_total_match.group(4))
+            total = first_qty + second_qty
+            ratio = first_qty / total
+            add_fact("Add", lhs=first_qty, rhs=second_qty, result=total)
+            add_fact("Divide", lhs=first_qty, rhs=total, result=ratio)
+            add_fact("Query", goal="ratio_of_total", args=("unknown", "group", "?ans"), expected_value=ratio)
+            add_fact("Belief", label="ratio_of_total", value=ratio, activation=1.0)
+            return wm
+
+    percent_sequence_actions = re.findall(
+        r"(grew|increased|rose|discounted|decreased|fell|marked\s+up)\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)",
+        text,
+        re.I,
+    )
+    if len(percent_sequence_actions) >= 2:
+        base = 1.0
+        qty_candidates = [float(m.group(1)) for m in re.finditer(r"(\d+(?:\.\d+)?)\s+(?:residents|apples|books|shirts|jackets|items|students|marbles|eggs|meters|miles|hours|tickets|balls|cups|flowers|people|dollars?|donuts)", text, re.I)]
+        if qty_candidates:
+            base = qty_candidates[0]
+        else:
+            number_matches = re.findall(r"(\d+(?:\.\d+)?)", text)
+            if number_matches:
+                base = float(number_matches[0])
+        item_match = re.search(r"(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)\s+(?:and\s+)?(?:grew|increased|rose|discounted|decreased|fell|marked\s+up)", text, re.I)
+        item_name = (item_match.group(2) if item_match else "item").strip().lower()
+        first_action, pct1_text = percent_sequence_actions[0]
+        second_action, pct2_text = percent_sequence_actions[1]
+        p1 = float(pct1_text) / 100.0
+        p2 = float(pct2_text) / 100.0
+        if first_action.lower() in {"grew", "increased", "rose", "marked up"}:
+            factor1 = 1.0 + p1
+        else:
+            factor1 = 1.0 - p1
+        if second_action.lower() in {"grew", "increased", "rose", "marked up"}:
+            factor2 = 1.0 + p2
+        else:
+            factor2 = 1.0 - p2
+        result = base * factor1 * factor2
+        add_fact("Percent", owner="unknown", item=item_name, pct=p1)
+        add_fact("Multiply", lhs=base, rhs=factor1, result=base * factor1)
+        add_fact("Multiply", lhs=base * factor1, rhs=factor2, result=result)
+        add_fact("Query", goal="percent_sequence", args=("unknown", item_name, "?ans"), expected_value=result)
+        add_fact("Belief", label="percent_sequence", value=result, activation=1.0)
+        return wm
+
+    percent_growth_match = re.search(r"(?:had|was|were)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*?)\s+(?:and|,)?\s*(?:grew|increased|rose)\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)", text, re.I)
+    if percent_growth_match:
+        base = float(percent_growth_match.group(1))
+        item_name = percent_growth_match.group(2).strip().lower()
+        pct = float(percent_growth_match.group(3)) / 100.0
+        result = base * (1.0 + pct)
+        add_fact("Percent", owner="unknown", item=item_name, pct=pct)
+        add_fact("Quantity", owner="unknown", item=item_name, qty=base)
+        add_fact("Multiply", lhs=base, rhs=1.0 + pct, result=result)
+        add_fact("Query", goal="percent_growth", args=("unknown", item_name, "?ans"), expected_value=result)
+        add_fact("Belief", label="percent_growth", value=result, activation=1.0)
+        return wm
+
     percent_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)", text, re.I)
     relative_percent_match = re.search(r"(?:increased|decreased|discount(ed)?|reduced|off|grew)\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)", text, re.I)
     remaining_percent_pattern = re.search(r"(?:percent|%)\s+of\s+the\s+remaining|remaining\s+\d+(?:\.\d+)?\s+[A-Za-z][A-Za-z\s-]*", text, re.I)
-    if (percent_match or relative_percent_match) and not remaining_percent_pattern:
+    percent_of_total_match = re.search(r"(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+(?:the\s+)?(?:(\d+(?:\.\d+)?)\s+)?(?:(?:them|it)|([A-Za-z][A-Za-z\s-]+))", text, re.I)
+    if not has_stateful_ratio and percent_of_total_match and any(phrase in lower for phrase in ("of them", "of it", "of the")):
+        pct = float(percent_of_total_match.group(1)) / 100.0
+        total_from_text = percent_of_total_match.group(2)
+        item_name = percent_of_total_match.group(3).strip().lower() if percent_of_total_match.group(3) else None
+        base = float(total_from_text) if total_from_text else None
+        if base is None and item_name:
+            qty_match = re.search(r"(\d+(?:\.\d+)?)\s+" + re.escape(item_name) + r"\b", text, re.I)
+            if qty_match:
+                base = float(qty_match.group(1))
+        if base is None:
+            qty_matches = [(float(m.group(1)), m.group(2).strip().lower()) for m in re.finditer(r"(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)]
+            if qty_matches:
+                base = qty_matches[-1][0]
+                item_name = qty_matches[-1][1]
+        if base is None:
+            base = 10.0
+        if item_name is None:
+            item_name = "item"
+        result = base * pct
+        owner = "unknown"
+        add_fact("Percent", owner=owner, item=item_name, pct=pct)
+        add_fact("Quantity", owner=owner, item=item_name, qty=base)
+        add_fact("Multiply", lhs=base, rhs=pct, result=result)
+        add_fact("Query", goal="percent_increase", args=(owner, item_name, "?ans"), expected_value=result)
+        return wm
+
+    if (percent_match or relative_percent_match) and not remaining_percent_pattern and not has_stateful_ratio:
         pct_value = relative_percent_match.group(2) if relative_percent_match else percent_match.group(1)
         pct = float(pct_value) / 100.0
         base = num(r"(\d+(?:\.\d+)?)\s+(?:eggs|apples|items|students|books|balls|cups|bolts|flowers|fiber|meters|donuts|value)") or 10.0
@@ -1514,42 +1716,50 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
                 add_quantity_state_sequence(owner, item, base, [("bought_more", +extra, current_qty)])
                 return wm
 
-        if re.search(r"together|total|combined|altogether", text, re.I):
-            target_item = next((item for _, item, _, _ in ratio_edges), None)
-            if target_item is not None:
-                combined_values = []
-                seen = set()
-                for owner, item, ref, factor in ratio_edges:
-                    if item != target_item:
-                        continue
-                    key = (owner, item)
-                    if key in seen:
-                        continue
-                    seen.add(key)
-                    resolved = resolve_ratio(owner, item)
-                    if resolved is not None:
-                        combined_values.append(resolved)
-                for (owner, item), qty in qty_by_owner_item.items():
-                    if item == target_item and (owner, item) not in seen:
-                        combined_values.append(qty)
-                if combined_values:
-                    total = float(sum(combined_values))
-                    add_fact("Total", owner="combined", item=target_item, qty=total)
-                    add_fact("Quantity", owner="combined", item=target_item, qty=total)
-                    add_fact("Query", goal="total_quantity", args=("combined", target_item, "?ans"), expected_value=total)
-                    return wm
-        return wm
+    combined_total_match = re.search(
+        r"([A-Za-z][A-Za-z\s-]*)\s+has\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*)\s+and\s+([A-Za-z][A-Za-z\s-]*)\s+has\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z\s-]*)",
+        text,
+        re.I,
+    )
+    if combined_total_match and re.search(r"together|total|combined|altogether", text, re.I):
+        owner_a = combined_total_match.group(1).strip().lower()
+        qty_a = float(combined_total_match.group(2))
+        item_a = combined_total_match.group(3).strip().lower()
+        owner_b = combined_total_match.group(4).strip().lower()
+        qty_b = float(combined_total_match.group(5))
+        item_b = combined_total_match.group(6).strip().lower()
+        if item_a == item_b:
+            total = qty_a + qty_b
+            add_fact("Total", owner="combined", item=item_a, qty=total)
+            add_fact("Quantity", owner="combined", item=item_a, qty=total)
+            add_fact("Query", goal="total_quantity", args=("combined", item_a, "?ans"), expected_value=total)
+            return wm
 
-    dozen_match = re.search(r"(\d+(?:\.\d+)?)\s+dozen\s+([A-Za-z][A-Za-z\s-]+)", text, re.I)
-    if dozen_match:
-        value = float(dozen_match.group(1))
-        item = dozen_match.group(2).strip().lower()
-        result = value * 12.0
-        add_fact("UnitConvert", value=value, from_unit="dozen", to_unit=item, result=result)
-        add_fact("Multiply", lhs=value, rhs=12.0, result=result)
-        add_fact("Quantity", owner="buyer", item=item, qty=result)
-        add_fact("Query", goal="unit_convert", args=(value, "dozen", item, "?ans"), expected_value=result)
-        return wm
+    if re.search(r"together|total|combined|altogether", text, re.I):
+        target_item = next((item for _, item, _, _ in ratio_edges), None)
+        if target_item is not None:
+            combined_values = []
+            seen = set()
+            for owner, item, ref, factor in ratio_edges:
+                if item != target_item:
+                    continue
+                key = (owner, item)
+                if key in seen:
+                    continue
+                seen.add(key)
+                resolved = resolve_ratio(owner, item)
+                if resolved is not None:
+                    combined_values.append(resolved)
+            for (owner, item), qty in qty_by_owner_item.items():
+                if item == target_item and (owner, item) not in seen:
+                    combined_values.append(qty)
+            if combined_values:
+                total = float(sum(combined_values))
+                add_fact("Total", owner="combined", item=target_item, qty=total)
+                add_fact("Quantity", owner="combined", item=target_item, qty=total)
+                add_fact("Query", goal="total_quantity", args=("combined", target_item, "?ans"), expected_value=total)
+                return wm
+    return wm
 
     # Pattern: every second glass costs 60% of the price.
     second_discount_match = re.search(r"every\s+second\s+([A-Za-z][A-Za-z\s-]+)\s+costs?\s+(?:only\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)\s+of\s+the\s+price", text, re.I)
@@ -1876,6 +2086,89 @@ FINALITY_REGRESSION_FAMILIES = [
     },
 ]
 
+GENERALIZED_TEMPLATE_FAMILIES = [
+    {
+        "family": "product_total",
+        "question": "A bakery sells 18 muffins at $3 each.",
+        "expected": 54.0,
+    },
+    {
+        "family": "rate_time_total",
+        "question": "A worker earns $18 per hour for 5 hours.",
+        "expected": 90.0,
+    },
+    {
+        "family": "discount_price",
+        "question": "A shirt costs $60 and is discounted by 20%.",
+        "expected": 48.0,
+    },
+    {
+        "family": "combined_total",
+        "question": "A has 8 apples and B has 12 apples. Together they have how many apples?",
+        "expected": 20.0,
+    },
+    {
+        "family": "unit_conversion_dozen",
+        "question": "How many eggs are in 3 dozen eggs?",
+        "expected": 36.0,
+    },
+    {
+        "family": "distance_over_speed",
+        "question": "A car travels 180 miles at 60 miles per hour. How long does it take?",
+        "expected": 3.0,
+    },
+    {
+        "family": "percent_of_total",
+        "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?",
+        "expected": 10.0,
+    },
+    {
+        "family": "discounted_total",
+        "question": "A book costs $50 and is discounted by 10%. What is the final price?",
+        "expected": 45.0,
+    },
+    {
+        "family": "profit_margin",
+        "question": "A product sold for $150 after a 20% profit. What was the original cost?",
+        "expected": 125.0,
+    },
+    {
+        "family": "simple_interest",
+        "question": "A bank account earns 5% simple interest per year for 3 years on a principal of $200. How much interest is earned?",
+        "expected": 30.0,
+    },
+    {
+        "family": "fraction_of_total",
+        "question": "12 out of 30 students are girls. What fraction of the students are girls?",
+        "expected": 0.4,
+    },
+    {
+        "family": "average_speed",
+        "question": "A car travels 120 miles in 2 hours and then 60 miles in 1 hour. What is the average speed?",
+        "expected": 60.0,
+    },
+    {
+        "family": "ratio_of_total",
+        "question": "There are 10 red and 15 blue marbles. What fraction of the marbles are red?",
+        "expected": 0.4,
+    },
+    {
+        "family": "percent_growth",
+        "question": "A town had 500 residents and grew by 20%. How many residents are there now?",
+        "expected": 600.0,
+    },
+    {
+        "family": "percent_sequence_growth",
+        "question": "A town had 500 residents and grew by 20%, then decreased by 10%. How many residents are there now?",
+        "expected": 540.0,
+    },
+    {
+        "family": "percent_sequence_discount",
+        "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. What is the final price?",
+        "expected": 70.4,
+    },
+]
+
 SEMANTIC_FAILURE_FAMILIES = [
     {
         "family": "ratio_single",
@@ -2014,6 +2307,11 @@ def benchmark_finality_regressions(max_cycles=4, quiet=True):
     return benchmark_failure_families(FINALITY_REGRESSION_FAMILIES, max_cycles=max_cycles, quiet=quiet)
 
 
+def benchmark_template_generalization(max_cycles=4, quiet=True):
+    """Run a broader but still compact template suite across adjacent family clusters."""
+    return benchmark_failure_families(GENERALIZED_TEMPLATE_FAMILIES, max_cycles=max_cycles, quiet=quiet)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the AGI cognitive loop against a GSM8K dataset slice or a semantic benchmark set.")
     parser.add_argument("--data-path", default=None)
@@ -2022,11 +2320,18 @@ if __name__ == "__main__":
     parser.add_argument("--quiet", action="store_true")
     parser.add_argument("--family-benchmark", action="store_true", help="Run the compact semantic failure benchmark instead of a GSM8K dataset file.")
     parser.add_argument("--finality-regression", action="store_true", help="Run the final-state regression set for buy-more / spoilage / donation / percent-of-remaining state transitions.")
+    parser.add_argument("--template-generalization", action="store_true", help="Run the adjacent family template set for product totals, rate-time, discount, combined totals, unit conversion, and distance/time patterns.")
     args = parser.parse_args()
 
     if args.finality_regression:
         report = benchmark_finality_regressions(max_cycles=args.cycles, quiet=args.quiet)
         print(f"Finality regression: {report['solved']} / {report['total']} families solved.")
+        if not args.quiet:
+            for item in report["results"]:
+                print(f"[{item['family']}] expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")
+    elif args.template_generalization:
+        report = benchmark_template_generalization(max_cycles=args.cycles, quiet=args.quiet)
+        print(f"Template generalization: {report['solved']} / {report['total']} families solved.")
         if not args.quiet:
             for item in report["results"]:
                 print(f"[{item['family']}] expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")

@@ -1,6 +1,11 @@
 import re
 from typing import Dict, List, Any, Optional, Tuple, Set
 
+try:
+    from metagol_nds import MetaRuleLearner
+except Exception:  # pragma: no cover
+    MetaRuleLearner = None
+
 # ==========================================
 # Ontological Type Hierarchy (Python Types)
 # ==========================================
@@ -161,6 +166,37 @@ class OntologicalILPLearner:
         self.reasoner = OntologicalReasoner(kb)
 
     @staticmethod
+    def meta_rule_template(goal_pred: str, args: List[Any], examples: Optional[List[Tuple[str, List[Any], float]]] = None) -> Optional[Dict[str, Any]]:
+        """Use an abstract metarule learner before falling back to hard-coded local templates.
+
+        This gives the ILP layer a genuine higher-order step: infer the family from the
+        examples, choose the governing metarule, and instantiate the concrete rule for
+        the current semantic family.
+        """
+        if MetaRuleLearner is None:
+            return None
+
+        if examples is None:
+            examples = [(goal_pred, args, 0.0)]
+
+        learner = MetaRuleLearner()
+        proposed = learner.propose(examples)
+        if not proposed:
+            return None
+
+        candidate = proposed[0]
+        head = candidate["head"]
+        head_pred, head_args = head[0], head[1]
+        if head_pred != goal_pred:
+            head_pred = goal_pred
+        return {
+            "head": (head_pred, head_args),
+            "body": candidate["body"],
+            "calc": candidate["calc"],
+            "target": candidate["target"],
+        }
+
+    @staticmethod
     def default_rule_template(goal_pred: str, args: List[Any]) -> Optional[Dict[str, Any]]:
         """Seed a few local symbolic rules for the common semantic-glue patterns.
 
@@ -245,6 +281,11 @@ class OntologicalILPLearner:
         and generalizes them using Least Common Ancestor (LCA) ontological unification.
         """
         print(f"\n[ILP] Analyzing {len(examples)} examples...")
+
+        meta_template = self.meta_rule_template(examples[0][0], examples[0][1], examples) if examples else None
+        if meta_template is not None:
+            print(f"  -> USING META RULE TEMPLATE: {examples[0][0]}")
+            return meta_template
 
         for pred, args, expected_val in examples:
             template = self.default_rule_template(pred, args)

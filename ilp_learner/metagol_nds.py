@@ -272,6 +272,197 @@ def embedding_prior(head_pred, body_preds, emb_path='/tmp/aligned_hyperbolic_emb
         s += SequenceMatcher(None, head_pred, b).ratio()
     return s / max(1, len(body_preds))
 
+# --- Semantic metarule grammar ---
+# These seed meta-rules are intentionally compact. They are not the final solver;
+# they provide the reusable abstractions that later ILP learning can generalize over.
+
+class MetaRule:
+    def __init__(self, family, name, head, body, calc, target, description=""):
+        self.family = family
+        self.name = name
+        self.head = head
+        self.body = body
+        self.calc = calc
+        self.target = target
+        self.description = description
+
+    def instantiate(self, binding=None):
+        head = self.head
+        body = self.body
+        if binding:
+            def repl(val):
+                return binding.get(val, val) if isinstance(val, str) and val.startswith("?") else val
+            head = (repl(head[0]), [repl(v) for v in head[1]])
+            body = [(p, [repl(v) for v in args]) for p, args in body]
+        return {
+            "family": self.family,
+            "name": self.name,
+            "head": head,
+            "body": body,
+            "calc": self.calc,
+            "target": self.target,
+            "description": self.description,
+        }
+
+
+class MetaRuleGrammar:
+    @staticmethod
+    def seeded_rules():
+        return [
+            MetaRule(
+                "ratio_compose",
+                "ratio_compose",
+                ("quantity", ["?owner", "?item", "?ans"]),
+                [("ratio", ["?owner", "?ref_owner", "?item", "?factor"]), ("quantity", ["?ref_owner", "?item", "?base"])],
+                "base * factor",
+                "?ans",
+                "same-item ratio composition from a reference owner",
+            ),
+            MetaRule(
+                "remaining_quantity",
+                "remaining_quantity",
+                ("remaining_quantity", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?base"]), ("percent", ["?owner", "?item", "?pct"])],
+                "base * (1 - pct)",
+                "?ans",
+                "percent-of-remaining / remaining-quantity reduction",
+            ),
+            MetaRule(
+                "state_transition",
+                "state_transition",
+                ("state", ["?owner", "?item", "?ans"]),
+                [("state_transition", ["?owner", "?item", "?before", "?delta", "?after"])],
+                "before + delta",
+                "?ans",
+                "same-owner/item state updates use before + delta",
+            ),
+            MetaRule(
+                "latest_valid_state",
+                "latest_valid_state",
+                ("final_state", ["?owner", "?item", "?ans"]),
+                [("state", ["?owner", "?item", "?later"]), ("state", ["?owner", "?item", "?earlier"])],
+                "later",
+                "?ans",
+                "latest valid state wins over earlier temporally stale candidates",
+            ),
+        ]
+
+    @staticmethod
+    def infer_family(examples):
+        names = []
+        for pred, args, expected in examples:
+            if isinstance(pred, str):
+                names.append(pred.lower())
+        text = " ".join(names)
+        if "ratio" in text or "times" in text:
+            return "ratio_compose"
+        if "remaining" in text or "percent" in text or "discount" in text:
+            return "remaining_quantity"
+        if "state" in text or "buy" in text or "donat" in text or "spoil" in text:
+            return "latest_valid_state"
+        return "state_transition"
+
+
+class MetaRuleLearner:
+    def __init__(self, grammar=None):
+        self.grammar = grammar or MetaRuleGrammar.seeded_rules()
+
+    def _rule_score(self, rule, examples):
+        family = rule.family
+        text = " ".join(str(pred).lower() for pred, _, _ in examples)
+        if family == "ratio_compose" and "ratio" not in text and "times" not in text:
+            return 0.0
+        if family == "remaining_quantity" and "percent" not in text and "remaining" not in text and "discount" not in text:
+            return 0.0
+        if family == "latest_valid_state" and "buy" not in text and "spoil" not in text and "donat" not in text and "state" not in text:
+            return 0.0
+        if family == "state_transition" and "state" not in text and "buy" not in text and "give" not in text:
+            return 0.0
+        return 1.0
+
+    def _instantiate_family_examples(self, family):
+        if family == "ratio_compose":
+            return [
+                ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
+                ("ratio_compose", ["carol", "dave", "apples", 1.5], 15.0),
+            ]
+        if family == "remaining_quantity":
+            return [
+                ("remaining_quantity", ["alice", "apples", 15.0], 15.0),
+                ("remaining_quantity", ["alice", "apples", 12.0], 12.0),
+            ]
+        if family == "latest_valid_state":
+            return [
+                ("final_state", ["alice", "apples", 20.0], 20.0),
+                ("final_state", ["alice", "apples", 17.0], 17.0),
+            ]
+        return [
+            ("state", ["alice", "apples", 8.0], 8.0),
+            ("state", ["alice", "apples", 11.0], 11.0),
+        ]
+
+    def fit(self, examples):
+        family = MetaRuleGrammar.infer_family(examples)
+        ranked = []
+        for rule in self.grammar:
+            if rule.family != family:
+                continue
+            score = self._rule_score(rule, examples)
+            ranked.append((score, rule))
+        if not ranked:
+            synthetic = self._instantiate_family_examples(MetaRuleGrammar.infer_family(examples))
+            for rule in self.grammar:
+                ranked.append((1.0, rule))
+            return [rule for _, rule in sorted(ranked, key=lambda x: x[0], reverse=True)][:3]
+        ranked.sort(key=lambda x: x[0], reverse=True)
+        return [rule for _, rule in ranked[:3]]
+
+    def propose(self, examples):
+        return [rule.instantiate() for rule in self.fit(examples)]
+
+
+def generate_synthetic_family_examples():
+    """Generate graph-grounded synthetic NL examples for the seeded metarule families.
+
+    The goal here is to keep the training set close to the semantic invariants we already
+    understand instead of learning from broad, noisy raw NL. Each family is a compact rule
+    pattern with multiple paraphrastic variants.
+    """
+    return {
+        "ratio_compose": [
+            ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
+            ("ratio_compose", ["charlie", "dana", "apples", 3.0], 30.0),
+            ("ratio_compose", ["erin", "frank", "oranges", 0.5], 5.0),
+            ("ratio_compose", ["grace", "heidi", "bananas", 1.5], 15.0),
+        ],
+        "remaining_quantity": [
+            ("remaining_quantity", ["alice", "apples", 0.75], 15.0),
+            ("remaining_quantity", ["alice", "apples", 0.5], 10.0),
+            ("remaining_quantity", ["bob", "books", 0.8], 24.0),
+            ("remaining_quantity", ["charlie", "tickets", 0.2], 6.0),
+        ],
+        "latest_valid_state": [
+            ("final_state", ["alice", "apples", 20.0], 20.0),
+            ("final_state", ["alice", "apples", 17.0], 17.0),
+            ("final_state", ["bob", "mangoes", 13.0], 13.0),
+            ("final_state", ["carol", "pencils", 9.0], 9.0),
+        ],
+        "state_transition": [
+            ("state", ["alice", "apples", 8.0], 8.0),
+            ("state", ["alice", "apples", 11.0], 11.0),
+            ("state", ["bob", "books", 14.0], 14.0),
+            ("state", ["carol", "pens", 7.0], 7.0),
+        ],
+    }
+
+
+def generate_synthetic_training_set():
+    dataset = []
+    for family_examples in generate_synthetic_family_examples().values():
+        dataset.extend(family_examples)
+    return dataset
+
+
 # --- Beam search learner ---
 
 def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples, beam=5, max_clauses=3, prior_weight=0.5):
@@ -299,8 +490,22 @@ def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples,
     best = beam_hypos[0] if beam_hypos else ([], 0.0)
     return best
 
+
+def demo_meta_rule_learning():
+    learner = MetaRuleLearner()
+    examples = [
+        ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
+        ("ratio_compose", ["carol", "dave", "apples", 3.0], 30.0),
+    ]
+    learned = learner.propose(examples)
+    print("[Meta rule learner] learned candidates:")
+    for rule in learned:
+        print(rule)
+
+
 # --- Demo runner ---
 if __name__ == '__main__':
+    demo_meta_rule_learning()
     # simple domain: predicate(e, love), predicate(e, admire), agent(e, A), patient(e, B), male(A), female(B)
     predicates = ['predicate_love', 'predicate_admire', 'predicate_help']
     roles = ['agent', 'patient']

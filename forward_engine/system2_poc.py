@@ -421,7 +421,13 @@ class System2Engine(KnowledgeEngine):
         TEST(lambda goal: goal == "unit_convert")
     )
     def unit_convert(self, goal, value, from_unit, to_unit, result, q, u):
+        from_unit_norm = str(from_unit).lower().strip()
+        to_unit_norm = str(to_unit).lower().strip()
         converted = float(value)
+        if from_unit_norm == "dozen":
+            converted = float(value) * 12.0
+        elif to_unit_norm == "dozen":
+            converted = float(value) / 12.0
         print(f"\n[System 2] Unit Convert Rule: {value} {from_unit} -> {converted} {to_unit}")
         self.declare(Belief(label="unit_convert", value=converted, activation=1.0))
 
