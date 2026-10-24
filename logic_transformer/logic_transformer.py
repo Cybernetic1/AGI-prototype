@@ -1,13 +1,24 @@
+from pathlib import Path
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+try:
+    from .lorentz_math import project_to_hyperboloid, lorentz_distance
+except ImportError:  # pragma: no cover - direct script execution fallback
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from lorentz_math import project_to_hyperboloid, lorentz_distance
+
 class LogicTransformer(nn.Module):
     """
     Logic Transformer (LT) / Differentiable Logic Network (DLN)
-    
+
     Acts as System 1 in a Tri-System Neurosymbolic Architecture.
-    This module applies fuzzy, differentiable logic rules in parallel over 
+    This module applies fuzzy, differentiable logic rules in parallel over
     a continuous working memory using tensor operations (unification & cylindrification).
     """
     def __init__(self, prop_length, max_props, output_dim, num_rules=8, num_premises=2, var_slots=3):
@@ -68,7 +79,14 @@ class LogicTransformer(nn.Module):
         
         # 3. Fuzzy Matching (Lorentz distance to rule constants)
         # diff: (B, M, J, L)
-        from lorentz_math import project_to_hyperboloid, lorentz_distance
+        try:
+            from .lorentz_math import project_to_hyperboloid, lorentz_distance
+        except ImportError:  # pragma: no cover - direct script execution fallback
+            import sys
+            from pathlib import Path
+
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            from lorentz_math import project_to_hyperboloid, lorentz_distance
         
         # Ensure both premise constants and selected embeddings are strictly on the hyperboloid
         hyper_constants = project_to_hyperboloid(self.premise_constants)
@@ -94,7 +112,66 @@ class LogicTransformer(nn.Module):
         
         # Rule outputs: (B, M, output_dim)
         rule_outputs = torch.einsum('bmk,mkd->bmd', rule_inputs, self.rule_weights) + self.rule_bias
-        
+
         # 6. Aggregation
         # Sum rule outputs (OR-like aggregation) to form the final logical inference
         return rule_outputs.sum(dim=1)
+
+    def _predicate_templates(self):
+        """Canonical proposition templates used for the ratio-only LT probe."""
+        return {
+            "has": torch.tensor([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=torch.float32),
+            "ratio": torch.tensor([1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=torch.float32),
+            "query": torch.tensor([2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=torch.float32),
+        }
+
+    def _map_premise_to_predicate(self, premise_vector, predicate_templates=None):
+        if predicate_templates is None:
+            predicate_templates = self._predicate_templates()
+        premise_vector = premise_vector.detach().reshape(1, -1)
+        best_name = None
+        best_distance = float("inf")
+        for name, template in predicate_templates.items():
+            distance = torch.linalg.norm(premise_vector - template.reshape(1, -1)).item()
+            if distance < best_distance:
+                best_distance = distance
+                best_name = name
+        return best_name, best_distance
+
+    def _slot_variables(self):
+        return ["?A", "?B", "?C"]
+
+    def _rule_to_symbolic_form(self, rule_idx, temp=1.0, tol=1e-3, predicate_templates=None):
+        if predicate_templates is None:
+            predicate_templates = self._predicate_templates()
+
+        vars_ = self._slot_variables()
+        premise_atoms = []
+        for premise_idx in range(self.J):
+            premise_vec = self.premise_constants[rule_idx, premise_idx]
+            pred_name, _ = self._map_premise_to_predicate(premise_vec, predicate_templates)
+            premise_atoms.append(f"{pred_name}({', '.join(vars_)})")
+
+        conclusion = "Target(?, ?, ?item)"
+        return f"({ ' ∧ '.join(premise_atoms) }) ⟹ {conclusion}"
+
+    def explain_rules(self, temp=1.0, tol=1e-3, predicate_templates=None):
+        """Render a compact symbolic summary of the learned rules in logic notation."""
+        if predicate_templates is None:
+            predicate_templates = self._predicate_templates()
+
+        lines = []
+        for rule_idx in range(self.M):
+            rule_expr = self._rule_to_symbolic_form(rule_idx, temp=temp, tol=tol, predicate_templates=predicate_templates)
+            lines.append(f"Rule {rule_idx}: {rule_expr}")
+        return "\n".join(lines)
+
+    def save_rules(self, path, temp=1.0, tol=1e-3, predicate_templates=None):
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        rendered = self.explain_rules(temp=temp, tol=tol, predicate_templates=predicate_templates)
+        path.write_text(rendered + "\n", encoding="utf-8")
+        return str(path)
+
+    def print_rules(self, temp=1.0, tol=1e-3, predicate_templates=None):
+        print(self.explain_rules(temp=temp, tol=tol, predicate_templates=predicate_templates))

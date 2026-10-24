@@ -1,0 +1,31 @@
+- name: same_owner_item_binding
+  family: binding
+  arity_limit: 2
+  template: |
+    owner(e1, X) and item(e1, Y) and owner(e2, X) and item(e2, Y) -> same_owner_item(X, Y)
+  notes:
+    - keep identity bindings over owner/item pairs rather than long n-ary facts
+
+- name: state_transition_delta
+  family: state_update
+  arity_limit: 2
+  template: |
+    has(e1) and owner(e1, X) and item(e1, Y) and qty(e1, Q1) and lose(e2) and owner(e2, X) and item(e2, Y) and qty(e2, Q2) -> state(s1) and owner(s1, X) and item(s1, Y) and before(s1, Q1) and delta(s1, -Q2) and after(s1, Q1 - Q2)
+  notes:
+    - the arithmetic is in the symbolic layer, not in LT
+
+- name: latest_state_preferred
+  family: finality
+  arity_limit: 2
+  template: |
+    later_state(s1, s2) and same_owner_item(X, Y) -> prefer(s2, X, Y)
+  notes:
+    - earlier states remain historical but are not authoritative
+
+- name: remaining_quantity_query
+  family: answer_selection
+  arity_limit: 2
+  template: |
+    state(s1) and owner(s1, X) and item(s1, Y) and after(s1, Q) and query(q1) and owner(q1, X) and item(q1, Y) and goal(q1, remaining_quantity) -> belief(answer, Q)
+  notes:
+    - this is the answer-selection invariant that should be symbolic and learnable

@@ -82,10 +82,13 @@ class VectorizedLogicNetwork(nn.Module):
         
         # Step 4: Compute match scores with premise constants
         # premises: (M, J, L), selected: (B, M, J, L)
-        import sys
-        from pathlib import Path
-        sys.path.append(str(Path(__file__).resolve().parent.parent.parent / 'logic-transformer'))
-        from lorentz_math import project_to_hyperboloid, lorentz_distance
+        try:
+            from .lorentz_math import project_to_hyperboloid, lorentz_distance
+        except ImportError:  # pragma: no cover - direct script execution fallback
+            import sys
+            from pathlib import Path
+            sys.path.append(str(Path(__file__).resolve().parent.parent.parent / 'logic-transformer'))
+            from lorentz_math import project_to_hyperboloid, lorentz_distance
         
         hyper_constants = project_to_hyperboloid(self.premise_constants)
         hyper_selected = project_to_hyperboloid(selected_avg)

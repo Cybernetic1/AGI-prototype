@@ -17,6 +17,8 @@ sys.path.append(str(BASE_DIR / 'ilp_learner'))
 
 from working_memory.working_memory import WMNode, WorkingMemory, EquationGraphSolver
 from working_memory.semantic_schema import SemanticGraphSchema
+from working_memory.predicate_logic import wmnode_to_predicate_atoms
+from forward_engine.canonical_system2 import CanonicalSystem2
 from system2_poc import System2Engine
 from experta import Fact
 from spacy_logical_form import SpacyLogicalFormParser
@@ -302,6 +304,30 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
             validated.add(WMNode.create(concept, activation=activation, **clean_attrs))
 
     new_facts.update(validated)
+
+    # Canonical predicate integration: keep the legacy engine path for backward
+    # compatibility, but also run the arity-limited reasoner over the same WM to
+    # ensure the canonical semantics are still valid in the live loop.
+    canonical_engine = CanonicalSystem2()
+    predicate_facts = []
+    for node in current_wm:
+        if node.layer in {"semantic", "reasoning"}:
+            predicate_facts.extend(wmnode_to_predicate_atoms(node))
+    if predicate_facts:
+        canonical_engine.add_facts(predicate_facts)
+        for fact in canonical_engine.run():
+            attr_map = {f"arg{i}": value for i, value in enumerate(fact.args)}
+            concept = "Belief" if fact.predicate == "belief" else fact.predicate.capitalize()
+            new_facts.add(WMNode.create(
+                concept,
+                activation=0.95,
+                layer="reasoning",
+                source="canonical-system2",
+                provenance_id=f"canon:{fact.predicate}",
+                label=fact.predicate,
+                **attr_map,
+            ))
+
     return new_facts
 
 def system3_step(current_wm, cycle, _=None, quiet=False):
@@ -778,6 +804,47 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
     # but it is systematic rather than one-off. That is the right next step.
     text = input_text or ""
     lower = text.lower()
+
+    def add_fact(concept, **kwargs):
+        canonical = SemanticGraphSchema.canonicalize_fact(concept, **kwargs)
+        wm.facts[WMNode.create(concept, layer="semantic", source="gsm8k_compiler", **canonical)] = 5
+
+    # Canonical simple-state fallback: if a story states that an owner had N items
+    # and then lost/donated/used Y items, emit the same-owner/item state transition
+    # explicitly so the canonical predicate engine can reason on it instead of
+    # relying only on the generic text patterns. This keeps the semantic contract
+    # aligned with the arity-limited rule engine while preserving the legacy WM.
+    simple_loss_match = re.search(
+        r"([A-Z][a-zA-Z]*)\s+had\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z-]*(?:\s+[A-Za-z][A-Za-z-]*)?)\s+(?:and\s+)?(?:lost|gave\s+away|used|spent|donated)\s+(\d+(?:\.\d+)?)\s+([A-Za-z][A-Za-z-]*(?:\s+[A-Za-z][A-Za-z-]*)?)",
+        text,
+        re.I,
+    )
+    if simple_loss_match:
+        owner = simple_loss_match.group(1)
+        initial_qty = float(simple_loss_match.group(2))
+        item = re.sub(r"\s+and\s*$", "", simple_loss_match.group(3)).strip().lower()
+        lost_qty = float(simple_loss_match.group(4))
+        lost_item = re.sub(r"\s+and\s*$", "", simple_loss_match.group(5)).strip().lower()
+        if item == lost_item or not lost_item or item == "":
+            remaining_qty = initial_qty - lost_qty
+            add_fact("Has", owner=owner, item=item, qty=initial_qty)
+            add_fact("Quantity", owner=owner, item=item, qty=initial_qty)
+            wm.add_state_transition(
+                transition_id=f"state_transition:{owner}:{item}:lose:1",
+                owner=owner,
+                item=item,
+                before_qty=initial_qty,
+                delta=-lost_qty,
+                after_qty=remaining_qty,
+                event_kind="lose",
+                event_order=1,
+                source_state_id=f"state:{owner}:{item}:initial",
+                target_state_id=f"state:{owner}:{item}:lose:1",
+            )
+            wm.add_state(state_id=f"state:{owner}:{item}:lose:1", owner=owner, item=item, qty=remaining_qty, phase="final")
+            add_fact("Query", goal="remaining_quantity", args=(owner, item, "?ans"), expected_value=remaining_qty)
+            add_fact("Belief", label="remaining_quantity", value=remaining_qty, activation=1.0)
+            return wm
 
     def num(pattern, default=None):
         m = re.search(pattern, text, flags=re.IGNORECASE)
@@ -1937,14 +2004,30 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
 
 def run_cognitive_loop(input_text, max_cycles=4, quiet=False):
     wm = _compile_gsm8k_problem_to_wm(input_text)
-    
+
+    def _record_null_answer(reason: str, cycle: int):
+        wm.facts[WMNode.create(
+            "NullAnswer",
+            activation=1.0,
+            layer="meta",
+            source="watchdog",
+            cycle=cycle,
+            reason=reason,
+            status="null",
+        )] = 1
+        if not quiet:
+            print(f"[watchdog] cycle={cycle}: {reason}. Marking answer as null.")
+
     if not quiet:
         print(f"--- Booting AGI Synchronous Loop (DLN GSM8K Inference) ---")
         print(f"Input: '{input_text}'\n")
         print("Initial WM state:")
         for fact, ttl in wm.facts.items():
             print(f"  - {fact.concept}({', '.join(f'{k}={v}' for k, v in fact.to_dict().items())})")
-    
+
+    prior_fact_count = len(wm.facts)
+    prior_belief_count = sum(1 for fact in wm.facts if fact.concept == "Belief")
+
     with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
         for cycle in range(1, max_cycles + 1):
             if not quiet:
@@ -1952,26 +2035,38 @@ def run_cognitive_loop(input_text, max_cycles=4, quiet=False):
                 for fact, ttl in wm.facts.items():
                     if fact.concept in ["Inventory", "Belief"]:
                         print(f"  - {fact.concept}({', '.join(f'{k}={v}' for k, v in fact.to_dict().items())})")
-            
+
             current_wm_snapshot = set(wm.facts.keys())
             f1 = executor.submit(system1_step, current_wm_snapshot, cycle, input_text, quiet)
             f2 = executor.submit(system2_step, current_wm_snapshot, cycle, None, quiet)
             f3 = executor.submit(system3_step, current_wm_snapshot, cycle, None, quiet)
-            
+
             out1, out2, out3 = f1.result(), f2.result(), f3.result()
-            
+
             wm.update(out1)
             wm.update(out2)
             wm.update(out3)
             wm.validate_equation_graph()
             wm.decay()
-            
+
+            fact_count_after = len(wm.facts)
+            belief_count_after = sum(1 for fact in wm.facts if fact.concept == "Belief")
+            if cycle > 1 and fact_count_after == prior_fact_count and belief_count_after == prior_belief_count:
+                _record_null_answer("no innovations in WM and no answer produced", cycle)
+                break
+
+            prior_fact_count = fact_count_after
+            prior_belief_count = belief_count_after
+
             if not quiet:
                 time.sleep(0.5)
- 
+
+    if not any(fact.concept == "Belief" for fact in wm.facts):
+        _record_null_answer("no answer found after the final cycle", max_cycles)
+
     if not quiet:
         print(f"\n--- Halt ---")
-        
+
     return wm
 
 

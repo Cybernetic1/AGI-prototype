@@ -13,7 +13,15 @@ sys.path.append(str(BASE_DIR / 'logic_transformer'))
 
 from phase3_synthetic_test import ontology_classify
 import train_pot_clause as tpc
-from lorentz_math import project_to_hyperboloid, lorentz_distance
+
+try:
+    from .lorentz_math import project_to_hyperboloid, lorentz_distance
+except ImportError:  # pragma: no cover - direct script execution fallback
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from lorentz_math import project_to_hyperboloid, lorentz_distance
 
 def get_predicate(clause_str):
     """Return the verb/predicate lemma for a proposition token.

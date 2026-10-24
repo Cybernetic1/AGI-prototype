@@ -76,6 +76,16 @@ class WorkingMemory:
         self.graph_nodes: Dict[str, GraphNode] = {}
         self.graph_edges: List[GraphEdge] = []
 
+    def to_predicate_atoms(self):
+        """Expose a canonical unary/binary predicate view of working memory.
+
+        This is the compatibility layer that keeps the logic engine and LT on the
+        same predicate-logic substrate even while legacy record-like WMEs remain
+        in the repository.
+        """
+        from working_memory.predicate_logic import wm_to_predicate_atoms
+        return wm_to_predicate_atoms(self)
+
     def add_equation_graph(self, *, op_id: str, op_kind: str, label: str, inputs: Optional[List[Tuple[str, Any]]] = None, outputs: Optional[List[Tuple[str, Any]]] = None, **attrs):
         """Create explicit graph nodes/edges for a symbolic equation or semantic dependency.
 
