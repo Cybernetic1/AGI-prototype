@@ -19,6 +19,7 @@ from working_memory.working_memory import WMNode, WorkingMemory, EquationGraphSo
 from working_memory.semantic_schema import SemanticGraphSchema
 from working_memory.predicate_logic import wmnode_to_predicate_atoms
 from forward_engine.canonical_system2 import CanonicalSystem2
+from forward_engine.defeasible_logic import load_default_defeasible_reasoner
 from system2_poc import System2Engine
 from experta import Fact
 from spacy_logical_form import SpacyLogicalFormParser
@@ -309,13 +310,15 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
     # compatibility, but also run the arity-limited reasoner over the same WM to
     # ensure the canonical semantics are still valid in the live loop.
     canonical_engine = CanonicalSystem2()
+    defeasible_reasoner = load_default_defeasible_reasoner()
     predicate_facts = []
     for node in current_wm:
         if node.layer in {"semantic", "reasoning"}:
             predicate_facts.extend(wmnode_to_predicate_atoms(node))
     if predicate_facts:
         canonical_engine.add_facts(predicate_facts)
-        for fact in canonical_engine.run():
+        canonical_facts = canonical_engine.run()
+        for fact in canonical_facts:
             attr_map = {f"arg{i}": value for i, value in enumerate(fact.args)}
             concept = "Belief" if fact.predicate == "belief" else fact.predicate.capitalize()
             new_facts.add(WMNode.create(
@@ -324,6 +327,34 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
                 layer="reasoning",
                 source="canonical-system2",
                 provenance_id=f"canon:{fact.predicate}",
+                label=fact.predicate,
+                **attr_map,
+            ))
+
+        # Defeasible layer: allow broad heuristic conclusions, then resolve conflicts
+        # via explicit priority relations (r1 > r2) instead of hard-coded scalar scoring.
+        defeasible_reasoner.add_facts(predicate_facts + canonical_facts)
+        accepted, meta = defeasible_reasoner.run()
+        for fact in accepted:
+            attr_map = {f"arg{i}": value for i, value in enumerate(fact.args)}
+            concept = "Belief" if fact.predicate == "belief" else fact.predicate.capitalize()
+            new_facts.add(WMNode.create(
+                concept,
+                activation=0.93,
+                layer="reasoning",
+                source="defeasible-system2",
+                provenance_id=f"def:{fact.predicate}",
+                label=fact.predicate,
+                **attr_map,
+            ))
+        for fact in meta:
+            attr_map = {f"arg{i}": value for i, value in enumerate(fact.args)}
+            new_facts.add(WMNode.create(
+                "DefeasibleMeta",
+                activation=0.9,
+                layer="meta",
+                source="defeasible-system2",
+                provenance_id=f"defmeta:{fact.predicate}",
                 label=fact.predicate,
                 **attr_map,
             ))

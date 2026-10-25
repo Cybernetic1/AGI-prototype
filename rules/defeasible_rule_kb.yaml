@@ -1,0 +1,19 @@
+rules:
+  - id: r_strict_remaining_from_state
+    kind: strict
+    rule: state(S) and owner(S, X) and item(S, Y) and after(S, Q) and query(Q1) and owner(Q1, X) and item(Q1, Y) and goal(Q1, remaining_quantity) -> belief(answer, Q)
+    notes: strict answer extraction from an explicit state
+
+  - id: r_defeasible_remaining_from_quantity
+    kind: defeasible
+    rule: quantity(E) and owner(E, X) and item(E, Y) and qty(E, Q) and query(Q1) and owner(Q1, X) and item(Q1, Y) and goal(Q1, remaining_quantity) => belief(answer, Q)
+    notes: fallback heuristic when no explicit state is available
+
+  - id: r_defeasible_not_remaining_from_blocked
+    kind: defeasible
+    rule: blockedstate(B) and owner(B, X) and item(B, Y) and qty(B, Q) and query(Q1) and owner(Q1, X) and item(Q1, Y) and goal(Q1, remaining_quantity) => not_belief(answer, Q)
+    notes: blocked-state values should be defeasibly rejected
+
+priorities:
+  - r_strict_remaining_from_state > r_defeasible_remaining_from_quantity
+  - r_defeasible_not_remaining_from_blocked > r_defeasible_remaining_from_quantity

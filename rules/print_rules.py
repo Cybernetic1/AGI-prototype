@@ -9,6 +9,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SYS2_RULES = REPO_ROOT / "rules" / "sys2_rule_kb.yaml"
+DEFEASIBLE_RULES = REPO_ROOT / "rules" / "defeasible_rule_kb.yaml"
 LT_RULE_CANDIDATES = [
     REPO_ROOT / "logic_transformer" / "semantic_wme_rules.txt",
     REPO_ROOT / "logic_transformer" / "ratio_rules.txt",
@@ -39,6 +40,36 @@ def print_sys2_rules(path: Path) -> None:
         print(f"  template: {pretty.replace(chr(10), ' ')}")
         for note in notes:
             print(f"    note: {note}")
+        print()
+
+
+def print_defeasible_rules(path: Path) -> None:
+    if not path.exists():
+        print(f"[missing] {path}")
+        return
+    payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    rules = payload.get("rules") or []
+    priorities = payload.get("priorities") or []
+    if not rules and not priorities:
+        print(f"[empty] {path}")
+        return
+
+    print(f"Defeasible rule base: {path}")
+    print("=" * 72)
+    for rule in rules:
+        rid = rule.get("id", "unnamed")
+        kind = rule.get("kind", "defeasible")
+        expr = str(rule.get("rule", "")).replace(" and ", " ∧ ").replace("=>", "⟹")
+        note = rule.get("notes", "")
+        print(f"- {rid} [{kind}]")
+        print(f"  rule: {expr}")
+        if note:
+            print(f"  note: {note}")
+        print()
+    if priorities:
+        print("Priorities:")
+        for rel in priorities:
+            print(f"  - {rel}")
         print()
 
 
@@ -74,16 +105,20 @@ def print_sys3_rules_summary() -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Print persisted AGI rule sets.")
     parser.add_argument("--sys2", action="store_true", help="Print the file-backed Sys-2 rule KB.")
+    parser.add_argument("--defeasible", action="store_true", help="Print the defeasible rule KB and priorities.")
     parser.add_argument("--lt", action="store_true", help="Print saved LT rule summaries from logic_transformer/.")
     parser.add_argument("--sys3", action="store_true", help="Print the current Sys-3 rule base status.")
     parser.add_argument("--all", action="store_true", help="Print all available persisted rule sources.")
     args = parser.parse_args()
 
-    if not any([args.sys2, args.lt, args.sys3, args.all]):
+    if not any([args.sys2, args.defeasible, args.lt, args.sys3, args.all]):
         args.all = True
 
     if args.all or args.sys2:
         print_sys2_rules(SYS2_RULES)
+        print()
+    if args.all or args.defeasible:
+        print_defeasible_rules(DEFEASIBLE_RULES)
         print()
     if args.all or args.lt:
         print_lt_rules(LT_RULE_CANDIDATES)
