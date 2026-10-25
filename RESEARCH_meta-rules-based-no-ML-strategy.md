@@ -1,5 +1,9 @@
 # Feasibility of LT/ILP vs Meta-Rule-First Bootstrapping for GSM8K (Low-Compute AGI Strategy)
 
+## User Question
+
+Researching: I want to research more on the feasibility of machine learning (either with LT or ILP) to solve the GSM8K dataset. Previously we have spent ample time on hand-crafted logic rules in Sys-2 and the progress was strong and steady, albeit that was not truly ML. It is not imperative for us to use ML to solve GSM8K, or even for bootstrapping an AGI. I was exploring the possibility of injecting meta-rules into Sys-2 or 3 such that the whole system can learn rules on its own by reading texts and from human interaction in NL. With this method, the entire paradigm of traditional ML (LT or ILP) may be scrapped. Is that plausible? I am not obsessed with using ML; our priority should be to minimize the time to bootstrap AGI and minimize the use of computing power.
+
 ## Executive Summary
 
 Your core intuition is sound: in the current repository state, **pure LT-only or ILP-only is unlikely to solve GSM8K to a significant degree** without substantial additional work in parsing, numeric grounding, and evaluation rigor.[^1][^2] At the same time, the codebase already contains strong symbolic infrastructure (Sys-2 canonical + defeasible, WM temporal/finality logic, Sys-3 induced-rule injection) that supports a **symbolic-first bootstrap path with much lower compute cost**.[^3][^4][^5]  
