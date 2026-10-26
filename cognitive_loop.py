@@ -2033,8 +2033,18 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
     return wm
 
 
-def run_cognitive_loop(input_text, max_cycles=4, quiet=False):
+def run_cognitive_loop(
+    input_text,
+    max_cycles=4,
+    quiet=False,
+    *,
+    use_ltm_recall: bool = False,
+    auto_accept_recall: bool = False,
+    write_ltm_episode: bool = False,
+):
     wm = _compile_gsm8k_problem_to_wm(input_text)
+    if use_ltm_recall:
+        wm.ltm_associative_recall(top_k=5, min_score=0.08, inject=auto_accept_recall)
 
     def _record_null_answer(reason: str, cycle: int):
         wm.facts[WMNode.create(
@@ -2095,6 +2105,14 @@ def run_cognitive_loop(input_text, max_cycles=4, quiet=False):
     if not any(fact.concept == "Belief" for fact in wm.facts):
         _record_null_answer("no answer found after the final cycle", max_cycles)
 
+    if write_ltm_episode:
+        solved = any(fact.concept == "Belief" for fact in wm.facts)
+        wm.ltm_write_episode(
+            reward=1.0 if solved else -1.0,
+            outcome="solved" if solved else "null",
+            extra_cues=["mode:runtime", "ltm:enabled" if use_ltm_recall else "ltm:disabled"],
+        )
+
     if not quiet:
         print(f"\n--- Halt ---")
 
@@ -2113,8 +2131,24 @@ def _extract_numeric_value(value):
     return float(match.group(0))
 
 
-def benchmark_single_problem(question, expected_answer=None, max_cycles=4, quiet=True):
-    wm = run_cognitive_loop(question, max_cycles=max_cycles, quiet=quiet)
+def benchmark_single_problem(
+    question,
+    expected_answer=None,
+    max_cycles=4,
+    quiet=True,
+    *,
+    use_ltm_recall: bool = False,
+    auto_accept_recall: bool = False,
+    write_ltm_episode: bool = False,
+):
+    wm = run_cognitive_loop(
+        question,
+        max_cycles=max_cycles,
+        quiet=quiet,
+        use_ltm_recall=use_ltm_recall,
+        auto_accept_recall=auto_accept_recall,
+        write_ltm_episode=write_ltm_episode,
+    )
     belief_values = []
     for fact in wm.facts:
         if fact.concept == "Belief":
@@ -2404,7 +2438,7 @@ SEMANTIC_FAILURE_FAMILIES = [
 ]
 
 
-def benchmark_failure_families(families=None, max_cycles=4, quiet=True):
+def benchmark_failure_families(families=None, max_cycles=4, quiet=True, **benchmark_kwargs):
     """Run a compact validation set covering the current semantic binding failure families."""
     items = families or SEMANTIC_FAILURE_FAMILIES
     results = []
@@ -2415,6 +2449,7 @@ def benchmark_failure_families(families=None, max_cycles=4, quiet=True):
             item["expected"],
             max_cycles=max_cycles,
             quiet=quiet,
+            **benchmark_kwargs,
         )
         result["family"] = item["family"]
         if result["solved"]:
@@ -2428,14 +2463,14 @@ def benchmark_failure_families(families=None, max_cycles=4, quiet=True):
     }
 
 
-def benchmark_finality_regressions(max_cycles=4, quiet=True):
+def benchmark_finality_regressions(max_cycles=4, quiet=True, **benchmark_kwargs):
     """Run the small final-state regression set that exercises the current temporal-priority contract."""
-    return benchmark_failure_families(FINALITY_REGRESSION_FAMILIES, max_cycles=max_cycles, quiet=quiet)
+    return benchmark_failure_families(FINALITY_REGRESSION_FAMILIES, max_cycles=max_cycles, quiet=quiet, **benchmark_kwargs)
 
 
-def benchmark_template_generalization(max_cycles=4, quiet=True):
+def benchmark_template_generalization(max_cycles=4, quiet=True, **benchmark_kwargs):
     """Run a broader but still compact template suite across adjacent family clusters."""
-    return benchmark_failure_families(GENERALIZED_TEMPLATE_FAMILIES, max_cycles=max_cycles, quiet=quiet)
+    return benchmark_failure_families(GENERALIZED_TEMPLATE_FAMILIES, max_cycles=max_cycles, quiet=quiet, **benchmark_kwargs)
 
 
 if __name__ == "__main__":

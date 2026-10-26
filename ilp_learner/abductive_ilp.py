@@ -5,6 +5,13 @@ try:
     from metagol_nds import MetaRuleLearner
 except Exception:  # pragma: no cover
     MetaRuleLearner = None
+try:
+    from metarule_loop import propose_ranked_for_examples
+except Exception:  # pragma: no cover
+    try:
+        from ilp_learner.metarule_loop import propose_ranked_for_examples
+    except Exception:  # pragma: no cover
+        propose_ranked_for_examples = None
 
 # ==========================================
 # Ontological Type Hierarchy (Python Types)
@@ -173,14 +180,15 @@ class OntologicalILPLearner:
         examples, choose the governing metarule, and instantiate the concrete rule for
         the current semantic family.
         """
-        if MetaRuleLearner is None:
-            return None
-
         if examples is None:
             examples = [(goal_pred, args, 0.0)]
 
-        learner = MetaRuleLearner()
-        proposed = learner.propose(examples)
+        proposed = []
+        if propose_ranked_for_examples is not None:
+            proposed = propose_ranked_for_examples(examples, top_n=3)
+        elif MetaRuleLearner is not None:
+            learner = MetaRuleLearner()
+            proposed = learner.propose(examples)
         if not proposed:
             return None
 

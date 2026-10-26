@@ -2,27 +2,27 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+import tempfile
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from working_memory.working_memory import WMNode, WorkingMemory
-
-
-def _read(path: Path) -> str:
-    return path.read_text(encoding="utf-8") if path.exists() else ""
+from working_memory.rule_registry import RuleRegistry
+from working_memory.ltm import LongTermMemory
 
 
 def main() -> None:
-    ltm_path = REPO_ROOT / "rules" / "ltm_store.yaml"
-    registry_path = REPO_ROOT / "rules" / "nl_rule_registry.yaml"
-    ltm_before = _read(ltm_path)
-    registry_before = _read(registry_path)
+    with tempfile.TemporaryDirectory(prefix="agi_ltm_flow_") as tmp:
+        tmp_dir = Path(tmp)
+        reg_path = tmp_dir / "registry.yaml"
+        ltm_path = tmp_dir / "ltm.yaml"
 
-    try:
         # Episode 1
         wm = WorkingMemory(default_ttl=3)
+        wm.rule_registry = RuleRegistry(reg_path)
+        wm.ltm = LongTermMemory(ltm_path)
         wm.update(
             {
                 WMNode.create("Quantity", layer="semantic", source="test", owner="Bob", item="apples", qty=10),
@@ -38,6 +38,8 @@ def main() -> None:
 
         # Episode 2
         wm2 = WorkingMemory(default_ttl=3)
+        wm2.rule_registry = RuleRegistry(reg_path)
+        wm2.ltm = LongTermMemory(ltm_path)
         wm2.update(
             {
                 WMNode.create("Remaining", layer="reasoning", source="test", owner="Bob", item="apples", qty=7),
@@ -50,22 +52,13 @@ def main() -> None:
 
         # Episode 3: cue-only WM retrieves earlier Bob/apples memories
         wm3 = WorkingMemory(default_ttl=3)
+        wm3.rule_registry = RuleRegistry(reg_path)
+        wm3.ltm = LongTermMemory(ltm_path)
         wm3.update({WMNode.create("Query", layer="semantic", source="test", goal="remaining_quantity", args=("Bob", "apples"))})
         recalled = wm3.ltm_associative_recall(top_k=2, min_score=0.01, inject=False)
         props = recalled.get("propositions", [])
         assert props, "Expected recalled propositions for Bob/apples cues"
         assert any((p.get("attrs") or {}).get("item") == "apples" for p in props)
-    finally:
-        if ltm_before == "":
-            if ltm_path.exists():
-                ltm_path.unlink()
-        else:
-            ltm_path.write_text(ltm_before, encoding="utf-8")
-        if registry_before == "":
-            if registry_path.exists():
-                registry_path.unlink()
-        else:
-            registry_path.write_text(registry_before, encoding="utf-8")
 
     print("LTM flow validation passed.")
 

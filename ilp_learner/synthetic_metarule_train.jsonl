@@ -1,0 +1,24 @@
+{"label": 1, "family": "ratio_compose", "pred": "ratio_compose", "args": ["alice", "bob", "apples", 2.0], "expected": 20.0}
+{"label": 1, "family": "ratio_compose", "pred": "ratio_compose", "args": ["charlie", "dana", "apples", 3.0], "expected": 30.0}
+{"label": 1, "family": "ratio_compose", "pred": "ratio_compose", "args": ["erin", "frank", "oranges", 0.5], "expected": 5.0}
+{"label": 1, "family": "ratio_compose", "pred": "ratio_compose", "args": ["grace", "heidi", "bananas", 1.5], "expected": 15.0}
+{"label": 0, "family": "ratio_compose", "pred": "remaining_quantity", "args": ["alice", "apples", 0.75], "expected": 15.0}
+{"label": 0, "family": "ratio_compose", "pred": "state", "args": ["alice", "apples", 8.0], "expected": 8.0}
+{"label": 1, "family": "remaining_quantity", "pred": "remaining_quantity", "args": ["alice", "apples", 0.75], "expected": 15.0}
+{"label": 1, "family": "remaining_quantity", "pred": "remaining_quantity", "args": ["alice", "apples", 0.5], "expected": 10.0}
+{"label": 1, "family": "remaining_quantity", "pred": "remaining_quantity", "args": ["bob", "books", 0.8], "expected": 24.0}
+{"label": 1, "family": "remaining_quantity", "pred": "remaining_quantity", "args": ["charlie", "tickets", 0.2], "expected": 6.0}
+{"label": 0, "family": "remaining_quantity", "pred": "ratio_compose", "args": ["alice", "bob", "apples", 2.0], "expected": 20.0}
+{"label": 0, "family": "remaining_quantity", "pred": "final_state", "args": ["alice", "apples", 17.0], "expected": 17.0}
+{"label": 1, "family": "latest_valid_state", "pred": "final_state", "args": ["alice", "apples", 20.0], "expected": 20.0}
+{"label": 1, "family": "latest_valid_state", "pred": "final_state", "args": ["alice", "apples", 17.0], "expected": 17.0}
+{"label": 1, "family": "latest_valid_state", "pred": "final_state", "args": ["bob", "mangoes", 13.0], "expected": 13.0}
+{"label": 1, "family": "latest_valid_state", "pred": "final_state", "args": ["carol", "pencils", 9.0], "expected": 9.0}
+{"label": 0, "family": "latest_valid_state", "pred": "ratio_compose", "args": ["carol", "dave", "apples", 3.0], "expected": 30.0}
+{"label": 0, "family": "latest_valid_state", "pred": "remaining_quantity", "args": ["bob", "books", 0.8], "expected": 24.0}
+{"label": 1, "family": "state_transition", "pred": "state", "args": ["alice", "apples", 8.0], "expected": 8.0}
+{"label": 1, "family": "state_transition", "pred": "state", "args": ["alice", "apples", 11.0], "expected": 11.0}
+{"label": 1, "family": "state_transition", "pred": "state", "args": ["bob", "books", 14.0], "expected": 14.0}
+{"label": 1, "family": "state_transition", "pred": "state", "args": ["carol", "pens", 7.0], "expected": 7.0}
+{"label": 0, "family": "state_transition", "pred": "remaining_quantity", "args": ["charlie", "tickets", 0.2], "expected": 6.0}
+{"label": 0, "family": "state_transition", "pred": "ratio_compose", "args": ["erin", "frank", "oranges", 0.5], "expected": 5.0}

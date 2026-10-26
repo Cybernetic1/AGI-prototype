@@ -767,6 +767,52 @@ class WorkingMemory:
 
         return {"ok": True, "rule_id": rule_id, "status": status, "version": int(entry.get("version", 1))}
 
+    def register_empirical_rule(
+        self,
+        *,
+        rule_id: str,
+        family: str,
+        condition: str,
+        effect: str,
+        priority: int = 50,
+        status: str = "approved",
+        evidence: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "dependency",
+            "rule_id": rule_id,
+            "family": family,
+            "condition": condition,
+            "effect": effect,
+            "priority": int(priority),
+            "source": "metarule",
+            "relation": "rule",
+        }
+        self.rule_registry.register_proposal(
+            rule_id=rule_id,
+            raw_rule=f"[empirical] {family}: {condition} -> {effect}",
+            source="metarule",
+            compiled_payload=payload,
+            evidence=evidence or {},
+        )
+        if status and status != "proposed":
+            if status == "active":
+                self.rule_registry.transition(rule_id, "approved", reviewer="metarule", reason="metarule loop registration")
+                self.rule_registry.transition(rule_id, "active", reviewer="metarule", reason="metarule loop registration")
+            else:
+                self.rule_registry.transition(rule_id, status, reviewer="metarule", reason="metarule loop registration")
+        self.facts[WMNode.create(
+            "RuleLifecycle",
+            layer="meta",
+            source="metarule",
+            provenance_id=rule_id,
+            rule_id=rule_id,
+            family=family,
+            status=status,
+            priority=int(priority),
+        )] = self.default_ttl
+        return {"ok": True, "rule_id": rule_id, "status": status, "family": family}
+
     def ltm_cues(self) -> List[str]:
         cues: List[str] = []
         for fact in self.facts:
@@ -935,6 +981,7 @@ class WorkingMemory:
 
     def ltm_sleep_maintenance(self, *, min_support: int = 2, forget_threshold: float = 0.25, keep_last: int = 50):
         self.ltm.sync_rule_registry(self.rule_registry.list_rules())
+        self.auto_tune_rule_priorities()
         consolidated = self.ltm.consolidate(min_support=min_support)
         forgotten = self.ltm.forget(threshold=forget_threshold, keep_last=keep_last)
         self.facts[WMNode.create(
@@ -946,6 +993,48 @@ class WorkingMemory:
             kept=forgotten.get("kept", 0),
         )] = self.default_ttl
         return {"consolidated": consolidated, "forgotten": forgotten}
+
+    def auto_tune_rule_priorities(self) -> Dict[str, int]:
+        updates: Dict[str, int] = {}
+        for entry in self.rule_registry.list_rules():
+            rid = entry.get("rule_id")
+            if not rid:
+                continue
+            if entry.get("status") != "active":
+                continue
+            if entry.get("mutability") == "locked":
+                continue
+            compiled = entry.get("compiled") or {}
+            base_priority = int(compiled.get("priority", 50))
+            acc = entry.get("accounting") or {}
+            wins = int(acc.get("wins", 0))
+            defeats = int(acc.get("defeats", 0))
+            recall_plus = int(acc.get("recall_accepted", 0))
+            recall_minus = int(acc.get("recall_rejected", 0))
+            delta = (wins - defeats) + (recall_plus - recall_minus)
+            if abs(delta) < 2:
+                continue
+            new_priority = max(1, min(200, base_priority + delta))
+            if new_priority == base_priority:
+                continue
+            compiled["priority"] = new_priority
+            self.rule_registry.register_proposal(
+                rule_id=rid,
+                raw_rule=entry.get("raw_rule", f"[retune] {rid}"),
+                source="rule_registry",
+                compiled_payload=compiled,
+                evidence=entry.get("evidence") or {},
+            )
+            updates[rid] = new_priority
+            self.facts[WMNode.create(
+                "RulePriorityUpdate",
+                layer="meta",
+                source="rule_registry",
+                rule_id=rid,
+                priority=new_priority,
+                delta=delta,
+            )] = self.default_ttl
+        return updates
 
 
 class EquationGraphSolver:
