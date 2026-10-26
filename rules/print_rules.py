@@ -11,6 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SYS2_RULES = REPO_ROOT / "rules" / "sys2_rule_kb.yaml"
 DEFEASIBLE_RULES = REPO_ROOT / "rules" / "defeasible_rule_kb.yaml"
 NL_RULE_REGISTRY = REPO_ROOT / "rules" / "nl_rule_registry.yaml"
+LTM_STORE = REPO_ROOT / "rules" / "ltm_store.yaml"
 LT_RULE_CANDIDATES = [
     REPO_ROOT / "logic_transformer" / "semantic_wme_rules.txt",
     REPO_ROOT / "logic_transformer" / "ratio_rules.txt",
@@ -112,6 +113,23 @@ def print_nl_rule_registry(path: Path) -> None:
         print()
 
 
+def print_ltm_summary(path: Path) -> None:
+    if not path.exists():
+        print(f"[missing] {path}")
+        return
+    payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    episodes = payload.get("episodes") or []
+    semantic = payload.get("semantic_memory") or []
+    rules = payload.get("rule_memory") or []
+    active_episodes = [e for e in episodes if not e.get("archived")]
+    print(f"LTM store: {path}")
+    print("=" * 72)
+    print(f"episodes_total: {len(episodes)}")
+    print(f"episodes_active: {len(active_episodes)}")
+    print(f"semantic_memory_entries: {len(semantic)}")
+    print(f"rule_memory_entries: {len(rules)}")
+
+
 def print_sys3_rules_summary() -> None:
     print("System 3 rule base: not yet a separate persisted file.")
     print("Current implementation lives in:")
@@ -130,12 +148,13 @@ def main() -> int:
     parser.add_argument("--sys2", action="store_true", help="Print the file-backed Sys-2 rule KB.")
     parser.add_argument("--defeasible", action="store_true", help="Print the defeasible rule KB and priorities.")
     parser.add_argument("--registry", action="store_true", help="Print the NL rule registry with lifecycle status.")
+    parser.add_argument("--ltm", action="store_true", help="Print a summary of the LTM store.")
     parser.add_argument("--lt", action="store_true", help="Print saved LT rule summaries from logic_transformer/.")
     parser.add_argument("--sys3", action="store_true", help="Print the current Sys-3 rule base status.")
     parser.add_argument("--all", action="store_true", help="Print all available persisted rule sources.")
     args = parser.parse_args()
 
-    if not any([args.sys2, args.defeasible, args.registry, args.lt, args.sys3, args.all]):
+    if not any([args.sys2, args.defeasible, args.registry, args.ltm, args.lt, args.sys3, args.all]):
         args.all = True
 
     if args.all or args.sys2:
@@ -146,6 +165,9 @@ def main() -> int:
         print()
     if args.all or args.registry:
         print_nl_rule_registry(NL_RULE_REGISTRY)
+        print()
+    if args.all or args.ltm:
+        print_ltm_summary(LTM_STORE)
         print()
     if args.all or args.lt:
         print_lt_rules(LT_RULE_CANDIDATES)

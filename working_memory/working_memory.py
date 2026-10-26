@@ -5,6 +5,7 @@ from typing import Any, Optional, Dict, List, Tuple
 from working_memory.semantic_schema import SemanticGraphSchema
 from working_memory.nl_rule_injection import NLRuleCompiler
 from working_memory.rule_registry import RuleRegistry
+from working_memory.ltm import LongTermMemory
 
 # ==========================================
 # Semantic graph support for equation/dependency tracing.
@@ -77,6 +78,7 @@ class WorkingMemory:
         self.graph_nodes: Dict[str, GraphNode] = {}
         self.graph_edges: List[GraphEdge] = []
         self.rule_registry = RuleRegistry.default()
+        self.ltm = LongTermMemory.default()
 
     def to_predicate_atoms(self):
         """Expose a canonical unary/binary predicate view of working memory.
@@ -761,6 +763,68 @@ class WorkingMemory:
             )] = self.default_ttl
 
         return {"ok": True, "rule_id": rule_id, "status": status, "version": int(entry.get("version", 1))}
+
+    def ltm_cues(self) -> List[str]:
+        cues: List[str] = []
+        for fact in self.facts:
+            attrs = fact.to_dict()
+            cues.append(str(fact.concept).lower())
+            for key in ("owner", "item", "goal", "label", "event_kind", "family", "rule_id", "status"):
+                value = attrs.get(key)
+                if value is None:
+                    continue
+                cues.append(f"{key}:{str(value).lower()}")
+        return sorted(set(cues))
+
+    def ltm_write_episode(self, *, reward: float = 0.0, outcome: str = "", extra_cues: Optional[List[str]] = None):
+        self.ltm.sync_rule_registry(self.rule_registry.list_rules())
+        return self.ltm.capture_episode(
+            self.facts.keys(),
+            reward=reward,
+            outcome=outcome,
+            extra_cues=extra_cues or [],
+        )
+
+    def ltm_associative_recall(self, *, top_k: int = 5, min_score: float = 0.1, inject: bool = True):
+        cues = self.ltm_cues()
+        recalled = self.ltm.associative_recall(cues, top_k=top_k, min_score=min_score)
+        if not inject:
+            return recalled
+
+        recalled_nodes = set()
+        for item in recalled.get("propositions", []):
+            concept = item.get("concept")
+            if not concept:
+                continue
+            attrs = item.get("attrs") or {}
+            if not isinstance(attrs, dict):
+                continue
+            node = WMNode.create(
+                str(concept),
+                activation=0.72,
+                layer="semantic",
+                source="ltm-recall",
+                provenance_id=f"ltm:{item.get('concept')}:{attrs.get('owner')}:{attrs.get('item')}",
+                **attrs,
+            )
+            recalled_nodes.add(node)
+        if recalled_nodes:
+            self.update(recalled_nodes)
+        return recalled
+
+    def ltm_sleep_maintenance(self, *, min_support: int = 2, forget_threshold: float = 0.25, keep_last: int = 50):
+        self.ltm.sync_rule_registry(self.rule_registry.list_rules())
+        consolidated = self.ltm.consolidate(min_support=min_support)
+        forgotten = self.ltm.forget(threshold=forget_threshold, keep_last=keep_last)
+        self.facts[WMNode.create(
+            "ConsolidationReport",
+            layer="meta",
+            source="ltm",
+            semantic_count=consolidated.get("semantic_count", 0),
+            archived=forgotten.get("archived", 0),
+            kept=forgotten.get("kept", 0),
+        )] = self.default_ttl
+        return {"consolidated": consolidated, "forgotten": forgotten}
 
 
 class EquationGraphSolver:
