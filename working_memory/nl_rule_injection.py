@@ -67,7 +67,7 @@ class NLRuleCompiler:
             return NLRuleSpec(
                 rule_id="rule-bind-owner-item",
                 family="bind_same_entity",
-                condition="same_owner_and_item_references_share_identity",
+                condition="same_owner_and_same_item_references_share_identity",
                 effect="bind_references_to_same_entity_id",
                 priority=60,
                 metadata={"rule_text": text},
@@ -123,7 +123,64 @@ class NLRuleCompiler:
         if family not in {"prefer_latest_state", "bind_same_entity", "remaining_quantity", "state_transition", "generic"}:
             return False, [f"unsupported rule family: {family}"]
 
+        semantic_ok, semantic_issues = NLRuleCompiler.validate_semantics(payload)
+        if not semantic_ok:
+            return False, semantic_issues
+
         return True, []
+
+    @staticmethod
+    def validate_semantics(payload: Dict[str, Any]) -> Tuple[bool, List[str]]:
+        family = str(payload.get("family") or "")
+        condition = str(payload.get("condition") or "")
+        effect = str(payload.get("effect") or "")
+        issues: List[str] = []
+
+        expected = {
+            "prefer_latest_state": (
+                {"later_state", "owner", "item"},
+                {"prefer_later_state", "earlier"},
+            ),
+            "bind_same_entity": (
+                {"same_owner", "same_item"},
+                {"bind", "entity"},
+            ),
+            "remaining_quantity": (
+                {"remaining_quantity", "base", "percent"},
+                {"compute_remaining_quantity", "reduction"},
+            ),
+            "state_transition": (
+                {"state_transition", "owner", "item"},
+                {"delta", "after_quantity"},
+            ),
+        }
+
+        if family == "generic":
+            return False, ["generic family is not auto-activatable; add a supported semantic family"]
+
+        constraints = expected.get(family)
+        if constraints is None:
+            return False, [f"no semantic validator configured for family: {family}"]
+        cond_tokens, eff_tokens = constraints
+        lower_condition = condition.lower()
+        lower_effect = effect.lower()
+
+        missing_cond = sorted(tok for tok in cond_tokens if tok not in lower_condition)
+        missing_eff = sorted(tok for tok in eff_tokens if tok not in lower_effect)
+        if missing_cond:
+            issues.append(f"condition missing semantic anchors: {missing_cond}")
+        if missing_eff:
+            issues.append(f"effect missing semantic anchors: {missing_eff}")
+
+        priority = payload.get("priority")
+        try:
+            pr = int(priority)
+            if pr <= 0:
+                issues.append("priority must be positive")
+        except (TypeError, ValueError):
+            issues.append("priority must be an integer")
+
+        return (len(issues) == 0), issues
 
     @staticmethod
     def load_rule_file(path: str | Path) -> List[str]:

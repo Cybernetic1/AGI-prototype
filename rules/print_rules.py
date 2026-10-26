@@ -10,6 +10,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SYS2_RULES = REPO_ROOT / "rules" / "sys2_rule_kb.yaml"
 DEFEASIBLE_RULES = REPO_ROOT / "rules" / "defeasible_rule_kb.yaml"
+NL_RULE_REGISTRY = REPO_ROOT / "rules" / "nl_rule_registry.yaml"
 LT_RULE_CANDIDATES = [
     REPO_ROOT / "logic_transformer" / "semantic_wme_rules.txt",
     REPO_ROOT / "logic_transformer" / "ratio_rules.txt",
@@ -89,6 +90,28 @@ def print_lt_rules(paths: list[Path]) -> None:
         print("No LT rule summaries found yet. Run a demo first.")
 
 
+def print_nl_rule_registry(path: Path) -> None:
+    if not path.exists():
+        print(f"[missing] {path}")
+        return
+    payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    rules = payload.get("rules") or []
+    print(f"NL rule registry: {path}")
+    print("=" * 72)
+    if not rules:
+        print("<empty>")
+        return
+    for entry in rules:
+        rid = entry.get("rule_id", "unknown")
+        status = entry.get("status", "proposed")
+        version = entry.get("version", 1)
+        family = (entry.get("compiled") or {}).get("family", "unknown")
+        print(f"- {rid} [status={status}, version={version}, family={family}]")
+        print(f"  source: {entry.get('source', 'unknown')}")
+        print(f"  updated_at: {entry.get('updated_at', 'n/a')}")
+        print()
+
+
 def print_sys3_rules_summary() -> None:
     print("System 3 rule base: not yet a separate persisted file.")
     print("Current implementation lives in:")
@@ -106,12 +129,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Print persisted AGI rule sets.")
     parser.add_argument("--sys2", action="store_true", help="Print the file-backed Sys-2 rule KB.")
     parser.add_argument("--defeasible", action="store_true", help="Print the defeasible rule KB and priorities.")
+    parser.add_argument("--registry", action="store_true", help="Print the NL rule registry with lifecycle status.")
     parser.add_argument("--lt", action="store_true", help="Print saved LT rule summaries from logic_transformer/.")
     parser.add_argument("--sys3", action="store_true", help="Print the current Sys-3 rule base status.")
     parser.add_argument("--all", action="store_true", help="Print all available persisted rule sources.")
     args = parser.parse_args()
 
-    if not any([args.sys2, args.defeasible, args.lt, args.sys3, args.all]):
+    if not any([args.sys2, args.defeasible, args.registry, args.lt, args.sys3, args.all]):
         args.all = True
 
     if args.all or args.sys2:
@@ -119,6 +143,9 @@ def main() -> int:
         print()
     if args.all or args.defeasible:
         print_defeasible_rules(DEFEASIBLE_RULES)
+        print()
+    if args.all or args.registry:
+        print_nl_rule_registry(NL_RULE_REGISTRY)
         print()
     if args.all or args.lt:
         print_lt_rules(LT_RULE_CANDIDATES)

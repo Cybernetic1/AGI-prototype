@@ -4,6 +4,7 @@ from typing import Any, Optional, Dict, List, Tuple
 
 from working_memory.semantic_schema import SemanticGraphSchema
 from working_memory.nl_rule_injection import NLRuleCompiler
+from working_memory.rule_registry import RuleRegistry
 
 # ==========================================
 # Semantic graph support for equation/dependency tracing.
@@ -75,6 +76,7 @@ class WorkingMemory:
         self.default_ttl = default_ttl
         self.graph_nodes: Dict[str, GraphNode] = {}
         self.graph_edges: List[GraphEdge] = []
+        self.rule_registry = RuleRegistry.default()
 
     def to_predicate_atoms(self):
         """Expose a canonical unary/binary predicate view of working memory.
@@ -622,7 +624,49 @@ class WorkingMemory:
         for fact in expired:
             del self.facts[fact]
 
-    def inject_nl_rule(self, raw_rule: str, source: str = "human", *, rule_id: Optional[str] = None):
+    def _materialize_rule_family(self, *, family: str, source: str, final_rule_id: str, priority: int) -> None:
+        if family == "prefer_latest_state":
+            self.facts[WMNode.create(
+                "PreferredStateRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="latest valid state wins for the same owner/item",
+                priority=priority,
+            )] = self.default_ttl
+
+        if family == "remaining_quantity":
+            self.facts[WMNode.create(
+                "RemainingRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="remaining quantity is base minus reduction",
+                priority=priority,
+            )] = self.default_ttl
+
+        if family == "state_transition":
+            self.facts[WMNode.create(
+                "StateTransitionRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="quantity updates use same-owner/item delta semantics",
+                priority=priority,
+            )] = self.default_ttl
+
+    def inject_nl_rule(
+        self,
+        raw_rule: str,
+        source: str = "human",
+        *,
+        rule_id: Optional[str] = None,
+        target_status: str = "proposed",
+        evidence: Optional[Dict[str, Any]] = None,
+    ):
         """Accept a human-written rule, compile it to the canonical graph contract, and inject it into WM.
 
         This keeps the runtime symbolic-first: the human-facing NL is only the authoring
@@ -635,6 +679,19 @@ class WorkingMemory:
             return {"accepted": False, "issues": issues, "payload": payload}
 
         final_rule_id = rule_id or payload.get("rule_id") or "rule-autogen"
+        entry = self.rule_registry.register_proposal(
+            rule_id=final_rule_id,
+            raw_rule=raw_rule,
+            source=source,
+            compiled_payload=payload,
+            evidence=evidence,
+        )
+
+        normalized_status = str(target_status).strip().lower() if target_status else "proposed"
+        if normalized_status != "proposed":
+            entry = self.rule_registry.transition(final_rule_id, normalized_status, reviewer=source, reason="explicit target status on injection")
+
+        current_status = entry.get("status", "proposed")
         concept = "Rule"
         rule_node = WMNode.create(
             concept,
@@ -646,45 +703,64 @@ class WorkingMemory:
             condition=payload.get("condition"),
             effect=payload.get("effect"),
             priority=int(payload.get("priority", 10)),
+            status=current_status,
             rule_text=raw_rule,
             validator="working_memory.nl_rule_injection.NLRuleCompiler.validate",
         )
         self.facts[rule_node] = self.default_ttl
 
-        if payload.get("family") == "prefer_latest_state":
-            self.facts[WMNode.create(
-                "PreferredStateRule",
-                layer="meta",
+        if current_status == "active":
+            self._materialize_rule_family(
+                family=str(payload.get("family")),
                 source=source,
-                provenance_id=final_rule_id,
-                rule_id=final_rule_id,
-                rationale="latest valid state wins for the same owner/item",
-                priority=int(payload.get("priority", 100)),
+                final_rule_id=final_rule_id,
+                priority=int(payload.get("priority", 10)),
+            )
+
+        return {
+            "accepted": True,
+            "rule_id": final_rule_id,
+            "family": payload.get("family"),
+            "status": current_status,
+            "version": entry.get("version"),
+            "payload": payload,
+        }
+
+    def transition_nl_rule(self, rule_id: str, new_status: str, *, reviewer: str = "human", reason: str = ""):
+        entry = self.rule_registry.transition(rule_id, new_status, reviewer=reviewer, reason=reason)
+        compiled = entry.get("compiled") or {}
+        status = entry.get("status", "proposed")
+        self.facts[WMNode.create(
+            "RuleLifecycle",
+            layer="meta",
+            source="rule_registry",
+            provenance_id=rule_id,
+            rule_id=rule_id,
+            status=status,
+            version=int(entry.get("version", 1)),
+            reviewer=reviewer,
+            reason=reason,
+        )] = self.default_ttl
+
+        if status == "active":
+            self._materialize_rule_family(
+                family=str(compiled.get("family", "")),
+                source="rule_registry",
+                final_rule_id=rule_id,
+                priority=int(compiled.get("priority", 10)),
+            )
+
+        if status == "retracted":
+            self.facts[WMNode.create(
+                "RuleRetraction",
+                layer="meta",
+                source="rule_registry",
+                provenance_id=rule_id,
+                rule_id=rule_id,
+                reason=reason or "manual retraction",
             )] = self.default_ttl
 
-        if payload.get("family") == "remaining_quantity":
-            self.facts[WMNode.create(
-                "RemainingRule",
-                layer="meta",
-                source=source,
-                provenance_id=final_rule_id,
-                rule_id=final_rule_id,
-                rationale="remaining quantity is base minus reduction",
-                priority=int(payload.get("priority", 80)),
-            )] = self.default_ttl
-
-        if payload.get("family") == "state_transition":
-            self.facts[WMNode.create(
-                "StateTransitionRule",
-                layer="meta",
-                source=source,
-                provenance_id=final_rule_id,
-                rule_id=final_rule_id,
-                rationale="quantity updates use same-owner/item delta semantics",
-                priority=int(payload.get("priority", 90)),
-            )] = self.default_ttl
-
-        return {"accepted": True, "rule_id": final_rule_id, "family": payload.get("family"), "payload": payload}
+        return {"ok": True, "rule_id": rule_id, "status": status, "version": int(entry.get("version", 1))}
 
 
 class EquationGraphSolver:
