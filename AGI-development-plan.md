@@ -24,6 +24,31 @@ The benchmark target is GSM8K, and the system should be shaped by bottleneck dis
 - LTM should retain useful learned rules and previously solved patterns across runs.
 - The cognitive loop should remain disciplined: snapshot, infer, merge, decay, log, evaluate.
 
+## Recent implementation milestones (brief)
+
+- **Canonical + defeasible Sys-2 runtime**
+  - Added file-backed defeasible rules with strict (`->`), defeasible (`⟹`), and priority (`r1 > r2`) forms.
+  - Defeasible resolver runs in the live loop and emits explicit meta-facts (`rule_applied`, `overrides`, `defeated`) for revision/accounting.
+
+- **Rule lifecycle registry (ML-free governance)**
+  - Added durable rule registry with status workflow: `proposed -> approved -> active -> retracted`.
+  - Added provenance/mutability policy (`teacher` vs `empirical`; `locked` / `priority_only` / `fully_mutable`).
+  - Added semantic validation gates for NL-injected rule families before activation.
+
+- **WM↔LTM bridge with associative recall**
+  - Added LTM store with episodic, semantic, and rule memory partitions.
+  - WM can write episodes, retrieve cue-matched recall candidates, and run sleep-style consolidation/forgetting.
+  - Forgetting uses retention/interestingness signals (reward, reuse, rule-signal, cue support) and archives weak episodes.
+
+- **Recall accept/reject + simple rule accounting**
+  - Associative recall is staged as candidates; each candidate can be explicitly accepted or rejected.
+  - Per-rule accounting now tracks `applied`, `wins`, `defeats`, `recall_accepted`, and `recall_rejected`.
+  - Defeasible outcomes are converted into accounting updates for later priority tuning.
+
+- **Operational tools and validation**
+  - CLI support to inspect Sys-2, defeasible KB, registry, and LTM summaries.
+  - Focused validators exist for predicate grammar, defeasible behavior, lifecycle transitions, LTM flow, and accounting+recall decisions.
+
 ## Phase 1: Stabilize benchmark and instrumentation
 
 ### Objectives

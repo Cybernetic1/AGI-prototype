@@ -79,6 +79,9 @@ class WorkingMemory:
         self.graph_edges: List[GraphEdge] = []
         self.rule_registry = RuleRegistry.default()
         self.ltm = LongTermMemory.default()
+        self.pending_recall: Dict[str, List[Dict[str, Any]]] = {}
+        self._recall_counter = 0
+        self._accounted_meta_keys: set[Tuple[str, frozenset]] = set()
 
     def to_predicate_atoms(self):
         """Expose a canonical unary/binary predicate view of working memory.
@@ -777,6 +780,7 @@ class WorkingMemory:
         return sorted(set(cues))
 
     def ltm_write_episode(self, *, reward: float = 0.0, outcome: str = "", extra_cues: Optional[List[str]] = None):
+        self._account_defeasible_meta()
         self.ltm.sync_rule_registry(self.rule_registry.list_rules())
         return self.ltm.capture_episode(
             self.facts.keys(),
@@ -785,32 +789,149 @@ class WorkingMemory:
             extra_cues=extra_cues or [],
         )
 
-    def ltm_associative_recall(self, *, top_k: int = 5, min_score: float = 0.1, inject: bool = True):
+    def ltm_associative_recall(self, *, top_k: int = 5, min_score: float = 0.1, inject: bool = False):
         cues = self.ltm_cues()
         recalled = self.ltm.associative_recall(cues, top_k=top_k, min_score=min_score)
-        if not inject:
-            return recalled
-
-        recalled_nodes = set()
-        for item in recalled.get("propositions", []):
+        self._recall_counter += 1
+        recall_id = f"recall_{self._recall_counter}"
+        candidates = []
+        for idx, item in enumerate(recalled.get("propositions", [])):
             concept = item.get("concept")
-            if not concept:
-                continue
             attrs = item.get("attrs") or {}
-            if not isinstance(attrs, dict):
+            if not concept or not isinstance(attrs, dict):
                 continue
+            candidate = {
+                "recall_id": recall_id,
+                "candidate_id": idx,
+                "concept": str(concept),
+                "attrs": dict(attrs),
+                "status": "pending",
+                "source_episode_count": len(recalled.get("episodes", [])),
+                "rule_id": attrs.get("rule_id"),
+            }
+            candidates.append(candidate)
+            self.facts[WMNode.create(
+                "RecallCandidate",
+                layer="meta",
+                source="ltm",
+                recall_id=recall_id,
+                candidate_id=idx,
+                candidate_concept=str(concept),
+                owner=attrs.get("owner"),
+                item=attrs.get("item"),
+                goal=attrs.get("goal"),
+                rule_id=attrs.get("rule_id"),
+                status="pending",
+            )] = self.default_ttl
+        self.pending_recall[recall_id] = candidates
+        recalled["recall_id"] = recall_id
+        recalled["candidates"] = candidates
+
+        if inject:
+            for c in list(candidates):
+                self.resolve_recall_candidate(recall_id, int(c["candidate_id"]), accept=True, reason="auto_accept")
+        return recalled
+
+    def list_recall_candidates(self, recall_id: str) -> List[Dict[str, Any]]:
+        return list(self.pending_recall.get(recall_id, []))
+
+    def resolve_recall_candidate(self, recall_id: str, candidate_id: int, *, accept: bool, reason: str = "") -> Dict[str, Any]:
+        candidates = self.pending_recall.get(recall_id) or []
+        target = next((c for c in candidates if int(c.get("candidate_id", -1)) == int(candidate_id)), None)
+        if target is None:
+            return {"ok": False, "reason": f"candidate not found: {recall_id}:{candidate_id}"}
+        if target.get("status") in {"accepted", "rejected"}:
+            return {"ok": True, "recall_id": recall_id, "candidate_id": candidate_id, "status": target.get("status"), "reason": "already_resolved"}
+
+        rule_id = target.get("rule_id")
+        if accept:
             node = WMNode.create(
-                str(concept),
+                target["concept"],
                 activation=0.72,
                 layer="semantic",
                 source="ltm-recall",
-                provenance_id=f"ltm:{item.get('concept')}:{attrs.get('owner')}:{attrs.get('item')}",
-                **attrs,
+                provenance_id=f"ltm:{target['concept']}:{target['attrs'].get('owner')}:{target['attrs'].get('item')}",
+                **target["attrs"],
             )
-            recalled_nodes.add(node)
-        if recalled_nodes:
-            self.update(recalled_nodes)
-        return recalled
+            self.update({node})
+            target["status"] = "accepted"
+            if rule_id:
+                self.rule_registry.record_accounting_event(
+                    rule_id,
+                    recall_accepted=1,
+                    event="recall_accept",
+                    details={"recall_id": recall_id, "candidate_id": candidate_id, "reason": reason},
+                )
+            self.facts[WMNode.create(
+                "RecallDecision",
+                layer="meta",
+                source="ltm",
+                recall_id=recall_id,
+                candidate_id=candidate_id,
+                decision="accepted",
+                reason=reason,
+                rule_id=rule_id,
+            )] = self.default_ttl
+            return {"ok": True, "recall_id": recall_id, "candidate_id": candidate_id, "status": "accepted"}
+
+        target["status"] = "rejected"
+        if rule_id:
+            self.rule_registry.record_accounting_event(
+                rule_id,
+                recall_rejected=1,
+                event="recall_reject",
+                details={"recall_id": recall_id, "candidate_id": candidate_id, "reason": reason},
+            )
+        self.facts[WMNode.create(
+            "RecallDecision",
+            layer="meta",
+            source="ltm",
+            recall_id=recall_id,
+            candidate_id=candidate_id,
+            decision="rejected",
+            reason=reason,
+            rule_id=rule_id,
+        )] = self.default_ttl
+        return {"ok": True, "recall_id": recall_id, "candidate_id": candidate_id, "status": "rejected"}
+
+    def _account_defeasible_meta(self) -> None:
+        metas = [f for f in self.facts if f.concept == "DefeasibleMeta"]
+        for fact in metas:
+            meta_key = (fact.concept, fact.attrs)
+            if meta_key in self._accounted_meta_keys:
+                continue
+            attrs = fact.to_dict()
+            label = attrs.get("label")
+            arg0 = attrs.get("arg0")
+            arg1 = attrs.get("arg1")
+            if label == "rule_applied" and arg0:
+                self.rule_registry.record_accounting_event(
+                    str(arg0),
+                    applied=1,
+                    event="rule_applied",
+                    details={"predicate": arg1},
+                )
+            elif label == "overrides" and arg0 and arg1:
+                self.rule_registry.record_accounting_event(
+                    str(arg0),
+                    wins=1,
+                    event="rule_win",
+                    details={"overrides": arg1},
+                )
+                self.rule_registry.record_accounting_event(
+                    str(arg1),
+                    defeats=1,
+                    event="rule_defeat",
+                    details={"lost_to": arg0},
+                )
+            elif label == "defeated" and arg0:
+                self.rule_registry.record_accounting_event(
+                    str(arg0),
+                    defeats=1,
+                    event="rule_defeat",
+                    details={"by": arg1},
+                )
+            self._accounted_meta_keys.add(meta_key)
 
     def ltm_sleep_maintenance(self, *, min_support: int = 2, forget_threshold: float = 0.25, keep_last: int = 50):
         self.ltm.sync_rule_registry(self.rule_registry.list_rules())

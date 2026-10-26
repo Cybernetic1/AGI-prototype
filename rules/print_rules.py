@@ -107,7 +107,19 @@ def print_nl_rule_registry(path: Path) -> None:
         status = entry.get("status", "proposed")
         version = entry.get("version", 1)
         family = (entry.get("compiled") or {}).get("family", "unknown")
+        provenance = entry.get("provenance", "unknown")
+        mutability = entry.get("mutability", "priority_only")
+        accounting = entry.get("accounting") or {}
         print(f"- {rid} [status={status}, version={version}, family={family}]")
+        print(f"  provenance: {provenance}  mutability: {mutability}")
+        print(
+            "  accounting: "
+            f"applied={accounting.get('applied', 0)} "
+            f"wins={accounting.get('wins', 0)} "
+            f"defeats={accounting.get('defeats', 0)} "
+            f"recall+={accounting.get('recall_accepted', 0)} "
+            f"recall-={accounting.get('recall_rejected', 0)}"
+        )
         print(f"  source: {entry.get('source', 'unknown')}")
         print(f"  updated_at: {entry.get('updated_at', 'n/a')}")
         print()
