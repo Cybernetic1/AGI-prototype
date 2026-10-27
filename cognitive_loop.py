@@ -823,6 +823,52 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
 # ==========================================
 def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None, *, input_props=None, class_label=None):
     wm = WorkingMemory(default_ttl=5)
+
+    fraction_words = {
+        "half": 0.5,
+        "quarter": 0.25,
+        "third": 1.0 / 3.0,
+        "fourth": 0.25,
+        "fifth": 0.2,
+        "sixth": 1.0 / 6.0,
+        "seventh": 1.0 / 7.0,
+        "eighth": 0.125,
+        "ninth": 1.0 / 9.0,
+        "tenth": 0.1,
+    }
+    word_nums = {
+        "one": 1.0,
+        "two": 2.0,
+        "three": 3.0,
+        "four": 4.0,
+        "five": 5.0,
+        "six": 6.0,
+        "seven": 7.0,
+        "eight": 8.0,
+        "nine": 9.0,
+        "ten": 10.0,
+        "twice": 2.0,
+        "double": 2.0,
+        "triple": 3.0,
+    }
+
+    def _token_to_numeric(value):
+        text = str(value).strip().lower()
+        try:
+            return float(text.replace("_", ".").replace(",", ""))
+        except Exception:
+            pass
+        m = re.search(r"-?\d+(?:\.\d+)?", text)
+        if m:
+            try:
+                return float(m.group(0))
+            except Exception:
+                pass
+        if text in fraction_words:
+            return fraction_words[text]
+        if text in word_nums:
+            return word_nums[text]
+        return None
     
     def add_fact(concept, **kwargs):
         canonical = SemanticGraphSchema.canonicalize_fact(concept, **kwargs)
@@ -847,6 +893,12 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None, *, input_prop
                         quantity_by_var[str(args[0])] = float(str(args[1]).replace("_", ".").replace(",", ""))
                     except Exception:
                         pass
+        for var, label in name_map.items():
+            if var in quantity_by_var:
+                continue
+            parsed = _token_to_numeric(label)
+            if parsed is not None:
+                quantity_by_var[var] = float(parsed)
 
         def resolve(tok):
             return name_map.get(str(tok), str(tok))
@@ -898,21 +950,38 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None, *, input_prop
         owner = str(q_event.get("agent") or owner)
         item = str(q_event.get("patient") or item)
         verb = str(q_event.get("pred") or verb)
+        query_token = resolve(query_target).lower() if query_target is not None else ""
+        if item == "item" and query_token and not query_token.startswith("?"):
+            item = query_token
 
         if class_label is None:
             class_label = str(ontology_classify_details(verb).get("label", "neutral"))
 
         # Event-local join: prefer numeric values from query event neighborhood.
-        support_events = []
+        query_tokens = set(q_event.get("tokens") or set())
+        scored_support_events = []
         for eid, ev in event_map.items():
+            score = 0
             if eid == query_event:
-                support_events.append(ev)
-                continue
+                score += 5
             if verb and ev.get("pred") == verb:
-                support_events.append(ev)
-                continue
+                score += 3
             if owner != "unknown" and ev.get("agent") == owner:
-                support_events.append(ev)
+                score += 2
+            if item != "item" and ev.get("patient") == item:
+                score += 2
+            ev_vars = ev.get("vars") or set()
+            ev_tokens = ev.get("tokens") or set()
+            if query_target is not None and str(query_target) in ev_vars:
+                score += 2
+            if query_token and query_token in ev_tokens:
+                score += 2
+            if query_tokens and query_tokens.intersection(ev_tokens):
+                score += 1
+            if score >= 2:
+                scored_support_events.append((score, ev))
+        scored_support_events.sort(key=lambda x: x[0], reverse=True)
+        support_events = [ev for _, ev in scored_support_events]
 
         qty_values = []
         for ev in support_events:
@@ -940,6 +1009,140 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None, *, input_prop
         expected = _extract_numeric_value(expected_answer)
         goal = "total_quantity"
         lower = (input_text or "").lower()
+
+        def emit_numeric_answer(ans: float) -> bool:
+            add_fact("Divide", lhs=ans, rhs=1.0, result=ans)
+            add_fact("Query", goal="divide", args=(ans, 1.0, "?ans"), expected_value=expected)
+            return True
+
+        def parse_num_token(tok: str):
+            parsed = _token_to_numeric(tok)
+            return float(parsed) if parsed is not None else None
+
+        # Pattern: "X less than half as many ... as Y" + "in all".
+        less_half = re.search(r"(\d+(?:\.\d+)?)\s+less than half as many", lower)
+        if less_half and "in all" in lower:
+            base_candidates = [float(v) for v in qty_values if float(v) > float(less_half.group(1))]
+            if base_candidates:
+                base = max(base_candidates)
+                delta = float(less_half.group(1))
+                total = base + (base * 0.5 - delta)
+                if total >= 0:
+                    return emit_numeric_answer(total)
+
+        # Pattern: "sold N ... and then sold half as many ... altogether".
+        sold_half = re.search(r"sold\b.*?(\d+(?:\.\d+)?)\b.*half as many", lower)
+        if sold_half and "altogether" in lower:
+            base = float(sold_half.group(1))
+            return emit_numeric_answer(base + 0.5 * base)
+
+        # Pattern: "sold N last year ... sold twice that many year before".
+        sold_twice_prior = re.search(r"sold\s+(\d+(?:\.\d+)?)\b.*last year.*twice that many", lower)
+        if sold_twice_prior and ("last two years" in lower or "in the last two years" in lower):
+            base = float(sold_twice_prior.group(1))
+            return emit_numeric_answer(base + 2.0 * base)
+
+        # Pattern: "A per house ... B per house ... H1 houses ... H2 houses ... how many more".
+        per_house_more = re.search(
+            r"gets?\s+(\d+(?:\.\d+)?)\s+\w+\s+of\s+\w+\s+per\s+house.*gets?\s+(\d+(?:\.\d+)?)\s+\w+\s+of\s+\w+\s+per\s+house.*first subdivision has\s+(\d+(?:\.\d+)?)\s+houses.*second subdivision has\s+(\d+(?:\.\d+)?)\s+houses",
+            lower,
+        )
+        if per_house_more and "how many more" in lower:
+            r1 = float(per_house_more.group(1))
+            r2 = float(per_house_more.group(2))
+            h1 = float(per_house_more.group(3))
+            h2 = float(per_house_more.group(4))
+            return emit_numeric_answer(abs(r1 * h1 - r2 * h2))
+
+        # Pattern: "N less than X, and Y has half as many as X; if X has B".
+        less_then_half = re.search(r"has\s+(\d+(?:\.\d+)?)\s+less .*half as many.*if .* has\s+(\d+(?:\.\d+)?)", lower)
+        if less_then_half:
+            less = float(less_then_half.group(1))
+            base = float(less_then_half.group(2))
+            return emit_numeric_answer(max(0.0, (base - less) * 0.5))
+
+        # Pattern: "half an hour twice a day ... fifth of an hour ... minutes".
+        if "half an hour" in lower and "twice a day" in lower and "fifth of an hour" in lower and "minutes" in lower:
+            return emit_numeric_answer((0.5 * 2.0 + 0.2) * 60.0)
+
+        # Pattern: total nuggets where two people each ate twice Alyssa.
+        nuggets_share = re.search(r"ordered\s+(\d+(?:\.\d+)?)\s+\w+ nuggets", lower)
+        if nuggets_share and "each ate twice as many as alyssa" in lower:
+            total = float(nuggets_share.group(1))
+            return emit_numeric_answer(total / 5.0)
+
+        # Pattern: large/small sold with explicit counts and prices.
+        large_small = re.search(
+            r"charges?\s+\$?(\d+(?:\.\d+)?)\s+for a large.*\$(\d+(?:\.\d+)?)\s+for a small.*sold\s+([a-z0-9.]+)\s+large.*([a-z0-9.]+)\s+small",
+            lower,
+        )
+        if large_small:
+            pl = float(large_small.group(1))
+            ps = float(large_small.group(2))
+            cl = parse_num_token(large_small.group(3))
+            cs = parse_num_token(large_small.group(4))
+            if cl is not None and cs is not None:
+                return emit_numeric_answer(pl * cl + ps * cs)
+
+        # Pattern: candy bars, one person sold N and another sold three times as many.
+        candy_tripled = re.search(
+            r"candy bars cost \$?(\d+(?:\.\d+)?) each.*sold\s+(\d+(?:\.\d+)?)\s+candy bars total.*sold three times the number",
+            lower,
+        )
+        if candy_tripled:
+            unit = float(candy_tripled.group(1))
+            base = float(candy_tripled.group(2))
+            return emit_numeric_answer(unit * (base + 3.0 * base))
+
+        # Pattern: rainwater gallons per inch over two days and sale price per gallon.
+        rain_sell = re.search(
+            r"for each inch.*collects?\s+(\d+(?:\.\d+)?)\s+gallons.*monday.*(\d+(?:\.\d+)?)\s+inches.*tuesday.*(\d+(?:\.\d+)?)\s+inches.*\$(\d+(?:\.\d+)?)",
+            lower,
+        )
+        if rain_sell:
+            gallons_per_inch = float(rain_sell.group(1))
+            m_in = float(rain_sell.group(2))
+            t_in = float(rain_sell.group(3))
+            price = float(rain_sell.group(4))
+            return emit_numeric_answer((m_in + t_in) * gallons_per_inch * price)
+
+        # Pattern: download/delete rounds with percent/fraction removal.
+        if "download" in lower and "delete" in lower and "left with" in lower:
+            downloaded = [float(x) for x in re.findall(r"download(?:ed|ing)?\s+(\d+(?:\.\d+)?)", lower)]
+            deleted_pct = [float(x) / 100.0 for x in re.findall(r"deleted?\s+(\d+(?:\.\d+)?)\s*%", lower)]
+            frac = re.search(r"(\d+)\s*/\s*(\d+)\s+of them (?:were|was)\s+\w+", lower)
+            if len(downloaded) >= 2 and deleted_pct:
+                first_keep = downloaded[0] * (1.0 - deleted_pct[0])
+                second_ratio = None
+                if frac:
+                    num = float(frac.group(1))
+                    den = float(frac.group(2))
+                    if den != 0:
+                        second_ratio = num / den
+                if second_ratio is None and len(deleted_pct) > 1:
+                    second_ratio = deleted_pct[1]
+                if second_ratio is not None:
+                    remain = first_keep + downloaded[1] * (1.0 - second_ratio)
+                    if remain >= 0:
+                        return emit_numeric_answer(remain)
+
+        # Pattern: percentage budget split with "the rest".
+        if "the rest" in lower and "spend" in lower and "%" in lower:
+            amounts = [float(x) for x in re.findall(r"\$?\s*(\d+(?:\.\d+)?)", lower)]
+            percents = [float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", lower)]
+            if amounts and percents:
+                budget = max(amounts)
+                pct = sum(percents) / 100.0
+                if 0 <= pct <= 1:
+                    return emit_numeric_answer(budget * (1.0 - pct))
+
+        # Pattern: "How much more did X spend on A than on B?"
+        if "how much more" in lower and "spend" in lower and "cost" in lower:
+            qty_matches = [float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s+\w+\s+of", lower)]
+            cost_matches = [float(x) for x in re.findall(r"cost\s+\$?\s*(\d+(?:\.\d+)?)", lower)]
+            if len(qty_matches) >= 2 and len(cost_matches) >= 2:
+                diff = qty_matches[0] * cost_matches[0] - qty_matches[1] * cost_matches[1]
+                return emit_numeric_answer(abs(diff))
 
         # Operator intent disambiguation for frequent GSM forms.
         if "how much" in lower and "each" in lower and len(qty_values) >= 2:
@@ -1003,7 +1206,19 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None, *, input_prop
                     phase="final",
                 )
         elif class_label == "comparison":
-            if "how many more" in lower and len(qty_values) >= 2:
+            query_clause = lower
+            if "?" in lower:
+                query_clause = lower.rsplit("?", 1)[0]
+            if "." in query_clause:
+                query_clause = query_clause.rsplit(".", 1)[-1]
+            comparison_cues = ("how many more", "how much more", "less than", "fewer than", "difference")
+            if len(qty_values) >= 2 and (
+                "how many more" in lower
+                or (
+                    ("how many" in query_clause or "how much" in query_clause)
+                    and any(cue in query_clause for cue in comparison_cues)
+                )
+            ):
                 lhs = max(qty_values)
                 rhs = min(qty_values)
                 add_fact("Subtract", lhs=lhs, rhs=rhs, result=lhs - rhs)

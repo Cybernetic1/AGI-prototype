@@ -5,6 +5,33 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 _NUM_RE = re.compile(r"-?\d+(?:\.\d+)?")
+_FRACTION_WORDS = {
+    "half": 0.5,
+    "quarter": 0.25,
+    "third": 1.0 / 3.0,
+    "fourth": 0.25,
+    "fifth": 0.2,
+    "sixth": 1.0 / 6.0,
+    "seventh": 1.0 / 7.0,
+    "eighth": 0.125,
+    "ninth": 1.0 / 9.0,
+    "tenth": 0.1,
+}
+_WORD_NUMS = {
+    "one": 1.0,
+    "two": 2.0,
+    "three": 3.0,
+    "four": 4.0,
+    "five": 5.0,
+    "six": 6.0,
+    "seven": 7.0,
+    "eight": 8.0,
+    "nine": 9.0,
+    "ten": 10.0,
+    "twice": 2.0,
+    "double": 2.0,
+    "triple": 3.0,
+}
 
 
 def _as_float(value: Any) -> Optional[float]:
@@ -20,6 +47,18 @@ def _as_float(value: Any) -> Optional[float]:
         return float(match.group(0))
     except Exception:
         return None
+
+
+def _token_to_numeric(value: Any) -> Optional[float]:
+    text = str(value).strip().lower()
+    parsed = _as_float(text)
+    if parsed is not None:
+        return parsed
+    if text in _FRACTION_WORDS:
+        return _FRACTION_WORDS[text]
+    if text in _WORD_NUMS:
+        return _WORD_NUMS[text]
+    return None
 
 
 def _build_name_map(input_props: List[Dict[str, Any]]) -> Dict[str, str]:
@@ -78,6 +117,7 @@ def extract_numeric_bridge(
                 verb = _resolve_token(args[1], name_map=name_map).lower()
 
     quantity_rows: List[Tuple[str, float]] = []
+    quantity_vars = set()
     for p in input_props:
         if p.get("pred") != "quantity":
             continue
@@ -87,7 +127,9 @@ def extract_numeric_bridge(
         qty = _as_float(args[1])
         if qty is None:
             continue
-        quantity_rows.append((str(args[0]), qty))
+        var = str(args[0])
+        quantity_vars.add(var)
+        quantity_rows.append((var, qty))
         facts.append(
             {
                 "concept": "Quantity",
@@ -95,6 +137,23 @@ def extract_numeric_bridge(
                 "item": item,
                 "qty": qty,
                 "source_var": str(args[0]),
+            }
+        )
+
+    for var, label in name_map.items():
+        if var in quantity_vars:
+            continue
+        qty = _token_to_numeric(label)
+        if qty is None:
+            continue
+        quantity_rows.append((var, qty))
+        facts.append(
+            {
+                "concept": "Quantity",
+                "owner": owner,
+                "item": item,
+                "qty": qty,
+                "source_var": str(var),
             }
         )
 

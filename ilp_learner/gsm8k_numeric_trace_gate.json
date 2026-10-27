@@ -9,19 +9,15 @@
     "selected": 80,
     "skip_neutral": 21,
     "skip_low_confidence": 60,
-    "numeric_solved": 1,
-    "numeric_solved_rate": 0.0125,
-    "nonempty_belief_count": 76,
-    "nonempty_belief_rate": 0.95,
-    "gate_pass_count": 57,
-    "gate_fail_count": 23,
+    "numeric_solved": 13,
+    "numeric_solved_rate": 0.1625,
+    "nonempty_belief_count": 77,
+    "nonempty_belief_rate": 0.9625,
+    "gate_pass_count": 71,
+    "gate_fail_count": 9,
     "gate_pass_nonempty_belief_rate": 1.0,
-    "gate_fail_nonempty_belief_rate": 0.8260869565217391,
+    "gate_fail_nonempty_belief_rate": 0.6666666666666666,
     "top_missing_primitives": [
-      [
-        "quantity",
-        14
-      ],
       [
         "query_event",
         4
@@ -31,71 +27,37 @@
         4
       ],
       [
-        "creation_numeric_cue",
-        3
+        "quantity",
+        1
       ],
       [
-        "comparison_cue",
+        "creation_numeric_cue",
         1
       ]
     ],
     "culprit_breakdown": [
       [
         "binding_scope_failure",
-        27
-      ],
-      [
-        "grounding_failure",
-        23
-      ],
-      [
-        "operator_target_mismatch",
-        15
+        33
       ],
       [
         "semantic_mismatch",
-        12
+        18
+      ],
+      [
+        "grounding_failure",
+        9
+      ],
+      [
+        "operator_target_mismatch",
+        6
       ],
       [
         "near_miss_arithmetic",
-        2
+        1
       ]
     ],
     "top_culprit_problems": [
-      {
-        "id": "2",
-        "index": 2,
-        "verb": "save",
-        "class": "creation",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 95,
-        "culprit_confidence": 0.95,
-        "expected_operator": "unknown",
-        "expected": 5.0,
-        "closest_belief": 15.0,
-        "min_abs_error": 10.0,
-        "bridge_missing": [
-          "quantity",
-          "creation_numeric_cue"
-        ]
-      },
-      {
-        "id": "34",
-        "index": 34,
-        "verb": "get",
-        "class": "creation",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 95,
-        "culprit_confidence": 0.95,
-        "expected_operator": "unknown",
-        "expected": 5250.0,
-        "closest_belief": 1750.0,
-        "min_abs_error": 3500.0,
-        "bridge_missing": [
-          "quantity",
-          "creation_numeric_cue"
-        ]
-      },
       {
         "id": "52",
         "index": 52,
@@ -114,182 +76,6 @@
         ]
       },
       {
-        "id": "0",
-        "index": 0,
-        "verb": "sell",
-        "class": "transfer",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 72.0,
-        "closest_belief": 48.0,
-        "min_abs_error": 24.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "8",
-        "index": 8,
-        "verb": "pay",
-        "class": "transfer",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 41.0,
-        "closest_belief": 154.0,
-        "min_abs_error": 113.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "31",
-        "index": 31,
-        "verb": "sell",
-        "class": "transfer",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 1200.0,
-        "closest_belief": 30.0,
-        "min_abs_error": 1170.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "36",
-        "index": 36,
-        "verb": "earn",
-        "class": "creation",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "unknown",
-        "expected": 15.0,
-        "closest_belief": 60.0,
-        "min_abs_error": 45.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "41",
-        "index": 41,
-        "verb": "buy",
-        "class": "creation",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "unknown",
-        "expected": 500.0,
-        "closest_belief": 200.0,
-        "min_abs_error": 300.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "54",
-        "index": 54,
-        "verb": "lose",
-        "class": "loss",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 11.0,
-        "closest_belief": 27.0,
-        "min_abs_error": 16.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "86",
-        "index": 86,
-        "verb": "buy",
-        "class": "creation",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "unknown",
-        "expected": 6.0,
-        "closest_belief": 2.0,
-        "min_abs_error": 4.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "111",
-        "index": 111,
-        "verb": "leave",
-        "class": "loss",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 6.0,
-        "closest_belief": 12.0,
-        "min_abs_error": 6.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "122",
-        "index": 122,
-        "verb": "have",
-        "class": "comparison",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "unknown",
-        "expected": 48.0,
-        "closest_belief": 40.0,
-        "min_abs_error": 8.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "129",
-        "index": 129,
-        "verb": "sell",
-        "class": "transfer",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 10.0,
-        "closest_belief": 98.0,
-        "min_abs_error": 88.0,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
-        "id": "141",
-        "index": 141,
-        "verb": "spend",
-        "class": "loss",
-        "culprit_category": "grounding_failure",
-        "culprit_score": 90,
-        "culprit_confidence": 0.95,
-        "expected_operator": "subtract",
-        "expected": 72.0,
-        "closest_belief": null,
-        "min_abs_error": null,
-        "bridge_missing": [
-          "quantity"
-        ]
-      },
-      {
         "id": "23",
         "index": 23,
         "verb": "have",
@@ -304,9 +90,205 @@
         "bridge_missing": [
           "query_event"
         ]
+      },
+      {
+        "id": "82",
+        "index": 82,
+        "verb": "earn",
+        "class": "creation",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 88,
+        "culprit_confidence": 0.95,
+        "expected_operator": "unknown",
+        "expected": 700.0,
+        "closest_belief": null,
+        "min_abs_error": null,
+        "bridge_missing": [
+          "query_event"
+        ]
+      },
+      {
+        "id": "83",
+        "index": 83,
+        "verb": "have",
+        "class": "comparison",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 88,
+        "culprit_confidence": 0.95,
+        "expected_operator": "unknown",
+        "expected": 54.0,
+        "closest_belief": 8.0,
+        "min_abs_error": 46.0,
+        "bridge_missing": [
+          "query_event"
+        ]
+      },
+      {
+        "id": "112",
+        "index": 112,
+        "verb": "have",
+        "class": "comparison",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 88,
+        "culprit_confidence": 0.95,
+        "expected_operator": "unknown",
+        "expected": 920.0,
+        "closest_belief": null,
+        "min_abs_error": null,
+        "bridge_missing": [
+          "query_event"
+        ]
+      },
+      {
+        "id": "81",
+        "index": 81,
+        "verb": "skip",
+        "class": "loss",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 80,
+        "culprit_confidence": 0.95,
+        "expected_operator": "subtract",
+        "expected": 14.0,
+        "closest_belief": 4.0,
+        "min_abs_error": 10.0,
+        "bridge_missing": [
+          "transition_cue"
+        ]
+      },
+      {
+        "id": "101",
+        "index": 101,
+        "verb": "bring",
+        "class": "transfer",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 80,
+        "culprit_confidence": 0.95,
+        "expected_operator": "subtract",
+        "expected": 36.0,
+        "closest_belief": 6.0,
+        "min_abs_error": 30.0,
+        "bridge_missing": [
+          "transition_cue"
+        ]
+      },
+      {
+        "id": "104",
+        "index": 104,
+        "verb": "transport",
+        "class": "transfer",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 80,
+        "culprit_confidence": 0.95,
+        "expected_operator": "subtract",
+        "expected": 96.0,
+        "closest_belief": 0.0,
+        "min_abs_error": 96.0,
+        "bridge_missing": [
+          "transition_cue"
+        ]
+      },
+      {
+        "id": "157",
+        "index": 157,
+        "verb": "remove",
+        "class": "loss",
+        "culprit_category": "grounding_failure",
+        "culprit_score": 80,
+        "culprit_confidence": 0.95,
+        "expected_operator": "subtract",
+        "expected": 10.0,
+        "closest_belief": 0.0,
+        "min_abs_error": 10.0,
+        "bridge_missing": [
+          "transition_cue"
+        ]
+      },
+      {
+        "id": "5",
+        "index": 5,
+        "verb": "have",
+        "class": "comparison",
+        "culprit_category": "binding_scope_failure",
+        "culprit_score": 70,
+        "culprit_confidence": 0.78,
+        "expected_operator": "unknown",
+        "expected": 35.0,
+        "closest_belief": 10.0,
+        "min_abs_error": 25.0,
+        "bridge_missing": []
+      },
+      {
+        "id": "8",
+        "index": 8,
+        "verb": "pay",
+        "class": "transfer",
+        "culprit_category": "binding_scope_failure",
+        "culprit_score": 70,
+        "culprit_confidence": 0.78,
+        "expected_operator": "subtract",
+        "expected": 41.0,
+        "closest_belief": 154.0,
+        "min_abs_error": 113.0,
+        "bridge_missing": []
+      },
+      {
+        "id": "13",
+        "index": 13,
+        "verb": "spend",
+        "class": "loss",
+        "culprit_category": "binding_scope_failure",
+        "culprit_score": 70,
+        "culprit_confidence": 0.78,
+        "expected_operator": "subtract",
+        "expected": 35.0,
+        "closest_belief": 8.0,
+        "min_abs_error": 27.0,
+        "bridge_missing": []
+      },
+      {
+        "id": "28",
+        "index": 28,
+        "verb": "have",
+        "class": "comparison",
+        "culprit_category": "binding_scope_failure",
+        "culprit_score": 70,
+        "culprit_confidence": 0.78,
+        "expected_operator": "unknown",
+        "expected": 8.0,
+        "closest_belief": 5.0,
+        "min_abs_error": 3.0,
+        "bridge_missing": []
+      },
+      {
+        "id": "30",
+        "index": 30,
+        "verb": "eat",
+        "class": "loss",
+        "culprit_category": "binding_scope_failure",
+        "culprit_score": 70,
+        "culprit_confidence": 0.78,
+        "expected_operator": "subtract",
+        "expected": 6.0,
+        "closest_belief": 0.0,
+        "min_abs_error": 6.0,
+        "bridge_missing": []
+      },
+      {
+        "id": "40",
+        "index": 40,
+        "verb": "pay",
+        "class": "transfer",
+        "culprit_category": "binding_scope_failure",
+        "culprit_score": 70,
+        "culprit_confidence": 0.78,
+        "expected_operator": "subtract",
+        "expected": 476.0,
+        "closest_belief": 12.0,
+        "min_abs_error": 464.0,
+        "bridge_missing": []
       }
     ],
-    "duration_sec": 114.974205493927
+    "duration_sec": 115.6541600227356
   },
   "results": [
     {
@@ -316,33 +298,32 @@
       "verb": "sell",
       "class": "transfer",
       "class_confidence": 0.98,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": false,
-        "has_quantity": false,
+        "has_quantity": true,
         "has_two_quantities": false,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 2,
       "expected": 72.0,
       "belief_values": [
-        48.0
+        1.0,
+        72.0
       ],
-      "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": 48.0,
-      "min_abs_error": 24.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 72.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 1,
@@ -358,25 +339,27 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 10.0,
       "belief_values": [
-        2500.0,
-        41.66666666666667
+        10.0,
+        600.0,
+        144.0,
+        12.0
       ],
-      "solved": false,
-      "culprit_category": "semantic_mismatch",
-      "culprit_score": 55,
-      "culprit_confidence": 0.65,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "unknown",
-      "closest_belief": 41.66666666666667,
-      "min_abs_error": 31.66666666666667,
-      "culprit_reason": "Beliefs were produced but do not match expected target"
+      "closest_belief": 10.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 2,
@@ -385,36 +368,31 @@
       "verb": "save",
       "class": "creation",
       "class_confidence": 0.96,
-      "bridge_missing": [
-        "quantity",
-        "creation_numeric_cue"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": true,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 4,
       "expected": 5.0,
       "belief_values": [
-        15.0,
-        100.0,
-        100.0
+        0.5
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 95,
-      "culprit_confidence": 0.95,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
-      "closest_belief": 15.0,
-      "min_abs_error": 10.0,
-      "culprit_reason": "Missing primitives: quantity, creation_numeric_cue"
+      "closest_belief": 0.5,
+      "min_abs_error": 4.5,
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 5,
@@ -435,9 +413,11 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 6,
       "expected": 35.0,
       "belief_values": [
+        80.0,
+        10.0,
         80.0
       ],
       "solved": false,
@@ -445,8 +425,8 @@
       "culprit_score": 70,
       "culprit_confidence": 0.78,
       "expected_operator": "unknown",
-      "closest_belief": 80.0,
-      "min_abs_error": 45.0,
+      "closest_belief": 10.0,
+      "min_abs_error": 25.0,
       "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
@@ -489,34 +469,32 @@
       "verb": "pay",
       "class": "transfer",
       "class_confidence": 0.98,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 7,
       "expected": 41.0,
       "belief_values": [
         154.0,
         154.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
       "closest_belief": 154.0,
       "min_abs_error": 113.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 12,
@@ -540,16 +518,17 @@
       "bridge_fact_count": 3,
       "expected": 85.0,
       "belief_values": [
-        60.0
+        1.0,
+        85.0
       ],
-      "solved": false,
-      "culprit_category": "binding_scope_failure",
-      "culprit_score": 70,
-      "culprit_confidence": 0.78,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "unknown",
-      "closest_belief": 60.0,
-      "min_abs_error": 25.0,
-      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
+      "closest_belief": 85.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 13,
@@ -565,24 +544,25 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 35.0,
       "belief_values": [
-        2.0
+        8.0,
+        8.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 2.0,
-      "min_abs_error": 33.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 8.0,
+      "min_abs_error": 27.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 15,
@@ -603,31 +583,31 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 7,
       "expected": 448000.0,
       "belief_values": [
         100.0,
-        4.0,
-        200.0,
-        25.0,
         2.0,
-        0.04,
-        0.125,
-        1.0,
-        8.0,
-        0.01,
-        0.005,
-        0.25,
         0.5,
-        500.0
+        8.0,
+        200.0,
+        1.0,
+        0.125,
+        4.0,
+        0.25,
+        0.01,
+        25.0,
+        0.005,
+        0.04,
+        20.0
       ],
       "solved": false,
       "culprit_category": "operator_target_mismatch",
       "culprit_score": 68,
       "culprit_confidence": 0.8,
       "expected_operator": "divide",
-      "closest_belief": 500.0,
-      "min_abs_error": 447500.0,
+      "closest_belief": 200.0,
+      "min_abs_error": 447800.0,
       "culprit_reason": "Question implies divide but produced target appears off-path"
     },
     {
@@ -644,23 +624,23 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": true,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 5,
       "expected": 800.0,
       "belief_values": [
-        2.0
+        2500.0
       ],
       "solved": false,
       "culprit_category": "semantic_mismatch",
       "culprit_score": 55,
       "culprit_confidence": 0.65,
       "expected_operator": "unknown",
-      "closest_belief": 2.0,
-      "min_abs_error": 798.0,
+      "closest_belief": 2500.0,
+      "min_abs_error": 1700.0,
       "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
@@ -717,7 +697,7 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 3,
+      "bridge_fact_count": 6,
       "expected": 5.0,
       "belief_values": [
         0.974025974025974,
@@ -751,20 +731,27 @@
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 8,
+      "bridge_fact_count": 9,
       "expected": 400.0,
       "belief_values": [
-        730.0,
-        730.0
+        1.0,
+        20.0,
+        400.0,
+        228.57142857142858,
+        0.004375,
+        0.0875,
+        11.428571428571429,
+        0.05,
+        70.0
       ],
-      "solved": false,
-      "culprit_category": "binding_scope_failure",
-      "culprit_score": 70,
-      "culprit_confidence": 0.78,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": 730.0,
-      "min_abs_error": 330.0,
-      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
+      "closest_belief": 400.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 28,
@@ -790,7 +777,7 @@
       "belief_values": [
         3.0,
         5.0,
-        3.0
+        5.0
       ],
       "solved": false,
       "culprit_category": "binding_scope_failure",
@@ -842,34 +829,31 @@
       "verb": "sell",
       "class": "transfer",
       "class_confidence": 0.98,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": false,
-        "has_quantity": false,
+        "has_quantity": true,
         "has_two_quantities": false,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 2,
       "expected": 1200.0,
       "belief_values": [
-        30.0,
-        30.0
+        60.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "operator_target_mismatch",
+      "culprit_score": 68,
+      "culprit_confidence": 0.8,
       "expected_operator": "subtract",
-      "closest_belief": 30.0,
-      "min_abs_error": 1170.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 60.0,
+      "min_abs_error": 1140.0,
+      "culprit_reason": "Question implies subtract but produced target appears off-path"
     },
     {
       "index": 34,
@@ -878,34 +862,31 @@
       "verb": "get",
       "class": "creation",
       "class_confidence": 0.96,
-      "bridge_missing": [
-        "quantity",
-        "creation_numeric_cue"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
+        "has_quantity": true,
         "has_two_quantities": false,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 2,
       "expected": 5250.0,
       "belief_values": [
         1750.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 95,
-      "culprit_confidence": 0.95,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
       "closest_belief": 1750.0,
       "min_abs_error": 3500.0,
-      "culprit_reason": "Missing primitives: quantity, creation_numeric_cue"
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 35,
@@ -929,9 +910,9 @@
       "bridge_fact_count": 17,
       "expected": 36.0,
       "belief_values": [
-        60.0,
         40.0,
         5.0,
+        60.0,
         40.0
       ],
       "solved": false,
@@ -950,33 +931,33 @@
       "verb": "earn",
       "class": "creation",
       "class_confidence": 0.96,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": true,
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 3,
       "expected": 15.0,
       "belief_values": [
-        60.0
+        0.5,
+        60.0,
+        0.5
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
-      "closest_belief": 60.0,
-      "min_abs_error": 45.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 0.5,
+      "min_abs_error": 14.5,
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 37,
@@ -997,16 +978,31 @@
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 9,
+      "bridge_fact_count": 13,
       "expected": 5.0,
       "belief_values": [
-        1.0,
-        1.25,
-        0.8,
-        4.0,
-        0.25,
-        0.2,
+        0.8333333333333334,
+        1.2,
+        1.6666666666666667,
+        0.3333333333333333,
+        0.24,
         5.0,
+        1.3333333333333333,
+        4.166666666666667,
+        3.3333333333333335,
+        0.75,
+        3.0,
+        0.39999999999999997,
+        1.0,
+        4.0,
+        0.3,
+        0.25,
+        1.25,
+        2.5,
+        10.0,
+        0.2,
+        0.6,
+        0.8,
         5.0
       ],
       "solved": true,
@@ -1041,16 +1037,16 @@
       "expected": 15.0,
       "belief_values": [
         1.0,
-        0.0
+        15.0
       ],
-      "solved": false,
-      "culprit_category": "binding_scope_failure",
-      "culprit_score": 70,
-      "culprit_confidence": 0.78,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": 1.0,
-      "min_abs_error": 14.0,
-      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
+      "closest_belief": 15.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 40,
@@ -1071,7 +1067,7 @@
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 9,
+      "bridge_fact_count": 11,
       "expected": 476.0,
       "belief_values": [
         12.0
@@ -1092,21 +1088,19 @@
       "verb": "buy",
       "class": "creation",
       "class_confidence": 0.96,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 3,
       "expected": 500.0,
       "belief_values": [
         200.0,
@@ -1114,13 +1108,13 @@
         50.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
       "closest_belief": 200.0,
       "min_abs_error": 300.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 42,
@@ -1144,8 +1138,8 @@
       "bridge_fact_count": 13,
       "expected": 99.0,
       "belief_values": [
-        9.0,
         12.0,
+        9.0,
         12.0
       ],
       "solved": false,
@@ -1176,19 +1170,20 @@
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 5,
       "expected": 300.0,
       "belief_values": [
-        30.0
+        1.0,
+        300.00000000000006
       ],
-      "solved": false,
-      "culprit_category": "binding_scope_failure",
-      "culprit_score": 70,
-      "culprit_confidence": 0.78,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": 30.0,
-      "min_abs_error": 270.0,
-      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
+      "closest_belief": 300.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 49,
@@ -1204,14 +1199,16 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 48.0,
       "belief_values": [
+        36.0,
+        0.3333333333333333,
         36.0
       ],
       "solved": false,
@@ -1276,19 +1273,20 @@
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 3,
+      "bridge_fact_count": 5,
       "expected": 36.0,
       "belief_values": [
-        4.0
+        1.0,
+        36.0
       ],
-      "solved": false,
-      "culprit_category": "binding_scope_failure",
-      "culprit_score": 70,
-      "culprit_confidence": 0.78,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "divide",
-      "closest_belief": 4.0,
-      "min_abs_error": 32.0,
-      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
+      "closest_belief": 36.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 54,
@@ -1297,34 +1295,31 @@
       "verb": "lose",
       "class": "loss",
       "class_confidence": 0.95,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": true,
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 4,
       "expected": 11.0,
       "belief_values": [
-        27.0,
-        27.0
+        28.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 27.0,
-      "min_abs_error": 16.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 28.0,
+      "min_abs_error": 17.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 57,
@@ -1345,18 +1340,19 @@
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 3,
+      "bridge_fact_count": 6,
       "expected": 2.0,
       "belief_values": [
-        10.0
+        0.0,
+        0.0
       ],
       "solved": false,
       "culprit_category": "binding_scope_failure",
       "culprit_score": 70,
       "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 10.0,
-      "min_abs_error": 8.0,
+      "closest_belief": 0.0,
+      "min_abs_error": 2.0,
       "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
@@ -1378,9 +1374,11 @@
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 5,
       "expected": 120.0,
       "belief_values": [
+        50.0,
+        15.0,
         50.0
       ],
       "solved": false,
@@ -1411,9 +1409,11 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 7,
       "expected": 200.0,
       "belief_values": [
+        0.2,
+        1000.0,
         1000.0
       ],
       "solved": false,
@@ -1421,8 +1421,8 @@
       "culprit_score": 68,
       "culprit_confidence": 0.8,
       "expected_operator": "subtract",
-      "closest_belief": 1000.0,
-      "min_abs_error": 800.0,
+      "closest_belief": 0.2,
+      "min_abs_error": 199.8,
       "culprit_reason": "Question implies subtract but produced target appears off-path"
     },
     {
@@ -1444,21 +1444,19 @@
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 5,
       "expected": 840.0,
       "belief_values": [
-        900.0,
-        600.0,
-        30.0
+        20.0
       ],
       "solved": false,
-      "culprit_category": "near_miss_arithmetic",
-      "culprit_score": 35,
-      "culprit_confidence": 0.7,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
-      "closest_belief": 900.0,
-      "min_abs_error": 60.0,
-      "culprit_reason": "Closest belief is near expected value"
+      "closest_belief": 20.0,
+      "min_abs_error": 820.0,
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 65,
@@ -1479,7 +1477,7 @@
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 6,
       "expected": 558.0,
       "belief_values": [
         16.0
@@ -1515,16 +1513,17 @@
       "bridge_fact_count": 4,
       "expected": 19.0,
       "belief_values": [
-        68.0
+        1.0,
+        19.0
       ],
-      "solved": false,
-      "culprit_category": "binding_scope_failure",
-      "culprit_score": 70,
-      "culprit_confidence": 0.78,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "unknown",
-      "closest_belief": 68.0,
-      "min_abs_error": 49.0,
-      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
+      "closest_belief": 19.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 74,
@@ -1683,7 +1682,7 @@
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 7,
       "expected": 700.0,
       "belief_values": [],
       "solved": false,
@@ -1719,9 +1718,9 @@
       "bridge_fact_count": 4,
       "expected": 54.0,
       "belief_values": [
-        2.0,
         8.0,
         6.0,
+        2.0,
         4.0
       ],
       "solved": false,
@@ -1740,36 +1739,31 @@
       "verb": "buy",
       "class": "creation",
       "class_confidence": 0.96,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 4,
       "expected": 6.0,
       "belief_values": [
-        2.0,
-        50.0,
-        25.0,
-        25.0
+        2.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
       "closest_belief": 2.0,
       "min_abs_error": 4.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 88,
@@ -1793,17 +1787,17 @@
       "bridge_fact_count": 2,
       "expected": 258.0,
       "belief_values": [
-        0.0,
-        0.0
+        1.0,
+        258.0
       ],
-      "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": 0.0,
-      "min_abs_error": 258.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 258.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 89,
@@ -1857,9 +1851,11 @@
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 7,
       "expected": 10.0,
       "belief_values": [
+        80.0,
+        8.0,
         8.0
       ],
       "solved": false,
@@ -1890,22 +1886,27 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 6,
+      "bridge_fact_count": 7,
       "expected": 126.0,
       "belief_values": [
         1.0,
+        12.5,
         0.26666666666666666,
+        126.0,
+        3.3333333333333335,
+        0.3,
         3.75,
+        0.08,
         4.0
       ],
-      "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "divide",
-      "closest_belief": 4.0,
-      "min_abs_error": 122.0,
-      "culprit_reason": "Question implies divide but produced target appears off-path"
+      "closest_belief": 126.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 98,
@@ -1926,9 +1927,12 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 7,
       "expected": 45.0,
       "belief_values": [
+        5.0,
+        6.0,
+        4.0,
         6.0
       ],
       "solved": false,
@@ -2063,9 +2067,11 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 5,
       "expected": 50.0,
       "belief_values": [
+        20.0,
+        10.0,
         20.0
       ],
       "solved": false,
@@ -2096,7 +2102,7 @@
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 7,
       "expected": 41.0,
       "belief_values": [
         9.0
@@ -2132,16 +2138,17 @@
       "bridge_fact_count": 2,
       "expected": 20.0,
       "belief_values": [
-        100.0
+        1.0,
+        20.0
       ],
-      "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": 100.0,
-      "min_abs_error": 80.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 20.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 110,
@@ -2157,14 +2164,18 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 140.0,
       "belief_values": [
+        0.05714285714285714,
+        1.0,
+        17.5,
+        280.0,
         35.0
       ],
       "solved": false,
@@ -2183,34 +2194,32 @@
       "verb": "leave",
       "class": "loss",
       "class_confidence": 0.7,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 4,
       "expected": 6.0,
       "belief_values": [
         12.0,
         12.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
       "closest_belief": 12.0,
       "min_abs_error": 6.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 112,
@@ -2292,24 +2301,25 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 4,
       "expected": 720.0,
       "belief_values": [
-        35.0
+        365.0,
+        365.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 35.0,
-      "min_abs_error": 685.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 365.0,
+      "min_abs_error": 355.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 122,
@@ -2318,36 +2328,31 @@
       "verb": "have",
       "class": "comparison",
       "class_confidence": 0.95,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
+        "has_quantity": true,
         "has_two_quantities": false,
         "has_ratio_cue": true,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 2,
       "expected": 48.0,
       "belief_values": [
-        2.0,
-        40.0,
-        5.0,
-        40.0
+        2.5
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "semantic_mismatch",
+      "culprit_score": 55,
+      "culprit_confidence": 0.65,
       "expected_operator": "unknown",
-      "closest_belief": 40.0,
-      "min_abs_error": 8.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 2.5,
+      "min_abs_error": 45.5,
+      "culprit_reason": "Beliefs were produced but do not match expected target"
     },
     {
       "index": 124,
@@ -2363,25 +2368,25 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 18.0,
       "belief_values": [
         0.0,
         0.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
       "closest_belief": 0.0,
       "min_abs_error": 18.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 126,
@@ -2456,34 +2461,32 @@
       "verb": "sell",
       "class": "transfer",
       "class_confidence": 0.98,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
-        "has_two_quantities": false,
+        "has_quantity": true,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 4,
       "expected": 10.0,
       "belief_values": [
-        98.0,
-        98.0
+        99.0,
+        99.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 98.0,
-      "min_abs_error": 88.0,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 99.0,
+      "min_abs_error": 89.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 130,
@@ -2504,7 +2507,7 @@
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 5,
       "expected": 55.0,
       "belief_values": [
         0.0,
@@ -2538,12 +2541,16 @@
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 3,
+      "bridge_fact_count": 4,
       "expected": 110.0,
       "belief_values": [
+        0.7272727272727273,
+        1.1,
         1.0,
-        1.25,
         0.8,
+        1.375,
+        1.25,
+        0.9090909090909091,
         5.0
       ],
       "solved": false,
@@ -2574,19 +2581,18 @@
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 9,
+      "bridge_fact_count": 11,
       "expected": 74.0,
       "belief_values": [
-        1.0,
-        1.0
+        500.0
       ],
       "solved": false,
       "culprit_category": "binding_scope_failure",
       "culprit_score": 70,
       "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 1.0,
-      "min_abs_error": 73.0,
+      "closest_belief": 500.0,
+      "min_abs_error": 426.0,
       "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
@@ -2641,7 +2647,7 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 5,
+      "bridge_fact_count": 8,
       "expected": 8.0,
       "belief_values": [
         3.0
@@ -2695,31 +2701,32 @@
       "verb": "spend",
       "class": "loss",
       "class_confidence": 0.95,
-      "bridge_missing": [
-        "quantity"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
-        "has_quantity": false,
+        "has_quantity": true,
         "has_two_quantities": false,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 1,
+      "bridge_fact_count": 2,
       "expected": 72.0,
-      "belief_values": [],
-      "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 90,
-      "culprit_confidence": 0.95,
+      "belief_values": [
+        1.0,
+        72.0
+      ],
+      "solved": true,
+      "culprit_category": "solved",
+      "culprit_score": 0,
+      "culprit_confidence": 1.0,
       "expected_operator": "subtract",
-      "closest_belief": null,
-      "min_abs_error": null,
-      "culprit_reason": "Missing primitives: quantity"
+      "closest_belief": 72.0,
+      "min_abs_error": 0.0,
+      "culprit_reason": "Solved"
     },
     {
       "index": 142,
@@ -2740,18 +2747,19 @@
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 6,
+      "bridge_fact_count": 7,
       "expected": 30.0,
       "belief_values": [
-        50.0
+        49.0,
+        49.0
       ],
       "solved": false,
       "culprit_category": "binding_scope_failure",
       "culprit_score": 70,
       "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 50.0,
-      "min_abs_error": 20.0,
+      "closest_belief": 49.0,
+      "min_abs_error": 19.0,
       "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
@@ -2773,9 +2781,11 @@
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 8,
+      "bridge_fact_count": 9,
       "expected": 136.0,
       "belief_values": [
+        3.0,
+        4.0,
         4.0
       ],
       "solved": false,
@@ -2835,25 +2845,25 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 283.0,
       "belief_values": [
         0.0,
         0.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
       "closest_belief": 0.0,
       "min_abs_error": 283.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 153,
@@ -2869,24 +2879,25 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 5,
       "expected": 135.0,
       "belief_values": [
-        75.0
+        180.0,
+        180.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 75.0,
-      "min_abs_error": 60.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 180.0,
+      "min_abs_error": 45.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 154,
@@ -2895,33 +2906,33 @@
       "verb": "have",
       "class": "comparison",
       "class_confidence": 0.95,
-      "bridge_missing": [
-        "comparison_cue"
-      ],
+      "bridge_missing": [],
       "bridge_signals": {
         "has_query_event": true,
         "has_verb": true,
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": false,
         "has_rate_cue": false
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 4,
       "expected": 720.0,
       "belief_values": [
-        10.0
+        200.0,
+        400.0,
+        400.0
       ],
       "solved": false,
-      "culprit_category": "grounding_failure",
-      "culprit_score": 80,
-      "culprit_confidence": 0.95,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "unknown",
-      "closest_belief": 10.0,
-      "min_abs_error": 710.0,
-      "culprit_reason": "Missing primitives: comparison_cue"
+      "closest_belief": 400.0,
+      "min_abs_error": 320.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 156,
@@ -2937,24 +2948,25 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 21.0,
       "belief_values": [
-        75.0
+        71.0,
+        71.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 75.0,
-      "min_abs_error": 54.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 71.0,
+      "min_abs_error": 50.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 157,
@@ -3006,24 +3018,24 @@
         "has_owner": true,
         "has_item": true,
         "has_quantity": true,
-        "has_two_quantities": false,
+        "has_two_quantities": true,
         "has_ratio_cue": false,
         "has_transition_cue": true,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 2,
+      "bridge_fact_count": 3,
       "expected": 27.0,
       "belief_values": [
-        50.0
+        18.0
       ],
       "solved": false,
-      "culprit_category": "operator_target_mismatch",
-      "culprit_score": 68,
-      "culprit_confidence": 0.8,
+      "culprit_category": "binding_scope_failure",
+      "culprit_score": 70,
+      "culprit_confidence": 0.78,
       "expected_operator": "subtract",
-      "closest_belief": 50.0,
-      "min_abs_error": 23.0,
-      "culprit_reason": "Question implies subtract but produced target appears off-path"
+      "closest_belief": 18.0,
+      "min_abs_error": 9.0,
+      "culprit_reason": "Multi-quantity case likely mixed owner/item or event scope"
     },
     {
       "index": 160,
@@ -3044,10 +3056,13 @@
         "has_transition_cue": false,
         "has_rate_cue": true
       },
-      "bridge_fact_count": 4,
+      "bridge_fact_count": 7,
       "expected": 295.0,
       "belief_values": [
-        100.0
+        80.0,
+        100.0,
+        3.0,
+        3.0
       ],
       "solved": false,
       "culprit_category": "semantic_mismatch",
