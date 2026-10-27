@@ -1,0 +1,7644 @@
+{
+  "summary": {
+    "dataset": "logic_transformer/data/gsm8k_train_lt.jsonl",
+    "mode": "medium_1000",
+    "min_class_confidence": 0.7,
+    "scanned": 1000,
+    "processed": 444,
+    "skip_neutral": 214,
+    "skip_low_confidence": 342,
+    "uncertain_review_count": 342,
+    "uncertain_rate_scanned": 0.342,
+    "target_inferred": 444,
+    "target_inferred_rate": 1.0,
+    "avg_score": 1.213098882808247,
+    "duration_sec": 152.3186662197113,
+    "beam": 6,
+    "max_clauses": 2,
+    "prior_weight": 0.5
+  },
+  "uncertain_for_review": [
+    {
+      "index": 3,
+      "id": "3",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 4,
+      "id": "4",
+      "verb": "write",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 9,
+      "id": "9",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 10,
+      "id": "10",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 11,
+      "id": "11",
+      "verb": "mow",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 19,
+      "id": "19",
+      "verb": "bike",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 21,
+      "id": "21",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 22,
+      "id": "22",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 24,
+      "id": "24",
+      "verb": "shop",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 26,
+      "id": "26",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 29,
+      "id": "29",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 32,
+      "id": "32",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 33,
+      "id": "33",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 38,
+      "id": "38",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 45,
+      "id": "45",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 46,
+      "id": "46",
+      "verb": "practice",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 48,
+      "id": "48",
+      "verb": "memorize",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 50,
+      "id": "50",
+      "verb": "average",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 51,
+      "id": "51",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 55,
+      "id": "55",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 56,
+      "id": "56",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 60,
+      "id": "60",
+      "verb": "last",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 62,
+      "id": "62",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 66,
+      "id": "66",
+      "verb": "plan",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 67,
+      "id": "67",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 68,
+      "id": "68",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 71,
+      "id": "71",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 72,
+      "id": "72",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 73,
+      "id": "73",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 77,
+      "id": "77",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 79,
+      "id": "79",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 84,
+      "id": "84",
+      "verb": "consider",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 85,
+      "id": "85",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 87,
+      "id": "87",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 90,
+      "id": "90",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 92,
+      "id": "92",
+      "verb": "decide",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 93,
+      "id": "93",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 95,
+      "id": "95",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 97,
+      "id": "97",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 99,
+      "id": "99",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 100,
+      "id": "100",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 102,
+      "id": "102",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 115,
+      "id": "115",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 116,
+      "id": "116",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 117,
+      "id": "117",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 119,
+      "id": "119",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 121,
+      "id": "121",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 123,
+      "id": "123",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 125,
+      "id": "125",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 127,
+      "id": "127",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 133,
+      "id": "133",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 135,
+      "id": "135",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 139,
+      "id": "139",
+      "verb": "walk",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 143,
+      "id": "143",
+      "verb": "count",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 144,
+      "id": "144",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 148,
+      "id": "148",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 149,
+      "id": "149",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 150,
+      "id": "150",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 152,
+      "id": "152",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 155,
+      "id": "155",
+      "verb": "contain",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 165,
+      "id": "165",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 166,
+      "id": "166",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 167,
+      "id": "167",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 168,
+      "id": "168",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 169,
+      "id": "169",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 170,
+      "id": "170",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 171,
+      "id": "171",
+      "verb": "plant",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 175,
+      "id": "175",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 177,
+      "id": "177",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 184,
+      "id": "184",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 186,
+      "id": "186",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 189,
+      "id": "189",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 190,
+      "id": "190",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 192,
+      "id": "192",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 194,
+      "id": "194",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 196,
+      "id": "196",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 197,
+      "id": "197",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 198,
+      "id": "198",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 201,
+      "id": "201",
+      "verb": "average",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 206,
+      "id": "206",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 213,
+      "id": "213",
+      "verb": "plant",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 215,
+      "id": "215",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 217,
+      "id": "217",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 220,
+      "id": "220",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 222,
+      "id": "222",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 224,
+      "id": "224",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 225,
+      "id": "225",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 226,
+      "id": "226",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 228,
+      "id": "228",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 229,
+      "id": "229",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 232,
+      "id": "232",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 241,
+      "id": "241",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 242,
+      "id": "242",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 243,
+      "id": "243",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 245,
+      "id": "245",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 248,
+      "id": "248",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 251,
+      "id": "251",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 252,
+      "id": "252",
+      "verb": "last",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 253,
+      "id": "253",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 254,
+      "id": "254",
+      "verb": "walk",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 255,
+      "id": "255",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 256,
+      "id": "256",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 258,
+      "id": "258",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 260,
+      "id": "260",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 261,
+      "id": "261",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 268,
+      "id": "268",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 269,
+      "id": "269",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 270,
+      "id": "270",
+      "verb": "last",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 271,
+      "id": "271",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 273,
+      "id": "273",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 276,
+      "id": "276",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 277,
+      "id": "277",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 278,
+      "id": "278",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 280,
+      "id": "280",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 281,
+      "id": "281",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 286,
+      "id": "286",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 287,
+      "id": "287",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 292,
+      "id": "292",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 293,
+      "id": "293",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 297,
+      "id": "297",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 298,
+      "id": "298",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 299,
+      "id": "299",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 302,
+      "id": "302",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 306,
+      "id": "306",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 310,
+      "id": "310",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 311,
+      "id": "311",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 312,
+      "id": "312",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 316,
+      "id": "316",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 322,
+      "id": "322",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 328,
+      "id": "328",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 331,
+      "id": "331",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 334,
+      "id": "334",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 340,
+      "id": "340",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 341,
+      "id": "341",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 342,
+      "id": "342",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 343,
+      "id": "343",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 348,
+      "id": "348",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 350,
+      "id": "350",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 352,
+      "id": "352",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 353,
+      "id": "353",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 362,
+      "id": "362",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 366,
+      "id": "366",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 372,
+      "id": "372",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 373,
+      "id": "373",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 374,
+      "id": "374",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 375,
+      "id": "375",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 377,
+      "id": "377",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 378,
+      "id": "378",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 379,
+      "id": "379",
+      "verb": "decide",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 381,
+      "id": "381",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 389,
+      "id": "389",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 393,
+      "id": "393",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 394,
+      "id": "394",
+      "verb": "last",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 395,
+      "id": "395",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 397,
+      "id": "397",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 398,
+      "id": "398",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 403,
+      "id": "403",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 405,
+      "id": "405",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 407,
+      "id": "407",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 408,
+      "id": "408",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 409,
+      "id": "409",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 410,
+      "id": "410",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 413,
+      "id": "413",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 415,
+      "id": "415",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 416,
+      "id": "416",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 418,
+      "id": "418",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 426,
+      "id": "426",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 427,
+      "id": "427",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 434,
+      "id": "434",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 435,
+      "id": "435",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 440,
+      "id": "440",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 446,
+      "id": "446",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 448,
+      "id": "448",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 454,
+      "id": "454",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 459,
+      "id": "459",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 467,
+      "id": "467",
+      "verb": "walk",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 472,
+      "id": "472",
+      "verb": "plant",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 478,
+      "id": "478",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 480,
+      "id": "480",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 483,
+      "id": "483",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 486,
+      "id": "486",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 489,
+      "id": "489",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 490,
+      "id": "490",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 491,
+      "id": "491",
+      "verb": "walk",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 492,
+      "id": "492",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 494,
+      "id": "494",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 498,
+      "id": "498",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 503,
+      "id": "503",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 505,
+      "id": "505",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 508,
+      "id": "508",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 515,
+      "id": "515",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 521,
+      "id": "521",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 523,
+      "id": "523",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 524,
+      "id": "524",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 526,
+      "id": "526",
+      "verb": "write",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 527,
+      "id": "527",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 529,
+      "id": "529",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 534,
+      "id": "534",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 540,
+      "id": "540",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 550,
+      "id": "550",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 551,
+      "id": "551",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 558,
+      "id": "558",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 559,
+      "id": "559",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 561,
+      "id": "561",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 562,
+      "id": "562",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 565,
+      "id": "565",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 568,
+      "id": "568",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 569,
+      "id": "569",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 579,
+      "id": "579",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 581,
+      "id": "581",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 586,
+      "id": "586",
+      "verb": "decide",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 588,
+      "id": "588",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 590,
+      "id": "590",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 592,
+      "id": "592",
+      "verb": "plan",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 593,
+      "id": "593",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 596,
+      "id": "596",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 597,
+      "id": "597",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 598,
+      "id": "598",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 601,
+      "id": "601",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 606,
+      "id": "606",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 608,
+      "id": "608",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 610,
+      "id": "610",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 626,
+      "id": "626",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 627,
+      "id": "627",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 628,
+      "id": "628",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 629,
+      "id": "629",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 631,
+      "id": "631",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 633,
+      "id": "633",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 634,
+      "id": "634",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 637,
+      "id": "637",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 639,
+      "id": "639",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 642,
+      "id": "642",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 645,
+      "id": "645",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 650,
+      "id": "650",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 653,
+      "id": "653",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 656,
+      "id": "656",
+      "verb": "write",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 658,
+      "id": "658",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 659,
+      "id": "659",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 663,
+      "id": "663",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 670,
+      "id": "670",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 671,
+      "id": "671",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 674,
+      "id": "674",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 675,
+      "id": "675",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 687,
+      "id": "687",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 688,
+      "id": "688",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 690,
+      "id": "690",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 692,
+      "id": "692",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 693,
+      "id": "693",
+      "verb": "keep",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 694,
+      "id": "694",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 697,
+      "id": "697",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 698,
+      "id": "698",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 700,
+      "id": "700",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 706,
+      "id": "706",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 717,
+      "id": "717",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 719,
+      "id": "719",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 724,
+      "id": "724",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 726,
+      "id": "726",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 735,
+      "id": "735",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 737,
+      "id": "737",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 738,
+      "id": "738",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 741,
+      "id": "741",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 742,
+      "id": "742",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 743,
+      "id": "743",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 747,
+      "id": "747",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 750,
+      "id": "750",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 752,
+      "id": "752",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 753,
+      "id": "753",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 754,
+      "id": "754",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 767,
+      "id": "767",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 773,
+      "id": "773",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 776,
+      "id": "776",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 777,
+      "id": "777",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 779,
+      "id": "779",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 780,
+      "id": "780",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 783,
+      "id": "783",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 786,
+      "id": "786",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 787,
+      "id": "787",
+      "verb": "contain",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 793,
+      "id": "793",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 798,
+      "id": "798",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 799,
+      "id": "799",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 803,
+      "id": "803",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 807,
+      "id": "807",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 816,
+      "id": "816",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 817,
+      "id": "817",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 820,
+      "id": "820",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 826,
+      "id": "826",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 827,
+      "id": "827",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 830,
+      "id": "830",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 833,
+      "id": "833",
+      "verb": "walk",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 835,
+      "id": "835",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 837,
+      "id": "837",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 843,
+      "id": "843",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 844,
+      "id": "844",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 845,
+      "id": "845",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 848,
+      "id": "848",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 852,
+      "id": "852",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 853,
+      "id": "853",
+      "verb": "contain",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 854,
+      "id": "854",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 862,
+      "id": "862",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 864,
+      "id": "864",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 871,
+      "id": "871",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 873,
+      "id": "873",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 875,
+      "id": "875",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 884,
+      "id": "884",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 887,
+      "id": "887",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 890,
+      "id": "890",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 891,
+      "id": "891",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 897,
+      "id": "897",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 898,
+      "id": "898",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 901,
+      "id": "901",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 904,
+      "id": "904",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 906,
+      "id": "906",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 909,
+      "id": "909",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 911,
+      "id": "911",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 912,
+      "id": "912",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 914,
+      "id": "914",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 916,
+      "id": "916",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 917,
+      "id": "917",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 918,
+      "id": "918",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 919,
+      "id": "919",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 922,
+      "id": "922",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 928,
+      "id": "928",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 937,
+      "id": "937",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 943,
+      "id": "943",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 949,
+      "id": "949",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 950,
+      "id": "950",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 952,
+      "id": "952",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 955,
+      "id": "955",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 958,
+      "id": "958",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 960,
+      "id": "960",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 964,
+      "id": "964",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 967,
+      "id": "967",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 970,
+      "id": "970",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 972,
+      "id": "972",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 976,
+      "id": "976",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 978,
+      "id": "978",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 979,
+      "id": "979",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 980,
+      "id": "980",
+      "verb": "contain",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 981,
+      "id": "981",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 983,
+      "id": "983",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 988,
+      "id": "988",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 995,
+      "id": "995",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    }
+  ],
+  "results": [
+    {
+      "index": 0,
+      "id": "0",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2194187013368425,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 1,
+      "id": "1",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 2,
+      "id": "2",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1904282895816625,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 5,
+      "id": "5",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 7,
+      "id": "7",
+      "verb": "create",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2112053966369163,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 8,
+      "id": "8",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 12,
+      "id": "12",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 13,
+      "id": "13",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 15,
+      "id": "15",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2095181743467986,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 16,
+      "id": "16",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 20,
+      "id": "20",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.211937256162233,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 23,
+      "id": "23",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 27,
+      "id": "27",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 28,
+      "id": "28",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 30,
+      "id": "30",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 31,
+      "id": "31",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2194187013368425,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 34,
+      "id": "34",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 35,
+      "id": "35",
+      "verb": "find",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1997899214052263,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 36,
+      "id": "36",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 37,
+      "id": "37",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 39,
+      "id": "39",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 40,
+      "id": "40",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 41,
+      "id": "41",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 42,
+      "id": "42",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 44,
+      "id": "44",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 49,
+      "id": "49",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 52,
+      "id": "52",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 53,
+      "id": "53",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 54,
+      "id": "54",
+      "verb": "lose",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 57,
+      "id": "57",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 59,
+      "id": "59",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 61,
+      "id": "61",
+      "verb": "gain",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2132683683137089,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 64,
+      "id": "64",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 65,
+      "id": "65",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 70,
+      "id": "70",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 74,
+      "id": "74",
+      "verb": "lose",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 78,
+      "id": "78",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 80,
+      "id": "80",
+      "verb": "purchase",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2005207136891747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 81,
+      "id": "81",
+      "verb": "skip",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.221389055991906,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 82,
+      "id": "82",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 83,
+      "id": "83",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 86,
+      "id": "86",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 88,
+      "id": "88",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 89,
+      "id": "89",
+      "verb": "borrow",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.2043704378879618,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 91,
+      "id": "91",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 96,
+      "id": "96",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 98,
+      "id": "98",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 101,
+      "id": "101",
+      "verb": "bring",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.1914166794584196,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 104,
+      "id": "104",
+      "verb": "transport",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.1942172239067594,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 105,
+      "id": "105",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 106,
+      "id": "106",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 108,
+      "id": "108",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 109,
+      "id": "109",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 110,
+      "id": "110",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 111,
+      "id": "111",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 112,
+      "id": "112",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 114,
+      "id": "114",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 120,
+      "id": "120",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 122,
+      "id": "122",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 124,
+      "id": "124",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 126,
+      "id": "126",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 128,
+      "id": "128",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 129,
+      "id": "129",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 130,
+      "id": "130",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 132,
+      "id": "132",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 134,
+      "id": "134",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 136,
+      "id": "136",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 138,
+      "id": "138",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1904282895816625,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 140,
+      "id": "140",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 141,
+      "id": "141",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 142,
+      "id": "142",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 146,
+      "id": "146",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 147,
+      "id": "147",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2110988155215134,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 151,
+      "id": "151",
+      "verb": "send",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2209132192889611,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 153,
+      "id": "153",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 154,
+      "id": "154",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 156,
+      "id": "156",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 157,
+      "id": "157",
+      "verb": "remove",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2290159734707993,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 159,
+      "id": "159",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 160,
+      "id": "160",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 161,
+      "id": "161",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 162,
+      "id": "162",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 164,
+      "id": "164",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 172,
+      "id": "172",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 176,
+      "id": "176",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 178,
+      "id": "178",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 179,
+      "id": "179",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 180,
+      "id": "180",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 182,
+      "id": "182",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 183,
+      "id": "183",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 187,
+      "id": "187",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 188,
+      "id": "188",
+      "verb": "break",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2125965475839742,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 191,
+      "id": "191",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 193,
+      "id": "193",
+      "verb": "find",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1997899214052263,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 195,
+      "id": "195",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 199,
+      "id": "199",
+      "verb": "borrow",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.2131453697499226,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 200,
+      "id": "200",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 203,
+      "id": "203",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 204,
+      "id": "204",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 205,
+      "id": "205",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 208,
+      "id": "208",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 209,
+      "id": "209",
+      "verb": "carry",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.2085261111301968,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 210,
+      "id": "210",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 211,
+      "id": "211",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2056634551201952,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 216,
+      "id": "216",
+      "verb": "double",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.221532274263275,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 218,
+      "id": "218",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 219,
+      "id": "219",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 227,
+      "id": "227",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 234,
+      "id": "234",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 235,
+      "id": "235",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 236,
+      "id": "236",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 238,
+      "id": "238",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2010122923958066,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 240,
+      "id": "240",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2071413854294846,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 244,
+      "id": "244",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 246,
+      "id": "246",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 247,
+      "id": "247",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 249,
+      "id": "249",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 257,
+      "id": "257",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 263,
+      "id": "263",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2095181743467986,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 264,
+      "id": "264",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 266,
+      "id": "266",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 267,
+      "id": "267",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 272,
+      "id": "272",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 274,
+      "id": "274",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 275,
+      "id": "275",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 282,
+      "id": "282",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 283,
+      "id": "283",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 285,
+      "id": "285",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 288,
+      "id": "288",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 289,
+      "id": "289",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 291,
+      "id": "291",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 294,
+      "id": "294",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 295,
+      "id": "295",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 300,
+      "id": "300",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 303,
+      "id": "303",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 305,
+      "id": "305",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 307,
+      "id": "307",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 313,
+      "id": "313",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 317,
+      "id": "317",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 318,
+      "id": "318",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 319,
+      "id": "319",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 321,
+      "id": "321",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 323,
+      "id": "323",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 324,
+      "id": "324",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 325,
+      "id": "325",
+      "verb": "create",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2213056928451604,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 327,
+      "id": "327",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 329,
+      "id": "329",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 332,
+      "id": "332",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 335,
+      "id": "335",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 336,
+      "id": "336",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 338,
+      "id": "338",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 339,
+      "id": "339",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 344,
+      "id": "344",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 345,
+      "id": "345",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 349,
+      "id": "349",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 351,
+      "id": "351",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 354,
+      "id": "354",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 355,
+      "id": "355",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 357,
+      "id": "357",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 360,
+      "id": "360",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 361,
+      "id": "361",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 363,
+      "id": "363",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 364,
+      "id": "364",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 367,
+      "id": "367",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 368,
+      "id": "368",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 369,
+      "id": "369",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 376,
+      "id": "376",
+      "verb": "pick",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1938121298099664,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 383,
+      "id": "383",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 385,
+      "id": "385",
+      "verb": "pick",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1938121298099664,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 386,
+      "id": "386",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 388,
+      "id": "388",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2095181743467986,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 391,
+      "id": "391",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 400,
+      "id": "400",
+      "verb": "carry",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.2085261111301968,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 402,
+      "id": "402",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 411,
+      "id": "411",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 414,
+      "id": "414",
+      "verb": "consume",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2148285656312985,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 417,
+      "id": "417",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 420,
+      "id": "420",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 421,
+      "id": "421",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 422,
+      "id": "422",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 423,
+      "id": "423",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 424,
+      "id": "424",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 430,
+      "id": "430",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 433,
+      "id": "433",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 436,
+      "id": "436",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 437,
+      "id": "437",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 439,
+      "id": "439",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2174790216528126,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 443,
+      "id": "443",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 444,
+      "id": "444",
+      "verb": "lose",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 445,
+      "id": "445",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 449,
+      "id": "449",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 451,
+      "id": "451",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 452,
+      "id": "452",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 453,
+      "id": "453",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 456,
+      "id": "456",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1904282895816625,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 458,
+      "id": "458",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 460,
+      "id": "460",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.199569239559274,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 463,
+      "id": "463",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 466,
+      "id": "466",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 468,
+      "id": "468",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 469,
+      "id": "469",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 470,
+      "id": "470",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 471,
+      "id": "471",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 475,
+      "id": "475",
+      "verb": "pick",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1890100343579926,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 485,
+      "id": "485",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 487,
+      "id": "487",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 488,
+      "id": "488",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 493,
+      "id": "493",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2034929354644237,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 495,
+      "id": "495",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 496,
+      "id": "496",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 497,
+      "id": "497",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2034929354644237,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 499,
+      "id": "499",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 502,
+      "id": "502",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 504,
+      "id": "504",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 507,
+      "id": "507",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 509,
+      "id": "509",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 510,
+      "id": "510",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 511,
+      "id": "511",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 513,
+      "id": "513",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2110988155215134,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 514,
+      "id": "514",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2110988155215134,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 516,
+      "id": "516",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 518,
+      "id": "518",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 519,
+      "id": "519",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 520,
+      "id": "520",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 525,
+      "id": "525",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 528,
+      "id": "528",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 530,
+      "id": "530",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 532,
+      "id": "532",
+      "verb": "purchase",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2005207136891747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 535,
+      "id": "535",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 538,
+      "id": "538",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2194187013368425,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 541,
+      "id": "541",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 543,
+      "id": "543",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 544,
+      "id": "544",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 545,
+      "id": "545",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 546,
+      "id": "546",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 548,
+      "id": "548",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 549,
+      "id": "549",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 553,
+      "id": "553",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 555,
+      "id": "555",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 556,
+      "id": "556",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2188101762624548,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 560,
+      "id": "560",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 563,
+      "id": "563",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 564,
+      "id": "564",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 567,
+      "id": "567",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 571,
+      "id": "571",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 572,
+      "id": "572",
+      "verb": "pick",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2022839940524908,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 573,
+      "id": "573",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 574,
+      "id": "574",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 575,
+      "id": "575",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 576,
+      "id": "576",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 577,
+      "id": "577",
+      "verb": "hand",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.207782896976703,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 578,
+      "id": "578",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1857904072432985,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 582,
+      "id": "582",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 584,
+      "id": "584",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 585,
+      "id": "585",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 587,
+      "id": "587",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 594,
+      "id": "594",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 595,
+      "id": "595",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 602,
+      "id": "602",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 603,
+      "id": "603",
+      "verb": "collect",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.211969447379758,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 604,
+      "id": "604",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 605,
+      "id": "605",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 607,
+      "id": "607",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 609,
+      "id": "609",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 612,
+      "id": "612",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 613,
+      "id": "613",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 614,
+      "id": "614",
+      "verb": "drop",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2234124616340611,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 619,
+      "id": "619",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2110728097587276,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 621,
+      "id": "621",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 624,
+      "id": "624",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 625,
+      "id": "625",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 630,
+      "id": "630",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 632,
+      "id": "632",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 635,
+      "id": "635",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.213127775297085,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 640,
+      "id": "640",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 641,
+      "id": "641",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 644,
+      "id": "644",
+      "verb": "carry",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.2085261111301968,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 646,
+      "id": "646",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 647,
+      "id": "647",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 649,
+      "id": "649",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 651,
+      "id": "651",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 652,
+      "id": "652",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 655,
+      "id": "655",
+      "verb": "charge",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.1958977756751923,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 657,
+      "id": "657",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.1989024076448864,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 660,
+      "id": "660",
+      "verb": "find",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2042477581427968,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 661,
+      "id": "661",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 665,
+      "id": "665",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 666,
+      "id": "666",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 667,
+      "id": "667",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 669,
+      "id": "669",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 672,
+      "id": "672",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 673,
+      "id": "673",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 676,
+      "id": "676",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 677,
+      "id": "677",
+      "verb": "bring",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.1944447940704663,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 679,
+      "id": "679",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 680,
+      "id": "680",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 681,
+      "id": "681",
+      "verb": "purchase",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1921928615012172,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 682,
+      "id": "682",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.198600672257639,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 683,
+      "id": "683",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 695,
+      "id": "695",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 699,
+      "id": "699",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 701,
+      "id": "701",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 702,
+      "id": "702",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 703,
+      "id": "703",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 704,
+      "id": "704",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 705,
+      "id": "705",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 709,
+      "id": "709",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 710,
+      "id": "710",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 711,
+      "id": "711",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 712,
+      "id": "712",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 713,
+      "id": "713",
+      "verb": "bring",
+      "class": "transfer",
+      "class_confidence": 0.72,
+      "class_reason": "transfer_default",
+      "score": 1.1944447940704663,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 714,
+      "id": "714",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 715,
+      "id": "715",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 718,
+      "id": "718",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 720,
+      "id": "720",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 721,
+      "id": "721",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 723,
+      "id": "723",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 725,
+      "id": "725",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 727,
+      "id": "727",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 728,
+      "id": "728",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 730,
+      "id": "730",
+      "verb": "lose",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 731,
+      "id": "731",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 732,
+      "id": "732",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 733,
+      "id": "733",
+      "verb": "collect",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2221447131894054,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 734,
+      "id": "734",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2018655374566747,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 736,
+      "id": "736",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 740,
+      "id": "740",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 745,
+      "id": "745",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 746,
+      "id": "746",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 748,
+      "id": "748",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 749,
+      "id": "749",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 756,
+      "id": "756",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 757,
+      "id": "757",
+      "verb": "find",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2051631829117815,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 758,
+      "id": "758",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 759,
+      "id": "759",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 760,
+      "id": "760",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 762,
+      "id": "762",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 763,
+      "id": "763",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 764,
+      "id": "764",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 765,
+      "id": "765",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 766,
+      "id": "766",
+      "verb": "deliver",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203582916117298,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 768,
+      "id": "768",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2110988155215134,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 772,
+      "id": "772",
+      "verb": "pick",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1938121298099664,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 775,
+      "id": "775",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 778,
+      "id": "778",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2194187013368425,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 781,
+      "id": "781",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 782,
+      "id": "782",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 785,
+      "id": "785",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 788,
+      "id": "788",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 791,
+      "id": "791",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 792,
+      "id": "792",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 794,
+      "id": "794",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 795,
+      "id": "795",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 800,
+      "id": "800",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2188101762624548,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 801,
+      "id": "801",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 802,
+      "id": "802",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 804,
+      "id": "804",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 805,
+      "id": "805",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 806,
+      "id": "806",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 810,
+      "id": "810",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 811,
+      "id": "811",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 813,
+      "id": "813",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1904282895816625,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 814,
+      "id": "814",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 819,
+      "id": "819",
+      "verb": "collect",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2221447131894054,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 821,
+      "id": "821",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 822,
+      "id": "822",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 823,
+      "id": "823",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 825,
+      "id": "825",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 828,
+      "id": "828",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 829,
+      "id": "829",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 831,
+      "id": "831",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 832,
+      "id": "832",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 834,
+      "id": "834",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 838,
+      "id": "838",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2039599895878046,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 840,
+      "id": "840",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 841,
+      "id": "841",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 842,
+      "id": "842",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 846,
+      "id": "846",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.198600672257639,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 847,
+      "id": "847",
+      "verb": "sell",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2043542622437164,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 850,
+      "id": "850",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.214121220532165,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 851,
+      "id": "851",
+      "verb": "lose",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 856,
+      "id": "856",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 857,
+      "id": "857",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2231923165042082,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 860,
+      "id": "860",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 861,
+      "id": "861",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2272132502636748,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 865,
+      "id": "865",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 867,
+      "id": "867",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 868,
+      "id": "868",
+      "verb": "break",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2125965475839742,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 869,
+      "id": "869",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 872,
+      "id": "872",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 874,
+      "id": "874",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 877,
+      "id": "877",
+      "verb": "pick",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1938121298099664,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 879,
+      "id": "879",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 880,
+      "id": "880",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 881,
+      "id": "881",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 882,
+      "id": "882",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 883,
+      "id": "883",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 885,
+      "id": "885",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2054611927784107,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 889,
+      "id": "889",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 892,
+      "id": "892",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 893,
+      "id": "893",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 894,
+      "id": "894",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 896,
+      "id": "896",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.22027570753256,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 902,
+      "id": "902",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 903,
+      "id": "903",
+      "verb": "collect",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.211969447379758,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 907,
+      "id": "907",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 908,
+      "id": "908",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 913,
+      "id": "913",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 915,
+      "id": "915",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.215707023413573,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 920,
+      "id": "920",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 921,
+      "id": "921",
+      "verb": "collect",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.211969447379758,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 923,
+      "id": "923",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.1989024076448864,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 926,
+      "id": "926",
+      "verb": "offer",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2290980208736648,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 929,
+      "id": "929",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 931,
+      "id": "931",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 934,
+      "id": "934",
+      "verb": "receive",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.203826326217788,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 936,
+      "id": "936",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 940,
+      "id": "940",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 941,
+      "id": "941",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2113123356122157,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 944,
+      "id": "944",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 945,
+      "id": "945",
+      "verb": "spend",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 947,
+      "id": "947",
+      "verb": "pass",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2039090825869647,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 953,
+      "id": "953",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 954,
+      "id": "954",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 956,
+      "id": "956",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 959,
+      "id": "959",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 962,
+      "id": "962",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2044755896924764,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 966,
+      "id": "966",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 968,
+      "id": "968",
+      "verb": "give",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2110988155215134,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 969,
+      "id": "969",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 971,
+      "id": "971",
+      "verb": "save",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.1904282895816625,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 973,
+      "id": "973",
+      "verb": "buy",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2129230723932933,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 974,
+      "id": "974",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2095181743467986,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 975,
+      "id": "975",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 982,
+      "id": "982",
+      "verb": "make",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.200443117312588,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 984,
+      "id": "984",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 987,
+      "id": "987",
+      "verb": "have",
+      "class": "comparison",
+      "class_confidence": 0.95,
+      "class_reason": "comparison_lexicon",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 990,
+      "id": "990",
+      "verb": "earn",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2110728097587276,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 992,
+      "id": "992",
+      "verb": "use",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2220745538770657,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 993,
+      "id": "993",
+      "verb": "get",
+      "class": "creation",
+      "class_confidence": 0.96,
+      "class_reason": "creation_lexicon",
+      "score": 1.2102670827554312,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 994,
+      "id": "994",
+      "verb": "leave",
+      "class": "loss",
+      "class_confidence": 0.7,
+      "class_reason": "loss_default",
+      "score": 1.2157297064635038,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 996,
+      "id": "996",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 997,
+      "id": "997",
+      "verb": "eat",
+      "class": "loss",
+      "class_confidence": 0.95,
+      "class_reason": "loss_lexicon",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "target_inferred": true
+    },
+    {
+      "index": 999,
+      "id": "999",
+      "verb": "pay",
+      "class": "transfer",
+      "class_confidence": 0.98,
+      "class_reason": "transfer_lexicon",
+      "score": 1.2020832190554613,
+      "num_clauses": 1,
+      "target_inferred": true
+    }
+  ]
+}

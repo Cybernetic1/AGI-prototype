@@ -4,12 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 from ontology import (
-    ComparisonEvent,
-    CreationEvent,
-    LossEvent,
-    NeutralEvent,
-    TransferEvent,
-    resolve_event_class,
+    classify_event_label,
 )
 
 
@@ -51,18 +46,18 @@ def baseline_classify(verb: str) -> str:
 
 
 def ontology_classify(verb: str) -> str:
-    cls = resolve_event_class(verb)
-    if issubclass(cls, TransferEvent):
-        return "transfer"
-    if issubclass(cls, CreationEvent):
-        return "creation"
-    if issubclass(cls, LossEvent):
-        return "loss"
-    if issubclass(cls, ComparisonEvent):
-        return "comparison"
-    if issubclass(cls, NeutralEvent):
-        return "neutral"
-    return "neutral"
+    label, _, _ = classify_event_label(verb)
+    return label
+
+
+def ontology_classify_details(verb: str) -> Dict[str, object]:
+    # Guidance-ready variant used by ILP data prep.
+    label, confidence, reason = classify_event_label(verb)
+    return {
+        "label": label,
+        "confidence": float(confidence),
+        "reason": reason,
+    }
 
 
 def apply_event(state: Dict[str, int], ex: Example, predicted: str) -> Dict[str, int]:

@@ -345,6 +345,106 @@ class MetaRuleGrammar:
                 "?ans",
                 "latest valid state wins over earlier temporally stale candidates",
             ),
+            # Core numeric primitives below are compact anchors for broader GSM coverage.
+            MetaRule(
+                "rate_product",
+                "rate_times_duration",
+                ("rate_times_duration", ["?owner", "?item", "?ans"]),
+                [("rate", ["?item", "?rate"]), ("quantity", ["?owner", "?duration", "?steps"])],
+                "rate * steps",
+                "?ans",
+                "rate × duration/quantity pattern",
+            ),
+            MetaRule(
+                "sum_total",
+                "combined_total",
+                ("combined_total", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?left"]), ("quantity", ["?other", "?item", "?right"])],
+                "left + right",
+                "?ans",
+                "sum of two quantities for same item",
+            ),
+            MetaRule(
+                "unit_convert",
+                "unit_convert",
+                ("unit_convert", ["?value", "?from_unit", "?to_unit", "?ans"]),
+                [("unitconvert", ["?value", "?from_unit", "?to_unit", "?result"])],
+                "result",
+                "?ans",
+                "canonical unit conversion bridge",
+            ),
+            MetaRule(
+                "percent_of_total",
+                "percent_of_total",
+                ("percent_of_total", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?base"]), ("percent", ["?owner", "?item", "?pct"])],
+                "base * pct",
+                "?ans",
+                "percent of base quantity",
+            ),
+            MetaRule(
+                "ratio_of_total",
+                "ratio_of_total",
+                ("ratio_of_total", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?part"]), ("quantity", ["?other", "?item", "?rest"])],
+                "part / (part + rest)",
+                "?ans",
+                "ratio over a two-part total",
+            ),
+            MetaRule(
+                "fraction_of_total",
+                "fraction_of_total",
+                ("fraction_of_total", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?part"]), ("quantity", ["?group", "?item", "?total"])],
+                "part / total",
+                "?ans",
+                "fraction of a known total",
+            ),
+            MetaRule(
+                "percent_growth",
+                "percent_growth",
+                ("percent_growth", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?base"]), ("percent", ["?owner", "?item", "?pct"])],
+                "base * (1 + pct)",
+                "?ans",
+                "single growth step from a base quantity",
+            ),
+            MetaRule(
+                "percent_sequence",
+                "percent_sequence",
+                ("percent_sequence", ["?owner", "?item", "?ans"]),
+                [("quantity", ["?owner", "?item", "?base"]), ("percent", ["?owner", "?item", "?pct1"]), ("percent", ["?owner", "?item", "?pct2"])],
+                "base * (1 + pct1) * (1 + pct2)",
+                "?ans",
+                "two-step percent sequence approximation",
+            ),
+            MetaRule(
+                "average_speed",
+                "average_speed",
+                ("average_speed", ["?trip", "?ans"]),
+                [("quantity", ["?trip", "distance", "?dist"]), ("quantity", ["?trip", "time", "?dur"])],
+                "dist / dur",
+                "?ans",
+                "distance over total time",
+            ),
+            MetaRule(
+                "simple_interest",
+                "simple_interest",
+                ("simple_interest", ["?bank", "?deposit", "?ans"]),
+                [("quantity", ["?bank", "principal", "?principal"]), ("percent", ["?bank", "principal", "?rate"]), ("quantity", ["?bank", "years", "?years"])],
+                "principal * rate * years",
+                "?ans",
+                "simple interest: P * r * t",
+            ),
+            MetaRule(
+                "profit_cost",
+                "profit_cost",
+                ("profit_cost", ["?seller", "?product", "?ans"]),
+                [("quantity", ["?seller", "sale_price", "?sale"]), ("percent", ["?seller", "sale_price", "?pct"])],
+                "sale / (1 + pct)",
+                "?ans",
+                "recover original cost from sale price and profit percent",
+            ),
         ]
 
     @staticmethod
@@ -354,6 +454,28 @@ class MetaRuleGrammar:
             if isinstance(pred, str):
                 names.append(pred.lower())
         text = " ".join(names)
+        if "rate" in text or "hour" in text or "duration" in text or "speed" in text:
+            return "rate_product"
+        if "ratio_of_total" in text:
+            return "ratio_of_total"
+        if "fraction_of_total" in text:
+            return "fraction_of_total"
+        if "percent_growth" in text:
+            return "percent_growth"
+        if "percent_sequence" in text:
+            return "percent_sequence"
+        if "average_speed" in text:
+            return "average_speed"
+        if "simple_interest" in text:
+            return "simple_interest"
+        if "profit_cost" in text:
+            return "profit_cost"
+        if "combined" in text or "total" in text or "sum" in text or "altogether" in text:
+            return "sum_total"
+        if "unit_convert" in text or "convert" in text or "dozen" in text:
+            return "unit_convert"
+        if "percent_of_total" in text:
+            return "percent_of_total"
         if "ratio" in text or "times" in text:
             return "ratio_compose"
         if "remaining" in text or "percent" in text or "discount" in text:
@@ -370,6 +492,28 @@ class MetaRuleLearner:
     def _rule_score(self, rule, examples):
         family = rule.family
         text = " ".join(str(pred).lower() for pred, _, _ in examples)
+        if family == "rate_product" and "rate" not in text and "hour" not in text and "duration" not in text:
+            return 0.0
+        if family == "ratio_of_total" and "ratio_of_total" not in text:
+            return 0.0
+        if family == "fraction_of_total" and "fraction_of_total" not in text:
+            return 0.0
+        if family == "percent_growth" and "percent_growth" not in text:
+            return 0.0
+        if family == "percent_sequence" and "percent_sequence" not in text:
+            return 0.0
+        if family == "average_speed" and "average_speed" not in text:
+            return 0.0
+        if family == "simple_interest" and "simple_interest" not in text:
+            return 0.0
+        if family == "profit_cost" and "profit_cost" not in text:
+            return 0.0
+        if family == "sum_total" and "total" not in text and "combined" not in text and "sum" not in text and "altogether" not in text:
+            return 0.0
+        if family == "unit_convert" and "convert" not in text and "dozen" not in text and "unit" not in text:
+            return 0.0
+        if family == "percent_of_total" and "percent" not in text:
+            return 0.0
         if family == "ratio_compose" and "ratio" not in text and "times" not in text:
             return 0.0
         if family == "remaining_quantity" and "percent" not in text and "remaining" not in text and "discount" not in text:
@@ -381,6 +525,61 @@ class MetaRuleLearner:
         return 1.0
 
     def _instantiate_family_examples(self, family):
+        if family == "rate_product":
+            return [
+                ("rate_times_duration", ["alice", "hours", 5.0], 50.0),
+                ("rate_times_duration", ["bob", "hours", 3.0], 30.0),
+            ]
+        if family == "ratio_of_total":
+            return [
+                ("ratio_of_total", ["alice", "marbles", 0.4], 0.4),
+                ("ratio_of_total", ["bob", "items", 0.25], 0.25),
+            ]
+        if family == "fraction_of_total":
+            return [
+                ("fraction_of_total", ["alice", "students", 0.4], 0.4),
+                ("fraction_of_total", ["bob", "tickets", 0.5], 0.5),
+            ]
+        if family == "percent_growth":
+            return [
+                ("percent_growth", ["town", "residents", 600.0], 600.0),
+                ("percent_growth", ["box", "items", 120.0], 120.0),
+            ]
+        if family == "percent_sequence":
+            return [
+                ("percent_sequence", ["town", "residents", 540.0], 540.0),
+                ("percent_sequence", ["price", "jacket", 70.4], 70.4),
+            ]
+        if family == "average_speed":
+            return [
+                ("average_speed", ["trip", 60.0], 60.0),
+                ("average_speed", ["route", 45.0], 45.0),
+            ]
+        if family == "simple_interest":
+            return [
+                ("simple_interest", ["bank", "deposit", 30.0], 30.0),
+                ("simple_interest", ["bank", "deposit", 20.0], 20.0),
+            ]
+        if family == "profit_cost":
+            return [
+                ("profit_cost", ["seller", "product", 125.0], 125.0),
+                ("profit_cost", ["vendor", "item", 80.0], 80.0),
+            ]
+        if family == "sum_total":
+            return [
+                ("combined_total", ["alice", "apples", 20.0], 20.0),
+                ("combined_total", ["bob", "books", 14.0], 14.0),
+            ]
+        if family == "unit_convert":
+            return [
+                ("unit_convert", [3.0, "dozen", "egg", 36.0], 36.0),
+                ("unit_convert", [2.0, "week", "day", 14.0], 14.0),
+            ]
+        if family == "percent_of_total":
+            return [
+                ("percent_of_total", ["alice", "apples", 10.0], 10.0),
+                ("percent_of_total", ["bob", "books", 6.0], 6.0),
+            ]
         if family == "ratio_compose":
             return [
                 ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
@@ -429,6 +628,72 @@ def generate_synthetic_family_examples():
     pattern with multiple paraphrastic variants.
     """
     return {
+        "rate_product": [
+            ("rate_times_duration", ["seller", "hours", 5.0], 90.0),
+            ("rate_times_duration", ["worker", "hours", 4.0], 72.0),
+            ("value_per_unit", ["vendor", "hours", 2.0], 24.0),
+            ("rate_times_duration", ["driver", "hours", 3.0], 60.0),
+        ],
+        "ratio_of_total": [
+            ("ratio_of_total", ["unknown", "marbles", 0.4], 0.4),
+            ("ratio_of_total", ["unknown", "balls", 0.25], 0.25),
+            ("ratio_of_total", ["unknown", "apples", 0.5], 0.5),
+            ("ratio_of_total", ["unknown", "cards", 0.6], 0.6),
+        ],
+        "fraction_of_total": [
+            ("fraction_of_total", ["unknown", "students", 0.4], 0.4),
+            ("fraction_of_total", ["unknown", "tickets", 0.5], 0.5),
+            ("fraction_of_total", ["unknown", "books", 0.2], 0.2),
+            ("fraction_of_total", ["unknown", "coins", 0.75], 0.75),
+        ],
+        "percent_growth": [
+            ("percent_growth", ["town", "residents", 600.0], 600.0),
+            ("percent_growth", ["school", "students", 240.0], 240.0),
+            ("percent_growth", ["inventory", "items", 75.0], 75.0),
+            ("percent_growth", ["box", "marbles", 30.0], 30.0),
+        ],
+        "percent_sequence": [
+            ("percent_sequence", ["town", "residents", 540.0], 540.0),
+            ("percent_sequence", ["jacket", "price", 70.4], 70.4),
+            ("percent_sequence", ["fund", "balance", 110.0], 110.0),
+            ("percent_sequence", ["store", "stock", 95.0], 95.0),
+        ],
+        "average_speed": [
+            ("average_speed", ["trip", 60.0], 60.0),
+            ("average_speed", ["route", 45.0], 45.0),
+            ("average_speed", ["drive", 30.0], 30.0),
+            ("average_speed", ["run", 12.0], 12.0),
+        ],
+        "simple_interest": [
+            ("simple_interest", ["bank", "deposit", 30.0], 30.0),
+            ("simple_interest", ["bank", "savings", 20.0], 20.0),
+            ("simple_interest", ["credit_union", "fund", 18.0], 18.0),
+            ("simple_interest", ["lender", "loan", 15.0], 15.0),
+        ],
+        "profit_cost": [
+            ("profit_cost", ["seller", "product", 125.0], 125.0),
+            ("profit_cost", ["vendor", "item", 80.0], 80.0),
+            ("profit_cost", ["shop", "good", 50.0], 50.0),
+            ("profit_cost", ["market", "bundle", 40.0], 40.0),
+        ],
+        "sum_total": [
+            ("combined_total", ["alice", "apples", 20.0], 20.0),
+            ("combined_total", ["alice", "books", 14.0], 14.0),
+            ("combined_total", ["team", "points", 55.0], 55.0),
+            ("combined_total", ["store", "items", 18.0], 18.0),
+        ],
+        "unit_convert": [
+            ("unit_convert", [3.0, "dozen", "egg", 36.0], 36.0),
+            ("unit_convert", [2.0, "week", "day", 14.0], 14.0),
+            ("unit_convert", [4.0, "hour", "minute", 240.0], 240.0),
+            ("unit_convert", [5.0, "meter", "centimeter", 500.0], 500.0),
+        ],
+        "percent_of_total": [
+            ("percent_of_total", ["box", "marble", 10.0], 10.0),
+            ("percent_of_total", ["class", "student", 12.0], 12.0),
+            ("percent_of_total", ["town", "resident", 50.0], 50.0),
+            ("percent_of_total", ["inventory", "item", 8.0], 8.0),
+        ],
         "ratio_compose": [
             ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
             ("ratio_compose", ["charlie", "dana", "apples", 3.0], 30.0),

@@ -192,7 +192,17 @@ class OntologicalILPLearner:
         if not proposed:
             return None
 
+        # #9 heuristic: ask for human guidance when the top ranked proposal is uncertain.
+        # We encode "uncertain" in ranking metadata from metarule_loop.
         candidate = proposed[0]
+        ranking = candidate.get("ranking") if isinstance(candidate, dict) else None
+        if isinstance(ranking, dict) and ranking.get("needs_human_guidance", False):
+            reason = ranking.get("guidance_reason", "uncertain")
+            score = ranking.get("score")
+            margin = ranking.get("top2_margin")
+            print(f"  -> UNCERTAIN META TEMPLATE ({reason}, score={score}, margin={margin}): request human guidance")
+            return None
+
         head = candidate["head"]
         head_pred, head_args = head[0], head[1]
         if head_pred != goal_pred:
@@ -214,6 +224,7 @@ class OntologicalILPLearner:
         """
         goal = str(goal_pred).lower()
 
+        # Short-body templates keep us close to LT-style compact predicates.
         if goal in {"percent_increase", "discount_amount"}:
             return {
                 "head": (goal_pred, ["?owner", "?item", "?ans"]),

@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 from collections import defaultdict
 from ilp_learner.metagol_nds import Atom, learn_metagol_nds, forward_chain
-from forward_engine.phase3_synthetic_test import ontology_classify
+from forward_engine.phase3_synthetic_test import ontology_classify_details
 
 DATA_CANDIDATES = [
     Path('gsm8k-tests/lt_core/data/gsm8k_train_lt.jsonl'),
@@ -16,6 +16,7 @@ DATA_CANDIDATES = [
 LT_PATH = next((p for p in DATA_CANDIDATES if p.exists()), DATA_CANDIDATES[0])
 OUT_PATH = Path('ilp_learner/hyperparam_sweep_results.json')
 OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+MIN_CLASS_CONFIDENCE = 0.70
 
 beams = [1,3,6,10]
 max_clauses_list = [1,2,3]
@@ -23,6 +24,9 @@ prior_weights = [0.0, 0.5, 1.0]
 
 # collect all labeled tasks first
 tasks = []
+uncertain_for_review = []
+skip_neutral = 0
+skip_low_confidence = 0
 with LT_PATH.open() as f:
     for i, line in enumerate(f):
         obj = json.loads(line)
@@ -43,8 +47,24 @@ with LT_PATH.open() as f:
         if isinstance(verb_arg, str) and verb_arg.startswith('?'):
             continue
         verb = str(verb_arg)
-        cls = ontology_classify(verb)
+        info = ontology_classify_details(verb)
+        cls = str(info["label"])
+        conf = float(info["confidence"])
+        reason = str(info["reason"])
         if cls == 'neutral':
+            skip_neutral += 1
+            continue
+        if conf < MIN_CLASS_CONFIDENCE:
+            uncertain_for_review.append(
+                {
+                    "id": obj.get("id"),
+                    "verb": verb,
+                    "proposed_class": cls,
+                    "confidence": conf,
+                    "reason": reason,
+                }
+            )
+            skip_low_confidence += 1
             continue
         # build background and meta
         background = []
@@ -72,7 +92,19 @@ with LT_PATH.open() as f:
         target = f'class_{cls}'
         predicates.add(target)
         pos = [Atom(target, [q_ev])]
-        tasks.append({'id': obj.get('id'), 'verb': verb, 'class': cls, 'background': background, 'predicates': list(predicates), 'roles': list(roles), 'pos': pos})
+        tasks.append(
+            {
+                'id': obj.get('id'),
+                'verb': verb,
+                'class': cls,
+                'class_confidence': conf,
+                'class_reason': reason,
+                'background': background,
+                'predicates': list(predicates),
+                'roles': list(roles),
+                'pos': pos,
+            }
+        )
 
 print(f"Collected {len(tasks)} labeled tasks from LT export")
 
@@ -116,5 +148,17 @@ for beam in beams:
             results.append(summary)
 end_all = time.time()
 with OUT_PATH.open('w') as f:
-    json.dump({'total_duration_sec': end_all-start_all, 'sweep_results': results}, f, indent=2)
+    json.dump(
+        {
+            'total_duration_sec': end_all-start_all,
+            'min_class_confidence': MIN_CLASS_CONFIDENCE,
+            'skip_neutral': skip_neutral,
+            'skip_low_confidence': skip_low_confidence,
+            'uncertain_review_count': len(uncertain_for_review),
+            'uncertain_for_review': uncertain_for_review,
+            'sweep_results': results,
+        },
+        f,
+        indent=2,
+    )
 print('Saved sweep results to', OUT_PATH)

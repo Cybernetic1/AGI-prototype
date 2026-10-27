@@ -9,13 +9,22 @@ For each example, we:
 import json
 from pathlib import Path
 from ilp_learner.metagol_nds import Atom, learn_metagol_nds, forward_chain
-from forward_engine.phase3_synthetic_test import ontology_classify
+from forward_engine.phase3_synthetic_test import ontology_classify_details
 
-IN_PATH = Path('gsm8k-tests/lt_core/data/gsm8k_train_lt.jsonl')
+DATA_CANDIDATES = [
+    Path('gsm8k-tests/lt_core/data/gsm8k_train_lt.jsonl'),
+    Path('logic_transformer/data/gsm8k_train_lt.jsonl'),
+    Path('gsm8k-tests-backup/lt_core/data/gsm8k_train_lt.jsonl'),
+]
+IN_PATH = next((p for p in DATA_CANDIDATES if p.exists()), DATA_CANDIDATES[0])
 OUT_PATH = Path('ilp_learner/gsm8k_ilp_results.json')
+GUIDANCE_PATH = Path('ilp_learner/gsm8k_ilp_uncertain_for_review.json')
 MAX_EXAMPLES = 30
+MIN_CLASS_CONFIDENCE = 0.70
 
 results = []
+uncertain_for_review = []
+skip_counts = {"neutral": 0, "low_confidence": 0}
 
 def var_to_const(v):
     # convert '?x3' -> 'x3'
@@ -49,9 +58,27 @@ with IN_PATH.open() as f:
             # unknown verb
             continue
         verb = str(verb_arg)
-        cls = ontology_classify(verb)
+        info = ontology_classify_details(verb)
+        cls = str(info["label"])
+        conf = float(info["confidence"])
+        reason = str(info["reason"])
         if cls == 'neutral':
             # skip unlabeled
+            skip_counts["neutral"] += 1
+            continue
+        if conf < MIN_CLASS_CONFIDENCE:
+            # Ask-human guidance queue: keep uncertain labels for manual review.
+            uncertain_for_review.append(
+                {
+                    "index": i,
+                    "id": obj.get("id"),
+                    "verb": verb,
+                    "proposed_class": cls,
+                    "confidence": conf,
+                    "reason": reason,
+                }
+            )
+            skip_counts["low_confidence"] += 1
             continue
         # build background
         background = []
@@ -96,6 +123,8 @@ with IN_PATH.open() as f:
             'id': obj.get('id'),
             'verb': verb,
             'class': cls,
+            'class_confidence': conf,
+            'class_reason': reason,
             'score': float(score),
             'num_clauses': len(best_hyp),
             'clauses': [str(c) for c in best_hyp],
@@ -106,4 +135,15 @@ with IN_PATH.open() as f:
 
 with OUT_PATH.open('w') as f:
     json.dump(results, f, indent=2)
+with GUIDANCE_PATH.open("w") as f:
+    json.dump(
+        {
+            "min_class_confidence": MIN_CLASS_CONFIDENCE,
+            "skip_counts": skip_counts,
+            "uncertain_for_review": uncertain_for_review,
+        },
+        f,
+        indent=2,
+    )
 print('Saved GSM8K ILP results to', OUT_PATH)
+print('Saved uncertain-label review queue to', GUIDANCE_PATH)

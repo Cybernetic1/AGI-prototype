@@ -4,7 +4,9 @@
     "id": "0",
     "verb": "sell",
     "class": "transfer",
-    "score": 1.182036634409153,
+    "class_confidence": 0.98,
+    "class_reason": "transfer_lexicon",
+    "score": 1.2194187013368425,
     "num_clauses": 1,
     "clauses": [
       "class_transfer(E) :- predicate_sell(E), manner(E, X)"
@@ -41,16 +43,19 @@
     "id": "1",
     "verb": "earn",
     "class": "creation",
-    "score": 1.1707492830291544,
+    "class_confidence": 0.96,
+    "class_reason": "creation_lexicon",
+    "score": 1.2018655374566747,
     "num_clauses": 1,
     "clauses": [
-      "class_creation(E) :- predicate_earn(E), query(E, X)"
+      "class_creation(E) :- predicate_earn(E), patient(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
       "agent(?e2, x2)",
       "agent(?e3, x2)",
       "beneficiary(?e1, x3)",
+      "class_creation(?e1)",
       "class_creation(?e3)",
       "manner(?e2, just)",
       "name(?x1, weng)",
@@ -75,10 +80,12 @@
     "id": "2",
     "verb": "save",
     "class": "creation",
-    "score": 1.1672591494272426,
+    "class_confidence": 0.96,
+    "class_reason": "creation_lexicon",
+    "score": 1.1904282895816625,
     "num_clauses": 1,
     "clauses": [
-      "class_creation(E) :- predicate_save(E), query(E, X)"
+      "class_creation(E) :- predicate_save(E), patient(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -120,7 +127,9 @@
     "id": "5",
     "verb": "have",
     "class": "comparison",
-    "score": 1.184912131441923,
+    "class_confidence": 0.95,
+    "class_reason": "comparison_lexicon",
+    "score": 1.2197154670913632,
     "num_clauses": 1,
     "clauses": [
       "class_comparison(E) :- predicate_have(E), query(E, X)"
@@ -167,10 +176,12 @@
     "id": "7",
     "verb": "create",
     "class": "creation",
-    "score": 1.1802757313886858,
+    "class_confidence": 0.96,
+    "class_reason": "creation_lexicon",
+    "score": 1.2112053966369163,
     "num_clauses": 1,
     "clauses": [
-      "class_creation(E) :- predicate_create(E), query(E, X)"
+      "class_creation(E) :- predicate_create(E), patient(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -233,10 +244,12 @@
     "id": "8",
     "verb": "pay",
     "class": "transfer",
-    "score": 1.180675007871113,
+    "class_confidence": 0.98,
+    "class_reason": "transfer_lexicon",
+    "score": 1.2054611927784107,
     "num_clauses": 1,
     "clauses": [
-      "class_transfer(E) :- predicate_pay(E), beneficiary(E, X)"
+      "class_transfer(E) :- predicate_pay(E), agent(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -301,7 +314,9 @@
     "id": "12",
     "verb": "have",
     "class": "comparison",
-    "score": 1.184912131441923,
+    "class_confidence": 0.95,
+    "class_reason": "comparison_lexicon",
+    "score": 1.2197154670913632,
     "num_clauses": 1,
     "clauses": [
       "class_comparison(E) :- predicate_have(E), query(E, X)"
@@ -335,7 +350,9 @@
     "id": "13",
     "verb": "spend",
     "class": "loss",
-    "score": 1.171053747460302,
+    "class_confidence": 0.95,
+    "class_reason": "loss_lexicon",
+    "score": 1.2209958619495602,
     "num_clauses": 1,
     "clauses": [
       "class_loss(E) :- predicate_spend(E), query(E, X)"
@@ -376,10 +393,12 @@
     "id": "15",
     "verb": "make",
     "class": "creation",
-    "score": 1.175007235632479,
+    "class_confidence": 0.96,
+    "class_reason": "creation_lexicon",
+    "score": 1.2095181743467986,
     "num_clauses": 1,
     "clauses": [
-      "class_creation(E) :- predicate_make(E), query(E, X)"
+      "class_creation(E) :- predicate_make(E), location(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -431,10 +450,12 @@
     "id": "16",
     "verb": "get",
     "class": "creation",
-    "score": 1.1717238450816814,
+    "class_confidence": 0.96,
+    "class_reason": "creation_lexicon",
+    "score": 1.2102670827554312,
     "num_clauses": 1,
     "clauses": [
-      "class_creation(E) :- predicate_get(E), query(E, X)"
+      "class_creation(E) :- predicate_get(E), patient(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -472,10 +493,12 @@
     "id": "20",
     "verb": "buy",
     "class": "creation",
-    "score": 1.1691395654339596,
+    "class_confidence": 0.96,
+    "class_reason": "creation_lexicon",
+    "score": 1.211937256162233,
     "num_clauses": 1,
     "clauses": [
-      "class_creation(E) :- predicate_buy(E), query(E, X)"
+      "class_creation(E) :- predicate_buy(E), manner(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -519,10 +542,12 @@
     "id": "23",
     "verb": "have",
     "class": "comparison",
-    "score": 1.174780366820065,
+    "class_confidence": 0.95,
+    "class_reason": "comparison_lexicon",
+    "score": 1.214121220532165,
     "num_clauses": 1,
     "clauses": [
-      "class_comparison(E) :- predicate_have(E), agent(E, X)"
+      "class_comparison(E) :- predicate_have(E), patient(E, X)"
     ],
     "inferred": [
       "agent(?e1, x1)",
@@ -557,11 +582,71 @@
     ]
   },
   {
+    "index": 27,
+    "id": "27",
+    "verb": "leave",
+    "class": "loss",
+    "class_confidence": 0.7,
+    "class_reason": "loss_default",
+    "score": 1.2157297064635038,
+    "num_clauses": 1,
+    "clauses": [
+      "class_loss(E) :- predicate_leave(E), query(E, X)"
+    ],
+    "inferred": [
+      "agent(?e1, x1)",
+      "agent(?e2, x2)",
+      "agent(?e3, x3)",
+      "agent(?e4, x2)",
+      "agent(?e5, x4)",
+      "beneficiary(?e6, x5)",
+      "class_loss(?e7)",
+      "manner(?e10, again)",
+      "name(?x1, brennan)",
+      "name(?x10, computer)",
+      "name(?x11, x)",
+      "name(?x12, them)",
+      "name(?x2, he)",
+      "name(?x3, they)",
+      "name(?x4, 3_5)",
+      "name(?x5, reference)",
+      "name(?x6, round)",
+      "name(?x7, project)",
+      "name(?x8, file)",
+      "name(?x9, internet)",
+      "patient(?e1, x7)",
+      "patient(?e2, x11)",
+      "patient(?e4, x8)",
+      "patient(?e7, x2)",
+      "patient(?e9, x8)",
+      "predicate_be(?e3)",
+      "predicate_be(?e5)",
+      "predicate_delete(?e2)",
+      "predicate_download(?e4)",
+      "predicate_download(?e9)",
+      "predicate_have(?e8)",
+      "predicate_leave(?e7)",
+      "predicate_realize(?e10)",
+      "predicate_research(?e1)",
+      "predicate_use(?e6)",
+      "quantity(?x11, 70)",
+      "quantity(?x8, 400)",
+      "quantity(?x8, 800)",
+      "query(?e7, x13)",
+      "recipient(?e9, x10)",
+      "source(?e9, x9)",
+      "state(?e3, helpful)",
+      "state(?e5, irrelevant)"
+    ]
+  },
+  {
     "index": 28,
     "id": "28",
     "verb": "have",
     "class": "comparison",
-    "score": 1.184912131441923,
+    "class_confidence": 0.95,
+    "class_reason": "comparison_lexicon",
+    "score": 1.2197154670913632,
     "num_clauses": 1,
     "clauses": [
       "class_comparison(E) :- predicate_have(E), query(E, X)"

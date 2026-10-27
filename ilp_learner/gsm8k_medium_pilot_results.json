@@ -1,0 +1,715 @@
+{
+  "summary": {
+    "dataset": "ilp_learner/gsm8k_validation_scaffold.jsonl",
+    "examples": 50,
+    "beam": 6,
+    "max_clauses": 2,
+    "prior_weight": 0.5,
+    "coverage_rate": 1.0,
+    "avg_false_pos_per_example": 0.0,
+    "avg_score": 1.2106311909091243,
+    "duration_sec": 8.001375913619995
+  },
+  "results": [
+    {
+      "index": 0,
+      "id": "1271",
+      "class": "comparison",
+      "verb": "have",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_have(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 1,
+      "id": "226",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 2,
+      "id": "36",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 3,
+      "id": "1451",
+      "class": "comparison",
+      "verb": "have",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_have(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 4,
+      "id": "555",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 5,
+      "id": "471",
+      "class": "comparison",
+      "verb": "have",
+      "score": 1.2197154670913632,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_have(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 6,
+      "id": "441",
+      "class": "comparison",
+      "verb": "twice",
+      "score": 1.2234829569564871,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_twice(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 7,
+      "id": "298",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 8,
+      "id": "1446",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 9,
+      "id": "207",
+      "class": "comparison",
+      "verb": "twice",
+      "score": 1.2234829569564871,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_twice(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 10,
+      "id": "1319",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 11,
+      "id": "1774",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 12,
+      "id": "310",
+      "class": "creation",
+      "verb": "make",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_make(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 13,
+      "id": "1404",
+      "class": "creation",
+      "verb": "get",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_get(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 14,
+      "id": "140",
+      "class": "creation",
+      "verb": "get",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_get(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 15,
+      "id": "139",
+      "class": "creation",
+      "verb": "get",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_get(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 16,
+      "id": "323",
+      "class": "creation",
+      "verb": "buy",
+      "score": 1.2071413854294846,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_buy(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 17,
+      "id": "712",
+      "class": "creation",
+      "verb": "get",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_get(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 18,
+      "id": "771",
+      "class": "creation",
+      "verb": "make",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_make(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 19,
+      "id": "1671",
+      "class": "creation",
+      "verb": "get",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_get(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 20,
+      "id": "119",
+      "class": "creation",
+      "verb": "make",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_make(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 21,
+      "id": "641",
+      "class": "creation",
+      "verb": "make",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_make(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 22,
+      "id": "1387",
+      "class": "creation",
+      "verb": "get",
+      "score": 1.2046268265547926,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_get(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 23,
+      "id": "714",
+      "class": "creation",
+      "verb": "make",
+      "score": 1.1953111583226326,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_creation(E) :- predicate_make(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 24,
+      "id": "1037",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 25,
+      "id": "1458",
+      "class": "loss",
+      "verb": "eat",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_eat(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 26,
+      "id": "730",
+      "class": "loss",
+      "verb": "lose",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_lose(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 27,
+      "id": "6",
+      "class": "loss",
+      "verb": "eat",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_eat(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 28,
+      "id": "469",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 29,
+      "id": "1715",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 30,
+      "id": "996",
+      "class": "loss",
+      "verb": "eat",
+      "score": 1.2178724535989722,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_eat(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 31,
+      "id": "814",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 32,
+      "id": "445",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 33,
+      "id": "587",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 34,
+      "id": "369",
+      "class": "loss",
+      "verb": "spend",
+      "score": 1.2209958619495602,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_spend(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 35,
+      "id": "340",
+      "class": "loss",
+      "verb": "lose",
+      "score": 1.230996427304927,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_loss(E) :- predicate_lose(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 36,
+      "id": "861",
+      "class": "transfer",
+      "verb": "give",
+      "score": 1.2020760143399976,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_give(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 37,
+      "id": "107",
+      "class": "transfer",
+      "verb": "pass",
+      "score": 1.1954781500373417,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_pass(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 38,
+      "id": "822",
+      "class": "transfer",
+      "verb": "give",
+      "score": 1.2020760143399976,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_give(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 39,
+      "id": "1561",
+      "class": "transfer",
+      "verb": "give",
+      "score": 1.2020760143399976,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_give(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 40,
+      "id": "1109",
+      "class": "transfer",
+      "verb": "give",
+      "score": 1.2020760143399976,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_give(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 41,
+      "id": "558",
+      "class": "transfer",
+      "verb": "send",
+      "score": 1.2110515361163816,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_send(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 42,
+      "id": "32",
+      "class": "transfer",
+      "verb": "hand",
+      "score": 1.2023114798909296,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_hand(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 43,
+      "id": "941",
+      "class": "transfer",
+      "verb": "give",
+      "score": 1.2020760143399976,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_give(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 44,
+      "id": "1020",
+      "class": "transfer",
+      "verb": "hand",
+      "score": 1.2023114798909296,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_hand(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 45,
+      "id": "1645",
+      "class": "transfer",
+      "verb": "gift",
+      "score": 1.1824093343668243,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_gift(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 46,
+      "id": "1733",
+      "class": "transfer",
+      "verb": "donate",
+      "score": 1.1840480155859905,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_donate(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 47,
+      "id": "42",
+      "class": "transfer",
+      "verb": "hand",
+      "score": 1.2023114798909296,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_transfer(E) :- predicate_hand(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 48,
+      "id": "1238",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    },
+    {
+      "index": 49,
+      "id": "690",
+      "class": "comparison",
+      "verb": "half",
+      "score": 1.217900699707193,
+      "num_clauses": 1,
+      "pos_hit": true,
+      "neg_count": 6,
+      "false_positive_negatives": 0,
+      "clauses": [
+        "class_comparison(E) :- predicate_half(E), query(E, X)"
+      ]
+    }
+  ]
+}

@@ -7,6 +7,11 @@ from pathlib import Path
 
 from ilp_learner.metagol_nds import MetaRuleLearner, generate_synthetic_family_examples
 
+# GSM-focused heuristics for "stuck/uncertain" detection.
+# We keep them small and explicit so they can be relaxed later for broader AGI settings.
+MIN_CONFIDENT_SCORE = 0.80
+MIN_TOP2_MARGIN = 0.08
+
 
 @dataclass
 class RankedMetaRule:
@@ -20,6 +25,50 @@ class RankedMetaRule:
 def generate_synthetic_family_examples_with_negatives() -> Dict[str, Dict[str, List[Tuple[str, List[Any], float]]]]:
     positives = generate_synthetic_family_examples()
     negatives: Dict[str, List[Tuple[str, List[Any], float]]] = {
+        "rate_product": [
+            ("combined_total", ["alice", "apples", 20.0], 20.0),
+            ("remaining_quantity", ["alice", "apples", 0.75], 15.0),
+        ],
+        "sum_total": [
+            ("rate_times_duration", ["seller", "hours", 5.0], 90.0),
+            ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
+        ],
+        "unit_convert": [
+            ("ratio_compose", ["carol", "dave", "apples", 3.0], 30.0),
+            ("remaining_quantity", ["bob", "books", 0.8], 24.0),
+        ],
+        "percent_of_total": [
+            ("rate_times_duration", ["worker", "hours", 4.0], 72.0),
+            ("combined_total", ["team", "points", 55.0], 55.0),
+        ],
+        "ratio_of_total": [
+            ("combined_total", ["alice", "apples", 20.0], 20.0),
+            ("remaining_quantity", ["alice", "apples", 0.75], 15.0),
+        ],
+        "fraction_of_total": [
+            ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
+            ("remaining_quantity", ["bob", "books", 0.8], 24.0),
+        ],
+        "percent_growth": [
+            ("combined_total", ["team", "points", 55.0], 55.0),
+            ("ratio_compose", ["carol", "dave", "apples", 3.0], 30.0),
+        ],
+        "percent_sequence": [
+            ("percent_growth", ["town", "residents", 600.0], 600.0),
+            ("remaining_quantity", ["charlie", "tickets", 0.2], 6.0),
+        ],
+        "average_speed": [
+            ("ratio_compose", ["erin", "frank", "oranges", 0.5], 5.0),
+            ("percent_growth", ["school", "students", 240.0], 240.0),
+        ],
+        "simple_interest": [
+            ("combined_total", ["store", "items", 18.0], 18.0),
+            ("ratio_compose", ["alice", "bob", "apples", 2.0], 20.0),
+        ],
+        "profit_cost": [
+            ("percent_of_total", ["box", "marble", 10.0], 10.0),
+            ("state", ["alice", "apples", 8.0], 8.0),
+        ],
         "ratio_compose": [
             ("remaining_quantity", ["alice", "apples", 0.75], 15.0),
             ("state", ["alice", "apples", 8.0], 8.0),
@@ -46,6 +95,28 @@ def generate_synthetic_family_examples_with_negatives() -> Dict[str, Dict[str, L
 def infer_family_from_examples(examples: List[Tuple[str, List[Any], float]]) -> str:
     names = [str(x[0]).lower() for x in examples if isinstance(x[0], str)]
     text = " ".join(names)
+    if "ratio_of_total" in text:
+        return "ratio_of_total"
+    if "fraction_of_total" in text:
+        return "fraction_of_total"
+    if "percent_growth" in text:
+        return "percent_growth"
+    if "percent_sequence" in text:
+        return "percent_sequence"
+    if "average_speed" in text:
+        return "average_speed"
+    if "simple_interest" in text:
+        return "simple_interest"
+    if "profit_cost" in text:
+        return "profit_cost"
+    if "rate" in text or "hour" in text or "duration" in text or "speed" in text:
+        return "rate_product"
+    if "combined" in text or "total" in text or "sum" in text or "altogether" in text:
+        return "sum_total"
+    if "unit_convert" in text or "convert" in text or "dozen" in text:
+        return "unit_convert"
+    if "percent_of_total" in text:
+        return "percent_of_total"
     if "ratio" in text or "times" in text:
         return "ratio_compose"
     if "remaining" in text or "percent" in text or "discount" in text:
@@ -64,6 +135,20 @@ def _allowed_predicates() -> set[str]:
         "ratio",
         "percent",
         "state_transition",
+        "rate",
+        "rate_times_duration",
+        "value_per_unit",
+        "combined_total",
+        "unitconvert",
+        "unit_convert",
+        "percent_of_total",
+        "ratio_of_total",
+        "fraction_of_total",
+        "percent_growth",
+        "percent_sequence",
+        "average_speed",
+        "simple_interest",
+        "profit_cost",
     }
 
 
@@ -111,8 +196,40 @@ def rank_candidates_for_family(
             )
         )
 
+    # Deterministic ranking (not randomized): higher score first.
     ranked.sort(key=lambda r: r.score, reverse=True)
     return ranked
+
+
+def _guidance_flags(ranked: List[RankedMetaRule]) -> Dict[str, Any]:
+    """Decide whether to request human guidance for this candidate set.
+
+    We call it "uncertain" when either:
+    - the best score is weak, or
+    - top candidates are too close to distinguish confidently.
+    """
+    if not ranked:
+        return {"needs_human_guidance": True, "reason": "no_candidates", "score": 0.0, "margin": 0.0}
+    best = ranked[0]
+    second = ranked[1] if len(ranked) > 1 else None
+    margin = float(best.score - second.score) if second is not None else float(best.score)
+    low_score = float(best.score) < MIN_CONFIDENT_SCORE
+    low_margin = margin < MIN_TOP2_MARGIN
+    if low_score:
+        return {
+            "needs_human_guidance": True,
+            "reason": "low_score",
+            "score": float(best.score),
+            "margin": margin,
+        }
+    if low_margin:
+        return {
+            "needs_human_guidance": True,
+            "reason": "low_margin",
+            "score": float(best.score),
+            "margin": margin,
+        }
+    return {"needs_human_guidance": False, "reason": "confident", "score": float(best.score), "margin": margin}
 
 
 def run_metarule_learning_cycle(top_n: int = 2) -> List[Dict[str, Any]]:
@@ -139,12 +256,18 @@ def run_metarule_learning_cycle(top_n: int = 2) -> List[Dict[str, Any]]:
 def propose_ranked_for_examples(examples: List[Tuple[str, List[Any], float]], top_n: int = 3) -> List[Dict[str, Any]]:
     if not examples:
         return []
+    # Meta-template-based search:
+    # 1) infer family from the examples
+    # 2) generate a small seeded candidate pool
+    # 3) rank deterministically by symbolic heuristics
+    # This is not BFS and does not use random branching.
     family = infer_family_from_examples(examples)
     data = generate_synthetic_family_examples_with_negatives()
     negatives = data.get(family, {}).get("negative", [])
     learner = MetaRuleLearner()
     proposed = learner.propose(examples)
     ranked = rank_candidates_for_family(family, proposed, examples, negatives)
+    guidance = _guidance_flags(ranked)
     selected: List[Dict[str, Any]] = []
     for row in ranked[: max(1, top_n)]:
         item = dict(row.candidate)
@@ -154,6 +277,9 @@ def propose_ranked_for_examples(examples: List[Tuple[str, List[Any], float]], to
             "simplicity": row.simplicity,
             "symbolic_validity": row.symbolic_validity,
             "family_inferred": family,
+            "needs_human_guidance": guidance["needs_human_guidance"],
+            "guidance_reason": guidance["reason"],
+            "top2_margin": guidance["margin"],
         }
         selected.append(item)
     return selected

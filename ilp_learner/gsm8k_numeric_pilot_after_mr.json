@@ -1,0 +1,925 @@
+{
+  "summary": {
+    "scan_limit": 220,
+    "eval_limit": 80,
+    "max_cycles": 2,
+    "min_class_confidence": 0.7,
+    "scanned": 161,
+    "selected": 80,
+    "skip_neutral": 21,
+    "skip_low_confidence": 60,
+    "numeric_solved": 0,
+    "numeric_solved_rate": 0.0,
+    "nonempty_belief_count": 25,
+    "nonempty_belief_rate": 0.3125,
+    "duration_sec": 113.50248336791992,
+    "by_class": {
+      "transfer": {
+        "n": 18,
+        "solved": 0,
+        "nonempty": 7
+      },
+      "creation": {
+        "n": 26,
+        "solved": 0,
+        "nonempty": 5
+      },
+      "comparison": {
+        "n": 18,
+        "solved": 0,
+        "nonempty": 5
+      },
+      "loss": {
+        "n": 18,
+        "solved": 0,
+        "nonempty": 8
+      }
+    },
+    "top_no_belief_verbs": [
+      [
+        "have",
+        13
+      ],
+      [
+        "get",
+        6
+      ],
+      [
+        "sell",
+        5
+      ],
+      [
+        "earn",
+        4
+      ],
+      [
+        "make",
+        4
+      ],
+      [
+        "buy",
+        3
+      ],
+      [
+        "pay",
+        2
+      ],
+      [
+        "spend",
+        2
+      ],
+      [
+        "lose",
+        2
+      ],
+      [
+        "leave",
+        2
+      ],
+      [
+        "use",
+        2
+      ],
+      [
+        "save",
+        1
+      ]
+    ],
+    "top_wrong_with_belief_verbs": [
+      [
+        "have",
+        5
+      ],
+      [
+        "pay",
+        5
+      ],
+      [
+        "leave",
+        3
+      ],
+      [
+        "spend",
+        3
+      ],
+      [
+        "buy",
+        1
+      ],
+      [
+        "eat",
+        1
+      ],
+      [
+        "find",
+        1
+      ],
+      [
+        "earn",
+        1
+      ],
+      [
+        "borrow",
+        1
+      ],
+      [
+        "save",
+        1
+      ],
+      [
+        "get",
+        1
+      ],
+      [
+        "give",
+        1
+      ]
+    ]
+  },
+  "results": [
+    {
+      "id": "0",
+      "index": 0,
+      "verb": "sell",
+      "class": "transfer",
+      "expected": 72.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "1",
+      "index": 1,
+      "verb": "earn",
+      "class": "creation",
+      "expected": 10.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "2",
+      "index": 2,
+      "verb": "save",
+      "class": "creation",
+      "expected": 5.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "5",
+      "index": 5,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 35.0,
+      "belief_values": [
+        8.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "7",
+      "index": 7,
+      "verb": "create",
+      "class": "creation",
+      "expected": 16.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "8",
+      "index": 8,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 41.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "12",
+      "index": 12,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 85.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "13",
+      "index": 13,
+      "verb": "spend",
+      "class": "loss",
+      "expected": 35.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "15",
+      "index": 15,
+      "verb": "make",
+      "class": "creation",
+      "expected": 448000.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "16",
+      "index": 16,
+      "verb": "get",
+      "class": "creation",
+      "expected": 800.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "20",
+      "index": 20,
+      "verb": "buy",
+      "class": "creation",
+      "expected": 38.0,
+      "belief_values": [
+        0.4583333333333333,
+        0.4583333333333333
+      ],
+      "solved": false
+    },
+    {
+      "id": "23",
+      "index": 23,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 5.0,
+      "belief_values": [
+        0.974025974025974,
+        0.974025974025974
+      ],
+      "solved": false
+    },
+    {
+      "id": "27",
+      "index": 27,
+      "verb": "leave",
+      "class": "loss",
+      "expected": 400.0,
+      "belief_values": [
+        3.5
+      ],
+      "solved": false
+    },
+    {
+      "id": "28",
+      "index": 28,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 8.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "30",
+      "index": 30,
+      "verb": "eat",
+      "class": "loss",
+      "expected": 6.0,
+      "belief_values": [
+        2.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "31",
+      "index": 31,
+      "verb": "sell",
+      "class": "transfer",
+      "expected": 1200.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "34",
+      "index": 34,
+      "verb": "get",
+      "class": "creation",
+      "expected": 5250.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "35",
+      "index": 35,
+      "verb": "find",
+      "class": "creation",
+      "expected": 36.0,
+      "belief_values": [
+        24.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "36",
+      "index": 36,
+      "verb": "earn",
+      "class": "creation",
+      "expected": 15.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "37",
+      "index": 37,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 5.0,
+      "belief_values": [
+        0.5555555555555556,
+        0.5555555555555556
+      ],
+      "solved": false
+    },
+    {
+      "id": "39",
+      "index": 39,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 15.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "40",
+      "index": 40,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 476.0,
+      "belief_values": [
+        0.5
+      ],
+      "solved": false
+    },
+    {
+      "id": "41",
+      "index": 41,
+      "verb": "buy",
+      "class": "creation",
+      "expected": 500.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "42",
+      "index": 42,
+      "verb": "get",
+      "class": "creation",
+      "expected": 99.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "44",
+      "index": 44,
+      "verb": "spend",
+      "class": "loss",
+      "expected": 300.0,
+      "belief_values": [
+        3.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "49",
+      "index": 49,
+      "verb": "get",
+      "class": "creation",
+      "expected": 48.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "52",
+      "index": 52,
+      "verb": "get",
+      "class": "creation",
+      "expected": 5.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "53",
+      "index": 53,
+      "verb": "spend",
+      "class": "loss",
+      "expected": 36.0,
+      "belief_values": [
+        0.7142857142857143,
+        0.7142857142857143
+      ],
+      "solved": false
+    },
+    {
+      "id": "54",
+      "index": 54,
+      "verb": "lose",
+      "class": "loss",
+      "expected": 11.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "57",
+      "index": 57,
+      "verb": "leave",
+      "class": "loss",
+      "expected": 2.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "59",
+      "index": 59,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 120.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "61",
+      "index": 61,
+      "verb": "gain",
+      "class": "creation",
+      "expected": 200.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "64",
+      "index": 64,
+      "verb": "earn",
+      "class": "creation",
+      "expected": 840.0,
+      "belief_values": [
+        2.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "65",
+      "index": 65,
+      "verb": "earn",
+      "class": "creation",
+      "expected": 558.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "70",
+      "index": 70,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 19.0,
+      "belief_values": [
+        0.5
+      ],
+      "solved": false
+    },
+    {
+      "id": "74",
+      "index": 74,
+      "verb": "lose",
+      "class": "loss",
+      "expected": 28.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "78",
+      "index": 78,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 4.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "80",
+      "index": 80,
+      "verb": "purchase",
+      "class": "creation",
+      "expected": 100.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "81",
+      "index": 81,
+      "verb": "skip",
+      "class": "loss",
+      "expected": 14.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "82",
+      "index": 82,
+      "verb": "earn",
+      "class": "creation",
+      "expected": 700.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "83",
+      "index": 83,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 54.0,
+      "belief_values": [
+        6.0,
+        8.0,
+        2.0,
+        4.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "86",
+      "index": 86,
+      "verb": "buy",
+      "class": "creation",
+      "expected": 6.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "88",
+      "index": 88,
+      "verb": "sell",
+      "class": "transfer",
+      "expected": 258.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "89",
+      "index": 89,
+      "verb": "borrow",
+      "class": "transfer",
+      "expected": 216.0,
+      "belief_values": [
+        16.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "91",
+      "index": 91,
+      "verb": "make",
+      "class": "creation",
+      "expected": 10.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "96",
+      "index": 96,
+      "verb": "make",
+      "class": "creation",
+      "expected": 126.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "98",
+      "index": 98,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 45.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "101",
+      "index": 101,
+      "verb": "bring",
+      "class": "transfer",
+      "expected": 36.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "104",
+      "index": 104,
+      "verb": "transport",
+      "class": "transfer",
+      "expected": 96.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "105",
+      "index": 105,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 320.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "106",
+      "index": 106,
+      "verb": "get",
+      "class": "creation",
+      "expected": 50.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "108",
+      "index": 108,
+      "verb": "spend",
+      "class": "loss",
+      "expected": 41.0,
+      "belief_values": [
+        0.6923076923076923,
+        0.6923076923076923
+      ],
+      "solved": false
+    },
+    {
+      "id": "109",
+      "index": 109,
+      "verb": "eat",
+      "class": "loss",
+      "expected": 20.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "110",
+      "index": 110,
+      "verb": "make",
+      "class": "creation",
+      "expected": 140.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "111",
+      "index": 111,
+      "verb": "leave",
+      "class": "loss",
+      "expected": 6.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "112",
+      "index": 112,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 920.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "114",
+      "index": 114,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 15.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "120",
+      "index": 120,
+      "verb": "leave",
+      "class": "loss",
+      "expected": 720.0,
+      "belief_values": [
+        0.18604651162790697,
+        0.18604651162790697
+      ],
+      "solved": false
+    },
+    {
+      "id": "122",
+      "index": 122,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 48.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "124",
+      "index": 124,
+      "verb": "use",
+      "class": "loss",
+      "expected": 18.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "126",
+      "index": 126,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 25.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "128",
+      "index": 128,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 6.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "129",
+      "index": 129,
+      "verb": "sell",
+      "class": "transfer",
+      "expected": 10.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "130",
+      "index": 130,
+      "verb": "sell",
+      "class": "transfer",
+      "expected": 55.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "132",
+      "index": 132,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 110.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "134",
+      "index": 134,
+      "verb": "give",
+      "class": "transfer",
+      "expected": 74.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "136",
+      "index": 136,
+      "verb": "use",
+      "class": "loss",
+      "expected": 20.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "138",
+      "index": 138,
+      "verb": "save",
+      "class": "creation",
+      "expected": 8.0,
+      "belief_values": [
+        0.375,
+        0.375
+      ],
+      "solved": false
+    },
+    {
+      "id": "140",
+      "index": 140,
+      "verb": "get",
+      "class": "creation",
+      "expected": 148.0,
+      "belief_values": [
+        24.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "141",
+      "index": 141,
+      "verb": "spend",
+      "class": "loss",
+      "expected": 72.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "142",
+      "index": 142,
+      "verb": "leave",
+      "class": "loss",
+      "expected": 30.0,
+      "belief_values": [
+        5.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "146",
+      "index": 146,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 136.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "147",
+      "index": 147,
+      "verb": "give",
+      "class": "transfer",
+      "expected": 9.0,
+      "belief_values": [
+        0.38461538461538464,
+        0.38461538461538464
+      ],
+      "solved": false
+    },
+    {
+      "id": "151",
+      "index": 151,
+      "verb": "send",
+      "class": "transfer",
+      "expected": 283.0,
+      "belief_values": [],
+      "solved": false
+    },
+    {
+      "id": "153",
+      "index": 153,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 135.0,
+      "belief_values": [
+        7.5
+      ],
+      "solved": false
+    },
+    {
+      "id": "154",
+      "index": 154,
+      "verb": "have",
+      "class": "comparison",
+      "expected": 720.0,
+      "belief_values": [
+        1.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "156",
+      "index": 156,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 21.0,
+      "belief_values": [
+        7.5
+      ],
+      "solved": false
+    },
+    {
+      "id": "157",
+      "index": 157,
+      "verb": "remove",
+      "class": "loss",
+      "expected": 10.0,
+      "belief_values": [
+        6.0,
+        8.0,
+        2.0,
+        4.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "159",
+      "index": 159,
+      "verb": "pay",
+      "class": "transfer",
+      "expected": 27.0,
+      "belief_values": [
+        5.0
+      ],
+      "solved": false
+    },
+    {
+      "id": "160",
+      "index": 160,
+      "verb": "buy",
+      "class": "creation",
+      "expected": 295.0,
+      "belief_values": [],
+      "solved": false
+    }
+  ]
+}
