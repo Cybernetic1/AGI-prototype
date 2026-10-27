@@ -1,5 +1,6 @@
 import argparse
 import concurrent.futures
+import ast
 import json
 import re
 import sys
@@ -732,10 +733,46 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
     for node in current_wm:
         if node.concept == "Inducedrule":
             r = node.to_dict()
+            raw_body = r.get("body", [])
+            if isinstance(raw_body, str):
+                try:
+                    raw_body = ast.literal_eval(raw_body)
+                except Exception:
+                    raw_body = []
+            normalized_body = []
+            for b in raw_body:
+                if isinstance(b, str):
+                    try:
+                        b = ast.literal_eval(b)
+                    except Exception:
+                        continue
+                if not isinstance(b, (list, tuple)) or len(b) != 2:
+                    continue
+                pred, b_args = b[0], b[1]
+                if isinstance(b_args, str):
+                    try:
+                        b_args = ast.literal_eval(b_args)
+                    except Exception:
+                        b_args = [b_args]
+                if not isinstance(b_args, (list, tuple)):
+                    b_args = [b_args]
+                normalized_body.append((pred, list(b_args)))
+
+            raw_head_args = r.get("head_args", [])
+            if isinstance(raw_head_args, str):
+                try:
+                    raw_head_args = ast.literal_eval(raw_head_args)
+                except Exception:
+                    raw_head_args = [raw_head_args]
+            if not isinstance(raw_head_args, (list, tuple)):
+                raw_head_args = [raw_head_args]
+
+            if not r.get("head_pred") or not normalized_body:
+                continue
             kb.declare_rule(
                 head_pred=r["head_pred"],
-                head_args=list(r["head_args"]),
-                body=[(b[0], list(b[1])) for b in r["body"]],
+                head_args=list(raw_head_args),
+                body=normalized_body,
                 calc_expr=r["calc"],
                 calc_target=r["target"]
             )

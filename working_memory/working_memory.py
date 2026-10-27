@@ -835,13 +835,20 @@ class WorkingMemory:
             extra_cues=extra_cues or [],
         )
 
-    def ltm_associative_recall(self, *, top_k: int = 5, min_score: float = 0.1, inject: bool = False):
+    def ltm_associative_recall(
+        self,
+        *,
+        top_k: int = 5,
+        min_score: float = 0.1,
+        inject: bool = False,
+        max_candidates: int = 150,
+    ):
         cues = self.ltm_cues()
         recalled = self.ltm.associative_recall(cues, top_k=top_k, min_score=min_score)
         self._recall_counter += 1
         recall_id = f"recall_{self._recall_counter}"
         candidates = []
-        for idx, item in enumerate(recalled.get("propositions", [])):
+        for idx, item in enumerate(recalled.get("propositions", [])[: max(1, int(max_candidates))]):
             concept = item.get("concept")
             attrs = item.get("attrs") or {}
             if not concept or not isinstance(attrs, dict):

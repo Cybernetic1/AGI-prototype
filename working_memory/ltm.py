@@ -8,6 +8,23 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import yaml
 
+_EPHEMERAL_META_CONCEPTS = {
+    "RecallCandidate",
+    "RecallDecision",
+    "ConsolidationReport",
+    "RulePriorityUpdate",
+    "NullAnswer",
+}
+_RULE_META_CONCEPTS = {
+    "Rule",
+    "RuleLifecycle",
+    "PreferredStateRule",
+    "RemainingRule",
+    "StateTransitionRule",
+    "DefeasibleMeta",
+}
+_MAX_LTM_STORE_BYTES = 2_000_000
+
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -48,6 +65,13 @@ class LongTermMemory:
     def _load(self) -> Dict[str, Any]:
         if not self.path.exists():
             return {"episodes": [], "semantic_memory": [], "rule_memory": []}
+        try:
+            if self.path.stat().st_size > _MAX_LTM_STORE_BYTES:
+                # Defensive fast path: avoid loading pathological oversized stores in
+                # interactive runtime loops; maintenance can compact/rotate later.
+                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "oversized_store": True}
+        except OSError:
+            pass
         payload = yaml.safe_load(self.path.read_text(encoding="utf-8")) or {}
         payload.setdefault("episodes", [])
         payload.setdefault("semantic_memory", [])
@@ -72,6 +96,7 @@ class LongTermMemory:
         reward: float = 0.0,
         outcome: str = "",
         extra_cues: Optional[List[str]] = None,
+        max_propositions: int = 500,
     ) -> Dict[str, Any]:
         propositions: List[Dict[str, Any]] = []
         rules: List[Dict[str, Any]] = []
@@ -87,10 +112,17 @@ class LongTermMemory:
             clean_attrs = _safe_attrs(attrs)
             cue_tokens.extend(_tokenize_fact(str(concept), clean_attrs))
 
+            layer = str(getattr(node, "layer", "reasoning"))
+            # Keep recall memory compact and stable by excluding transient bookkeeping WMEs.
+            if str(concept) in _EPHEMERAL_META_CONCEPTS:
+                continue
+            if layer == "meta" and str(concept) not in _RULE_META_CONCEPTS:
+                continue
+
             record = {
                 "concept": str(concept),
                 "attrs": clean_attrs,
-                "layer": getattr(node, "layer", "reasoning"),
+                "layer": layer,
                 "source": getattr(node, "source", "unknown"),
                 "activation": float(getattr(node, "activation", 1.0)),
             }
@@ -104,6 +136,8 @@ class LongTermMemory:
                         "priority": clean_attrs.get("priority"),
                     }
                 )
+            if len(propositions) >= max(10, int(max_propositions)):
+                break
 
         cues = sorted({c for c in cue_tokens if c})
         created_at = _utc_now()
@@ -162,12 +196,22 @@ class LongTermMemory:
             return 0.0
         return float(len(q & c)) / float(len(q | c))
 
-    def associative_recall(self, cues: List[str], *, top_k: int = 5, min_score: float = 0.1) -> Dict[str, Any]:
+    def associative_recall(
+        self,
+        cues: List[str],
+        *,
+        top_k: int = 5,
+        min_score: float = 0.1,
+        max_total_propositions: int = 300,
+        max_episode_propositions: int = 2000,
+    ) -> Dict[str, Any]:
         payload = self._load()
         episodes = payload.get("episodes", [])
         scored: List[Tuple[float, Dict[str, Any]]] = []
         for ep in episodes:
             if ep.get("archived"):
+                continue
+            if len(ep.get("propositions", [])) > int(max_episode_propositions):
                 continue
             score = self._cue_similarity(cues, ep.get("cues", []))
             score += 0.1 * float(ep.get("interestingness", 0.0))
@@ -177,10 +221,20 @@ class LongTermMemory:
         selected = [ep for _, ep in scored[:max(1, top_k)]]
 
         propositions: List[Dict[str, Any]] = []
+        seen = set()
         for ep in selected:
-            propositions.extend(ep.get("propositions", []))
+            for p in ep.get("propositions", []):
+                key = (p.get("concept"), tuple(sorted((p.get("attrs") or {}).items())))
+                if key in seen:
+                    continue
+                seen.add(key)
+                propositions.append(p)
+                if len(propositions) >= int(max_total_propositions):
+                    break
             ep["recall_count"] = int(ep.get("recall_count", 0)) + 1
             ep["updated_at"] = _utc_now()
+            if len(propositions) >= int(max_total_propositions):
+                break
         self._save(payload)
 
         return {

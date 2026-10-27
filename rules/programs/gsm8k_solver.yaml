@@ -1,0 +1,26 @@
+name: gsm8k_solver
+description: Narrow GSM-style symbolic solver profile with conservative memory policy.
+background_allowed: true
+
+seeds:
+  activate_defeasible: true
+  activate_empirical_rules: approved_only
+  notes:
+    - keep teacher rules locked
+    - empirical rules are priority-only mutable
+
+policy:
+  use_ltm_recall: false
+  auto_accept_recall: false
+  write_ltm_episode: true
+
+execution:
+  mode: template_generalization
+  subset_size: 4
+  max_cycles: 1
+
+readiness:
+  enabled: true
+  subset_size: 4
+  min_solved: 4
+  max_cycles: 1

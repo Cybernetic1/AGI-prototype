@@ -1,0 +1,22 @@
+name: story_recall_eval
+description: Story-like temporal state transitions with recall enabled for contradiction/finality stress.
+background_allowed: false
+
+seeds:
+  activate_defeasible: true
+  activate_empirical_rules: approved_only
+  notes:
+    - focus on temporal finality and contradiction handling
+
+policy:
+  use_ltm_recall: true
+  auto_accept_recall: false
+  write_ltm_episode: true
+
+execution:
+  mode: finality_regression
+  subset_size: 3
+  max_cycles: 2
+
+readiness:
+  enabled: false
