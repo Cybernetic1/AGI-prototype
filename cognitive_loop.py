@@ -28,6 +28,7 @@ from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
 from abductive_ilp import KnowledgeBase, OntologicalReasoner, OntologicalILPLearner, DuckEgg
 from local_proposal_ranker import ProposalRanker
+from forward_engine.phase3_synthetic_test import ontology_classify_details
 
 # ==========================================
 # A compact GSM8K predicate vocabulary.
@@ -820,8 +821,202 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
 # ==========================================
 # Main Cognitive Orchestrator
 # ==========================================
-def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
+def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None, *, input_props=None, class_label=None):
     wm = WorkingMemory(default_ttl=5)
+    
+    def add_fact(concept, **kwargs):
+        canonical = SemanticGraphSchema.canonicalize_fact(concept, **kwargs)
+        wm.facts[WMNode.create(concept, layer="semantic", source="gsm8k_compiler", **canonical)] = 5
+
+    def _compile_lt_props_to_wm(input_props, class_label: str | None = None) -> bool:
+        # LF-first grounding path: map structured logical-form props into canonical WM facts.
+        if not input_props:
+            return False
+
+        name_map = {}
+        quantity_by_var = {}
+        for row in input_props:
+            if row.get("pred") == "name":
+                args = row.get("args") or []
+                if len(args) >= 2:
+                    name_map[str(args[0])] = str(args[1])
+            elif row.get("pred") == "quantity":
+                args = row.get("args") or []
+                if len(args) >= 2:
+                    try:
+                        quantity_by_var[str(args[0])] = float(str(args[1]).replace("_", ".").replace(",", ""))
+                    except Exception:
+                        pass
+
+        def resolve(tok):
+            return name_map.get(str(tok), str(tok))
+
+        event_map = {}
+        for row in input_props:
+            if row.get("pred") == "event":
+                args = row.get("args") or []
+                if args:
+                    event_map[str(args[0])] = {"pred": "", "agent": "", "patient": "", "vars": set(), "tokens": set(), "nums": []}
+
+        query_event = None
+        query_target = None
+        for row in input_props:
+            if row.get("pred") == "query":
+                args = row.get("args") or []
+                if len(args) >= 2:
+                    query_event = str(args[0])
+                    query_target = str(args[1])
+                    break
+
+        if query_event is None:
+            return False
+
+        for row in input_props:
+            pred = row.get("pred")
+            args = row.get("args") or []
+            if len(args) < 2:
+                continue
+            e = str(args[0])
+            if e not in event_map:
+                continue
+            val = str(args[1])
+            event_map[e]["vars"].add(val)
+            event_map[e]["tokens"].add(resolve(val).lower())
+            if val in quantity_by_var:
+                event_map[e]["nums"].append(float(quantity_by_var[val]))
+            if pred == "predicate":
+                event_map[e]["pred"] = resolve(args[1]).lower()
+            elif pred == "agent":
+                event_map[e]["agent"] = resolve(args[1]).lower()
+            elif pred == "patient":
+                event_map[e]["patient"] = resolve(args[1]).lower()
+
+        owner = "unknown"
+        item = "item"
+        verb = ""
+        q_event = event_map.get(query_event, {})
+        owner = str(q_event.get("agent") or owner)
+        item = str(q_event.get("patient") or item)
+        verb = str(q_event.get("pred") or verb)
+
+        if class_label is None:
+            class_label = str(ontology_classify_details(verb).get("label", "neutral"))
+
+        # Event-local join: prefer numeric values from query event neighborhood.
+        support_events = []
+        for eid, ev in event_map.items():
+            if eid == query_event:
+                support_events.append(ev)
+                continue
+            if verb and ev.get("pred") == verb:
+                support_events.append(ev)
+                continue
+            if owner != "unknown" and ev.get("agent") == owner:
+                support_events.append(ev)
+
+        qty_values = []
+        for ev in support_events:
+            for n in ev.get("nums", []):
+                qty_values.append(float(n))
+        if not qty_values:
+            qty_values = list(quantity_by_var.values())
+        if not qty_values:
+            local_lower = (input_text or "").lower()
+            for m in re.finditer(r"\d+(?:\.\d+)?", local_lower):
+                try:
+                    qty_values.append(float(m.group(0)))
+                except Exception:
+                    continue
+
+        for qty in qty_values[:6]:
+            add_fact("Quantity", owner=owner, item=item, qty=qty)
+            add_fact("Has", owner=owner, item=item, qty=qty)
+
+        if len(qty_values) >= 2:
+            add_fact("Add", lhs=qty_values[0], rhs=qty_values[1], result=qty_values[0] + qty_values[1])
+            if qty_values[0] >= qty_values[1]:
+                add_fact("Subtract", lhs=qty_values[0], rhs=qty_values[1], result=qty_values[0] - qty_values[1])
+
+        expected = _extract_numeric_value(expected_answer)
+        goal = "total_quantity"
+        lower = (input_text or "").lower()
+
+        # Operator intent disambiguation for frequent GSM forms.
+        if "how much" in lower and "each" in lower and len(qty_values) >= 2:
+            lhs = max(qty_values)
+            rhs = min(v for v in qty_values if v != 0) if any(v != 0 for v in qty_values) else 1.0
+            add_fact("Divide", lhs=lhs, rhs=rhs, result=lhs / rhs)
+            add_fact("Query", goal="divide", args=(lhs, rhs, "?ans"), expected_value=expected)
+            return True
+
+        # Rate-time bridge for "earn/cost per hour/minute" style questions.
+        if verb in {"earn", "cost", "pay", "sell"} and ("hour" in lower or "minute" in lower):
+            rate_val = None
+            dur_val = None
+            for ev in support_events:
+                nums = ev.get("nums") or []
+                tokens = ev.get("tokens") or set()
+                if nums and ("hour" in tokens or "per" in lower):
+                    rate_val = nums[0] if rate_val is None else rate_val
+                if nums and ("minute" in tokens or "hour" in tokens or ev.get("pred") in {"do", "work"}):
+                    dur_val = nums[0] if dur_val is None else dur_val
+            if rate_val is None and qty_values:
+                rate_val = qty_values[0]
+            if dur_val is None and len(qty_values) > 1:
+                dur_val = qty_values[1]
+            if rate_val is not None and dur_val is not None:
+                duration_hours = dur_val / 60.0 if "minute" in lower and dur_val > 10 else dur_val
+                add_fact("Rate", item="hours", price_per_unit=rate_val)
+                add_fact("Quantity", owner=owner, item="hours", qty=duration_hours)
+                add_fact("Query", goal="rate_times_duration", args=(owner, "hours", "?ans"), expected_value=expected)
+                return True
+
+        if class_label in {"transfer", "loss"}:
+            goal = "remaining_quantity"
+            if len(qty_values) >= 2:
+                sorted_qty = sorted(float(v) for v in qty_values if isinstance(v, (int, float)))
+                if len(sorted_qty) >= 2:
+                    before = sorted_qty[-1]
+                    delta_mag = sorted_qty[-2]
+                else:
+                    before = float(qty_values[0])
+                    delta_mag = float(qty_values[1])
+                delta = -delta_mag
+                after = before + delta
+                wm.add_state_transition(
+                    transition_id=f"state_transition:{owner}:{item}:{verb or class_label}:1",
+                    owner=owner,
+                    item=item,
+                    before_qty=before,
+                    delta=delta,
+                    after_qty=after,
+                    event_kind=verb or class_label,
+                    event_order=1,
+                    source_state_id=f"state:{owner}:{item}:initial",
+                    target_state_id=f"state:{owner}:{item}:{verb or class_label}:1",
+                )
+                wm.add_state(
+                    state_id=f"state:{owner}:{item}:{verb or class_label}:1",
+                    owner=owner,
+                    item=item,
+                    qty=after,
+                    phase="final",
+                )
+        elif class_label == "comparison":
+            if "how many more" in lower and len(qty_values) >= 2:
+                lhs = max(qty_values)
+                rhs = min(qty_values)
+                add_fact("Subtract", lhs=lhs, rhs=rhs, result=lhs - rhs)
+                goal = "divide"  # reuse arithmetic path via explicit result
+                add_fact("Divide", lhs=(lhs - rhs), rhs=1.0, result=(lhs - rhs))
+                add_fact("Query", goal=goal, args=((lhs - rhs), 1.0, "?ans"), expected_value=expected)
+                return True
+            goal = "total_quantity"
+        elif class_label == "creation":
+            goal = "total_quantity"
+
+        add_fact("Query", goal=goal, args=(owner, item, "?ans"), expected_value=expected)
+        return True
 
     def add_quantity_state_sequence(owner, item, initial_qty, events):
         """Emit an ordered state-trace for multi-step quantity problems.
@@ -873,9 +1068,8 @@ def _compile_gsm8k_problem_to_wm(input_text, expected_answer=None):
     text = input_text or ""
     lower = text.lower()
 
-    def add_fact(concept, **kwargs):
-        canonical = SemanticGraphSchema.canonicalize_fact(concept, **kwargs)
-        wm.facts[WMNode.create(concept, layer="semantic", source="gsm8k_compiler", **canonical)] = 5
+    if _compile_lt_props_to_wm(input_props=input_props, class_label=class_label):
+        return wm
 
     # Canonical simple-state fallback: if a story states that an owner had N items
     # and then lost/donated/used Y items, emit the same-owner/item state transition
@@ -2075,11 +2269,17 @@ def run_cognitive_loop(
     max_cycles=4,
     quiet=False,
     *,
+    input_props: list[dict] | None = None,
+    class_label: str | None = None,
     use_ltm_recall: bool = False,
     auto_accept_recall: bool = False,
     write_ltm_episode: bool = False,
 ):
-    wm = _compile_gsm8k_problem_to_wm(input_text)
+    wm = _compile_gsm8k_problem_to_wm(
+        input_text,
+        input_props=input_props,
+        class_label=class_label,
+    )
     if use_ltm_recall:
         wm.ltm_associative_recall(top_k=5, min_score=0.08, inject=auto_accept_recall)
 
@@ -2174,6 +2374,8 @@ def benchmark_single_problem(
     max_cycles=4,
     quiet=True,
     *,
+    input_props: list[dict] | None = None,
+    class_label: str | None = None,
     use_ltm_recall: bool = False,
     auto_accept_recall: bool = False,
     write_ltm_episode: bool = False,
@@ -2182,6 +2384,8 @@ def benchmark_single_problem(
         question,
         max_cycles=max_cycles,
         quiet=quiet,
+        input_props=input_props,
+        class_label=class_label,
         use_ltm_recall=use_ltm_recall,
         auto_accept_recall=auto_accept_recall,
         write_ltm_episode=write_ltm_episode,
