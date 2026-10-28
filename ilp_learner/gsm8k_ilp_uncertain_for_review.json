@@ -1,8 +1,10 @@
 {
   "min_class_confidence": 0.7,
+  "search_strategy": "value_guided",
+  "reward_profile": "aggressive",
   "skip_counts": {
     "neutral": 5,
-    "low_confidence": 11
+    "low_confidence": 14
   },
   "uncertain_for_review": [
     {
@@ -89,6 +91,30 @@
       "index": 29,
       "id": "29",
       "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 32,
+      "id": "32",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 33,
+      "id": "33",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 38,
+      "id": "38",
+      "verb": "need",
       "proposed_class": "comparison",
       "confidence": 0.65,
       "reason": "comparison_default"

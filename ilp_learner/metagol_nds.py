@@ -730,7 +730,7 @@ def generate_synthetic_training_set():
 
 # --- Beam search learner ---
 
-def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples, beam=5, max_clauses=3, prior_weight=0.5):
+def _learn_metagol_beam(predicates, roles, background, pos_examples, neg_examples, beam=5, max_clauses=3, prior_weight=0.5):
     # initial empty hypothesis
     beam_hypos = [([], 0.0)]  # list of (clauses_list, score)
     for step in range(max_clauses):
@@ -754,6 +754,62 @@ def learn_metagol_nds(predicates, roles, background, pos_examples, neg_examples,
             break
     best = beam_hypos[0] if beam_hypos else ([], 0.0)
     return best
+
+
+def learn_metagol_nds(
+    predicates,
+    roles,
+    background,
+    pos_examples,
+    neg_examples,
+    beam=5,
+    max_clauses=3,
+    prior_weight=0.5,
+    *,
+    search_strategy="beam",
+    reward_profile="balanced",
+    value_model=None,
+    trace_out=None,
+):
+    """Learn a clause set for the target using either beam or value-guided search.
+
+    `trace_out` can be an empty list supplied by caller; this function appends
+    per-step diagnostics when strategy supports it.
+    """
+    strategy = str(search_strategy or "beam").lower()
+    if strategy == "beam":
+        return _learn_metagol_beam(
+            predicates,
+            roles,
+            background,
+            pos_examples,
+            neg_examples,
+            beam=beam,
+            max_clauses=max_clauses,
+            prior_weight=prior_weight,
+        )
+
+    if strategy != "value_guided":
+        raise ValueError(f"Unknown search_strategy: {search_strategy}")
+
+    # Lazy import avoids circular imports when value-guided module imports this file.
+    from ilp_learner.value_guided_search import learn_with_value_guided_search
+
+    best_hyp, best_score, trace = learn_with_value_guided_search(
+        predicates=predicates,
+        roles=roles,
+        background=background,
+        pos_examples=pos_examples,
+        neg_examples=neg_examples,
+        beam=beam,
+        max_clauses=max_clauses,
+        prior_weight=prior_weight,
+        reward_profile=reward_profile,
+        value_model=value_model,
+    )
+    if isinstance(trace_out, list):
+        trace_out.extend(trace)
+    return best_hyp, best_score
 
 
 def demo_meta_rule_learning():

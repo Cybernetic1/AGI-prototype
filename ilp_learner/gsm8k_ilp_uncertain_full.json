@@ -1,0 +1,255 @@
+{
+  "min_class_confidence": 0.7,
+  "search_strategy": "value_guided",
+  "reward_profile": "aggressive",
+  "uncertain_for_review": [
+    {
+      "index": 3,
+      "id": "3",
+      "verb": "want",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 4,
+      "id": "4",
+      "verb": "write",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 9,
+      "id": "9",
+      "verb": "work",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 10,
+      "id": "10",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 11,
+      "id": "11",
+      "verb": "mow",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 19,
+      "id": "19",
+      "verb": "bike",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 21,
+      "id": "21",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 22,
+      "id": "22",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 24,
+      "id": "24",
+      "verb": "shop",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 26,
+      "id": "26",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 29,
+      "id": "29",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 32,
+      "id": "32",
+      "verb": "drive",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 33,
+      "id": "33",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 38,
+      "id": "38",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 45,
+      "id": "45",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 46,
+      "id": "46",
+      "verb": "practice",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 48,
+      "id": "48",
+      "verb": "memorize",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 50,
+      "id": "50",
+      "verb": "average",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 51,
+      "id": "51",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 55,
+      "id": "55",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 56,
+      "id": "56",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 60,
+      "id": "60",
+      "verb": "last",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 62,
+      "id": "62",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 66,
+      "id": "66",
+      "verb": "plan",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 67,
+      "id": "67",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 68,
+      "id": "68",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 71,
+      "id": "71",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 72,
+      "id": "72",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 73,
+      "id": "73",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 77,
+      "id": "77",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 79,
+      "id": "79",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    }
+  ]
+}
