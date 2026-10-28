@@ -1,0 +1,13 @@
+{
+  "bias": 1.8985351726504045,
+  "weights": {
+    "bias": 1.9185351726504027,
+    "depth_norm": 1.869795718885917,
+    "parent_score": 0.1,
+    "candidate_score": 0.45,
+    "delta_score": 0.8,
+    "prior": 1.428223076351893,
+    "is_duplicate": -0.5,
+    "is_role_pair": 0.0
+  }
+}

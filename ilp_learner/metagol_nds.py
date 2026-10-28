@@ -37,6 +37,48 @@ def instantiate_metarule_role_transfer(p_pred,q_pred, role_pred):
     body = [Atom(p_pred, [E]), Atom(role_pred, [E, X])]
     return Clause(head, body)
 
+
+def instantiate_metarule_role_pair(q_pred, role_a, role_b):
+    head = Atom(q_pred, [E])
+    body = [Atom(role_a, [E, X]), Atom(role_b, [E, Y])]
+    return Clause(head, body)
+
+
+def generate_clause_candidates(predicates, roles, existing_hyp=None):
+    """Generate candidate clause actions from the metarule action space."""
+    existing = {str(c) for c in (existing_hyp or [])}
+    candidates = []
+    for p_pred in predicates:
+        for q_pred in predicates:
+            for role_pred in roles:
+                clause = instantiate_metarule_role_transfer(p_pred, q_pred, role_pred)
+                candidates.append(
+                    {
+                        "clause": clause,
+                        "metarule_type": "role_transfer",
+                        "head_pred": q_pred,
+                        "body_preds": [p_pred, role_pred],
+                        "duplicate": str(clause) in existing,
+                    }
+                )
+    if len(roles) >= 2:
+        for q_pred in predicates:
+            for role_a in roles:
+                for role_b in roles:
+                    if role_a == role_b:
+                        continue
+                    clause = instantiate_metarule_role_pair(q_pred, role_a, role_b)
+                    candidates.append(
+                        {
+                            "clause": clause,
+                            "metarule_type": "role_pair",
+                            "head_pred": q_pred,
+                            "body_preds": [role_a, role_b],
+                            "duplicate": str(clause) in existing,
+                        }
+                    )
+    return candidates
+
 # --- Forward-chaining entailment (simple) ---
 # facts: set of ground Atoms (no variables) as strings
 
@@ -737,15 +779,13 @@ def _learn_metagol_beam(predicates, roles, background, pos_examples, neg_example
         candidates = []
         for hy, _ in beam_hypos:
             # expand by adding one clause instantiated from metarule templates
-            for p_pred in predicates:
-                for q_pred in predicates:
-                    for role_pred in roles:
-                        clause = instantiate_metarule_role_transfer(p_pred, q_pred, role_pred)
-                        new_hyp = hy + [clause]
-                        sc = score_hypothesis(new_hyp, pos_examples, neg_examples, background)
-                        prior = embedding_prior(q_pred, [p_pred, role_pred])
-                        total = sc + prior_weight * prior
-                        candidates.append((new_hyp, total))
+            for cand in generate_clause_candidates(predicates, roles, existing_hyp=hy):
+                clause = cand["clause"]
+                new_hyp = hy + [clause]
+                sc = score_hypothesis(new_hyp, pos_examples, neg_examples, background)
+                prior = embedding_prior(cand["head_pred"], cand["body_preds"])
+                total = sc + prior_weight * prior
+                candidates.append((new_hyp, total))
         # keep top beam
         candidates.sort(key=lambda x: x[1], reverse=True)
         beam_hypos = candidates[:beam]
@@ -769,6 +809,9 @@ def learn_metagol_nds(
     search_strategy="beam",
     reward_profile="balanced",
     value_model=None,
+    value_learning_rate=0.02,
+    value_discount=0.9,
+    online_value_updates=True,
     trace_out=None,
 ):
     """Learn a clause set for the target using either beam or value-guided search.
@@ -806,6 +849,9 @@ def learn_metagol_nds(
         prior_weight=prior_weight,
         reward_profile=reward_profile,
         value_model=value_model,
+        value_learning_rate=value_learning_rate,
+        value_discount=value_discount,
+        online_value_updates=online_value_updates,
     )
     if isinstance(trace_out, list):
         trace_out.extend(trace)

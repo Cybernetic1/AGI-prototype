@@ -1,0 +1,4 @@
+strict-binary	22	1	-0.909091	0
+strict-distance	22	1	-0.466131	0
+none-binary	22	1	-0.909091	14
+none-distance	22	1	-0.274459	14

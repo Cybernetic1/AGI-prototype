@@ -16,6 +16,22 @@ class LinearValueModel:
         self.weights = dict(weights or {})
         self.bias = float(bias)
 
+    @classmethod
+    def seeded(cls) -> "LinearValueModel":
+        """Hand-tuned initial weights for stable early value-guided search."""
+        return cls(
+            weights={
+                "bias": 0.02,
+                "depth_norm": -0.02,
+                "parent_score": 0.10,
+                "candidate_score": 0.45,
+                "delta_score": 0.80,
+                "prior": 0.15,
+                "is_duplicate": -0.50,
+            },
+            bias=0.0,
+        )
+
     def score(self, features: Dict[str, float]) -> float:
         total = self.bias
         for key, val in features.items():
@@ -48,4 +64,3 @@ class LinearValueModel:
         p = Path(path)
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(self.to_dict(), indent=2), encoding="utf-8")
-

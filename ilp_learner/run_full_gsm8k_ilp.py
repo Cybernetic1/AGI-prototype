@@ -27,6 +27,10 @@ def parse_args():
     parser.add_argument("--search-strategy", choices=["beam", "value_guided"], default="beam")
     parser.add_argument("--reward-profile", choices=["conservative", "balanced", "aggressive"], default="balanced")
     parser.add_argument("--value-model-path", default="", help="Optional JSON model file for value-guided scoring.")
+    parser.add_argument("--save-value-model-path", default="", help="Optional output path to persist updated value model.")
+    parser.add_argument("--value-lr", type=float, default=0.02, help="Learning rate for online value updates.")
+    parser.add_argument("--value-discount", type=float, default=0.9, help="Discount factor for online value updates.")
+    parser.add_argument("--no-online-value-updates", action="store_true", help="Disable online value-model updates.")
     parser.add_argument("--trace-limit", type=int, default=4)
     parser.add_argument("--max-rows", type=int, default=0, help="Optional scan cap; 0 means full dataset.")
     return parser.parse_args()
@@ -34,7 +38,9 @@ def parse_args():
 
 def main():
     args = parse_args()
-    value_model = LinearValueModel.load(args.value_model_path) if args.value_model_path else None
+    value_model = None
+    if args.search_strategy == "value_guided":
+        value_model = LinearValueModel.load(args.value_model_path) if args.value_model_path else LinearValueModel.seeded()
 
     results = []
     uncertain_for_review = []
@@ -129,6 +135,9 @@ def main():
                     search_strategy=args.search_strategy,
                     reward_profile=args.reward_profile,
                     value_model=value_model,
+                    value_learning_rate=args.value_lr,
+                    value_discount=args.value_discount,
+                    online_value_updates=not args.no_online_value_updates,
                     trace_out=trace,
                 )
             except Exception:
@@ -190,6 +199,9 @@ def main():
         f"Results saved to {OUT_PATH}"
     )
     print(f"Uncertain-label review queue saved to {GUIDANCE_PATH}")
+    if args.search_strategy == "value_guided" and args.save_value_model_path and value_model is not None:
+        value_model.save(args.save_value_model_path)
+        print(f"Saved value model to {args.save_value_model_path}")
 
 
 if __name__ == "__main__":

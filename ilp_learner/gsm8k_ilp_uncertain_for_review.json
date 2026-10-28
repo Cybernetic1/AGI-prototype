@@ -3,8 +3,8 @@
   "search_strategy": "value_guided",
   "reward_profile": "aggressive",
   "skip_counts": {
-    "neutral": 5,
-    "low_confidence": 14
+    "neutral": 8,
+    "low_confidence": 21
   },
   "uncertain_for_review": [
     {
@@ -115,6 +115,62 @@
       "index": 38,
       "id": "38",
       "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 45,
+      "id": "45",
+      "verb": "cost",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 46,
+      "id": "46",
+      "verb": "practice",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 48,
+      "id": "48",
+      "verb": "memorize",
+      "proposed_class": "creation",
+      "confidence": 0.68,
+      "reason": "creation_default"
+    },
+    {
+      "index": 50,
+      "id": "50",
+      "verb": "average",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 51,
+      "id": "51",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 55,
+      "id": "55",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 56,
+      "id": "56",
+      "verb": "be",
       "proposed_class": "comparison",
       "confidence": 0.65,
       "reason": "comparison_default"

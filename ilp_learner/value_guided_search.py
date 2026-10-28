@@ -4,7 +4,7 @@ from math import sqrt
 
 from ilp_learner.metagol_nds import (
     embedding_prior,
-    instantiate_metarule_role_transfer,
+    generate_clause_candidates,
     score_hypothesis,
 )
 from ilp_learner.value_model import LinearValueModel
@@ -27,6 +27,7 @@ def _feature_map(
     candidate_score: float,
     prior: float,
     duplicate: bool,
+    metarule_type: str,
 ) -> dict[str, float]:
     delta = candidate_score - parent_score
     return {
@@ -37,23 +38,8 @@ def _feature_map(
         "delta_score": float(delta),
         "prior": float(prior),
         "is_duplicate": 1.0 if duplicate else 0.0,
+        "is_role_pair": 1.0 if metarule_type == "role_pair" else 0.0,
     }
-
-
-def _initial_model() -> LinearValueModel:
-    # Hand-tuned initial weights stabilize early exploration.
-    return LinearValueModel(
-        weights={
-            "bias": 0.02,
-            "depth_norm": -0.02,
-            "parent_score": 0.10,
-            "candidate_score": 0.45,
-            "delta_score": 0.80,
-            "prior": 0.15,
-            "is_duplicate": -0.50,
-        },
-        bias=0.0,
-    )
 
 
 def learn_with_value_guided_search(
@@ -68,6 +54,9 @@ def learn_with_value_guided_search(
     prior_weight: float = 0.5,
     reward_profile: str = "balanced",
     value_model: LinearValueModel | None = None,
+    value_learning_rate: float = 0.02,
+    value_discount: float = 0.9,
+    online_value_updates: bool = True,
 ):
     """Value-guided clause search with lightweight MCTS-style visit bonus.
 
@@ -75,7 +64,7 @@ def learn_with_value_guided_search(
     value guidance and exploration pressure beyond static beam ranking.
     """
     params = _reward_params(reward_profile)
-    model = value_model or _initial_model()
+    model = value_model or LinearValueModel.seeded()
 
     frontier = [{"hyp": [], "score": 0.0, "objective": 0.0}]
     action_visits: dict[tuple[int, str], int] = {}
@@ -87,49 +76,49 @@ def learn_with_value_guided_search(
         for node in frontier:
             hyp = node["hyp"]
             parent_score = float(node["score"])
-            seen_clause_strings = {str(c) for c in hyp}
-            for p_pred in predicates:
-                for q_pred in predicates:
-                    for role_pred in roles:
-                        clause = instantiate_metarule_role_transfer(p_pred, q_pred, role_pred)
-                        clause_str = str(clause)
-                        duplicate = clause_str in seen_clause_strings
-                        new_hyp = hyp + [clause]
-                        score = score_hypothesis(new_hyp, pos_examples, neg_examples, background)
-                        prior = embedding_prior(q_pred, [p_pred, role_pred])
-                        features = _feature_map(
-                            depth=depth + 1,
-                            max_depth=max_clauses,
-                            parent_score=parent_score,
-                            candidate_score=score,
-                            prior=prior,
-                            duplicate=duplicate,
-                        )
-                        value_est = model.score(features)
-                        shaped_reward = (
-                            params["delta"] * (score - parent_score)
-                            + params["prior"] * prior
-                            + (params["duplicate"] if duplicate else 0.0)
-                        )
+            for spec in generate_clause_candidates(predicates, roles, existing_hyp=hyp):
+                clause = spec["clause"]
+                clause_str = str(clause)
+                duplicate = bool(spec["duplicate"])
+                new_hyp = hyp + [clause]
+                score = score_hypothesis(new_hyp, pos_examples, neg_examples, background)
+                prior = embedding_prior(spec["head_pred"], spec["body_preds"])
+                features = _feature_map(
+                    depth=depth + 1,
+                    max_depth=max_clauses,
+                    parent_score=parent_score,
+                    candidate_score=score,
+                    prior=prior,
+                    duplicate=duplicate,
+                    metarule_type=spec["metarule_type"],
+                )
+                value_est = model.score(features)
+                shaped_reward = (
+                    params["delta"] * (score - parent_score)
+                    + params["prior"] * prior
+                    + (params["duplicate"] if duplicate else 0.0)
+                )
 
-                        action_key = (depth, clause_str)
-                        visits = action_visits.get(action_key, 0)
-                        # Small exploration bonus (UCB-like) to avoid myopic collapse.
-                        exploration = 0.15 * sqrt(max(0.0, (1.0 + parent_count) / (1.0 + visits)))
-                        total = score + prior_weight * prior + value_est + shaped_reward + exploration
-                        candidates.append(
-                            {
-                                "hyp": new_hyp,
-                                "score": float(score),
-                                "total": float(total),
-                                "prior": float(prior),
-                                "value_est": float(value_est),
-                                "shaped_reward": float(shaped_reward),
-                                "duplicate": duplicate,
-                                "clause": clause_str,
-                                "depth": depth + 1,
-                            }
-                        )
+                action_key = (depth, clause_str)
+                visits = action_visits.get(action_key, 0)
+                # Small exploration bonus (UCB-like) to avoid myopic collapse.
+                exploration = 0.15 * sqrt(max(0.0, (1.0 + parent_count) / (1.0 + visits)))
+                total = score + prior_weight * prior + value_est + shaped_reward + exploration
+                candidates.append(
+                    {
+                        "hyp": new_hyp,
+                        "score": float(score),
+                        "total": float(total),
+                        "prior": float(prior),
+                        "value_est": float(value_est),
+                        "shaped_reward": float(shaped_reward),
+                        "duplicate": duplicate,
+                        "clause": clause_str,
+                        "depth": depth + 1,
+                        "features": features,
+                        "metarule_type": spec["metarule_type"],
+                    }
+                )
 
         if not candidates:
             break
@@ -138,6 +127,10 @@ def learn_with_value_guided_search(
         for cand in top:
             action_key = (cand["depth"] - 1, cand["clause"])
             action_visits[action_key] = action_visits.get(action_key, 0) + 1
+            if online_value_updates:
+                # TD-style update: immediate shaped reward + discounted objective proxy.
+                td_target = cand["shaped_reward"] + value_discount * cand["total"]
+                model.update(cand["features"], td_target, lr=value_learning_rate)
             trace.append(
                 {
                     "depth": cand["depth"],
@@ -147,7 +140,10 @@ def learn_with_value_guided_search(
                     "value_est": cand["value_est"],
                     "shaped_reward": cand["shaped_reward"],
                     "duplicate": cand["duplicate"],
+                    "metarule_type": cand["metarule_type"],
                     "clause": cand["clause"],
+                    "td_target": cand["shaped_reward"] + value_discount * cand["total"],
+                    "features": dict(cand["features"]),
                 }
             )
         frontier = [{"hyp": c["hyp"], "score": c["score"], "objective": c["total"]} for c in top]
