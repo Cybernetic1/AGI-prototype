@@ -97,32 +97,42 @@ def print_nl_rule_registry(path: Path) -> None:
         return
     payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     rules = payload.get("rules") or []
+    teacher_events = payload.get("teacher_proposals") or []
     print(f"NL rule registry: {path}")
     print("=" * 72)
     if not rules:
         print("<empty>")
-        return
-    for entry in rules:
-        rid = entry.get("rule_id", "unknown")
-        status = entry.get("status", "proposed")
-        version = entry.get("version", 1)
-        family = (entry.get("compiled") or {}).get("family", "unknown")
-        provenance = entry.get("provenance", "unknown")
-        mutability = entry.get("mutability", "priority_only")
-        accounting = entry.get("accounting") or {}
-        print(f"- {rid} [status={status}, version={version}, family={family}]")
-        print(f"  provenance: {provenance}  mutability: {mutability}")
+    else:
+        for entry in rules:
+            rid = entry.get("rule_id", "unknown")
+            status = entry.get("status", "proposed")
+            version = entry.get("version", 1)
+            family = (entry.get("compiled") or {}).get("family", "unknown")
+            provenance = entry.get("provenance", "unknown")
+            mutability = entry.get("mutability", "priority_only")
+            accounting = entry.get("accounting") or {}
+            print(f"- {rid} [status={status}, version={version}, family={family}]")
+            print(f"  provenance: {provenance}  mutability: {mutability}")
+            print(
+                "  accounting: "
+                f"applied={accounting.get('applied', 0)} "
+                f"wins={accounting.get('wins', 0)} "
+                f"defeats={accounting.get('defeats', 0)} "
+                f"recall+={accounting.get('recall_accepted', 0)} "
+                f"recall-={accounting.get('recall_rejected', 0)}"
+            )
+            print(f"  source: {entry.get('source', 'unknown')}")
+            print(f"  updated_at: {entry.get('updated_at', 'n/a')}")
+            print()
+
+    print(f"teacher_proposals_logged: {len(teacher_events)}")
+    for event in teacher_events[-5:]:
         print(
-            "  accounting: "
-            f"applied={accounting.get('applied', 0)} "
-            f"wins={accounting.get('wins', 0)} "
-            f"defeats={accounting.get('defeats', 0)} "
-            f"recall+={accounting.get('recall_accepted', 0)} "
-            f"recall-={accounting.get('recall_rejected', 0)}"
+            f"  - {event.get('proposal_id', 'unknown')} "
+            f"kind={event.get('proposal_kind', 'unknown')} "
+            f"decision={event.get('decision', 'unknown')} "
+            f"ab={event.get('ab_arm', 'n/a')}"
         )
-        print(f"  source: {entry.get('source', 'unknown')}")
-        print(f"  updated_at: {entry.get('updated_at', 'n/a')}")
-        print()
 
 
 def print_ltm_summary(path: Path) -> None:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -13,9 +14,12 @@ from ilp_learner.metarule_loop import run_metarule_learning_cycle
 from working_memory.working_memory import WorkingMemory
 
 
-def register_candidates(*, top_n: int, activate: bool) -> list[dict]:
+def register_candidates(*, top_n: int, activate: bool, include_agi_transfer_families: bool = False) -> list[dict]:
     wm = WorkingMemory(default_ttl=3)
-    accepted = run_metarule_learning_cycle(top_n=top_n)
+    accepted = run_metarule_learning_cycle(
+        top_n=top_n,
+        include_agi_transfer_families=include_agi_transfer_families,
+    )
     status = "active" if activate else "approved"
     records = []
     for idx, cand in enumerate(accepted, start=1):
@@ -59,12 +63,31 @@ def main() -> int:
     parser.add_argument("--top-n", type=int, default=2)
     parser.add_argument("--activate", action="store_true", help="Register metarules as active instead of approved.")
     parser.add_argument("--ab", action="store_true", help="Run A/B benchmark (baseline vs recall+writeback).")
+    parser.add_argument(
+        "--agi-transfer-families",
+        action="store_true",
+        help=(
+            "Enable AGI-transfer metarule families (part-whole, temporal-causal, "
+            "unit-compatibility) for this run."
+        ),
+    )
     parser.add_argument("--cycles", type=int, default=4)
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
 
-    recs = register_candidates(top_n=max(1, args.top_n), activate=args.activate)
-    print(f"Registered {len(recs)} empirical metarules (status={'active' if args.activate else 'approved'}).")
+    if args.agi_transfer_families:
+        os.environ["AGI_ENABLE_TRANSFER_METARULES"] = "1"
+
+    recs = register_candidates(
+        top_n=max(1, args.top_n),
+        activate=args.activate,
+        include_agi_transfer_families=args.agi_transfer_families,
+    )
+    mode = "with-transfer-families" if args.agi_transfer_families else "baseline-families-only"
+    print(
+        f"Registered {len(recs)} empirical metarules "
+        f"(status={'active' if args.activate else 'approved'}, mode={mode})."
+    )
 
     if args.ab:
         report = run_ab(cycles=max(1, args.cycles), quiet=args.quiet)

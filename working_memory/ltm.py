@@ -291,6 +291,93 @@ class LongTermMemory:
         self._save(payload)
         return {"semantic_count": len(semantic_memory)}
 
+    def record_quality_snapshot(
+        self,
+        *,
+        suite: str,
+        metrics: Dict[str, float],
+        tag: str = "quality",
+        max_snapshots: int = 20,
+    ) -> Dict[str, Any]:
+        payload = self._load()
+        snapshots = payload.setdefault("governance_snapshots", {})
+        suite_key = str(suite or "default")
+        entry = {
+            "snapshot_id": f"snap_{len(snapshots.get(suite_key, [])) + 1}_{_utc_now().replace(':', '').replace('-', '').replace('.', '')}",
+            "tag": str(tag),
+            "created_at": _utc_now(),
+            "metrics": {str(k): float(v) for k, v in (metrics or {}).items()},
+        }
+        suite_list = snapshots.setdefault(suite_key, [])
+        suite_list.append(entry)
+        if len(suite_list) > int(max_snapshots):
+            suite_list[:] = suite_list[-int(max_snapshots):]
+        payload["governance_latest"] = entry
+        self._save(payload)
+        return entry
+
+    def check_quality_drift(
+        self,
+        *,
+        suite: str,
+        current_metrics: Dict[str, float],
+        quality_metric: str = "symbolic_validity",
+        drift_threshold: float = 0.05,
+    ) -> Dict[str, Any]:
+        payload = self._load()
+        snapshots = (payload.get("governance_snapshots") or {}).get(str(suite), [])
+        if not snapshots:
+            return {"drift_detected": False, "baseline": None, "current": current_metrics, "delta": 0.0}
+
+        metric_values = [
+            float(snapshot.get("metrics", {}).get(quality_metric, 0.0))
+            for snapshot in snapshots
+            if quality_metric in (snapshot.get("metrics") or {})
+        ]
+        baseline = max(metric_values) if metric_values else float((snapshots[-1].get("metrics") or {}).get(quality_metric, 0.0))
+        current = float((current_metrics or {}).get(quality_metric, baseline))
+        delta = baseline - current
+        drift_detected = delta > float(drift_threshold)
+        return {
+            "drift_detected": bool(drift_detected),
+            "metric": quality_metric,
+            "baseline": baseline,
+            "current": current,
+            "delta": delta,
+            "threshold": float(drift_threshold),
+            "last_snapshot_id": snapshots[-1].get("snapshot_id"),
+        }
+
+    def rollback_if_drift(
+        self,
+        *,
+        suite: str,
+        current_metrics: Dict[str, float],
+        quality_metric: str = "symbolic_validity",
+        drift_threshold: float = 0.05,
+    ) -> Dict[str, Any]:
+        report = self.check_quality_drift(
+            suite=suite,
+            current_metrics=current_metrics,
+            quality_metric=quality_metric,
+            drift_threshold=drift_threshold,
+        )
+        if not report["drift_detected"]:
+            return {"rolled_back": False, "report": report}
+
+        payload = self._load()
+        snapshots = (payload.get("governance_snapshots") or {}).get(str(suite), [])
+        anchor = None
+        for candidate in reversed(snapshots):
+            metric = float((candidate.get("metrics") or {}).get(quality_metric, 0.0))
+            if metric >= float(report["baseline"]) - float(drift_threshold):
+                anchor = candidate
+                break
+        payload["rollback_anchor"] = anchor or snapshots[-1]
+        payload["last_drift_report"] = report
+        self._save(payload)
+        return {"rolled_back": True, "anchor": anchor or snapshots[-1], "report": report}
+
     def forget(self, *, threshold: float = 0.2, keep_last: int = 50) -> Dict[str, Any]:
         payload = self._load()
         episodes = payload.get("episodes", [])

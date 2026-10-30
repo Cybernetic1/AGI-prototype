@@ -1,1 +1,3140 @@
-rules: []
+rules:
+- rule_id: teacher-prop-prefer-latest
+  version: 1
+  status: proposed
+  created_at: '2026-10-29T08:24:38.537955+00:00'
+  updated_at: '2026-10-29T16:04:00.668499+00:00'
+  source: teacher_llm
+  provenance: teacher_llm
+  mutability: locked
+  raw_rule: If a later state exists for the same owner and item, prefer the later
+    state.
+  compiled:
+    kind: dependency
+    rule_id: rule-prefer-latest-state
+    family: prefer_latest_state
+    condition: later_state_exists_for_same_owner_and_item
+    effect: prefer_later_state_over_earlier_quantity
+    priority: 100
+    owner: null
+    item: null
+    value: null
+    source: nl_rule
+    relation: rule
+    rule_text: If a later state exists for the same owner and item, prefer the later
+      state.
+    validation:
+      required_fields:
+      - rule_id
+      - family
+      - condition
+      - effect
+      - priority
+      accepted: true
+  fingerprint:
+    family: prefer_latest_state
+    condition: later_state_exists_for_same_owner_and_item
+    effect: prefer_later_state_over_earlier_quantity
+    priority: 100
+  proposal_kind: teacher_rule
+  runtime_authority: proposal_only
+  activation_policy: proposal_only
+  evidence:
+    teacher_ingestion_audit:
+      ingested_at: '2026-10-29T16:04:00.142627+00:00'
+      ingestion_channel: teacher_llm_bootstrap
+      ab_arm: treatment
+      low_volume_mode: true
+      teacher_id: bootstrap-teacher-llm
+      teacher_model: unknown
+      proposal_id: teacher-rule-0001
+      compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+      validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  audit:
+    ingested_at: '2026-10-29T16:04:00.142627+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  accounting:
+    applied: 0
+    wins: 0
+    defeats: 0
+    recall_accepted: 0
+    recall_rejected: 0
+    last_event_at: '2026-10-29T08:24:38.537955+00:00'
+  history:
+  - at: '2026-10-29T08:24:38.537955+00:00'
+    event: proposed
+    source: teacher_llm
+  - at: '2026-10-29T08:25:57.919789+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T08:27:17.424792+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T08:28:37.469779+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T08:29:57.119746+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:02:26.868383+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:05:05.681688+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:07:45.341145+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:10:25.913531+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:13:06.201214+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:15:46.450101+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:18:27.523762+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:21:08.696644+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T10:23:49.140149+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T13:38:54.660542+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T13:39:21.294022+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T14:57:03.937871+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T14:57:31.483442+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T14:59:13.384773+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T14:59:40.842813+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:26:30.847466+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:26:55.387813+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:42:15.826697+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:44:58.302926+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:47:41.012757+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:50:23.958151+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:53:06.291968+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:55:49.865243+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T15:58:33.734039+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T16:01:17.505057+00:00'
+    event: updated
+    source: teacher_llm
+  - at: '2026-10-29T16:04:00.668499+00:00'
+    event: updated
+    source: teacher_llm
+teacher_proposals:
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:24:38.510764+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T08:24:38.510764+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T08:24:38.561085+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:24:38.510764+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T08:24:38.592600+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:24:38.510764+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T08:24:38.624995+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:24:38.510764+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T08:24:38.662928+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:25:57.887685+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T08:25:57.887685+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T08:25:57.994860+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:25:57.887685+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T08:25:58.048395+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:25:57.887685+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T08:25:58.105681+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:25:57.887685+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T08:25:58.169319+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:27:17.376695+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T08:27:17.376695+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T08:27:17.524936+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:27:17.376695+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T08:27:17.631860+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:27:17.376695+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T08:27:17.739955+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:27:17.376695+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T08:27:17.856027+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:28:37.404313+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T08:28:37.404313+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T08:28:37.600316+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:28:37.404313+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T08:28:37.734818+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:28:37.404313+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T08:28:37.874270+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:28:37.404313+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T08:28:38.022712+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:29:57.038073+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T08:29:57.038073+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T08:29:57.272789+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:29:57.038073+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T08:29:57.438166+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:29:57.038073+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T08:29:57.598787+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T08:29:57.038073+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T08:29:57.772443+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:02:26.769913+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:02:26.769913+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:02:27.047109+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:02:26.769913+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:02:27.235930+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:02:26.769913+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:02:27.452059+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:02:26.769913+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:02:27.649784+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:05:05.566483+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:05:05.566483+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:05:05.889192+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:05:05.566483+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:05:06.102902+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:05:05.566483+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:05:06.321877+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:05:05.566483+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:05:06.712730+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:07:45.209847+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:07:45.209847+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:07:45.581733+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:07:45.209847+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:07:45.832350+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:07:45.209847+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:07:46.072158+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:07:45.209847+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:07:46.451559+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:10:25.764851+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:10:25.764851+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:10:26.169246+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:10:25.764851+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:10:26.436401+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:10:25.764851+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:10:26.854890+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:10:25.764851+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:10:27.132876+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:13:06.035100+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:13:06.035100+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:13:06.494393+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:13:06.035100+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:13:06.797292+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:13:06.035100+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:13:07.100379+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:13:06.035100+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:13:07.401970+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:15:46.268712+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:15:46.268712+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:15:46.756521+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:15:46.268712+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:15:47.073394+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:15:46.268712+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:15:47.396433+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:15:46.268712+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:15:47.863454+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:18:27.326030+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:18:27.326030+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:18:27.863617+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:18:27.326030+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:18:28.351139+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:18:27.326030+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:18:28.702462+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:18:27.326030+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:18:29.053736+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:21:08.477755+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:21:08.477755+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:21:09.065875+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:21:08.477755+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:21:09.568410+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:21:08.477755+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:21:09.942516+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:21:08.477755+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:21:10.326552+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:23:48.905301+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T10:23:48.905301+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T10:23:49.528391+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:23:48.905301+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T10:23:50.059052+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:23:48.905301+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T10:23:50.454638+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T10:23:48.905301+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T10:23:50.856946+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:38:54.407307+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T13:38:54.407307+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T13:38:55.078074+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:38:54.407307+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T13:38:55.633597+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:38:54.407307+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T13:38:56.066497+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:38:54.407307+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T13:38:56.529656+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:39:21.026576+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T13:39:21.026576+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T13:39:21.726289+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:39:21.026576+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T13:39:22.308194+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:39:21.026576+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T13:39:22.759053+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T13:39:21.026576+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T13:39:23.212666+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:03.656426+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T14:57:03.656426+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T14:57:04.537844+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:03.656426+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T14:57:05.008443+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:03.656426+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T14:57:05.497040+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:03.656426+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T14:57:05.989152+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:31.184302+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T14:57:31.184302+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T14:57:32.117046+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:31.184302+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T14:57:32.593889+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:31.184302+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T14:57:33.099697+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:57:31.184302+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T14:57:33.606459+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:13.066883+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T14:59:13.066883+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T14:59:14.040312+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:13.066883+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T14:59:14.565667+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:13.066883+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T14:59:15.109960+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:13.066883+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T14:59:15.655859+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:40.508581+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T14:59:40.508581+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T14:59:41.528245+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:40.508581+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T14:59:42.095189+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:40.508581+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T14:59:42.654236+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T14:59:40.508581+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T14:59:43.221111+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:30.488493+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:26:30.488493+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:26:31.553888+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:30.488493+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:26:32.133946+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:30.488493+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:26:32.717296+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:30.488493+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:26:33.305353+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:55.027281+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:26:55.027281+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:26:56.122563+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:55.027281+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:26:56.727734+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:55.027281+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:26:57.330604+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:26:55.027281+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:26:57.967049+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:42:15.446742+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:42:15.446742+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:42:16.590359+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:42:15.446742+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:42:17.216368+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:42:15.446742+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:42:17.854251+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:42:15.446742+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:42:18.494929+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:44:57.892738+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:44:57.892738+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:44:59.084410+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:44:57.892738+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:44:59.742369+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:44:57.892738+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:45:00.397720+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:44:57.892738+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:45:01.069414+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:47:40.591308+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:47:40.591308+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:47:41.829478+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:47:40.591308+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:47:42.523491+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:47:40.591308+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:47:43.226502+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:47:40.591308+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:47:43.933642+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:50:23.521325+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:50:23.521325+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:50:24.785239+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:50:23.521325+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:50:25.508208+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:50:23.521325+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:50:26.220714+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:50:23.521325+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:50:26.942578+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:53:05.843653+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:53:05.843653+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:53:07.169658+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:53:05.843653+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:53:07.911566+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:53:05.843653+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:53:08.660865+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:53:05.843653+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:53:09.416072+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:55:49.398950+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:55:49.398950+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:55:50.764216+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:55:49.398950+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:55:51.543600+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:55:49.398950+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:55:52.322164+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:55:49.398950+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:55:53.244831+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:58:33.251104+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T15:58:33.251104+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T15:58:34.652736+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:58:33.251104+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T15:58:35.460223+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:58:33.251104+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T15:58:36.264284+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T15:58:33.251104+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T15:58:37.201316+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:01:17.006243+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T16:01:17.006243+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T16:01:18.448761+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:01:17.006243+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T16:01:19.273234+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:01:17.006243+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T16:01:20.093781+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:01:17.006243+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T16:01:21.050360+00:00'
+- proposal_id: teacher-rule-0001
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:04:00.142627+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed
+  rule_id: teacher-prop-prefer-latest
+  audit:
+    ingested_at: '2026-10-29T16:04:00.142627+00:00'
+    ingestion_channel: teacher_llm_bootstrap
+    ab_arm: treatment
+    low_volume_mode: true
+    teacher_id: bootstrap-teacher-llm
+    teacher_model: unknown
+    proposal_id: teacher-rule-0001
+    compiler: working_memory.nl_rule_injection.NLRuleCompiler.compile
+    validator: working_memory.nl_rule_injection.NLRuleCompiler.validate
+  logged_at: '2026-10-29T16:04:01.645863+00:00'
+- proposal_id: teacher-rule-0002
+  proposal_kind: rule
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:04:00.142627+00:00'
+  decision: rejected
+  gates:
+    compile: false
+    validate: false
+    lifecycle: proposed_only
+  reason: volume_limit_exceeded
+  logged_at: '2026-10-29T16:04:02.503434+00:00'
+- proposal_id: teacher-fact-0003
+  proposal_kind: fact
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:04:00.142627+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  fact_kind: state
+  fact_id: state_bob_apples_1
+  compiled_fact:
+    kind: state
+    id: state_bob_apples_1
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  logged_at: '2026-10-29T16:04:03.362613+00:00'
+- proposal_id: teacher-counterfactual-0004
+  proposal_kind: counterfactual
+  source: teacher_llm
+  teacher_id: bootstrap-teacher-llm
+  teacher_model: unknown
+  ab_arm: treatment
+  low_volume_mode: true
+  runtime_authority: proposal_only
+  received_at: '2026-10-29T16:04:00.142627+00:00'
+  decision: accepted
+  gates:
+    compile: true
+    validate: true
+    lifecycle: proposed_only
+  if:
+    kind: state
+    id: state_cf_before
+    owner: Bob
+    item: apples
+    qty: 10
+    phase: before
+  then:
+    kind: state
+    id: state_cf_after
+    owner: Bob
+    item: apples
+    qty: 7
+    phase: after
+  hypothesis: If Bob gives away apples, remaining apples should decrease.
+  logged_at: '2026-10-29T16:04:04.351817+00:00'

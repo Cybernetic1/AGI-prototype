@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from typing import Any, Optional, Dict, List, Tuple
 
@@ -71,6 +72,15 @@ class WMNode:
 # Working Memory (Global Workspace)
 # ==========================================
 class WorkingMemory:
+    TEACHER_AB_ARMS = {"control", "treatment"}
+    TEACHER_LOW_VOLUME_DEFAULTS = {
+        "total": 3,
+        "rules": 1,
+        "facts": 1,
+        "counterfactuals": 1,
+        "max_rule_chars": 280,
+    }
+
     def __init__(self, default_ttl=3):
         # Dictionary mapping: WMNode -> remaining cycles (TTL)
         self.facts: Dict[WMNode, int] = {}
@@ -286,6 +296,79 @@ class WorkingMemory:
         if not candidates:
             return None
         return max(candidates, key=lambda fact: int(fact.to_dict().get("event_order") or 0))
+
+    def _fact_semantic_key(self, fact):
+        """Return a canonical identity for logically equivalent facts.
+
+        This intentionally ignores provenance, source, activation, and layer metadata so
+        that system outputs which describe the same symbolic state collapse into one WM
+        fact instead of accumulating duplicate beliefs. We keep the causal ordering and
+        value payload, because those are semantically relevant even if multiple subsystems
+        produced the same thing.
+        """
+        attrs = {k: v for k, v in fact.to_dict().items() if k not in {"activation", "layer", "source", "provenance_id"}}
+
+        def normalize(value):
+            if isinstance(value, dict):
+                return tuple(sorted((k, normalize(v)) for k, v in value.items()))
+            if isinstance(value, (list, tuple)):
+                return tuple(normalize(v) for v in value)
+            return value
+
+        return (fact.concept, tuple(sorted((k, normalize(v)) for k, v in attrs.items())))
+
+    def _collapse_duplicate_facts(self):
+        """Keep only the strongest instance of each logically equivalent fact."""
+        groups = {}
+        for fact in list(self.facts):
+            groups.setdefault(self._fact_semantic_key(fact), []).append(fact)
+
+        for bucket in groups.values():
+            if len(bucket) <= 1:
+                continue
+            winner = max(bucket, key=lambda f: (self._state_priority(f), float(f.activation), self.facts[f]))
+            for stale in bucket:
+                if stale is winner:
+                    continue
+                self.facts.pop(stale, None)
+
+    def _prune_stale_state_facts(self):
+        """Drop older state values once a newer final or preferred state is established."""
+        latest_by_key = {}
+        for fact in list(self.facts):
+            attrs = fact.to_dict()
+            owner = attrs.get("owner")
+            item = attrs.get("item")
+            if owner is None or item is None:
+                continue
+            if fact.concept not in {"FinalState", "PreferredState", "StateTransition", "State"}:
+                continue
+            key = (owner, item)
+            current = latest_by_key.get(key)
+            if current is None:
+                latest_by_key[key] = fact
+                continue
+            current_order = int(current.to_dict().get("event_order") or -1)
+            fact_order = int(fact.to_dict().get("event_order") or -1)
+            if fact_order > current_order:
+                latest_by_key[key] = fact
+
+        for fact in list(self.facts):
+            attrs = fact.to_dict()
+            owner = attrs.get("owner")
+            item = attrs.get("item")
+            if owner is None or item is None:
+                continue
+            latest = latest_by_key.get((owner, item))
+            if latest is None or fact is latest:
+                continue
+            fact_order = attrs.get("event_order")
+            latest_order = latest.to_dict().get("event_order")
+            if fact_order is None or latest_order is None:
+                continue
+            if int(fact_order) < int(latest_order):
+                if fact.concept in {"BlockedState", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State", "StateTransition", "FinalState", "PreferredState"}:
+                    self.facts.pop(fact, None)
 
     def _reconcile_state_authority(self, owner, item):
         latest = self._latest_state_authority(owner, item)
@@ -577,6 +660,9 @@ class WorkingMemory:
             else:
                 self.facts[fact] = self.default_ttl
 
+        self._prune_stale_state_facts()
+        self._collapse_duplicate_facts()
+
     def facts_by_layer(self, layer):
         return {fact: ttl for fact, ttl in self.facts.items() if fact.layer == layer}
 
@@ -663,6 +749,337 @@ class WorkingMemory:
                 priority=priority,
             )] = self.default_ttl
 
+    @staticmethod
+    def _utc_now() -> str:
+        return datetime.now(timezone.utc).isoformat()
+
+    @staticmethod
+    def _is_teacher_llm_source(source: str) -> bool:
+        return str(source or "").strip().lower().replace("-", "_") in {"teacher_llm", "bootstrap_teacher_llm"}
+
+    @staticmethod
+    def _as_int(value: Any, default: int) -> int:
+        try:
+            return int(value)
+        except Exception:
+            return int(default)
+
+    def _teacher_limits(
+        self,
+        *,
+        low_volume_mode: bool,
+        max_total: int,
+        max_rules: int,
+        max_facts: int,
+        max_counterfactuals: int,
+        max_rule_chars: int,
+    ) -> Dict[str, int]:
+        requested = {
+            "total": max(0, self._as_int(max_total, self.TEACHER_LOW_VOLUME_DEFAULTS["total"])),
+            "rules": max(0, self._as_int(max_rules, self.TEACHER_LOW_VOLUME_DEFAULTS["rules"])),
+            "facts": max(0, self._as_int(max_facts, self.TEACHER_LOW_VOLUME_DEFAULTS["facts"])),
+            "counterfactuals": max(0, self._as_int(max_counterfactuals, self.TEACHER_LOW_VOLUME_DEFAULTS["counterfactuals"])),
+            "max_rule_chars": max(80, self._as_int(max_rule_chars, self.TEACHER_LOW_VOLUME_DEFAULTS["max_rule_chars"])),
+        }
+        if not low_volume_mode:
+            return requested
+        return {
+            key: min(requested[key], int(self.TEACHER_LOW_VOLUME_DEFAULTS[key]))
+            for key in requested
+        }
+
+    def _normalize_teacher_proposal_lists(self, proposals: Any) -> Dict[str, List[Dict[str, Any]]]:
+        normalized: Dict[str, List[Dict[str, Any]]] = {
+            "rules": [],
+            "facts": [],
+            "counterfactuals": [],
+        }
+        if isinstance(proposals, list):
+            for item in proposals:
+                if not isinstance(item, dict):
+                    continue
+                kind = str(item.get("kind") or "").strip().lower()
+                if kind in {"rule", "rules"}:
+                    normalized["rules"].append(item)
+                elif kind in {"fact", "facts"}:
+                    normalized["facts"].append(item)
+                elif kind in {"counterfactual", "counterfactuals"}:
+                    normalized["counterfactuals"].append(item)
+            return normalized
+
+        if not isinstance(proposals, dict):
+            return normalized
+
+        def _extract(*names: str) -> List[Dict[str, Any]]:
+            for name in names:
+                value = proposals.get(name)
+                if isinstance(value, list):
+                    return [v for v in value if isinstance(v, dict)]
+            return []
+
+        normalized["rules"] = _extract("rules", "rule_candidates", "candidate_rules")
+        normalized["facts"] = _extract("facts", "fact_candidates", "candidate_facts")
+        normalized["counterfactuals"] = _extract("counterfactuals", "counterfactual_candidates", "candidate_counterfactuals")
+        return normalized
+
+    def ingest_teacher_proposals(
+        self,
+        proposals: Any,
+        *,
+        source: str = "teacher_llm",
+        teacher_id: str = "bootstrap-teacher-llm",
+        teacher_model: str = "unknown",
+        ab_arm: str = "control",
+        enable_ingestion: bool = False,
+        low_volume_mode: bool = True,
+        max_total: int = 3,
+        max_rules: int = 1,
+        max_facts: int = 1,
+        max_counterfactuals: int = 1,
+        max_rule_chars: int = 280,
+    ) -> Dict[str, Any]:
+        normalized_arm = str(ab_arm or "control").strip().lower()
+        if normalized_arm not in self.TEACHER_AB_ARMS:
+            raise ValueError(f"unsupported teacher A/B arm: {ab_arm}")
+
+        report: Dict[str, Any] = {
+            "accepted": False,
+            "enabled": bool(enable_ingestion),
+            "ab_arm": normalized_arm,
+            "low_volume_mode": bool(low_volume_mode),
+            "source": source,
+            "teacher_id": teacher_id,
+            "teacher_model": teacher_model,
+            "runtime_authority": "proposal_only",
+            "events": [],
+            "counts": {
+                "submitted": 0,
+                "processed": 0,
+                "accepted": 0,
+                "rejected": 0,
+                "dropped_by_volume": 0,
+            },
+        }
+        if not enable_ingestion:
+            report["reason"] = "teacher ingestion disabled"
+            return report
+        if normalized_arm == "control":
+            report["reason"] = "control arm: ingestion skipped"
+            return report
+        if not self._is_teacher_llm_source(source):
+            raise ValueError("teacher proposal ingestion source must be teacher_llm")
+
+        bundles = self._normalize_teacher_proposal_lists(proposals)
+        report["counts"]["submitted"] = sum(len(items) for items in bundles.values())
+        limits = self._teacher_limits(
+            low_volume_mode=bool(low_volume_mode),
+            max_total=max_total,
+            max_rules=max_rules,
+            max_facts=max_facts,
+            max_counterfactuals=max_counterfactuals,
+            max_rule_chars=max_rule_chars,
+        )
+        report["limits"] = limits
+
+        kind_cap_key = {
+            "rules": "rules",
+            "facts": "facts",
+            "counterfactuals": "counterfactuals",
+        }
+        accepted_per_kind = {"rules": 0, "facts": 0, "counterfactuals": 0}
+        now = self._utc_now()
+        proposal_seq = 0
+        total_accepted = 0
+
+        for kind in ("rules", "facts", "counterfactuals"):
+            for item in bundles[kind]:
+                proposal_seq += 1
+                proposal_id = f"teacher-{kind[:-1]}-{proposal_seq:04d}"
+                base_event = {
+                    "proposal_id": proposal_id,
+                    "proposal_kind": kind[:-1],
+                    "source": source,
+                    "teacher_id": teacher_id,
+                    "teacher_model": teacher_model,
+                    "ab_arm": normalized_arm,
+                    "low_volume_mode": bool(low_volume_mode),
+                    "runtime_authority": "proposal_only",
+                    "received_at": now,
+                    "decision": "rejected",
+                    "gates": {
+                        "compile": False,
+                        "validate": False,
+                        "lifecycle": "proposed_only",
+                    },
+                }
+
+                if total_accepted >= limits["total"] or accepted_per_kind[kind] >= limits[kind_cap_key[kind]]:
+                    base_event["reason"] = "volume_limit_exceeded"
+                    self.rule_registry.append_teacher_proposal_event(base_event)
+                    report["events"].append(base_event)
+                    report["counts"]["dropped_by_volume"] += 1
+                    report["counts"]["rejected"] += 1
+                    continue
+
+                if kind == "rules":
+                    raw_rule = str(item.get("raw_rule") or item.get("rule_text") or "").strip()
+                    if not raw_rule:
+                        base_event["reason"] = "missing_raw_rule"
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+                    if len(raw_rule) > limits["max_rule_chars"]:
+                        base_event["reason"] = f"rule_text_too_long>{limits['max_rule_chars']}"
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+                    compiled = NLRuleCompiler.compile(raw_rule)
+                    base_event["gates"]["compile"] = True
+                    ok, issues = NLRuleCompiler.validate(compiled)
+                    base_event["gates"]["validate"] = bool(ok)
+                    if not ok:
+                        base_event["reason"] = "validator_rejected_rule"
+                        base_event["issues"] = issues
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+
+                    candidate_rule_id = str(item.get("rule_id") or compiled.get("rule_id") or "").strip()
+                    if not candidate_rule_id or candidate_rule_id in {"rule-generic", "rule-autogen"}:
+                        candidate_rule_id = f"teacher_llm_rule_{proposal_id.replace('-', '_')}"
+                    audit = {
+                        "ingested_at": now,
+                        "ingestion_channel": "teacher_llm_bootstrap",
+                        "ab_arm": normalized_arm,
+                        "low_volume_mode": bool(low_volume_mode),
+                        "teacher_id": teacher_id,
+                        "teacher_model": teacher_model,
+                        "proposal_id": proposal_id,
+                        "compiler": "working_memory.nl_rule_injection.NLRuleCompiler.compile",
+                        "validator": "working_memory.nl_rule_injection.NLRuleCompiler.validate",
+                    }
+                    evidence = dict(item.get("evidence") or {})
+                    evidence["teacher_ingestion_audit"] = dict(audit)
+                    entry = self.rule_registry.register_proposal(
+                        rule_id=candidate_rule_id,
+                        raw_rule=raw_rule,
+                        source=source,
+                        compiled_payload=compiled,
+                        evidence=evidence,
+                        audit=audit,
+                        proposal_kind="teacher_rule",
+                        runtime_authority="proposal_only",
+                        activation_policy="proposal_only",
+                    )
+                    self.facts[WMNode.create(
+                        "TeacherRuleProposal",
+                        layer="meta",
+                        source=source,
+                        provenance_id=candidate_rule_id,
+                        proposal_id=proposal_id,
+                        rule_id=candidate_rule_id,
+                        family=compiled.get("family"),
+                        status=entry.get("status", "proposed"),
+                        runtime_authority="proposal_only",
+                        ab_arm=normalized_arm,
+                    )] = self.default_ttl
+                    accepted_event = dict(base_event)
+                    accepted_event["decision"] = "accepted"
+                    accepted_event["rule_id"] = candidate_rule_id
+                    accepted_event["gates"]["lifecycle"] = entry.get("status", "proposed")
+                    accepted_event["audit"] = audit
+                    self.rule_registry.append_teacher_proposal_event(accepted_event)
+                    report["events"].append(accepted_event)
+                elif kind == "facts":
+                    fragment = item.get("fact") or item.get("payload") or item
+                    if not isinstance(fragment, dict):
+                        base_event["reason"] = "fact_payload_must_be_dict"
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+                    compiled_fact = dict(fragment)
+                    base_event["gates"]["compile"] = True
+                    ok, issues = SemanticGraphSchema.validate_graph_fragment(compiled_fact)
+                    base_event["gates"]["validate"] = bool(ok)
+                    if not ok:
+                        base_event["reason"] = "validator_rejected_fact"
+                        base_event["issues"] = issues
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+
+                    accepted_event = dict(base_event)
+                    accepted_event["decision"] = "accepted"
+                    accepted_event["fact_kind"] = str(compiled_fact.get("kind"))
+                    accepted_event["fact_id"] = str(compiled_fact.get("id", ""))
+                    accepted_event["compiled_fact"] = compiled_fact
+                    self.facts[WMNode.create(
+                        "TeacherFactProposal",
+                        layer="meta",
+                        source=source,
+                        proposal_id=proposal_id,
+                        fact_kind=accepted_event["fact_kind"],
+                        fact_id=accepted_event["fact_id"] or proposal_id,
+                        status="proposed",
+                        runtime_authority="proposal_only",
+                        ab_arm=normalized_arm,
+                    )] = self.default_ttl
+                    self.rule_registry.append_teacher_proposal_event(accepted_event)
+                    report["events"].append(accepted_event)
+                else:
+                    if_fragment = item.get("if") or item.get("if_fragment")
+                    then_fragment = item.get("then") or item.get("then_fragment")
+                    if not isinstance(if_fragment, dict) or not isinstance(then_fragment, dict):
+                        base_event["reason"] = "counterfactual_requires_if_and_then_fragments"
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+                    base_event["gates"]["compile"] = True
+                    if_ok, if_issues = SemanticGraphSchema.validate_graph_fragment(if_fragment)
+                    then_ok, then_issues = SemanticGraphSchema.validate_graph_fragment(then_fragment)
+                    gate_ok = bool(if_ok and then_ok)
+                    base_event["gates"]["validate"] = gate_ok
+                    if not gate_ok:
+                        base_event["reason"] = "validator_rejected_counterfactual"
+                        base_event["issues"] = list(if_issues or []) + list(then_issues or [])
+                        self.rule_registry.append_teacher_proposal_event(base_event)
+                        report["events"].append(base_event)
+                        report["counts"]["rejected"] += 1
+                        continue
+
+                    accepted_event = dict(base_event)
+                    accepted_event["decision"] = "accepted"
+                    accepted_event["if"] = if_fragment
+                    accepted_event["then"] = then_fragment
+                    accepted_event["hypothesis"] = str(item.get("hypothesis") or "")
+                    self.facts[WMNode.create(
+                        "TeacherCounterfactualProposal",
+                        layer="meta",
+                        source=source,
+                        proposal_id=proposal_id,
+                        status="proposed",
+                        runtime_authority="proposal_only",
+                        ab_arm=normalized_arm,
+                    )] = self.default_ttl
+                    self.rule_registry.append_teacher_proposal_event(accepted_event)
+                    report["events"].append(accepted_event)
+
+                accepted_per_kind[kind] += 1
+                total_accepted += 1
+                report["counts"]["accepted"] += 1
+                report["counts"]["processed"] += 1
+
+        report["accepted"] = report["counts"]["accepted"] > 0
+        report["counts"]["processed"] = report["counts"]["accepted"] + report["counts"]["rejected"]
+        report["accepted_by_kind"] = accepted_per_kind
+        return report
+
     def inject_nl_rule(
         self,
         raw_rule: str,
@@ -684,15 +1101,32 @@ class WorkingMemory:
             return {"accepted": False, "issues": issues, "payload": payload}
 
         final_rule_id = rule_id or payload.get("rule_id") or "rule-autogen"
+        teacher_llm_source = self._is_teacher_llm_source(source)
+        audit = {
+            "ingested_at": self._utc_now(),
+            "ingestion_channel": "nl_rule_injection",
+            "source": source,
+            "compiler": "working_memory.nl_rule_injection.NLRuleCompiler.compile",
+            "validator": "working_memory.nl_rule_injection.NLRuleCompiler.validate",
+        }
+        merged_evidence = dict(evidence or {})
+        if teacher_llm_source:
+            merged_evidence["teacher_ingestion_audit"] = dict(audit)
         entry = self.rule_registry.register_proposal(
             rule_id=final_rule_id,
             raw_rule=raw_rule,
             source=source,
             compiled_payload=payload,
-            evidence=evidence,
+            evidence=merged_evidence,
+            audit=audit,
+            proposal_kind="teacher_rule" if teacher_llm_source else "rule",
+            runtime_authority="proposal_only" if teacher_llm_source else None,
+            activation_policy="proposal_only" if teacher_llm_source else None,
         )
 
         normalized_status = str(target_status).strip().lower() if target_status else "proposed"
+        if teacher_llm_source:
+            normalized_status = "proposed"
         if normalized_status != "proposed":
             entry = self.rule_registry.transition(final_rule_id, normalized_status, reviewer=source, reason="explicit target status on injection")
 
@@ -728,6 +1162,7 @@ class WorkingMemory:
             "family": payload.get("family"),
             "status": current_status,
             "version": entry.get("version"),
+            "runtime_authority": entry.get("runtime_authority", "full"),
             "payload": payload,
         }
 
@@ -743,6 +1178,8 @@ class WorkingMemory:
             rule_id=rule_id,
             status=status,
             version=int(entry.get("version", 1)),
+            runtime_authority=str(entry.get("runtime_authority", "full")),
+            activation_policy=str(entry.get("activation_policy", "none")),
             reviewer=reviewer,
             reason=reason,
         )] = self.default_ttl
