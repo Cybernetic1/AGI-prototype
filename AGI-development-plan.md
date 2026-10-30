@@ -34,6 +34,8 @@ The benchmark target is GSM8K, and the system should be shaped by bottleneck dis
   - Added durable rule registry with status workflow: `proposed -> approved -> active -> retracted`.
   - Added provenance/mutability policy (`teacher` vs `empirical`; `locked` / `priority_only` / `fully_mutable`).
   - Added semantic validation gates for NL-injected rule families before activation.
+  - Added strict teacher-LLM proposal ingestion (`rules/facts/counterfactuals`) with proposal-only runtime authority, audit/provenance logging, and low-volume caps.
+  - Added A/B controls (`control` vs `treatment`) and explicit low-volume toggles for bootstrap ingestion runs.
 
 - **WM↔LTM bridge with associative recall**
   - Added LTM store with episodic, semantic, and rule memory partitions.

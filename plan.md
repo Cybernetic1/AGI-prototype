@@ -1,3 +1,37 @@
+2026-10-29 unified bootstrap decisions (current canonical plan)
+- Canonical planning location: this repository `plan.md` is now the human-readable source of truth.
+- We also keep execution state in SQL todos/dependencies and generated report artifacts; those are operational tracking layers, not the canonical narrative plan.
+- Priority order:
+  1) SAR trainability first,
+  2) integrate PoT with a small typed DSL (not free-form Python),
+  3) GSM8K cost reduction with symbolic-validity-first promotion gates,
+  4) TinyStories widening at ~40% curriculum share,
+  5) unified cross-domain ledger gates.
+- PoT integration decisions:
+  - PoT is proposal-only until System-2 / WM validation accepts it.
+  - Use typed executable traces over existing primitives (`Add/Subtract/Multiply/Divide`, state transitions, final-state authority).
+  - Promotion requires repeated seeded A/B non-regression on solve + symbolic validity.
+- Continuous CPU-loop decisions:
+  - Keep versioned rule snapshots, append-only experience logs, and periodic checkpointing.
+  - Gate all promoted rule/metarule changes via symbolic-validity-first non-regression checks.
+- Implementation progress (2026-10-29):
+  - PoT typed DSL IR + validator/executor implemented (`working_memory/pot_dsl.py`).
+  - PoT corpus pipeline implemented (`rules/export_pot_corpus.py`) with executable positive/negative trace rows.
+  - PoT proposer baseline trainer implemented (`rules/train_pot_proposer.py`) with initial model artifact and metrics.
+  - PoT runtime treatment hook integrated into bootstrap baseline/A-B runner (`--pot-enable`, `--pot-enable-treatment`) and validated on repeated seeded A/B:
+    - solve-rate delta mean: 0.0
+    - symbolic-valid-rate delta mean: 0.0
+    - wall-time delta mean: +0.192s (current PoT treatment is non-degrading but slower).
+  - GSM golden lock contract finalized and validated (`rules/bootstrap_golden_slices_v1.json`, `rules/validate_golden_slices_lock.py`, `rules/reports/golden_slices_lock_eval_v1.json`).
+  - TinyStories compact symbolic curation exported and validated (`rules/export_tinystories_symbolic_set.py`, `rules/validate_tinystories_symbolic_set.py`, `rules/reports/tinystories_symbolic_compact_v1.jsonl`).
+  - TinyStories compact repeated A/B report generated (`rules/reports/agi_bootstrap_ab_tinystories_symbolic_v1.json`) with hybrid solve/symbolic validity remaining green on the 3-family compact slice.
+  - GSM per-family cost diagnostics added (`rules/run_gsm_cost_diagnostics.py`, `rules/reports/gsm_cost_diagnostics_v1.json`), identifying `buy_more_then_donation_and_spoilage` as the top wall-time bottleneck among locked GSM families.
+  - GSM annealing promotions rerun on locked golden slices (`rules/reports/agi_bootstrap_efficiency_phase_v2.json`): quality gates remain green, but no non-default budget is promoted yet.
+  - TinyStories widening gates runner added (`rules/run_tinystories_widening_gates.py`, `rules/reports/agi_bootstrap_tinystories_widening_gates_v1.json`), currently green on both compact TinyStories and compact mixed narrative-symbolic slices.
+  - Cross-domain transfer + unified ledger evaluations added:
+    - `rules/evaluate_cross_domain_transfer.py` -> `rules/reports/agi_bootstrap_cross_domain_transfer_v1.json` (overall_pass=true)
+    - `rules/evaluate_unified_contract_ledger.py` -> `rules/reports/agi_bootstrap_unified_contract_ledger_v1.json` (overall_green=false solely because annealing has not promoted beyond baseline-default-budget).
+
 2026-10-22 final-state authority and revision milestone
 - Fixed the remaining ordering bug in the state machine: final-state transitions now use the global event order, so the latest valid state outranks stale earlier candidates.
 - Added the contradiction / revision layer in System 3 so same owner/item conflicts prefer the latest valid state and source authority before numeric size.

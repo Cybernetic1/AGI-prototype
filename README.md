@@ -48,3 +48,82 @@ System 1 utilizes hyperbolic space (such as Poincaré embeddings) to model hiera
 Working Memory operates with an integer-based Time-To-Live (TTL) decay mechanism. Facts are assigned a TTL in terms of cognitive cycles. If a fact is not actively reinforced (re-perceived by System 1 or re-deduced by Systems 2/3), its TTL decrements each cycle until it drops to zero and is forgotten. This "activation energy" limits memory bloat and keeps the Global Workspace focused on salient information.
 
 By separating these concerns, the architecture leverages the strengths of differentiable neural networks for noisy input handling (System 1) while retaining the correctness, interpretability, and powerful search capabilities of classical symbolic engines (Systems 2 & 3).
+
+## Baseline efficiency contract (AGI-cum-GSM bootstrap)
+
+Use this single reproducible command for A/B profile comparisons:
+
+```bash
+python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json
+```
+
+Profiles:
+- `lt-heavy`: System 1 + System 2
+- `hybrid`: System 1 + System 2 + System 3
+- `ilp-heavy`: System 1 + System 3
+
+Contract metrics:
+- capability: `solve_rate = solved_cases / total_cases`
+- symbolic validity: numeric reasoning-belief rate (`Belief(value=number)` not emitted by `gsm8k_compiler`)
+- sample efficiency: valid solves per sample and samples per valid solve
+- compute cost: wall-clock total/per-case/per-valid-solve seconds
+
+### Semantic-AR (SAR) proposal shaping (A/B)
+
+SAR is an auxiliary **proposal/ranking shaper** in System 1. It does not replace symbolic truth checks:
+- System-2 semantic validation and WM graph validation remain authoritative gates.
+- SAR can only reweight proposal ranking; failed symbolic pre-gates receive no SAR boost.
+
+Example (SAR-enabled A/B run):
+
+```bash
+python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --sar-enabled --sar-weight 0.2 --output rules/reports/agi_bootstrap_baseline_sar_v1.json
+```
+
+Useful SAR flags:
+- `--sar-enabled`
+- `--sar-weight`
+- `--sar-lexical-weight`
+- `--sar-role-weight`
+- `--sar-prior-weight`
+- `--sar-gate-fail-penalty`
+- `--sar-disable-symbolic-gate-coupling` (ablation)
+- `--sar-emit-metadata`
+
+### Invariant-first curriculum + regression gates
+
+Compact invariant curriculum contract:
+- Contract file: `rules/bootstrap_invariant_curriculum.json`
+- Runner: `rules/run_bootstrap_invariant_curriculum.py`
+
+Validation (syntax + dataset compatibility):
+```bash
+python3 rules/run_bootstrap_invariant_curriculum.py --check-only --print-commands
+```
+
+Full gated regression run:
+```bash
+python3 rules/run_bootstrap_invariant_curriculum.py --output rules/reports/agi_bootstrap_invariant_curriculum_v1.json
+```
+
+Curriculum widening run (TinyStories-style + mixed symbolic-text slices, still invariant-gated):
+```bash
+python3 rules/run_bootstrap_invariant_curriculum.py --contract rules/bootstrap_invariant_curriculum_widening.json --check-only --print-commands
+python3 rules/run_bootstrap_invariant_curriculum.py --contract rules/bootstrap_invariant_curriculum_widening.json --output rules/reports/agi_bootstrap_curriculum_widening_v1.json
+```
+
+Convenience script:
+```bash
+bash rules/reports/agi_bootstrap_curriculum_widening_commands.sh
+```
+
+SAR controls are also available on the curriculum runner and are forwarded to each baseline subprocess.
+
+Minimal SAR smoke validation:
+```bash
+python3 rules/validate_sar_objective.py
+```
+
+Pass criteria:
+- Slices run in order and widening stops on first blocking gate failure.
+- Regression passes only when `all_gates_green=true` in the report JSON.
