@@ -1,0 +1,288 @@
+{
+  "study_id": "agi-bootstrap-ab-efficiency-v1",
+  "generated_at": "2026-10-28T17:18:49.331062+00:00",
+  "slice": {
+    "suite": "combined",
+    "families": [
+      "buy_more_final_gap",
+      "donation_after_buy_more",
+      "buy_more_then_donation_and_spoilage",
+      "buy_more_then_donation_after_spoilage_long_tail",
+      "unit_conversion_dozen",
+      "distance_over_speed",
+      "percent_sequence_growth",
+      "percent_sequence_discount"
+    ],
+    "case_count": 8,
+    "max_cycles": 2
+  },
+  "profiles": [
+    {
+      "profile": "lt-heavy",
+      "systems": [
+        "system1",
+        "system2"
+      ],
+      "control": {
+        "total_cases": 8,
+        "solved_cases": 6,
+        "symbolic_valid_cases": 8,
+        "solved_and_symbolic_valid_cases": 6,
+        "capability": {
+          "solve_rate": 0.75
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 1.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.75,
+          "samples_per_valid_solve": 1.3333333333333333
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 12.627035548001004,
+          "wall_time_sec_per_case": 1.5783794435001255,
+          "wall_time_sec_per_valid_solve": 2.104505924666834
+        }
+      },
+      "treatment": {
+        "total_cases": 8,
+        "solved_cases": 6,
+        "symbolic_valid_cases": 8,
+        "solved_and_symbolic_valid_cases": 6,
+        "capability": {
+          "solve_rate": 0.75
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 1.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.75,
+          "samples_per_valid_solve": 1.3333333333333333
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 12.758294642997498,
+          "wall_time_sec_per_case": 1.5947868303746873,
+          "wall_time_sec_per_valid_solve": 2.126382440499583
+        }
+      },
+      "delta_treatment_minus_control": {
+        "capability": {
+          "solve_rate": 0.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 0.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.0,
+          "samples_per_valid_solve": 0.0
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 0.13125909499649424,
+          "wall_time_sec_per_case": 0.01640738687456178,
+          "wall_time_sec_per_valid_solve": 0.021876515832749188
+        }
+      }
+    },
+    {
+      "profile": "hybrid",
+      "systems": [
+        "system1",
+        "system2",
+        "system3"
+      ],
+      "control": {
+        "total_cases": 8,
+        "solved_cases": 8,
+        "symbolic_valid_cases": 8,
+        "solved_and_symbolic_valid_cases": 8,
+        "capability": {
+          "solve_rate": 1.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 1.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 1.0,
+          "samples_per_valid_solve": 1.0
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 12.043397694997111,
+          "wall_time_sec_per_case": 1.5054247118746389,
+          "wall_time_sec_per_valid_solve": 1.5054247118746389
+        }
+      },
+      "treatment": {
+        "total_cases": 8,
+        "solved_cases": 8,
+        "symbolic_valid_cases": 8,
+        "solved_and_symbolic_valid_cases": 8,
+        "capability": {
+          "solve_rate": 1.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 1.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 1.0,
+          "samples_per_valid_solve": 1.0
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 11.965523941998981,
+          "wall_time_sec_per_case": 1.4956904927498726,
+          "wall_time_sec_per_valid_solve": 1.4956904927498726
+        }
+      },
+      "delta_treatment_minus_control": {
+        "capability": {
+          "solve_rate": 0.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 0.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.0,
+          "samples_per_valid_solve": 0.0
+        },
+        "compute_cost": {
+          "wall_time_sec_total": -0.07787375299812993,
+          "wall_time_sec_per_case": -0.009734219124766241,
+          "wall_time_sec_per_valid_solve": -0.009734219124766241
+        }
+      }
+    },
+    {
+      "profile": "ilp-heavy",
+      "systems": [
+        "system1",
+        "system3"
+      ],
+      "control": {
+        "total_cases": 8,
+        "solved_cases": 8,
+        "symbolic_valid_cases": 6,
+        "solved_and_symbolic_valid_cases": 6,
+        "capability": {
+          "solve_rate": 1.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 0.75
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.75,
+          "samples_per_valid_solve": 1.3333333333333333
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 8.532535278998694,
+          "wall_time_sec_per_case": 1.0665669098748367,
+          "wall_time_sec_per_valid_solve": 1.4220892131664489
+        }
+      },
+      "treatment": {
+        "total_cases": 8,
+        "solved_cases": 8,
+        "symbolic_valid_cases": 6,
+        "solved_and_symbolic_valid_cases": 6,
+        "capability": {
+          "solve_rate": 1.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 0.75
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.75,
+          "samples_per_valid_solve": 1.3333333333333333
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 8.576380004000384,
+          "wall_time_sec_per_case": 1.072047500500048,
+          "wall_time_sec_per_valid_solve": 1.4293966673333973
+        }
+      },
+      "delta_treatment_minus_control": {
+        "capability": {
+          "solve_rate": 0.0
+        },
+        "symbolic_validity": {
+          "symbolic_valid_rate": 0.0
+        },
+        "sample_efficiency": {
+          "valid_solves_per_sample": 0.0,
+          "samples_per_valid_solve": 0.0
+        },
+        "compute_cost": {
+          "wall_time_sec_total": 0.043844725001690676,
+          "wall_time_sec_per_case": 0.0054805906252113346,
+          "wall_time_sec_per_valid_solve": 0.007307454166948446
+        }
+      }
+    }
+  ],
+  "macro_summary": {
+    "control": {
+      "solve_rate_mean": 0.9166666666666666,
+      "symbolic_valid_rate_mean": 0.9166666666666666,
+      "valid_solves_per_sample_mean": 0.8333333333333334,
+      "wall_time_sec_total_sum": 33.20296852199681
+    },
+    "treatment": {
+      "solve_rate_mean": 0.9166666666666666,
+      "symbolic_valid_rate_mean": 0.9166666666666666,
+      "valid_solves_per_sample_mean": 0.8333333333333334,
+      "wall_time_sec_total_sum": 33.300198588996864
+    },
+    "delta_treatment_minus_control": {
+      "solve_rate_mean": 0.0,
+      "symbolic_valid_rate_mean": 0.0,
+      "valid_solves_per_sample_mean": 0.0,
+      "wall_time_sec_total_sum": 0.09723006700005499
+    }
+  },
+  "knob_profiles": {
+    "control": {
+      "agi_transfer_metarules": false,
+      "semantic_ar_enabled": false,
+      "teacher_ingestion": {
+        "enabled": false,
+        "ab_arm": "control"
+      }
+    },
+    "treatment": {
+      "agi_transfer_metarules": true,
+      "semantic_ar": {
+        "enabled": true,
+        "weight": 0.25,
+        "lexical_weight": 0.55,
+        "role_weight": 0.3,
+        "prior_weight": 0.15,
+        "gate_fail_penalty": 0.05,
+        "couple_to_symbolic_gate": true,
+        "emit_metadata": false
+      },
+      "teacher_ingestion": {
+        "enabled": true,
+        "ab_arm": "treatment",
+        "counts": {
+          "submitted": 4,
+          "processed": 4,
+          "accepted": 3,
+          "rejected": 1,
+          "dropped_by_volume": 1
+        },
+        "accepted_by_kind": {
+          "rules": 1,
+          "facts": 1,
+          "counterfactuals": 1
+        }
+      }
+    }
+  },
+  "repro_commands": {
+    "control": "AGI_ENABLE_TRANSFER_METARULES=0 /home/yky/misc-programs/.venv/bin/python rules/run_bootstrap_baseline.py --suite combined --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families buy_more_final_gap donation_after_buy_more buy_more_then_donation_and_spoilage buy_more_then_donation_after_spoilage_long_tail unit_conversion_dozen percent_sequence_growth percent_sequence_discount distance_over_speed --output rules/reports/agi_bootstrap_ab_efficiency_control.json --quiet",
+    "treatment": "AGI_ENABLE_TRANSFER_METARULES=1 /home/yky/misc-programs/.venv/bin/python rules/run_bootstrap_baseline.py --suite combined --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families buy_more_final_gap donation_after_buy_more buy_more_then_donation_and_spoilage buy_more_then_donation_after_spoilage_long_tail unit_conversion_dozen percent_sequence_growth percent_sequence_discount distance_over_speed --output rules/reports/agi_bootstrap_ab_efficiency_treatment.json --quiet --sar-enabled --sar-weight 0.25 --sar-lexical-weight 0.55 --sar-role-weight 0.30 --sar-prior-weight 0.15 --sar-gate-fail-penalty 0.05 --teacher-proposals rules/reports/teacher_proposals_ab_smoke.json --teacher-enable-ingestion --teacher-ab-arm treatment --teacher-id ab-efficiency-teacher --teacher-model smoke-v1"
+  },
+  "source_reports": {
+    "control": "rules/reports/agi_bootstrap_ab_efficiency_control.json",
+    "treatment": "rules/reports/agi_bootstrap_ab_efficiency_treatment.json",
+    "teacher_proposals": "rules/reports/teacher_proposals_ab_smoke.json"
+  }
+}

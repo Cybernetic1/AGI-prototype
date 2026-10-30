@@ -1,0 +1,74 @@
+{
+  "lock_id": "agi-bootstrap-gsm-golden-lock-v1",
+  "lock_path": "rules/bootstrap_golden_slices_v1.json",
+  "contract_path": "rules/bootstrap_invariant_curriculum_widening.json",
+  "ok": true,
+  "missing_slices": [],
+  "golden_slices": [
+    {
+      "slice_id": "invariant-core-finality",
+      "suite": "finality_regression",
+      "family_count": 4,
+      "families": [
+        "buy_more_final_gap",
+        "donation_after_buy_more",
+        "buy_more_then_donation_and_spoilage",
+        "mixed_remaining_state"
+      ]
+    },
+    {
+      "slice_id": "adjacent-template-core",
+      "suite": "template_generalization",
+      "family_count": 8,
+      "families": [
+        "product_total",
+        "rate_time_total",
+        "discount_price",
+        "combined_total",
+        "unit_conversion_dozen",
+        "distance_over_speed",
+        "percent_of_total",
+        "discounted_total"
+      ]
+    },
+    {
+      "slice_id": "adjacent-template-full",
+      "suite": "template_generalization",
+      "family_count": 16,
+      "families": [
+        "product_total",
+        "rate_time_total",
+        "discount_price",
+        "combined_total",
+        "unit_conversion_dozen",
+        "distance_over_speed",
+        "percent_of_total",
+        "discounted_total",
+        "profit_margin",
+        "simple_interest",
+        "fraction_of_total",
+        "average_speed",
+        "ratio_of_total",
+        "percent_growth",
+        "percent_sequence_growth",
+        "percent_sequence_discount"
+      ]
+    }
+  ],
+  "seed_set": [
+    11,
+    23,
+    37
+  ],
+  "profiles": [
+    "lt-heavy",
+    "hybrid",
+    "ilp-heavy"
+  ],
+  "promotion_policy": {
+    "symbolic_validity_first": true,
+    "require_non_degrading_solve": true,
+    "require_non_degrading_symbolic_validity": true,
+    "require_wall_time_improvement": true
+  }
+}

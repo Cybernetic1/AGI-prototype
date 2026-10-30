@@ -1,0 +1,1081 @@
+{
+  "study_id": "agi-bootstrap-ab-efficiency-repeated-v1",
+  "generated_at": "2026-10-29T15:27:03.682898+00:00",
+  "suite": "combined_widening",
+  "families": [
+    "tinystory_basket_lunch_dinner",
+    "tinystory_basket_after_school",
+    "tinystory_ratio_market_day"
+  ],
+  "max_cycles": 2,
+  "seeds": [
+    11,
+    23
+  ],
+  "profiles_requested": [
+    "hybrid"
+  ],
+  "search_budget": {
+    "strict_numeric_authority": false,
+    "ilp_max_depth": 0,
+    "ilp_max_fact_matches": 0,
+    "ilp_max_rule_matches": 0,
+    "ilp_max_subgoal_results": 0
+  },
+  "pot_treatment": {
+    "enabled": false
+  },
+  "run_count": 2,
+  "per_run": [
+    {
+      "run_index": 1,
+      "seed": 11,
+      "control_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_ab_control_seed11.json",
+      "treatment_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_ab_treatment_seed11.json",
+      "control": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "combined_widening",
+        "requested_families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "max_cycles": 2,
+        "case_count": 3,
+        "seed": 11,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "pot_dsl": {
+            "enabled": false,
+            "mode": "proposal_trace_injection",
+            "runtime_authority": "proposal_only"
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "search_budget": {
+          "strict_numeric_authority": false,
+          "ilp_max_depth": 0,
+          "ilp_max_fact_matches": 0,
+          "ilp_max_rule_matches": 0,
+          "ilp_max_subgoal_results": 0
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.355517811003665,
+              "wall_time_sec_per_case": 1.451839270334555,
+              "wall_time_sec_per_valid_solve": 1.451839270334555
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  16.25,
+                  11.25,
+                  11.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  19.2,
+                  19.2,
+                  19.2,
+                  25.2,
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0,
+                  0.0,
+                  45.0,
+                  90.0,
+                  0.0,
+                  15.0,
+                  10.0,
+                  25.0,
+                  27.0,
+                  12.0,
+                  30.0,
+                  15.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          }
+        ]
+      },
+      "treatment": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "combined_widening",
+        "requested_families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "max_cycles": 2,
+        "case_count": 3,
+        "seed": 11,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": true,
+            "weight": 0.25,
+            "lexical_weight": 0.55,
+            "role_weight": 0.3,
+            "prior_weight": 0.15,
+            "gate_fail_penalty": 0.05,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "pot_dsl": {
+            "enabled": false,
+            "mode": "proposal_trace_injection",
+            "runtime_authority": "proposal_only"
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "search_budget": {
+          "strict_numeric_authority": false,
+          "ilp_max_depth": 0,
+          "ilp_max_fact_matches": 0,
+          "ilp_max_rule_matches": 0,
+          "ilp_max_subgoal_results": 0
+        },
+        "teacher_proposal_ingestion": {
+          "accepted": true,
+          "enabled": true,
+          "ab_arm": "treatment",
+          "low_volume_mode": true,
+          "source": "teacher_llm",
+          "teacher_id": "bootstrap-teacher-llm",
+          "teacher_model": "unknown",
+          "runtime_authority": "proposal_only",
+          "events": [
+            {
+              "proposal_id": "teacher-rule-0001",
+              "proposal_kind": "rule",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:30.488493+00:00",
+              "decision": "accepted",
+              "gates": {
+                "compile": true,
+                "validate": true,
+                "lifecycle": "proposed"
+              },
+              "rule_id": "teacher-prop-prefer-latest",
+              "audit": {
+                "ingested_at": "2026-10-29T15:26:30.488493+00:00",
+                "ingestion_channel": "teacher_llm_bootstrap",
+                "ab_arm": "treatment",
+                "low_volume_mode": true,
+                "teacher_id": "bootstrap-teacher-llm",
+                "teacher_model": "unknown",
+                "proposal_id": "teacher-rule-0001",
+                "compiler": "working_memory.nl_rule_injection.NLRuleCompiler.compile",
+                "validator": "working_memory.nl_rule_injection.NLRuleCompiler.validate"
+              }
+            },
+            {
+              "proposal_id": "teacher-rule-0002",
+              "proposal_kind": "rule",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:30.488493+00:00",
+              "decision": "rejected",
+              "gates": {
+                "compile": false,
+                "validate": false,
+                "lifecycle": "proposed_only"
+              },
+              "reason": "volume_limit_exceeded"
+            },
+            {
+              "proposal_id": "teacher-fact-0003",
+              "proposal_kind": "fact",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:30.488493+00:00",
+              "decision": "accepted",
+              "gates": {
+                "compile": true,
+                "validate": true,
+                "lifecycle": "proposed_only"
+              },
+              "fact_kind": "state",
+              "fact_id": "state_bob_apples_1",
+              "compiled_fact": {
+                "kind": "state",
+                "id": "state_bob_apples_1",
+                "owner": "Bob",
+                "item": "apples",
+                "qty": 10,
+                "phase": "before"
+              }
+            },
+            {
+              "proposal_id": "teacher-counterfactual-0004",
+              "proposal_kind": "counterfactual",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:30.488493+00:00",
+              "decision": "accepted",
+              "gates": {
+                "compile": true,
+                "validate": true,
+                "lifecycle": "proposed_only"
+              },
+              "if": {
+                "kind": "state",
+                "id": "state_cf_before",
+                "owner": "Bob",
+                "item": "apples",
+                "qty": 10,
+                "phase": "before"
+              },
+              "then": {
+                "kind": "state",
+                "id": "state_cf_after",
+                "owner": "Bob",
+                "item": "apples",
+                "qty": 7,
+                "phase": "after"
+              },
+              "hypothesis": "If Bob gives away apples, remaining apples should decrease."
+            }
+          ],
+          "counts": {
+            "submitted": 4,
+            "processed": 4,
+            "accepted": 3,
+            "rejected": 1,
+            "dropped_by_volume": 1
+          },
+          "limits": {
+            "total": 3,
+            "rules": 1,
+            "facts": 1,
+            "counterfactuals": 1,
+            "max_rule_chars": 280
+          },
+          "accepted_by_kind": {
+            "rules": 1,
+            "facts": 1,
+            "counterfactuals": 1
+          }
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.373805953997362,
+              "wall_time_sec_per_case": 1.4579353179991206,
+              "wall_time_sec_per_valid_solve": 1.4579353179991206
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  16.25,
+                  11.25,
+                  11.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  25.2,
+                  19.2,
+                  19.2,
+                  19.2,
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  90.0,
+                  15.0,
+                  0.0,
+                  30.0,
+                  15.0,
+                  27.0,
+                  25.0,
+                  0.0,
+                  12.0,
+                  10.0,
+                  45.0,
+                  15.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "run_index": 2,
+      "seed": 23,
+      "control_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_ab_control_seed23.json",
+      "treatment_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_ab_treatment_seed23.json",
+      "control": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "combined_widening",
+        "requested_families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "max_cycles": 2,
+        "case_count": 3,
+        "seed": 23,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "pot_dsl": {
+            "enabled": false,
+            "mode": "proposal_trace_injection",
+            "runtime_authority": "proposal_only"
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "search_budget": {
+          "strict_numeric_authority": false,
+          "ilp_max_depth": 0,
+          "ilp_max_fact_matches": 0,
+          "ilp_max_rule_matches": 0,
+          "ilp_max_subgoal_results": 0
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.354936892996193,
+              "wall_time_sec_per_case": 1.451645630998731,
+              "wall_time_sec_per_valid_solve": 1.451645630998731
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  19.2,
+                  19.2,
+                  25.2,
+                  19.2,
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  45.0,
+                  27.0,
+                  0.0,
+                  15.0,
+                  10.0,
+                  30.0,
+                  12.0,
+                  15.0,
+                  90.0,
+                  0.0,
+                  15.0,
+                  25.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          }
+        ]
+      },
+      "treatment": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "combined_widening",
+        "requested_families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "max_cycles": 2,
+        "case_count": 3,
+        "seed": 23,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": true,
+            "weight": 0.25,
+            "lexical_weight": 0.55,
+            "role_weight": 0.3,
+            "prior_weight": 0.15,
+            "gate_fail_penalty": 0.05,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "pot_dsl": {
+            "enabled": false,
+            "mode": "proposal_trace_injection",
+            "runtime_authority": "proposal_only"
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "search_budget": {
+          "strict_numeric_authority": false,
+          "ilp_max_depth": 0,
+          "ilp_max_fact_matches": 0,
+          "ilp_max_rule_matches": 0,
+          "ilp_max_subgoal_results": 0
+        },
+        "teacher_proposal_ingestion": {
+          "accepted": true,
+          "enabled": true,
+          "ab_arm": "treatment",
+          "low_volume_mode": true,
+          "source": "teacher_llm",
+          "teacher_id": "bootstrap-teacher-llm",
+          "teacher_model": "unknown",
+          "runtime_authority": "proposal_only",
+          "events": [
+            {
+              "proposal_id": "teacher-rule-0001",
+              "proposal_kind": "rule",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:55.027281+00:00",
+              "decision": "accepted",
+              "gates": {
+                "compile": true,
+                "validate": true,
+                "lifecycle": "proposed"
+              },
+              "rule_id": "teacher-prop-prefer-latest",
+              "audit": {
+                "ingested_at": "2026-10-29T15:26:55.027281+00:00",
+                "ingestion_channel": "teacher_llm_bootstrap",
+                "ab_arm": "treatment",
+                "low_volume_mode": true,
+                "teacher_id": "bootstrap-teacher-llm",
+                "teacher_model": "unknown",
+                "proposal_id": "teacher-rule-0001",
+                "compiler": "working_memory.nl_rule_injection.NLRuleCompiler.compile",
+                "validator": "working_memory.nl_rule_injection.NLRuleCompiler.validate"
+              }
+            },
+            {
+              "proposal_id": "teacher-rule-0002",
+              "proposal_kind": "rule",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:55.027281+00:00",
+              "decision": "rejected",
+              "gates": {
+                "compile": false,
+                "validate": false,
+                "lifecycle": "proposed_only"
+              },
+              "reason": "volume_limit_exceeded"
+            },
+            {
+              "proposal_id": "teacher-fact-0003",
+              "proposal_kind": "fact",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:55.027281+00:00",
+              "decision": "accepted",
+              "gates": {
+                "compile": true,
+                "validate": true,
+                "lifecycle": "proposed_only"
+              },
+              "fact_kind": "state",
+              "fact_id": "state_bob_apples_1",
+              "compiled_fact": {
+                "kind": "state",
+                "id": "state_bob_apples_1",
+                "owner": "Bob",
+                "item": "apples",
+                "qty": 10,
+                "phase": "before"
+              }
+            },
+            {
+              "proposal_id": "teacher-counterfactual-0004",
+              "proposal_kind": "counterfactual",
+              "source": "teacher_llm",
+              "teacher_id": "bootstrap-teacher-llm",
+              "teacher_model": "unknown",
+              "ab_arm": "treatment",
+              "low_volume_mode": true,
+              "runtime_authority": "proposal_only",
+              "received_at": "2026-10-29T15:26:55.027281+00:00",
+              "decision": "accepted",
+              "gates": {
+                "compile": true,
+                "validate": true,
+                "lifecycle": "proposed_only"
+              },
+              "if": {
+                "kind": "state",
+                "id": "state_cf_before",
+                "owner": "Bob",
+                "item": "apples",
+                "qty": 10,
+                "phase": "before"
+              },
+              "then": {
+                "kind": "state",
+                "id": "state_cf_after",
+                "owner": "Bob",
+                "item": "apples",
+                "qty": 7,
+                "phase": "after"
+              },
+              "hypothesis": "If Bob gives away apples, remaining apples should decrease."
+            }
+          ],
+          "counts": {
+            "submitted": 4,
+            "processed": 4,
+            "accepted": 3,
+            "rejected": 1,
+            "dropped_by_volume": 1
+          },
+          "limits": {
+            "total": 3,
+            "rules": 1,
+            "facts": 1,
+            "counterfactuals": 1,
+            "max_rule_chars": 280
+          },
+          "accepted_by_kind": {
+            "rules": 1,
+            "facts": 1,
+            "counterfactuals": 1
+          }
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.362480781004706,
+              "wall_time_sec_per_case": 1.454160260334902,
+              "wall_time_sec_per_valid_solve": 1.454160260334902
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  19.2,
+                  19.2,
+                  19.2,
+                  25.2,
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  45.0,
+                  0.0,
+                  25.0,
+                  30.0,
+                  90.0,
+                  27.0,
+                  12.0,
+                  15.0,
+                  0.0,
+                  15.0,
+                  10.0,
+                  15.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "pot": {
+                  "enabled": false,
+                  "program_id": null,
+                  "applied": false,
+                  "execution_ok": false,
+                  "issue_count": 0
+                },
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "profiles": [
+    {
+      "profile": "hybrid",
+      "metrics": {
+        "solve_rate": {
+          "control": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "treatment": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "delta_treatment_minus_control": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          }
+        },
+        "symbolic_valid_rate": {
+          "control": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "treatment": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "delta_treatment_minus_control": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          }
+        },
+        "valid_solves_per_sample": {
+          "control": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "treatment": {
+            "mean": 1.0,
+            "stdev": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "delta_treatment_minus_control": {
+            "mean": 0.0,
+            "stdev": 0.0,
+            "min": 0.0,
+            "max": 0.0
+          }
+        },
+        "wall_time_sec_total": {
+          "control": {
+            "mean": 4.355227351999929,
+            "stdev": 0.0002904590037360322,
+            "min": 4.354936892996193,
+            "max": 4.355517811003665
+          },
+          "treatment": {
+            "mean": 4.368143367501034,
+            "stdev": 0.005662586496328004,
+            "min": 4.362480781004706,
+            "max": 4.373805953997362
+          },
+          "delta_treatment_minus_control": {
+            "mean": 0.012916015501104994,
+            "stdev": 0.0053721274925919715,
+            "min": 0.007543888008513022,
+            "max": 0.018288142993696965
+          }
+        },
+        "wall_time_sec_per_valid_solve": {
+          "control": {
+            "mean": 1.451742450666643,
+            "stdev": 9.681966791208474e-05,
+            "min": 1.451645630998731,
+            "max": 1.451839270334555
+          },
+          "treatment": {
+            "mean": 1.4560477891670112,
+            "stdev": 0.0018875288321092976,
+            "min": 1.454160260334902,
+            "max": 1.4579353179991206
+          },
+          "delta_treatment_minus_control": {
+            "mean": 0.004305338500368294,
+            "stdev": 0.0017907091641972128,
+            "min": 0.0025146293361710814,
+            "max": 0.006096047664565507
+          }
+        }
+      }
+    }
+  ],
+  "macro_delta_treatment_minus_control": {
+    "wall_time_sec_total_sum": {
+      "mean": 0.012916015501104994,
+      "stdev": 0.0053721274925919715,
+      "min": 0.007543888008513022,
+      "max": 0.018288142993696965
+    },
+    "solve_rate_mean": {
+      "mean": 0.0,
+      "stdev": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "symbolic_valid_rate_mean": {
+      "mean": 0.0,
+      "stdev": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    }
+  },
+  "reproducible_command": "python rules/run_bootstrap_ab_repeated.py --suite combined_widening --max-cycles 2 --profiles hybrid --seeds 11 23"
+}

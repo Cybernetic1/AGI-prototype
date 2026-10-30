@@ -1,0 +1,35 @@
+{
+  "model": {
+    "bias": 1.642227735257091,
+    "weights": {
+      "bigram:const->const": -0.4122447950935431,
+      "bigram:const->div": -1.3285355269676982,
+      "bigram:const->mul": 0.5040459367806122,
+      "bigram:div->state_set": -2.0216827075276433,
+      "bigram:mul->state_set": 1.1971931173405574,
+      "bigram:state_add_delta->state_add_delta": -0.4122447950935431,
+      "bigram:state_add_delta->state_apply_percent_reduction": -0.4122447950935431,
+      "bigram:state_add_delta->state_query": -0.4122447950935431,
+      "bigram:state_apply_percent_reduction->state_add_delta": -0.4122447950935431,
+      "bigram:state_set->state_add_delta": -0.4122447950935431,
+      "len:1": 2.845851742927939,
+      "len:3": -0.41224479509354295,
+      "len:9": -0.4122447950935431,
+      "op:const": 0.7733788705641964,
+      "op:div": -1.3285355269676982,
+      "op:mul": 0.5040459367806122,
+      "op:state_add_delta": -0.4122447950935431,
+      "op:state_apply_percent_reduction": -0.4122447950935431,
+      "op:state_query": -0.4122447950935431,
+      "op:state_set": -0.4122447950935431
+    }
+  },
+  "metrics": {
+    "accuracy": 0.9428571428571428,
+    "precision": 0.9666666666666667,
+    "recall": 0.9666666666666667,
+    "f1": 0.9666666666666667
+  },
+  "rows": 35,
+  "notes": "Naive Bayes style feature log-odds over PoT op/bigram/length features."
+}

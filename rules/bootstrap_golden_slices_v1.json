@@ -1,0 +1,26 @@
+{
+  "lock_id": "agi-bootstrap-gsm-golden-lock-v1",
+  "description": "Canonical golden GSM slices for efficiency/promotion comparability.",
+  "contract_path": "rules/bootstrap_invariant_curriculum_widening.json",
+  "golden_slices": [
+    "invariant-core-finality",
+    "adjacent-template-core",
+    "adjacent-template-full"
+  ],
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "profiles": [
+    "lt-heavy",
+    "hybrid",
+    "ilp-heavy"
+  ],
+  "promotion_policy": {
+    "symbolic_validity_first": true,
+    "require_non_degrading_solve": true,
+    "require_non_degrading_symbolic_validity": true,
+    "require_wall_time_improvement": true
+  }
+}

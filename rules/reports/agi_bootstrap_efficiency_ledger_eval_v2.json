@@ -1,0 +1,27 @@
+{
+  "eval_id": "agi-bootstrap-efficiency-ledger-eval-v1",
+  "generated_at": "2026-10-29T08:33:11.823233+00:00",
+  "sources": {
+    "ledger": "rules/bootstrap_efficiency_ledger.json",
+    "milestone_review": "rules/reports/agi_bootstrap_milestone_review_v2.json",
+    "ab_repeated": "rules/reports/agi_bootstrap_ab_efficiency_repeated_v1.json",
+    "widening_report": "rules/reports/agi_bootstrap_curriculum_widening_v1.json"
+  },
+  "checks": {
+    "invariant_all_gates_green": true,
+    "widening_all_gates_green": true,
+    "ab_solve_non_degrading": true,
+    "ab_symbolic_non_degrading": true,
+    "ab_wall_time_delta_bound": true,
+    "phase_min_factor_met": true,
+    "stretch_factor_met": false
+  },
+  "metrics": {
+    "hybrid_achieved_factor_vs_baseline": 1.2182465112476122,
+    "long_horizon_target_factor": 100.0,
+    "ab_solve_delta_mean": 0.0,
+    "ab_symbolic_delta_mean": 0.0,
+    "ab_wall_time_delta_mean_sec": -0.061662517801232754
+  },
+  "overall_pass": false
+}

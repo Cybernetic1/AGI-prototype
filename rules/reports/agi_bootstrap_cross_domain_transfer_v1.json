@@ -1,0 +1,27 @@
+{
+  "eval_id": "agi-bootstrap-cross-domain-transfer-eval-v1",
+  "generated_at": "2026-10-29T16:06:17.529017+00:00",
+  "sources": {
+    "gsm_ab": "rules/reports/efficiency_phase/baseline-default-budget.ab_repeated.json",
+    "tinystories_ab": "rules/reports/agi_bootstrap_ab_tinystories_symbolic_v1.json",
+    "tinystories_gates": "rules/reports/agi_bootstrap_tinystories_widening_gates_v1.json"
+  },
+  "domain_metrics": {
+    "gsm_hybrid": {
+      "solve_delta_mean": 0.0,
+      "symbolic_delta_mean": 0.0,
+      "wall_per_valid_delta_mean": -0.00031113401673795355
+    },
+    "tinystories_hybrid": {
+      "solve_delta_mean": 0.0,
+      "symbolic_delta_mean": 0.0,
+      "wall_per_valid_delta_mean": 0.004305338500368294
+    }
+  },
+  "checks": {
+    "gsm_quality_non_degrading": true,
+    "tinystories_quality_non_degrading": true,
+    "tinystories_widening_gates_green": true
+  },
+  "overall_pass": true
+}

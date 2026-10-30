@@ -1,0 +1,2140 @@
+{
+  "contract_id": "agi-bootstrap-invariant-curriculum-widening-v1",
+  "baseline_contract_id": "agi-bootstrap-baseline-contract-v1",
+  "proposal_shaping": {
+    "semantic_ar": {
+      "enabled": false,
+      "weight": 0.2,
+      "lexical_weight": 0.5,
+      "role_weight": 0.3,
+      "prior_weight": 0.2,
+      "gate_fail_penalty": 0.0,
+      "couple_to_symbolic_gate": true,
+      "emit_metadata": false
+    },
+    "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+  },
+  "generated_at": "2026-10-29T08:32:34.952845+00:00",
+  "contract_path": "/home/yky/misc-programs/AGI-prototype/rules/bootstrap_invariant_curriculum_widening.json",
+  "output_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.json",
+  "selected_slice_ids": [
+    "invariant-core-finality",
+    "adjacent-template-core",
+    "tinystories-state-tracking-compact",
+    "mixed-narrative-symbolic-compact",
+    "widening-sentinel-regression"
+  ],
+  "executed_slice_ids": [
+    "invariant-core-finality",
+    "adjacent-template-core",
+    "tinystories-state-tracking-compact",
+    "mixed-narrative-symbolic-compact",
+    "widening-sentinel-regression"
+  ],
+  "skipped_slice_ids": [],
+  "stop_on_fail": true,
+  "halted_on_slice": null,
+  "all_gates_green": true,
+  "regression": {
+    "commands": [
+      {
+        "id": "validate-widening-contract",
+        "command": "python3 rules/run_bootstrap_invariant_curriculum.py --contract rules/bootstrap_invariant_curriculum_widening.json --check-only --print-commands",
+        "expected": "exit code 0"
+      },
+      {
+        "id": "run-gated-widening-curriculum-regression",
+        "command": "python3 rules/run_bootstrap_invariant_curriculum.py --contract rules/bootstrap_invariant_curriculum_widening.json --output rules/reports/agi_bootstrap_curriculum_widening_v1.json",
+        "expected": "exit code 0 and all_gates_green=true"
+      }
+    ],
+    "pass_criteria": [
+      "Compact GSM invariant slices execute before widening slices.",
+      "Widening must halt at the first blocking gate regression unless continue-on-fail is explicitly set.",
+      "Regression passes only when all_gates_green=true in the output report."
+    ]
+  },
+  "slices": [
+    {
+      "slice_id": "invariant-core-finality",
+      "description": "Core final-state authority invariants before widening.",
+      "suite": "finality_regression",
+      "families": [
+        "buy_more_final_gap",
+        "donation_after_buy_more",
+        "buy_more_then_donation_and_spoilage",
+        "mixed_remaining_state"
+      ],
+      "profiles": [
+        "lt-heavy",
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "max_cycles": 2,
+      "proposal_shaping": {
+        "semantic_ar": {
+          "enabled": false,
+          "weight": 0.2,
+          "lexical_weight": 0.5,
+          "role_weight": 0.3,
+          "prior_weight": 0.2,
+          "gate_fail_penalty": 0.0,
+          "couple_to_symbolic_gate": true,
+          "emit_metadata": false
+        }
+      },
+      "command": "/home/yky/misc-programs/.venv/bin/python /home/yky/misc-programs/AGI-prototype/rules/run_bootstrap_baseline.py --suite finality_regression --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families buy_more_final_gap donation_after_buy_more buy_more_then_donation_and_spoilage mixed_remaining_state --output /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.invariant-core-finality.baseline.json --quiet --sar-weight 0.2 --sar-lexical-weight 0.5 --sar-role-weight 0.3 --sar-prior-weight 0.2 --sar-gate-fail-penalty 0.0",
+      "return_code": 0,
+      "stdout": "\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 33.0\n\n[System 2] Composition Rule: ratio 3.0 * 11.0 = 33.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Ratio Rule: composed ratio result = 33.0\n\n[System 2] Composition Rule: ratio 3.0 * 11.0 = 33.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 33.0\n\n[System 2] Composition Rule: ratio 3.0 * 11.0 = 33.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 13.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Ratio Rule: composed ratio result = 48.0\n\n[System 2] Composition Rule: ratio 3.0 * 16.0 = 48.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 1.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 8.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Ratio Rule: composed ratio result = 33.0\n\n[System 2] Composition Rule: ratio 3.0 * 11.0 = 33.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = -4.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 6.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 7.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 11.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 26.0\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\nlt-heavy: solved=4/4 symbolic_valid=4/4 time=6.84s\nhybrid: solved=4/4 symbolic_valid=4/4 time=6.47s\nilp-heavy: solved=4/4 symbolic_valid=4/4 time=4.23s\nSaved baseline report to /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.invariant-core-finality.baseline.json\n",
+      "stderr": "",
+      "baseline_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.invariant-core-finality.baseline.json",
+      "baseline_report": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "finality_regression",
+        "requested_families": [
+          "buy_more_final_gap",
+          "donation_after_buy_more",
+          "buy_more_then_donation_and_spoilage",
+          "mixed_remaining_state"
+        ],
+        "families": [
+          "buy_more_final_gap",
+          "donation_after_buy_more",
+          "buy_more_then_donation_and_spoilage",
+          "mixed_remaining_state"
+        ],
+        "max_cycles": 2,
+        "case_count": 4,
+        "seed": 0,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "lt-heavy",
+            "description": "System-1 proposal + System-2 validation/reasoning only",
+            "systems": [
+              "system1",
+              "system2"
+            ],
+            "total_cases": 4,
+            "solved_cases": 4,
+            "symbolic_valid_cases": 4,
+            "solved_and_symbolic_valid_cases": 4,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 6.836747662999187,
+              "wall_time_sec_per_case": 1.7091869157497968,
+              "wall_time_sec_per_valid_solve": 1.7091869157497968
+            },
+            "results": [
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0,
+                  45.0,
+                  90.0,
+                  12.0,
+                  0.0,
+                  27.0,
+                  15.0,
+                  30.0,
+                  25.0,
+                  15.0,
+                  10.0,
+                  0.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_final_gap",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 16.0,
+                "belief_values": [
+                  1.0,
+                  90.0,
+                  11.0,
+                  16.0,
+                  26.0,
+                  16.0,
+                  45.0,
+                  12.0,
+                  0.0,
+                  27.0,
+                  48.0,
+                  13.0,
+                  30.0,
+                  15.0,
+                  0.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "donation_after_buy_more",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?"
+              },
+              {
+                "expected": 11.0,
+                "belief_values": [
+                  1.0,
+                  -4.0,
+                  8.0,
+                  7.0,
+                  90.0,
+                  11.0,
+                  26.0,
+                  25.0,
+                  11.0,
+                  11.0,
+                  45.0,
+                  12.0,
+                  0.0,
+                  27.0,
+                  48.0,
+                  13.0,
+                  30.0,
+                  15.0,
+                  33.0,
+                  10.0,
+                  0.0,
+                  6.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_then_donation_and_spoilage",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_remaining_state",
+                "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?"
+              }
+            ]
+          },
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 4,
+            "solved_cases": 4,
+            "symbolic_valid_cases": 4,
+            "solved_and_symbolic_valid_cases": 4,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 6.4678440269999555,
+              "wall_time_sec_per_case": 1.6169610067499889,
+              "wall_time_sec_per_valid_solve": 1.6169610067499889
+            },
+            "results": [
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0,
+                  45.0,
+                  90.0,
+                  12.0,
+                  0.0,
+                  27.0,
+                  15.0,
+                  30.0,
+                  25.0,
+                  15.0,
+                  10.0,
+                  0.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_final_gap",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 16.0,
+                "belief_values": [
+                  1.0,
+                  90.0,
+                  11.0,
+                  16.0,
+                  26.0,
+                  16.0,
+                  16.0,
+                  45.0,
+                  12.0,
+                  0.0,
+                  27.0,
+                  48.0,
+                  13.0,
+                  30.0,
+                  15.0,
+                  0.0,
+                  16.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "donation_after_buy_more",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?"
+              },
+              {
+                "expected": 11.0,
+                "belief_values": [
+                  1.0,
+                  -4.0,
+                  8.0,
+                  7.0,
+                  90.0,
+                  11.0,
+                  26.0,
+                  25.0,
+                  11.0,
+                  11.0,
+                  45.0,
+                  12.0,
+                  0.0,
+                  27.0,
+                  48.0,
+                  13.0,
+                  30.0,
+                  15.0,
+                  33.0,
+                  10.0,
+                  0.0,
+                  6.0,
+                  11.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_then_donation_and_spoilage",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_remaining_state",
+                "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?"
+              }
+            ]
+          },
+          {
+            "profile": "ilp-heavy",
+            "description": "System-1 grounding + System-3 abduction/revision emphasis",
+            "systems": [
+              "system1",
+              "system3"
+            ],
+            "total_cases": 4,
+            "solved_cases": 4,
+            "symbolic_valid_cases": 4,
+            "solved_and_symbolic_valid_cases": 4,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.227947829000186,
+              "wall_time_sec_per_case": 1.0569869572500465,
+              "wall_time_sec_per_valid_solve": 1.0569869572500465
+            },
+            "results": [
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_final_gap",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 16.0,
+                "belief_values": [
+                  16.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "donation_after_buy_more",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?"
+              },
+              {
+                "expected": 11.0,
+                "belief_values": [
+                  11.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_then_donation_and_spoilage",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_remaining_state",
+                "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?"
+              }
+            ]
+          }
+        ]
+      },
+      "gate_results": [
+        {
+          "id": "hybrid-core-all-valid-solves",
+          "description": "Hybrid must solve all compact finality core families with symbolic validity.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 4.0,
+          "target": 4.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-core-solve-floor",
+          "description": "LT-heavy solve floor on compact finality core families.",
+          "profile": "lt-heavy",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 1.0,
+          "target": 0.75,
+          "target_source": "value",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-core-symbolic-perfect",
+          "description": "LT-heavy symbolic validity must remain perfect on compact finality core.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 1.0,
+          "target": 1.0,
+          "target_source": "value",
+          "passed": true
+        },
+        {
+          "id": "ilp-heavy-core-symbolic-floor",
+          "description": "ILP-heavy keeps a minimum symbolic validity floor (monitor-only).",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": false,
+          "actual": 1.0,
+          "target": 0.5,
+          "target_source": "value",
+          "passed": true
+        }
+      ],
+      "gates_green": true
+    },
+    {
+      "slice_id": "adjacent-template-core",
+      "description": "Adjacent arithmetic-template core before widening.",
+      "suite": "template_generalization",
+      "families": [
+        "product_total",
+        "rate_time_total",
+        "discount_price",
+        "combined_total",
+        "unit_conversion_dozen",
+        "distance_over_speed",
+        "percent_of_total",
+        "discounted_total"
+      ],
+      "profiles": [
+        "lt-heavy",
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "max_cycles": 2,
+      "proposal_shaping": {
+        "semantic_ar": {
+          "enabled": false,
+          "weight": 0.2,
+          "lexical_weight": 0.5,
+          "role_weight": 0.3,
+          "prior_weight": 0.2,
+          "gate_fail_penalty": 0.0,
+          "couple_to_symbolic_gate": true,
+          "emit_metadata": false
+        }
+      },
+      "command": "/home/yky/misc-programs/.venv/bin/python /home/yky/misc-programs/AGI-prototype/rules/run_bootstrap_baseline.py --suite template_generalization --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families product_total rate_time_total discount_price combined_total unit_conversion_dozen distance_over_speed percent_of_total discounted_total --output /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.adjacent-template-core.baseline.json --quiet --sar-weight 0.2 --sar-lexical-weight 0.5 --sar-role-weight 0.3 --sar-prior-weight 0.2 --sar-gate-fail-penalty 0.0",
+      "return_code": 0,
+      "stdout": "\n[System 2] Generic Rate-Time Rule: 54.0\n\n[System 2] Rate-Time Rule: seller/muffins over time = 54.0\n\n[System 2] Generic Rate-Time Rule: 54.0\n\n[System 2] Rate-Time Rule: seller/muffins over time = 54.0\n\n[System 2] Generic Rate-Time Rule: 90.0\n\n[System 2] Rate-Time Rule: worker/hours over time = 90.0\n\n[System 2] Generic Rate-Time Rule: 90.0\n\n[System 2] Rate-Time Rule: worker/hours over time = 90.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 48.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 48.0\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Explicit Divide Rule: traveler/distance = 1.0\n\n[System 2] Explicit Divide Rule: traveler/distance = 1.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 45.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 45.0\n\n[System 2] Generic Rate-Time Rule: 54.0\n\n[System 2] Rate-Time Rule: seller/muffins over time = 54.0\n\n[System 2] Generic Rate-Time Rule: 54.0\n\n[System 2] Rate-Time Rule: seller/muffins over time = 54.0\n\n[System 2] Generic Rate-Time Rule: 90.0\n\n[System 2] Rate-Time Rule: worker/hours over time = 90.0\n\n[System 2] Generic Rate-Time Rule: 90.0\n\n[System 2] Rate-Time Rule: worker/hours over time = 90.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 48.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 48.0\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Explicit Divide Rule: traveler/distance = 1.0\n\n[System 2] Explicit Divide Rule: traveler/distance = 1.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 45.0\n\n[System 2] Percent Rule: seller/price goal=final_price => 45.0\nlt-heavy: solved=7/8 symbolic_valid=8/8 time=9.98s\nhybrid: solved=8/8 symbolic_valid=8/8 time=9.77s\nilp-heavy: solved=8/8 symbolic_valid=8/8 time=8.02s\nSaved baseline report to /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.adjacent-template-core.baseline.json\n",
+      "stderr": "",
+      "baseline_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.adjacent-template-core.baseline.json",
+      "baseline_report": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "template_generalization",
+        "requested_families": [
+          "product_total",
+          "rate_time_total",
+          "discount_price",
+          "combined_total",
+          "unit_conversion_dozen",
+          "distance_over_speed",
+          "percent_of_total",
+          "discounted_total"
+        ],
+        "families": [
+          "product_total",
+          "rate_time_total",
+          "discount_price",
+          "combined_total",
+          "unit_conversion_dozen",
+          "distance_over_speed",
+          "percent_of_total",
+          "discounted_total"
+        ],
+        "max_cycles": 2,
+        "case_count": 8,
+        "seed": 0,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "lt-heavy",
+            "description": "System-1 proposal + System-2 validation/reasoning only",
+            "systems": [
+              "system1",
+              "system2"
+            ],
+            "total_cases": 8,
+            "solved_cases": 7,
+            "symbolic_valid_cases": 8,
+            "solved_and_symbolic_valid_cases": 7,
+            "capability": {
+              "solve_rate": 0.875
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 0.875,
+              "samples_per_valid_solve": 1.1428571428571428
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 9.981410631000472,
+              "wall_time_sec_per_case": 1.247676328875059,
+              "wall_time_sec_per_valid_solve": 1.4259158044286389
+            },
+            "results": [
+              {
+                "expected": 54.0,
+                "belief_values": [
+                  54.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "product_total",
+                "question": "A bakery sells 18 muffins at $3 each."
+              },
+              {
+                "expected": 90.0,
+                "belief_values": [
+                  90.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "rate_time_total",
+                "question": "A worker earns $18 per hour for 5 hours."
+              },
+              {
+                "expected": 48.0,
+                "belief_values": [
+                  48.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "discount_price",
+                "question": "A shirt costs $60 and is discounted by 20%."
+              },
+              {
+                "expected": 20.0,
+                "belief_values": [
+                  20.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "combined_total",
+                "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+              },
+              {
+                "expected": 36.0,
+                "belief_values": [
+                  36.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "unit_conversion_dozen",
+                "question": "How many eggs are in 3 dozen eggs?"
+              },
+              {
+                "expected": 3.0,
+                "belief_values": [
+                  1.0
+                ],
+                "solved": false,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "distance_over_speed",
+                "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "percent_of_total",
+                "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+              },
+              {
+                "expected": 45.0,
+                "belief_values": [
+                  45.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "discounted_total",
+                "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+              }
+            ]
+          },
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 8,
+            "solved_cases": 8,
+            "symbolic_valid_cases": 8,
+            "solved_and_symbolic_valid_cases": 8,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 9.768081125999743,
+              "wall_time_sec_per_case": 1.2210101407499678,
+              "wall_time_sec_per_valid_solve": 1.2210101407499678
+            },
+            "results": [
+              {
+                "expected": 54.0,
+                "belief_values": [
+                  54.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "product_total",
+                "question": "A bakery sells 18 muffins at $3 each."
+              },
+              {
+                "expected": 90.0,
+                "belief_values": [
+                  90.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "rate_time_total",
+                "question": "A worker earns $18 per hour for 5 hours."
+              },
+              {
+                "expected": 48.0,
+                "belief_values": [
+                  48.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "discount_price",
+                "question": "A shirt costs $60 and is discounted by 20%."
+              },
+              {
+                "expected": 20.0,
+                "belief_values": [
+                  20.0,
+                  20.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "combined_total",
+                "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+              },
+              {
+                "expected": 36.0,
+                "belief_values": [
+                  36.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "unit_conversion_dozen",
+                "question": "How many eggs are in 3 dozen eggs?"
+              },
+              {
+                "expected": 3.0,
+                "belief_values": [
+                  1.0,
+                  3.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "distance_over_speed",
+                "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "percent_of_total",
+                "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+              },
+              {
+                "expected": 45.0,
+                "belief_values": [
+                  45.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "discounted_total",
+                "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+              }
+            ]
+          },
+          {
+            "profile": "ilp-heavy",
+            "description": "System-1 grounding + System-3 abduction/revision emphasis",
+            "systems": [
+              "system1",
+              "system3"
+            ],
+            "total_cases": 8,
+            "solved_cases": 8,
+            "symbolic_valid_cases": 8,
+            "solved_and_symbolic_valid_cases": 8,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 8.02222517500013,
+              "wall_time_sec_per_case": 1.0027781468750163,
+              "wall_time_sec_per_valid_solve": 1.0027781468750163
+            },
+            "results": [
+              {
+                "expected": 54.0,
+                "belief_values": [
+                  54.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "product_total",
+                "question": "A bakery sells 18 muffins at $3 each."
+              },
+              {
+                "expected": 90.0,
+                "belief_values": [
+                  90.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "rate_time_total",
+                "question": "A worker earns $18 per hour for 5 hours."
+              },
+              {
+                "expected": 48.0,
+                "belief_values": [
+                  48.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "discount_price",
+                "question": "A shirt costs $60 and is discounted by 20%."
+              },
+              {
+                "expected": 20.0,
+                "belief_values": [
+                  20.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "combined_total",
+                "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+              },
+              {
+                "expected": 36.0,
+                "belief_values": [
+                  36.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "unit_conversion_dozen",
+                "question": "How many eggs are in 3 dozen eggs?"
+              },
+              {
+                "expected": 3.0,
+                "belief_values": [
+                  3.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "distance_over_speed",
+                "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "percent_of_total",
+                "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+              },
+              {
+                "expected": 45.0,
+                "belief_values": [
+                  45.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "discounted_total",
+                "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+              }
+            ]
+          }
+        ]
+      },
+      "gate_results": [
+        {
+          "id": "hybrid-template-core-solve-perfect",
+          "description": "Hybrid must solve all template-core families.",
+          "profile": "hybrid",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 1.0,
+          "target": 1.0,
+          "target_source": "value",
+          "passed": true
+        },
+        {
+          "id": "hybrid-template-core-symbolic-perfect",
+          "description": "Hybrid symbolic validity must remain perfect on template-core.",
+          "profile": "hybrid",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 1.0,
+          "target": 1.0,
+          "target_source": "value",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-template-core-solve-floor",
+          "description": "LT-heavy solve floor for template-core families.",
+          "profile": "lt-heavy",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 0.875,
+          "target": 0.75,
+          "target_source": "value",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-template-core-symbolic-floor",
+          "description": "LT-heavy symbolic validity floor for template-core families.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 1.0,
+          "target": 0.875,
+          "target_source": "value",
+          "passed": true
+        },
+        {
+          "id": "ilp-heavy-template-core-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor (monitor-only).",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": false,
+          "actual": 1.0,
+          "target": 0.25,
+          "target_source": "value",
+          "passed": true
+        }
+      ],
+      "gates_green": true
+    },
+    {
+      "slice_id": "tinystories-state-tracking-compact",
+      "description": "TinyStories-style compact narrative state-tracking widening slice.",
+      "suite": "tinystories_state_tracking",
+      "families": [
+        "tinystory_basket_lunch_dinner",
+        "tinystory_basket_after_school",
+        "tinystory_ratio_market_day"
+      ],
+      "profiles": [
+        "lt-heavy",
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "max_cycles": 2,
+      "proposal_shaping": {
+        "semantic_ar": {
+          "enabled": false,
+          "weight": 0.2,
+          "lexical_weight": 0.5,
+          "role_weight": 0.3,
+          "prior_weight": 0.2,
+          "gate_fail_penalty": 0.0,
+          "couple_to_symbolic_gate": true,
+          "emit_metadata": false
+        }
+      },
+      "command": "/home/yky/misc-programs/.venv/bin/python /home/yky/misc-programs/AGI-prototype/rules/run_bootstrap_baseline.py --suite tinystories_state_tracking --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families tinystory_basket_lunch_dinner tinystory_basket_after_school tinystory_ratio_market_day --output /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.tinystories-state-tracking-compact.baseline.json --quiet --sar-weight 0.2 --sar-lexical-weight 0.5 --sar-role-weight 0.3 --sar-prior-weight 0.2 --sar-gate-fail-penalty 0.0",
+      "return_code": 0,
+      "stdout": "\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 25.2\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 19.2\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 25.2\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 19.2\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 25.2\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 19.2\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 25.2\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 19.2\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\nlt-heavy: solved=3/3 symbolic_valid=3/3 time=4.39s\nhybrid: solved=3/3 symbolic_valid=3/3 time=4.16s\nilp-heavy: solved=3/3 symbolic_valid=3/3 time=3.17s\nSaved baseline report to /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.tinystories-state-tracking-compact.baseline.json\n",
+      "stderr": "",
+      "baseline_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.tinystories-state-tracking-compact.baseline.json",
+      "baseline_report": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "tinystories_state_tracking",
+        "requested_families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "families": [
+          "tinystory_basket_lunch_dinner",
+          "tinystory_basket_after_school",
+          "tinystory_ratio_market_day"
+        ],
+        "max_cycles": 2,
+        "case_count": 3,
+        "seed": 0,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "lt-heavy",
+            "description": "System-1 proposal + System-2 validation/reasoning only",
+            "systems": [
+              "system1",
+              "system2"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.389776371001062,
+              "wall_time_sec_per_case": 1.4632587903336873,
+              "wall_time_sec_per_valid_solve": 1.4632587903336873
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  19.2,
+                  25.2,
+                  19.2,
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  0.0,
+                  90.0,
+                  45.0,
+                  15.0,
+                  0.0,
+                  27.0,
+                  15.0,
+                  30.0,
+                  15.0,
+                  25.0,
+                  12.0,
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          },
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 4.159983318999366,
+              "wall_time_sec_per_case": 1.386661106333122,
+              "wall_time_sec_per_valid_solve": 1.386661106333122
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  19.2,
+                  25.2,
+                  19.2,
+                  19.2,
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  0.0,
+                  90.0,
+                  45.0,
+                  15.0,
+                  0.0,
+                  27.0,
+                  15.0,
+                  30.0,
+                  15.0,
+                  25.0,
+                  12.0,
+                  10.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          },
+          {
+            "profile": "ilp-heavy",
+            "description": "System-1 grounding + System-3 abduction/revision emphasis",
+            "systems": [
+              "system1",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 3.1720589920005295,
+              "wall_time_sec_per_case": 1.0573529973335098,
+              "wall_time_sec_per_valid_solve": 1.0573529973335098
+            },
+            "results": [
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 19.2,
+                "belief_values": [
+                  19.2
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_after_school",
+                "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              }
+            ]
+          }
+        ]
+      },
+      "gate_results": [
+        {
+          "id": "hybrid-tinystory-all-valid-solves",
+          "description": "Hybrid must solve all TinyStories compact state-tracking families with symbolic validity.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 3.0,
+          "target": 3.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-tinystory-all-valid-solves",
+          "description": "LT-heavy must solve all TinyStories compact state-tracking families with symbolic validity.",
+          "profile": "lt-heavy",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 3.0,
+          "target": 3.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "ilp-heavy-tinystory-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on TinyStories slice.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 1.0,
+          "target": 0.66,
+          "target_source": "value",
+          "passed": true
+        }
+      ],
+      "gates_green": true
+    },
+    {
+      "slice_id": "mixed-narrative-symbolic-compact",
+      "description": "Compact mixed symbolic-text widening slice with explicit equation hints in natural language.",
+      "suite": "mixed_narrative_symbolic",
+      "families": [
+        "mixed_symbolic_discount_sequence",
+        "mixed_symbolic_profit_inverse",
+        "mixed_symbolic_percent_projection"
+      ],
+      "profiles": [
+        "lt-heavy",
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "max_cycles": 2,
+      "proposal_shaping": {
+        "semantic_ar": {
+          "enabled": false,
+          "weight": 0.2,
+          "lexical_weight": 0.5,
+          "role_weight": 0.3,
+          "prior_weight": 0.2,
+          "gate_fail_penalty": 0.0,
+          "couple_to_symbolic_gate": true,
+          "emit_metadata": false
+        }
+      },
+      "command": "/home/yky/misc-programs/.venv/bin/python /home/yky/misc-programs/AGI-prototype/rules/run_bootstrap_baseline.py --suite mixed_narrative_symbolic --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families mixed_symbolic_discount_sequence mixed_symbolic_profit_inverse mixed_symbolic_percent_projection --output /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.mixed-narrative-symbolic-compact.baseline.json --quiet --sar-weight 0.2 --sar-lexical-weight 0.5 --sar-role-weight 0.3 --sar-prior-weight 0.2 --sar-gate-fail-penalty 0.0",
+      "return_code": 0,
+      "stdout": "\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: profit_cost\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: profit_cost\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: profit_cost\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: profit_cost\nlt-heavy: solved=3/3 symbolic_valid=3/3 time=3.94s\nhybrid: solved=3/3 symbolic_valid=3/3 time=3.78s\nilp-heavy: solved=3/3 symbolic_valid=1/3 time=2.93s\nSaved baseline report to /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.mixed-narrative-symbolic-compact.baseline.json\n",
+      "stderr": "",
+      "baseline_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.mixed-narrative-symbolic-compact.baseline.json",
+      "baseline_report": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "mixed_narrative_symbolic",
+        "requested_families": [
+          "mixed_symbolic_discount_sequence",
+          "mixed_symbolic_profit_inverse",
+          "mixed_symbolic_percent_projection"
+        ],
+        "families": [
+          "mixed_symbolic_discount_sequence",
+          "mixed_symbolic_profit_inverse",
+          "mixed_symbolic_percent_projection"
+        ],
+        "max_cycles": 2,
+        "case_count": 3,
+        "seed": 0,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "lt-heavy",
+            "description": "System-1 proposal + System-2 validation/reasoning only",
+            "systems": [
+              "system1",
+              "system2"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 3.9424267840004177,
+              "wall_time_sec_per_case": 1.3141422613334726,
+              "wall_time_sec_per_valid_solve": 1.3141422613334726
+            },
+            "results": [
+              {
+                "expected": 70.4,
+                "belief_values": [
+                  70.4,
+                  70.4
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_discount_sequence",
+                "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+              },
+              {
+                "expected": 125.0,
+                "belief_values": [
+                  125.0,
+                  125.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_profit_inverse",
+                "question": "A product sold for $150 after a 20% profit. Symbolically, sell = cost * 1.2. What was the original cost?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_percent_projection",
+                "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+              }
+            ]
+          },
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 3,
+            "solved_and_symbolic_valid_cases": 3,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 3.7795530920011515,
+              "wall_time_sec_per_case": 1.2598510306670505,
+              "wall_time_sec_per_valid_solve": 1.2598510306670505
+            },
+            "results": [
+              {
+                "expected": 70.4,
+                "belief_values": [
+                  70.4,
+                  70.4
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_discount_sequence",
+                "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+              },
+              {
+                "expected": 125.0,
+                "belief_values": [
+                  125.0,
+                  125.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_profit_inverse",
+                "question": "A product sold for $150 after a 20% profit. Symbolically, sell = cost * 1.2. What was the original cost?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_percent_projection",
+                "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+              }
+            ]
+          },
+          {
+            "profile": "ilp-heavy",
+            "description": "System-1 grounding + System-3 abduction/revision emphasis",
+            "systems": [
+              "system1",
+              "system3"
+            ],
+            "total_cases": 3,
+            "solved_cases": 3,
+            "symbolic_valid_cases": 1,
+            "solved_and_symbolic_valid_cases": 1,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 0.3333333333333333
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 0.3333333333333333,
+              "samples_per_valid_solve": 3.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 2.926193928999055,
+              "wall_time_sec_per_case": 0.9753979763330184,
+              "wall_time_sec_per_valid_solve": 2.926193928999055
+            },
+            "results": [
+              {
+                "expected": 70.4,
+                "belief_values": [
+                  70.4
+                ],
+                "solved": true,
+                "symbolic_valid": false,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_discount_sequence",
+                "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+              },
+              {
+                "expected": 125.0,
+                "belief_values": [
+                  125.0
+                ],
+                "solved": true,
+                "symbolic_valid": false,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_profit_inverse",
+                "question": "A product sold for $150 after a 20% profit. Symbolically, sell = cost * 1.2. What was the original cost?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_percent_projection",
+                "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+              }
+            ]
+          }
+        ]
+      },
+      "gate_results": [
+        {
+          "id": "hybrid-mixed-symbolic-all-valid-solves",
+          "description": "Hybrid must solve all mixed symbolic-text families with symbolic validity.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 3.0,
+          "target": 3.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-mixed-symbolic-all-valid-solves",
+          "description": "LT-heavy must solve all mixed symbolic-text families with symbolic validity.",
+          "profile": "lt-heavy",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 3.0,
+          "target": 3.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "ilp-heavy-mixed-symbolic-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on mixed symbolic-text slice.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 0.3333333333333333,
+          "target": 0.33,
+          "target_source": "value",
+          "passed": true
+        }
+      ],
+      "gates_green": true
+    },
+    {
+      "slice_id": "widening-sentinel-regression",
+      "description": "Cross-suite sentinel families guarding compact + widening regressions.",
+      "suite": "combined_widening",
+      "families": [
+        "buy_more_final_gap",
+        "unit_conversion_dozen",
+        "tinystory_basket_lunch_dinner",
+        "tinystory_ratio_market_day",
+        "mixed_symbolic_discount_sequence",
+        "mixed_symbolic_percent_projection"
+      ],
+      "profiles": [
+        "lt-heavy",
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "max_cycles": 2,
+      "proposal_shaping": {
+        "semantic_ar": {
+          "enabled": false,
+          "weight": 0.2,
+          "lexical_weight": 0.5,
+          "role_weight": 0.3,
+          "prior_weight": 0.2,
+          "gate_fail_penalty": 0.0,
+          "couple_to_symbolic_gate": true,
+          "emit_metadata": false
+        }
+      },
+      "command": "/home/yky/misc-programs/.venv/bin/python /home/yky/misc-programs/AGI-prototype/rules/run_bootstrap_baseline.py --suite combined_widening --profiles lt-heavy hybrid ilp-heavy --max-cycles 2 --families buy_more_final_gap unit_conversion_dozen tinystory_basket_lunch_dinner tinystory_ratio_market_day mixed_symbolic_discount_sequence mixed_symbolic_percent_projection --output /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.widening-sentinel-regression.baseline.json --quiet --sar-weight 0.2 --sar-lexical-weight 0.5 --sar-role-weight 0.3 --sar-prior-weight 0.2 --sar-gate-fail-penalty 0.0",
+      "return_code": 0,
+      "stdout": "\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Composition Rule: unit convert 3.0 dozen -> 36.0 eggs\n\n[System 2] Unit Convert Rule: 3.0 dozen -> 36.0 eggs\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 11.25\n\n[System 2] Remaining-From-Quantity Rule: unknown/apples left = 16.25\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 27.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 25.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 15.0\n\n[System 2] Composition Rule: ratio 3.0 * 30.0 = 90.0\n\n[System 2] Ratio Rule: composed ratio result = 90.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 12.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 10.0\n\n[System 2] Remaining-From-Quantity Rule: a/apples left = 0.0\n\n[System 2] Ratio Rule (ref-owner): A = 3.0 \u00d7 B/apples = 0.0\n\n[System 2] Composition Rule: ratio 3.0 * 15.0 = 45.0\n\n[System 2] Ratio Rule: composed ratio result = 45.0\n\n[System 2] Ratio Rule (ref-owner): a = 3.0 \u00d7 b/apples = 30.0\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[System 2] Percent Rule: unknown/marbles goal=percent_increase => 10.0\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\n\n[ILP] Analyzing 1 examples...\n  -> USING META RULE TEMPLATE: percent_sequence\nlt-heavy: solved=6/6 symbolic_valid=6/6 time=8.28s\nhybrid: solved=6/6 symbolic_valid=6/6 time=7.86s\nilp-heavy: solved=6/6 symbolic_valid=5/6 time=6.33s\nSaved baseline report to /home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.widening-sentinel-regression.baseline.json\n",
+      "stderr": "",
+      "baseline_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v1.widening-sentinel-regression.baseline.json",
+      "baseline_report": {
+        "contract_id": "agi-bootstrap-baseline-contract-v1",
+        "suite": "combined_widening",
+        "requested_families": [
+          "buy_more_final_gap",
+          "unit_conversion_dozen",
+          "tinystory_basket_lunch_dinner",
+          "tinystory_ratio_market_day",
+          "mixed_symbolic_discount_sequence",
+          "mixed_symbolic_percent_projection"
+        ],
+        "families": [
+          "buy_more_final_gap",
+          "unit_conversion_dozen",
+          "tinystory_basket_lunch_dinner",
+          "tinystory_ratio_market_day",
+          "mixed_symbolic_discount_sequence",
+          "mixed_symbolic_percent_projection"
+        ],
+        "max_cycles": 2,
+        "case_count": 6,
+        "seed": 0,
+        "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+        "proposal_shaping": {
+          "semantic_ar": {
+            "enabled": false,
+            "weight": 0.2,
+            "lexical_weight": 0.5,
+            "role_weight": 0.3,
+            "prior_weight": 0.2,
+            "gate_fail_penalty": 0.0,
+            "couple_to_symbolic_gate": true,
+            "emit_metadata": false
+          },
+          "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+        },
+        "teacher_proposal_ingestion": {
+          "enabled": false,
+          "ab_arm": "control",
+          "low_volume_mode": true,
+          "reason": "not requested"
+        },
+        "metric_definitions": {
+          "capability": "solve_rate = solved_cases / total_cases",
+          "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+          "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+          "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+        },
+        "profiles": [
+          {
+            "profile": "lt-heavy",
+            "description": "System-1 proposal + System-2 validation/reasoning only",
+            "systems": [
+              "system1",
+              "system2"
+            ],
+            "total_cases": 6,
+            "solved_cases": 6,
+            "symbolic_valid_cases": 6,
+            "solved_and_symbolic_valid_cases": 6,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 8.27767034899989,
+              "wall_time_sec_per_case": 1.379611724833315,
+              "wall_time_sec_per_valid_solve": 1.379611724833315
+            },
+            "results": [
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  0.0,
+                  90.0,
+                  10.0,
+                  0.0,
+                  15.0,
+                  30.0,
+                  12.0,
+                  27.0,
+                  45.0,
+                  15.0,
+                  25.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_final_gap",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 36.0,
+                "belief_values": [
+                  36.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "unit_conversion_dozen",
+                "question": "How many eggs are in 3 dozen eggs?"
+              },
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  11.25,
+                  16.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  0.0,
+                  90.0,
+                  10.0,
+                  0.0,
+                  15.0,
+                  30.0,
+                  12.0,
+                  27.0,
+                  45.0,
+                  15.0,
+                  25.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              },
+              {
+                "expected": 70.4,
+                "belief_values": [
+                  70.4,
+                  70.4
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_discount_sequence",
+                "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_percent_projection",
+                "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+              }
+            ]
+          },
+          {
+            "profile": "hybrid",
+            "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+            "systems": [
+              "system1",
+              "system2",
+              "system3"
+            ],
+            "total_cases": 6,
+            "solved_cases": 6,
+            "symbolic_valid_cases": 6,
+            "solved_and_symbolic_valid_cases": 6,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 1.0
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 1.0,
+              "samples_per_valid_solve": 1.0
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 7.857444424000278,
+              "wall_time_sec_per_case": 1.309574070666713,
+              "wall_time_sec_per_valid_solve": 1.309574070666713
+            },
+            "results": [
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  0.0,
+                  90.0,
+                  10.0,
+                  0.0,
+                  15.0,
+                  30.0,
+                  12.0,
+                  27.0,
+                  45.0,
+                  15.0,
+                  25.0,
+                  15.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_final_gap",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 36.0,
+                "belief_values": [
+                  36.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "unit_conversion_dozen",
+                "question": "How many eggs are in 3 dozen eggs?"
+              },
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25,
+                  11.25,
+                  16.25,
+                  11.25,
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  0.0,
+                  90.0,
+                  10.0,
+                  0.0,
+                  15.0,
+                  30.0,
+                  12.0,
+                  27.0,
+                  45.0,
+                  15.0,
+                  25.0,
+                  15.0,
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              },
+              {
+                "expected": 70.4,
+                "belief_values": [
+                  70.4,
+                  70.4
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_discount_sequence",
+                "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_percent_projection",
+                "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+              }
+            ]
+          },
+          {
+            "profile": "ilp-heavy",
+            "description": "System-1 grounding + System-3 abduction/revision emphasis",
+            "systems": [
+              "system1",
+              "system3"
+            ],
+            "total_cases": 6,
+            "solved_cases": 6,
+            "symbolic_valid_cases": 5,
+            "solved_and_symbolic_valid_cases": 5,
+            "capability": {
+              "solve_rate": 1.0
+            },
+            "symbolic_validity": {
+              "symbolic_valid_rate": 0.8333333333333334
+            },
+            "sample_efficiency": {
+              "valid_solves_per_sample": 0.8333333333333334,
+              "samples_per_valid_solve": 1.2
+            },
+            "compute_cost": {
+              "wall_time_sec_total": 6.328737283998635,
+              "wall_time_sec_per_case": 1.0547895473331057,
+              "wall_time_sec_per_valid_solve": 1.2657474567997269
+            },
+            "results": [
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "buy_more_final_gap",
+                "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+              },
+              {
+                "expected": 36.0,
+                "belief_values": [
+                  36.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "unit_conversion_dozen",
+                "question": "How many eggs are in 3 dozen eggs?"
+              },
+              {
+                "expected": 11.25,
+                "belief_values": [
+                  11.25
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_basket_lunch_dinner",
+                "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+              },
+              {
+                "expected": 15.0,
+                "belief_values": [
+                  15.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "tinystory_ratio_market_day",
+                "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+              },
+              {
+                "expected": 70.4,
+                "belief_values": [
+                  70.4
+                ],
+                "solved": true,
+                "symbolic_valid": false,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_discount_sequence",
+                "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+              },
+              {
+                "expected": 10.0,
+                "belief_values": [
+                  10.0
+                ],
+                "solved": true,
+                "symbolic_valid": true,
+                "cycles_executed": 2,
+                "family": "mixed_symbolic_percent_projection",
+                "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+              }
+            ]
+          }
+        ]
+      },
+      "gate_results": [
+        {
+          "id": "hybrid-widening-sentinel-all-valid-solves",
+          "description": "Hybrid must stay perfect on cross-suite widening sentinels.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 6.0,
+          "target": 6.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "lt-heavy-widening-sentinel-symbolic-perfect",
+          "description": "LT-heavy symbolic validity must remain perfect on widening sentinels.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_valid_cases",
+          "op": "==",
+          "blocking": true,
+          "actual": 6.0,
+          "target": 6.0,
+          "target_source": "total_cases",
+          "passed": true
+        },
+        {
+          "id": "ilp-heavy-widening-sentinel-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on widening sentinels.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "blocking": true,
+          "actual": 0.8333333333333334,
+          "target": 0.8,
+          "target_source": "value",
+          "passed": true
+        }
+      ],
+      "gates_green": true
+    }
+  ]
+}

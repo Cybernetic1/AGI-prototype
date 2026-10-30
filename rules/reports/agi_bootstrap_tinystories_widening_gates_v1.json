@@ -1,0 +1,35 @@
+{
+  "study_id": "agi-bootstrap-tinystories-widening-gates-v1",
+  "generated_at": "2026-10-29T15:40:24.110526+00:00",
+  "contract": "/home/yky/misc-programs/AGI-prototype/rules/bootstrap_invariant_curriculum_widening.json",
+  "selected_slices": [
+    "tinystories-state-tracking-compact",
+    "mixed-narrative-symbolic-compact"
+  ],
+  "max_cycles": 2,
+  "all_gates_green": true,
+  "halted_on_slice": null,
+  "slice_summaries": [
+    {
+      "slice_id": "tinystories-state-tracking-compact",
+      "suite": "tinystories_state_tracking",
+      "case_count": 3,
+      "gates_green": true,
+      "passed_gate_count": 3,
+      "total_gate_count": 3,
+      "blocking_failures": [],
+      "report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_tinystories_widening_raw_v1.tinystories-state-tracking-compact.baseline.json"
+    },
+    {
+      "slice_id": "mixed-narrative-symbolic-compact",
+      "suite": "mixed_narrative_symbolic",
+      "case_count": 3,
+      "gates_green": true,
+      "passed_gate_count": 3,
+      "total_gate_count": 3,
+      "blocking_failures": [],
+      "report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_tinystories_widening_raw_v1.mixed-narrative-symbolic-compact.baseline.json"
+    }
+  ],
+  "raw_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_tinystories_widening_raw_v1.json"
+}

@@ -1,0 +1,45 @@
+{
+  "rules": [
+    {
+      "rule_id": "teacher-prop-prefer-latest",
+      "raw_rule": "If a later state exists for the same owner and item, prefer the later state."
+    },
+    {
+      "rule_id": "teacher-prop-bind-owner-item",
+      "raw_rule": "If same owner and same item are mentioned, bind them to the same identity."
+    }
+  ],
+  "facts": [
+    {
+      "fact": {
+        "kind": "state",
+        "id": "state_bob_apples_1",
+        "owner": "Bob",
+        "item": "apples",
+        "qty": 10,
+        "phase": "before"
+      }
+    }
+  ],
+  "counterfactuals": [
+    {
+      "hypothesis": "If Bob gives away apples, remaining apples should decrease.",
+      "if": {
+        "kind": "state",
+        "id": "state_cf_before",
+        "owner": "Bob",
+        "item": "apples",
+        "qty": 10,
+        "phase": "before"
+      },
+      "then": {
+        "kind": "state",
+        "id": "state_cf_after",
+        "owner": "Bob",
+        "item": "apples",
+        "qty": 7,
+        "phase": "after"
+      }
+    }
+  ]
+}

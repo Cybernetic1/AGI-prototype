@@ -1,0 +1,18 @@
+{
+  "ledger_id": "agi-bootstrap-efficiency-ledger-v1",
+  "description": "Explicit milestone thresholds toward long-horizon 100x cost reduction while preserving symbolic validity and gate health.",
+  "thresholds": {
+    "required_all_gates_green": true,
+    "required_widening_all_gates_green": true,
+    "ab_repeated": {
+      "max_solve_rate_drop_mean": 0.0,
+      "max_symbolic_valid_rate_drop_mean": 0.0,
+      "max_wall_time_delta_mean_sec": 0.05
+    },
+    "efficiency_factors": {
+      "phase_min_factor_vs_hybrid_baseline": 1.10,
+      "stretch_factor_vs_hybrid_baseline": 1.25,
+      "long_horizon_target_factor": 100.0
+    }
+  }
+}

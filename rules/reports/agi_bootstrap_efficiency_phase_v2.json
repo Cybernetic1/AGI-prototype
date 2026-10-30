@@ -1,0 +1,160 @@
+{
+  "phase_id": "agi-bootstrap-focused-efficiency-phase-v1",
+  "generated_at": "2026-10-29T16:05:18.891502+00:00",
+  "contract": "/home/yky/misc-programs/AGI-prototype/rules/bootstrap_invariant_curriculum_widening.json",
+  "golden_lock": "/home/yky/misc-programs/AGI-prototype/rules/bootstrap_golden_slices_v1.json",
+  "golden_slices": [
+    "invariant-core-finality",
+    "adjacent-template-core",
+    "adjacent-template-full"
+  ],
+  "golden_families": [
+    "buy_more_final_gap",
+    "donation_after_buy_more",
+    "buy_more_then_donation_and_spoilage",
+    "mixed_remaining_state",
+    "product_total",
+    "rate_time_total",
+    "discount_price",
+    "combined_total",
+    "unit_conversion_dozen",
+    "distance_over_speed",
+    "percent_of_total",
+    "discounted_total",
+    "profit_margin",
+    "simple_interest",
+    "fraction_of_total",
+    "average_speed",
+    "ratio_of_total",
+    "percent_growth",
+    "percent_sequence_growth",
+    "percent_sequence_discount"
+  ],
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "profiles": [
+    "lt-heavy",
+    "hybrid",
+    "ilp-heavy"
+  ],
+  "max_cycles": 2,
+  "budget_grid": [
+    {
+      "id": "baseline-default-budget",
+      "ilp_max_depth": 0,
+      "ilp_max_fact_matches": 0,
+      "ilp_max_rule_matches": 0,
+      "ilp_max_subgoal_results": 0,
+      "numeric_authority_strict": false
+    },
+    {
+      "id": "depth10-subgoal8-authority",
+      "ilp_max_depth": 10,
+      "ilp_max_fact_matches": 0,
+      "ilp_max_rule_matches": 0,
+      "ilp_max_subgoal_results": 8,
+      "numeric_authority_strict": true
+    },
+    {
+      "id": "depth8-subgoal6-authority",
+      "ilp_max_depth": 8,
+      "ilp_max_fact_matches": 0,
+      "ilp_max_rule_matches": 0,
+      "ilp_max_subgoal_results": 6,
+      "numeric_authority_strict": true
+    }
+  ],
+  "evaluations": [
+    {
+      "run_id": "baseline-default-budget",
+      "budget": {
+        "id": "baseline-default-budget",
+        "ilp_max_depth": 0,
+        "ilp_max_fact_matches": 0,
+        "ilp_max_rule_matches": 0,
+        "ilp_max_subgoal_results": 0,
+        "numeric_authority_strict": false
+      },
+      "report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/efficiency_phase/baseline-default-budget.ab_repeated.json",
+      "hybrid_metrics": {
+        "solve_rate_control_mean": 1.0,
+        "solve_rate_treatment_mean": 1.0,
+        "symbolic_control_mean": 1.0,
+        "symbolic_treatment_mean": 1.0,
+        "wall_per_valid_control_mean": 1.2970101146000768,
+        "wall_per_valid_treatment_mean": 1.2966989805833389
+      },
+      "gates": {
+        "solve_non_degrading_vs_promoted_baseline": true,
+        "symbolic_non_degrading_vs_promoted_baseline": true,
+        "wall_per_valid_improved_vs_promoted_baseline": false
+      },
+      "promoted": false
+    },
+    {
+      "run_id": "depth10-subgoal8-authority",
+      "budget": {
+        "id": "depth10-subgoal8-authority",
+        "ilp_max_depth": 10,
+        "ilp_max_fact_matches": 0,
+        "ilp_max_rule_matches": 0,
+        "ilp_max_subgoal_results": 8,
+        "numeric_authority_strict": true
+      },
+      "report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/efficiency_phase/depth10-subgoal8-authority.ab_repeated.json",
+      "hybrid_metrics": {
+        "solve_rate_control_mean": 1.0,
+        "solve_rate_treatment_mean": 1.0,
+        "symbolic_control_mean": 1.0,
+        "symbolic_treatment_mean": 1.0,
+        "wall_per_valid_control_mean": 1.3026215289833392,
+        "wall_per_valid_treatment_mean": 1.296646798299965
+      },
+      "gates": {
+        "solve_non_degrading_vs_promoted_baseline": true,
+        "symbolic_non_degrading_vs_promoted_baseline": true,
+        "wall_per_valid_improved_vs_promoted_baseline": false
+      },
+      "promoted": false
+    },
+    {
+      "run_id": "depth8-subgoal6-authority",
+      "budget": {
+        "id": "depth8-subgoal6-authority",
+        "ilp_max_depth": 8,
+        "ilp_max_fact_matches": 0,
+        "ilp_max_rule_matches": 0,
+        "ilp_max_subgoal_results": 6,
+        "numeric_authority_strict": true
+      },
+      "report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/efficiency_phase/depth8-subgoal6-authority.ab_repeated.json",
+      "hybrid_metrics": {
+        "solve_rate_control_mean": 1.0,
+        "solve_rate_treatment_mean": 1.0,
+        "symbolic_control_mean": 1.0,
+        "symbolic_treatment_mean": 1.0,
+        "wall_per_valid_control_mean": 1.3052593917166329,
+        "wall_per_valid_treatment_mean": 1.305082157366754
+      },
+      "gates": {
+        "solve_non_degrading_vs_promoted_baseline": true,
+        "symbolic_non_degrading_vs_promoted_baseline": true,
+        "wall_per_valid_improved_vs_promoted_baseline": false
+      },
+      "promoted": false
+    }
+  ],
+  "promoted_run_id": "baseline-default-budget",
+  "promoted_budget": {
+    "id": "baseline-default-budget",
+    "ilp_max_depth": 0,
+    "ilp_max_fact_matches": 0,
+    "ilp_max_rule_matches": 0,
+    "ilp_max_subgoal_results": 0,
+    "numeric_authority_strict": false
+  },
+  "promoted_report_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/efficiency_phase/baseline-default-budget.ab_repeated.json"
+}

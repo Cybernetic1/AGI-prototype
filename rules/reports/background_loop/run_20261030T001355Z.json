@@ -1,0 +1,799 @@
+{
+  "contract_id": "agi-bootstrap-baseline-contract-v1",
+  "suite": "combined_widening",
+  "requested_families": [],
+  "families": [
+    "buy_more_final_gap",
+    "buy_more_final_gap_variant",
+    "donation_after_buy_more",
+    "buy_more_then_donation_and_spoilage",
+    "buy_more_then_donation_and_spoilt",
+    "buy_more_then_donation_after_that_spoilage",
+    "mixed_remaining_state",
+    "buy_more_then_donation_after_spoilage_long_tail",
+    "product_total",
+    "rate_time_total",
+    "discount_price",
+    "combined_total",
+    "unit_conversion_dozen",
+    "distance_over_speed",
+    "percent_of_total",
+    "discounted_total",
+    "profit_margin",
+    "simple_interest",
+    "fraction_of_total",
+    "average_speed",
+    "ratio_of_total",
+    "percent_growth",
+    "percent_sequence_growth",
+    "percent_sequence_discount",
+    "tinystory_basket_lunch_dinner",
+    "tinystory_basket_after_school",
+    "tinystory_ratio_market_day",
+    "mixed_symbolic_discount_sequence",
+    "mixed_symbolic_profit_inverse",
+    "mixed_symbolic_percent_projection"
+  ],
+  "max_cycles": 2,
+  "case_count": 30,
+  "seed": 0,
+  "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+  "proposal_shaping": {
+    "semantic_ar": {
+      "enabled": false,
+      "weight": 0.2,
+      "lexical_weight": 0.5,
+      "role_weight": 0.3,
+      "prior_weight": 0.2,
+      "gate_fail_penalty": 0.0,
+      "couple_to_symbolic_gate": true,
+      "emit_metadata": false
+    },
+    "pot_dsl": {
+      "enabled": false,
+      "mode": "proposal_trace_injection",
+      "runtime_authority": "proposal_only"
+    },
+    "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+  },
+  "search_budget": {
+    "strict_numeric_authority": false,
+    "ilp_max_depth": 0,
+    "ilp_max_fact_matches": 0,
+    "ilp_max_rule_matches": 0,
+    "ilp_max_subgoal_results": 0
+  },
+  "teacher_proposal_ingestion": {
+    "enabled": false,
+    "ab_arm": "control",
+    "low_volume_mode": true,
+    "reason": "not requested"
+  },
+  "metric_definitions": {
+    "capability": "solve_rate = solved_cases / total_cases",
+    "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+    "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+    "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+  },
+  "profiles": [
+    {
+      "profile": "hybrid",
+      "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+      "systems": [
+        "system1",
+        "system2",
+        "system3"
+      ],
+      "total_cases": 30,
+      "solved_cases": 30,
+      "symbolic_valid_cases": 30,
+      "solved_and_symbolic_valid_cases": 30,
+      "capability": {
+        "solve_rate": 1.0
+      },
+      "symbolic_validity": {
+        "symbolic_valid_rate": 1.0
+      },
+      "sample_efficiency": {
+        "valid_solves_per_sample": 1.0,
+        "samples_per_valid_solve": 1.0
+      },
+      "compute_cost": {
+        "wall_time_sec_total": 41.12455434599542,
+        "wall_time_sec_per_case": 1.3708184781998474,
+        "wall_time_sec_per_valid_solve": 1.3708184781998474
+      },
+      "results": [
+        {
+          "expected": 15.0,
+          "belief_values": [
+            0.0,
+            30.0,
+            0.0,
+            15.0,
+            90.0,
+            12.0,
+            15.0,
+            10.0,
+            45.0,
+            27.0,
+            25.0,
+            15.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "buy_more_final_gap",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+        },
+        {
+          "expected": 19.5,
+          "belief_values": [
+            29.0,
+            32.0,
+            19.5,
+            0.0,
+            12.0,
+            14.0,
+            19.0,
+            19.5,
+            22.0,
+            128.0,
+            88.0,
+            26.5,
+            16.5,
+            78.0,
+            9.5,
+            19.5
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "buy_more_final_gap_variant",
+          "question": "A has 4 times as many apples as B. B has 8 apples. A gives away 10 apples. 25% of the remaining apples are eaten. A then buys 6 more apples and 3 apples are spoiled. How many apples does A have?"
+        },
+        {
+          "expected": 16.0,
+          "belief_values": [
+            0.0,
+            11.0,
+            48.0,
+            30.0,
+            0.0,
+            90.0,
+            16.0,
+            12.0,
+            1.0,
+            16.0,
+            13.0,
+            26.0,
+            15.0,
+            45.0,
+            27.0,
+            16.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "donation_after_buy_more",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?"
+        },
+        {
+          "expected": 11.0,
+          "belief_values": [
+            0.0,
+            11.0,
+            48.0,
+            30.0,
+            0.0,
+            90.0,
+            12.0,
+            6.0,
+            1.0,
+            11.0,
+            33.0,
+            25.0,
+            13.0,
+            26.0,
+            15.0,
+            10.0,
+            7.0,
+            45.0,
+            8.0,
+            -4.0,
+            27.0,
+            11.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "buy_more_then_donation_and_spoilage",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoiled. How many apples does A have?"
+        },
+        {
+          "expected": 11.0,
+          "belief_values": [
+            0.0,
+            11.0,
+            48.0,
+            30.0,
+            0.0,
+            90.0,
+            12.0,
+            6.0,
+            1.0,
+            11.0,
+            33.0,
+            25.0,
+            13.0,
+            26.0,
+            15.0,
+            10.0,
+            7.0,
+            45.0,
+            8.0,
+            -4.0,
+            27.0,
+            11.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "buy_more_then_donation_and_spoilt",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoilt. How many apples does A have?"
+        },
+        {
+          "expected": 11.0,
+          "belief_values": [
+            0.0,
+            11.0,
+            48.0,
+            30.0,
+            0.0,
+            90.0,
+            12.0,
+            6.0,
+            1.0,
+            11.0,
+            33.0,
+            25.0,
+            13.0,
+            26.0,
+            15.0,
+            10.0,
+            7.0,
+            45.0,
+            8.0,
+            -4.0,
+            27.0,
+            11.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "buy_more_then_donation_after_that_spoilage",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. After that, 5 apples are spoiled. How many apples does A have?"
+        },
+        {
+          "expected": 11.25,
+          "belief_values": [
+            11.25,
+            16.25,
+            11.25,
+            11.25
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "mixed_remaining_state",
+          "question": "There were 20 apples. 5 were eaten. 25% of the remaining 15 apples were eaten. How many apples are left?"
+        },
+        {
+          "expected": 15.04,
+          "belief_values": [
+            11.84,
+            16.8,
+            28.8,
+            19.24,
+            15.04,
+            96.0,
+            0.0,
+            12.0,
+            60.16,
+            76.16,
+            32.0,
+            14.279999999999998,
+            15.04,
+            24.0,
+            36.0,
+            3.039999999999999,
+            10.279999999999998,
+            11.04,
+            144.0,
+            7.84,
+            20.0,
+            7.039999999999999,
+            31.24,
+            15.04
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "buy_more_then_donation_after_spoilage_long_tail",
+          "question": "A has 4 times as many apples as B. B has 9 apples. A gives away 12 apples. 30% of the remaining apples are eaten. A then buys 7 more apples and 20% of the remaining apples are donated. Then 4 apples are spoilt. How many apples does A have?"
+        },
+        {
+          "expected": 54.0,
+          "belief_values": [
+            54.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "product_total",
+          "question": "A bakery sells 18 muffins at $3 each."
+        },
+        {
+          "expected": 90.0,
+          "belief_values": [
+            90.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "rate_time_total",
+          "question": "A worker earns $18 per hour for 5 hours."
+        },
+        {
+          "expected": 48.0,
+          "belief_values": [
+            48.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "discount_price",
+          "question": "A shirt costs $60 and is discounted by 20%."
+        },
+        {
+          "expected": 20.0,
+          "belief_values": [
+            20.0,
+            20.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "combined_total",
+          "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+        },
+        {
+          "expected": 36.0,
+          "belief_values": [
+            36.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "unit_conversion_dozen",
+          "question": "How many eggs are in 3 dozen eggs?"
+        },
+        {
+          "expected": 3.0,
+          "belief_values": [
+            1.0,
+            3.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "distance_over_speed",
+          "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+        },
+        {
+          "expected": 10.0,
+          "belief_values": [
+            10.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "percent_of_total",
+          "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+        },
+        {
+          "expected": 45.0,
+          "belief_values": [
+            45.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "discounted_total",
+          "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+        },
+        {
+          "expected": 125.0,
+          "belief_values": [
+            125.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "profit_margin",
+          "question": "A product sold for $150 after a 20% profit. What was the original cost?"
+        },
+        {
+          "expected": 30.0,
+          "belief_values": [
+            30.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "simple_interest",
+          "question": "A bank account earns 5% simple interest per year for 3 years on a principal of $200. How much interest is earned?"
+        },
+        {
+          "expected": 0.4,
+          "belief_values": [
+            0.4
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "fraction_of_total",
+          "question": "12 out of 30 students are girls. What fraction of the students are girls?"
+        },
+        {
+          "expected": 60.0,
+          "belief_values": [
+            60.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "average_speed",
+          "question": "A car travels 120 miles in 2 hours and then 60 miles in 1 hour. What is the average speed?"
+        },
+        {
+          "expected": 0.4,
+          "belief_values": [
+            0.4
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "ratio_of_total",
+          "question": "There are 10 red and 15 blue marbles. What fraction of the marbles are red?"
+        },
+        {
+          "expected": 600.0,
+          "belief_values": [
+            600.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "percent_growth",
+          "question": "A town had 500 residents and grew by 20%. How many residents are there now?"
+        },
+        {
+          "expected": 540.0,
+          "belief_values": [
+            540.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "percent_sequence_growth",
+          "question": "A town had 500 residents and grew by 20%, then decreased by 10%. How many residents are there now?"
+        },
+        {
+          "expected": 70.4,
+          "belief_values": [
+            70.4
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "percent_sequence_discount",
+          "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. What is the final price?"
+        },
+        {
+          "expected": 11.25,
+          "belief_values": [
+            11.25,
+            16.25,
+            11.25,
+            11.25
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "tinystory_basket_lunch_dinner",
+          "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?"
+        },
+        {
+          "expected": 19.2,
+          "belief_values": [
+            19.2,
+            25.2,
+            19.2,
+            19.2
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "tinystory_basket_after_school",
+          "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?"
+        },
+        {
+          "expected": 15.0,
+          "belief_values": [
+            0.0,
+            30.0,
+            0.0,
+            15.0,
+            90.0,
+            12.0,
+            15.0,
+            10.0,
+            45.0,
+            27.0,
+            25.0,
+            15.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "tinystory_ratio_market_day",
+          "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?"
+        },
+        {
+          "expected": 70.4,
+          "belief_values": [
+            70.4
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "mixed_symbolic_discount_sequence",
+          "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?"
+        },
+        {
+          "expected": 125.0,
+          "belief_values": [
+            125.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "mixed_symbolic_profit_inverse",
+          "question": "A product sold for $150 after a 20% profit. Symbolically, sell = cost * 1.2. What was the original cost?"
+        },
+        {
+          "expected": 10.0,
+          "belief_values": [
+            10.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "family": "mixed_symbolic_percent_projection",
+          "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?"
+        }
+      ]
+    }
+  ]
+}

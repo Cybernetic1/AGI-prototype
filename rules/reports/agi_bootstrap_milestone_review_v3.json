@@ -1,0 +1,126 @@
+{
+  "review_id": "agi-bootstrap-milestone-review-v1",
+  "generated_at": "2026-10-29T08:42:34.425430+00:00",
+  "goal_context": {
+    "focus": [
+      "progress toward 100x cost-reduction target",
+      "symbolic-validity preservation during widening"
+    ]
+  },
+  "sources": {
+    "baseline": "rules/reports/agi_bootstrap_baseline_v1.json",
+    "invariant": "rules/reports/agi_bootstrap_invariant_curriculum_v1.json",
+    "ab": "rules/reports/agi_bootstrap_ab_efficiency_repeated_v1.json",
+    "widening": "rules/reports/agi_bootstrap_curriculum_widening_v2.json"
+  },
+  "aggregated_findings": {
+    "baseline": {
+      "hybrid": {
+        "solve_rate": 1.0,
+        "symbolic_valid_rate": 1.0,
+        "wall_time_sec_per_valid_solve": 1.4874913441666042
+      }
+    },
+    "invariant": {
+      "slice_id": "invariant-core-finality",
+      "hybrid": {
+        "solve_rate": 1.0,
+        "symbolic_valid_rate": 1.0
+      },
+      "lt_heavy": {
+        "solve_rate": 1.0,
+        "symbolic_valid_rate": 1.0
+      }
+    },
+    "ab": {
+      "macro_control": {},
+      "macro_treatment": {},
+      "delta_treatment_minus_control": {
+        "solve_rate_mean": 0.0,
+        "symbolic_valid_rate_mean": 0.0,
+        "valid_solves_per_sample_mean": 0.0,
+        "wall_time_sec_total_sum": -0.061662517801232754
+      }
+    },
+    "widening": {
+      "all_gates_green": true,
+      "gate_pass_count": 22,
+      "gate_total_count": 22,
+      "hybrid_symbolic_perfect_all_slices": true,
+      "executed_slice_ids": [
+        "invariant-core-finality",
+        "adjacent-template-core",
+        "adjacent-template-full",
+        "tinystories-state-tracking-compact",
+        "mixed-narrative-symbolic-compact",
+        "widening-sentinel-regression"
+      ],
+      "ilp_heavy_symbolic_valid_rates": [
+        {
+          "slice_id": "invariant-core-finality",
+          "symbolic_valid_rate": 1.0
+        },
+        {
+          "slice_id": "adjacent-template-core",
+          "symbolic_valid_rate": 1.0
+        },
+        {
+          "slice_id": "adjacent-template-full",
+          "symbolic_valid_rate": 0.5625
+        },
+        {
+          "slice_id": "tinystories-state-tracking-compact",
+          "symbolic_valid_rate": 1.0
+        },
+        {
+          "slice_id": "mixed-narrative-symbolic-compact",
+          "symbolic_valid_rate": 0.3333333333333333
+        },
+        {
+          "slice_id": "widening-sentinel-regression",
+          "symbolic_valid_rate": 0.8333333333333334
+        }
+      ]
+    }
+  },
+  "achieved": [
+    "Widening regression passed with all gates green (22/22) in agi_bootstrap_curriculum_widening_v2.json.",
+    "Hybrid profile preserved symbolic validity at 1.0 on baseline, invariant-core, A/B control+treatment, and every widening slice.",
+    "A/B treatment preserved quality metrics: macro deltas are 0.0 for solve rate, symbolic-valid rate, and valid-solves/sample."
+  ],
+  "not_yet_achieved": [
+    "100x cost reduction is not met under symbolic-perfect hybrid comparison.",
+    "A/B treatment did not reduce aggregate wall-time; macro delta is +-0.061663 sec.",
+    "ILP-heavy symbolic validity is not consistently preserved in widening (mixed-narrative-symbolic-compact=0.333333, widening-sentinel-regression=0.833333)."
+  ],
+  "gap_to_target": {
+    "target_factor": 100.0,
+    "baseline_reference": {
+      "profile": "hybrid",
+      "source": "rules/reports/agi_bootstrap_baseline_v1.json",
+      "wall_time_sec_per_valid_solve": 1.4874913441666042
+    },
+    "best_symbolic_perfect_hybrid": {
+      "source": "widening/adjacent-template-full/hybrid",
+      "wall_time_sec_per_valid_solve": 1.2160684221250904
+    },
+    "best_symbolic_perfect_any_profile": {
+      "source": "widening/adjacent-template-core/ilp-heavy",
+      "wall_time_sec_per_valid_solve": 1.002744085250015
+    },
+    "hybrid_target_threshold_sec_per_valid_solve": 0.014874913441666042,
+    "hybrid_achieved_factor_vs_baseline": 1.2231970809399029,
+    "hybrid_achieved_reduction_percent": 18.247025309151212,
+    "hybrid_remaining_factor_to_target": 81.75297469084879,
+    "hybrid_additional_reduction_needed_percent": 98.7768029190601,
+    "best_any_achieved_factor_vs_hybrid_baseline": 1.4834207112732327,
+    "best_any_remaining_factor_to_target": 67.41175934787181
+  },
+  "immediate_next_actions": [
+    "Prioritize hybrid cost reduction experiments while keeping symbolic_valid_rate=1.0 and all widening gates green.",
+    "Target profiles/slices where cost is highest under symbolic-perfect runs (e.g., invariant-core hybrid cost 1.800792 sec/valid-solve).",
+    "Stabilize ilp-heavy symbolic validity on mixed narrative and widening sentinel slices before treating it as a reliable low-cost path.",
+    "Re-run A/B and widening reports after each cost-focused change, then regenerate this milestone review with the command below."
+  ],
+  "reproducible_command": "python3 rules/generate_agi_bootstrap_milestone_review.py --baseline-report rules/reports/agi_bootstrap_baseline_v1.json --invariant-report rules/reports/agi_bootstrap_invariant_curriculum_v1.json --ab-report rules/reports/agi_bootstrap_ab_efficiency_repeated_v1.json --widening-report rules/reports/agi_bootstrap_curriculum_widening_v2.json --output-json rules/reports/agi_bootstrap_milestone_review_v3.json --output-md rules/reports/agi_bootstrap_milestone_review_v3.md"
+}

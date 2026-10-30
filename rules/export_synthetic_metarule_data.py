@@ -14,9 +14,17 @@ from ilp_learner.metarule_loop import export_synthetic_training_set
 def main() -> int:
     parser = argparse.ArgumentParser(description="Export synthetic metarule training data with positives and negatives.")
     parser.add_argument("--out", default=str(REPO_ROOT / "ilp_learner" / "synthetic_metarule_train.jsonl"))
+    parser.add_argument(
+        "--agi-transfer-families",
+        action="store_true",
+        help="Include AGI-transfer metarule families (part-whole, temporal-causal, unit-compatibility).",
+    )
     args = parser.parse_args()
 
-    count = export_synthetic_training_set(args.out)
+    count = export_synthetic_training_set(
+        args.out,
+        include_agi_transfer_families=args.agi_transfer_families,
+    )
     print(f"Wrote {count} rows to {args.out}")
     return 0
 

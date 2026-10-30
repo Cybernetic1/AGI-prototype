@@ -1,0 +1,409 @@
+{
+  "contract_id": "agi-bootstrap-baseline-contract-v1",
+  "suite": "template_generalization",
+  "requested_families": [
+    "product_total",
+    "rate_time_total",
+    "discount_price",
+    "combined_total",
+    "unit_conversion_dozen",
+    "distance_over_speed",
+    "percent_of_total",
+    "discounted_total"
+  ],
+  "families": [
+    "product_total",
+    "rate_time_total",
+    "discount_price",
+    "combined_total",
+    "unit_conversion_dozen",
+    "distance_over_speed",
+    "percent_of_total",
+    "discounted_total"
+  ],
+  "max_cycles": 2,
+  "case_count": 8,
+  "seed": 0,
+  "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+  "proposal_shaping": {
+    "semantic_ar": {
+      "enabled": false,
+      "weight": 0.2,
+      "lexical_weight": 0.5,
+      "role_weight": 0.3,
+      "prior_weight": 0.2,
+      "gate_fail_penalty": 0.0,
+      "couple_to_symbolic_gate": true,
+      "emit_metadata": false
+    },
+    "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+  },
+  "teacher_proposal_ingestion": {
+    "enabled": false,
+    "ab_arm": "control",
+    "low_volume_mode": true,
+    "reason": "not requested"
+  },
+  "metric_definitions": {
+    "capability": "solve_rate = solved_cases / total_cases",
+    "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+    "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+    "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+  },
+  "profiles": [
+    {
+      "profile": "lt-heavy",
+      "description": "System-1 proposal + System-2 validation/reasoning only",
+      "systems": [
+        "system1",
+        "system2"
+      ],
+      "total_cases": 8,
+      "solved_cases": 7,
+      "symbolic_valid_cases": 8,
+      "solved_and_symbolic_valid_cases": 7,
+      "capability": {
+        "solve_rate": 0.875
+      },
+      "symbolic_validity": {
+        "symbolic_valid_rate": 1.0
+      },
+      "sample_efficiency": {
+        "valid_solves_per_sample": 0.875,
+        "samples_per_valid_solve": 1.1428571428571428
+      },
+      "compute_cost": {
+        "wall_time_sec_total": 9.989083577000201,
+        "wall_time_sec_per_case": 1.2486354471250252,
+        "wall_time_sec_per_valid_solve": 1.4270119395714573
+      },
+      "results": [
+        {
+          "expected": 54.0,
+          "belief_values": [
+            54.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "product_total",
+          "question": "A bakery sells 18 muffins at $3 each."
+        },
+        {
+          "expected": 90.0,
+          "belief_values": [
+            90.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "rate_time_total",
+          "question": "A worker earns $18 per hour for 5 hours."
+        },
+        {
+          "expected": 48.0,
+          "belief_values": [
+            48.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "discount_price",
+          "question": "A shirt costs $60 and is discounted by 20%."
+        },
+        {
+          "expected": 20.0,
+          "belief_values": [
+            20.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "combined_total",
+          "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+        },
+        {
+          "expected": 36.0,
+          "belief_values": [
+            36.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "unit_conversion_dozen",
+          "question": "How many eggs are in 3 dozen eggs?"
+        },
+        {
+          "expected": 3.0,
+          "belief_values": [
+            1.0
+          ],
+          "solved": false,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "distance_over_speed",
+          "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+        },
+        {
+          "expected": 10.0,
+          "belief_values": [
+            10.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "percent_of_total",
+          "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+        },
+        {
+          "expected": 45.0,
+          "belief_values": [
+            45.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "discounted_total",
+          "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+        }
+      ]
+    },
+    {
+      "profile": "hybrid",
+      "description": "Full tri-system loop (System-1 + System-2 + System-3)",
+      "systems": [
+        "system1",
+        "system2",
+        "system3"
+      ],
+      "total_cases": 8,
+      "solved_cases": 8,
+      "symbolic_valid_cases": 8,
+      "solved_and_symbolic_valid_cases": 8,
+      "capability": {
+        "solve_rate": 1.0
+      },
+      "symbolic_validity": {
+        "symbolic_valid_rate": 1.0
+      },
+      "sample_efficiency": {
+        "valid_solves_per_sample": 1.0,
+        "samples_per_valid_solve": 1.0
+      },
+      "compute_cost": {
+        "wall_time_sec_total": 9.809772586999316,
+        "wall_time_sec_per_case": 1.2262215733749144,
+        "wall_time_sec_per_valid_solve": 1.2262215733749144
+      },
+      "results": [
+        {
+          "expected": 54.0,
+          "belief_values": [
+            54.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "product_total",
+          "question": "A bakery sells 18 muffins at $3 each."
+        },
+        {
+          "expected": 90.0,
+          "belief_values": [
+            90.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "rate_time_total",
+          "question": "A worker earns $18 per hour for 5 hours."
+        },
+        {
+          "expected": 48.0,
+          "belief_values": [
+            48.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "discount_price",
+          "question": "A shirt costs $60 and is discounted by 20%."
+        },
+        {
+          "expected": 20.0,
+          "belief_values": [
+            20.0,
+            20.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "combined_total",
+          "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+        },
+        {
+          "expected": 36.0,
+          "belief_values": [
+            36.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "unit_conversion_dozen",
+          "question": "How many eggs are in 3 dozen eggs?"
+        },
+        {
+          "expected": 3.0,
+          "belief_values": [
+            1.0,
+            3.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "distance_over_speed",
+          "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+        },
+        {
+          "expected": 10.0,
+          "belief_values": [
+            10.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "percent_of_total",
+          "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+        },
+        {
+          "expected": 45.0,
+          "belief_values": [
+            45.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "discounted_total",
+          "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+        }
+      ]
+    },
+    {
+      "profile": "ilp-heavy",
+      "description": "System-1 grounding + System-3 abduction/revision emphasis",
+      "systems": [
+        "system1",
+        "system3"
+      ],
+      "total_cases": 8,
+      "solved_cases": 8,
+      "symbolic_valid_cases": 8,
+      "solved_and_symbolic_valid_cases": 8,
+      "capability": {
+        "solve_rate": 1.0
+      },
+      "symbolic_validity": {
+        "symbolic_valid_rate": 1.0
+      },
+      "sample_efficiency": {
+        "valid_solves_per_sample": 1.0,
+        "samples_per_valid_solve": 1.0
+      },
+      "compute_cost": {
+        "wall_time_sec_total": 8.02195268200012,
+        "wall_time_sec_per_case": 1.002744085250015,
+        "wall_time_sec_per_valid_solve": 1.002744085250015
+      },
+      "results": [
+        {
+          "expected": 54.0,
+          "belief_values": [
+            54.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "product_total",
+          "question": "A bakery sells 18 muffins at $3 each."
+        },
+        {
+          "expected": 90.0,
+          "belief_values": [
+            90.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "rate_time_total",
+          "question": "A worker earns $18 per hour for 5 hours."
+        },
+        {
+          "expected": 48.0,
+          "belief_values": [
+            48.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "discount_price",
+          "question": "A shirt costs $60 and is discounted by 20%."
+        },
+        {
+          "expected": 20.0,
+          "belief_values": [
+            20.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "combined_total",
+          "question": "A has 8 apples and B has 12 apples. Together they have how many apples?"
+        },
+        {
+          "expected": 36.0,
+          "belief_values": [
+            36.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "unit_conversion_dozen",
+          "question": "How many eggs are in 3 dozen eggs?"
+        },
+        {
+          "expected": 3.0,
+          "belief_values": [
+            3.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "distance_over_speed",
+          "question": "A car travels 180 miles at 60 miles per hour. How long does it take?"
+        },
+        {
+          "expected": 10.0,
+          "belief_values": [
+            10.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "percent_of_total",
+          "question": "A box has 40 marbles. 25% of them are blue. How many marbles are blue?"
+        },
+        {
+          "expected": 45.0,
+          "belief_values": [
+            45.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 2,
+          "family": "discounted_total",
+          "question": "A book costs $50 and is discounted by 10%. What is the final price?"
+        }
+      ]
+    }
+  ]
+}

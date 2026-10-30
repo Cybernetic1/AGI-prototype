@@ -1,0 +1,331 @@
+{
+  "contract_id": "agi-bootstrap-invariant-curriculum-widening-v1",
+  "baseline_contract_id": "agi-bootstrap-baseline-contract-v1",
+  "description": "Invariant-gated widening from compact GSM slices into TinyStories-style and mixed symbolic-text slices.",
+  "baseline_runner": "rules/run_bootstrap_baseline.py",
+  "default_profiles": [
+    "lt-heavy",
+    "hybrid",
+    "ilp-heavy"
+  ],
+  "default_max_cycles": 2,
+  "regression": {
+    "commands": [
+      {
+        "id": "validate-widening-contract",
+        "command": "python3 rules/run_bootstrap_invariant_curriculum.py --contract rules/bootstrap_invariant_curriculum_widening.json --check-only --print-commands",
+        "expected": "exit code 0"
+      },
+      {
+        "id": "run-gated-widening-curriculum-regression",
+        "command": "python3 rules/run_bootstrap_invariant_curriculum.py --contract rules/bootstrap_invariant_curriculum_widening.json --output rules/reports/agi_bootstrap_curriculum_widening_v1.json",
+        "expected": "exit code 0 and all_gates_green=true"
+      }
+    ],
+    "pass_criteria": [
+      "Compact GSM invariant slices execute before widening slices.",
+      "Widening must halt at the first blocking gate regression unless continue-on-fail is explicitly set.",
+      "Regression passes only when all_gates_green=true in the output report."
+    ]
+  },
+  "slices": [
+    {
+      "id": "invariant-core-finality",
+      "description": "Core final-state authority invariants before widening.",
+      "suite": "finality_regression",
+      "max_cycles": 2,
+      "families": [
+        "buy_more_final_gap",
+        "donation_after_buy_more",
+        "buy_more_then_donation_and_spoilage",
+        "mixed_remaining_state"
+      ],
+      "gates": [
+        {
+          "id": "hybrid-core-all-valid-solves",
+          "description": "Hybrid must solve all compact finality core families with symbolic validity.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-core-solve-floor",
+          "description": "LT-heavy solve floor on compact finality core families.",
+          "profile": "lt-heavy",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "value": 0.75,
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-core-symbolic-perfect",
+          "description": "LT-heavy symbolic validity must remain perfect on compact finality core.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 1.0,
+          "blocking": true
+        },
+        {
+          "id": "ilp-heavy-core-symbolic-floor",
+          "description": "ILP-heavy keeps a minimum symbolic validity floor (monitor-only).",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.5,
+          "blocking": false
+        }
+      ]
+    },
+    {
+      "id": "adjacent-template-core",
+      "description": "Adjacent arithmetic-template core before widening.",
+      "suite": "template_generalization",
+      "max_cycles": 2,
+      "families": [
+        "product_total",
+        "rate_time_total",
+        "discount_price",
+        "combined_total",
+        "unit_conversion_dozen",
+        "distance_over_speed",
+        "percent_of_total",
+        "discounted_total"
+      ],
+      "gates": [
+        {
+          "id": "hybrid-template-core-solve-perfect",
+          "description": "Hybrid must solve all template-core families.",
+          "profile": "hybrid",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "value": 1.0,
+          "blocking": true
+        },
+        {
+          "id": "hybrid-template-core-symbolic-perfect",
+          "description": "Hybrid symbolic validity must remain perfect on template-core.",
+          "profile": "hybrid",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 1.0,
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-template-core-solve-floor",
+          "description": "LT-heavy solve floor for template-core families.",
+          "profile": "lt-heavy",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "value": 0.75,
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-template-core-symbolic-floor",
+          "description": "LT-heavy symbolic validity floor for template-core families.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.875,
+          "blocking": true
+        },
+        {
+          "id": "ilp-heavy-template-core-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor (monitor-only).",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.25,
+          "blocking": false
+        }
+      ]
+    },
+    {
+      "id": "adjacent-template-full",
+      "description": "Full generalized template widening slice after template-core stability.",
+      "suite": "template_generalization",
+      "max_cycles": 2,
+      "families": [
+        "product_total",
+        "rate_time_total",
+        "discount_price",
+        "combined_total",
+        "unit_conversion_dozen",
+        "distance_over_speed",
+        "percent_of_total",
+        "discounted_total",
+        "profit_margin",
+        "simple_interest",
+        "fraction_of_total",
+        "average_speed",
+        "ratio_of_total",
+        "percent_growth",
+        "percent_sequence_growth",
+        "percent_sequence_discount"
+      ],
+      "gates": [
+        {
+          "id": "hybrid-template-full-solve-floor",
+          "description": "Hybrid solve floor on full generalized template slice.",
+          "profile": "hybrid",
+          "metric": "capability.solve_rate",
+          "op": ">=",
+          "value": 0.875,
+          "blocking": true
+        },
+        {
+          "id": "hybrid-template-full-symbolic-floor",
+          "description": "Hybrid symbolic validity floor on full generalized template slice.",
+          "profile": "hybrid",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.875,
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-template-full-symbolic-floor",
+          "description": "LT-heavy symbolic validity floor on full generalized template slice.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.75,
+          "blocking": true
+        },
+        {
+          "id": "ilp-heavy-template-full-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on full generalized template slice.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.5,
+          "blocking": true
+        }
+      ]
+    },
+    {
+      "id": "tinystories-state-tracking-compact",
+      "description": "TinyStories-style compact narrative state-tracking widening slice.",
+      "suite": "tinystories_state_tracking",
+      "max_cycles": 2,
+      "families": [
+        "tinystory_basket_lunch_dinner",
+        "tinystory_basket_after_school",
+        "tinystory_ratio_market_day"
+      ],
+      "gates": [
+        {
+          "id": "hybrid-tinystory-all-valid-solves",
+          "description": "Hybrid must solve all TinyStories compact state-tracking families with symbolic validity.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-tinystory-all-valid-solves",
+          "description": "LT-heavy must solve all TinyStories compact state-tracking families with symbolic validity.",
+          "profile": "lt-heavy",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "ilp-heavy-tinystory-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on TinyStories slice.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.66,
+          "blocking": true
+        }
+      ]
+    },
+    {
+      "id": "mixed-narrative-symbolic-compact",
+      "description": "Compact mixed symbolic-text widening slice with explicit equation hints in natural language.",
+      "suite": "mixed_narrative_symbolic",
+      "max_cycles": 2,
+      "families": [
+        "mixed_symbolic_discount_sequence",
+        "mixed_symbolic_profit_inverse",
+        "mixed_symbolic_percent_projection"
+      ],
+      "gates": [
+        {
+          "id": "hybrid-mixed-symbolic-all-valid-solves",
+          "description": "Hybrid must solve all mixed symbolic-text families with symbolic validity.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-mixed-symbolic-all-valid-solves",
+          "description": "LT-heavy must solve all mixed symbolic-text families with symbolic validity.",
+          "profile": "lt-heavy",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "ilp-heavy-mixed-symbolic-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on mixed symbolic-text slice.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.33,
+          "blocking": true
+        }
+      ]
+    },
+    {
+      "id": "widening-sentinel-regression",
+      "description": "Cross-suite sentinel families guarding compact + widening regressions.",
+      "suite": "combined_widening",
+      "max_cycles": 2,
+      "families": [
+        "buy_more_final_gap",
+        "unit_conversion_dozen",
+        "tinystory_basket_lunch_dinner",
+        "tinystory_ratio_market_day",
+        "mixed_symbolic_discount_sequence",
+        "mixed_symbolic_percent_projection"
+      ],
+      "gates": [
+        {
+          "id": "hybrid-widening-sentinel-all-valid-solves",
+          "description": "Hybrid must stay perfect on cross-suite widening sentinels.",
+          "profile": "hybrid",
+          "metric": "solved_and_symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "lt-heavy-widening-sentinel-symbolic-perfect",
+          "description": "LT-heavy symbolic validity must remain perfect on widening sentinels.",
+          "profile": "lt-heavy",
+          "metric": "symbolic_valid_cases",
+          "op": "==",
+          "value_from": "total_cases",
+          "blocking": true
+        },
+        {
+          "id": "ilp-heavy-widening-sentinel-symbolic-floor",
+          "description": "ILP-heavy symbolic validity floor on widening sentinels.",
+          "profile": "ilp-heavy",
+          "metric": "symbolic_validity.symbolic_valid_rate",
+          "op": ">=",
+          "value": 0.8,
+          "blocking": true
+        }
+      ]
+    }
+  ]
+}
