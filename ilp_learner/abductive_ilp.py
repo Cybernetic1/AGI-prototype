@@ -1,4 +1,5 @@
 import re
+import os
 from typing import Dict, List, Any, Optional, Tuple, Set
 
 try:
@@ -32,6 +33,24 @@ class AcquisitionEvent(PredicateType): pass
 class Buy(AcquisitionEvent): pass
 class Bake(AcquisitionEvent): pass
 class Produce(AcquisitionEvent): pass
+
+
+_TRUE_VALUES = {"1", "true", "yes", "on"}
+
+
+def _agi_transfer_families_enabled() -> bool:
+    return str(os.getenv("AGI_ENABLE_TRANSFER_METARULES", "")).strip().lower() in _TRUE_VALUES
+
+
+def _env_int(name: str, default: int, *, minimum: int = 0) -> int:
+    raw = str(os.getenv(name, "")).strip()
+    if not raw:
+        return max(minimum, int(default))
+    try:
+        value = int(raw)
+    except Exception:
+        return max(minimum, int(default))
+    return max(minimum, value)
 
 # Least Common Ancestor (LCA) helper
 def find_lca(cls1: type, cls2: type) -> type:
@@ -68,11 +87,15 @@ class KnowledgeBase:
 class OntologicalReasoner:
     def __init__(self, kb: KnowledgeBase):
         self.kb = kb
+        self.max_depth = _env_int("AGI_ILP_MAX_DEPTH", 12, minimum=1)
+        self.max_fact_matches = _env_int("AGI_ILP_MAX_FACT_MATCHES", 0, minimum=0)
+        self.max_rule_matches = _env_int("AGI_ILP_MAX_RULE_MATCHES", 0, minimum=0)
+        self.max_subgoal_results = _env_int("AGI_ILP_MAX_SUBGOAL_RESULTS", 0, minimum=0)
 
     def solve(self, pred: str, args: List[Any], depth: int = 0, seen: Optional[Set[Tuple[str, Tuple[Any, ...]]]] = None) -> List[Dict[str, Any]]:
         if seen is None:
             seen = set()
-        if depth > 12:
+        if depth > self.max_depth:
             return []
 
         key = (pred, tuple(args))
@@ -83,12 +106,17 @@ class OntologicalReasoner:
         
         # 1. Match facts
         if pred in self.kb.facts:
+            matched_facts = 0
             for fact_args in self.kb.facts[pred]:
                 bindings = self._unify(args, list(fact_args))
                 if bindings is not None:
                     results.append(bindings)
+                    matched_facts += 1
+                    if self.max_fact_matches and matched_facts >= self.max_fact_matches:
+                        break
 
         # 2. Match rules
+        matched_rules = 0
         for rule in self.kb.rules:
             r_head_pred, r_head_args = rule["head"]
             if r_head_pred != pred:
@@ -106,6 +134,8 @@ class OntologicalReasoner:
                 for b in body_bindings:
                     sub_args = [b.get(a, a) for a in b_args]
                     sub_results = self.solve(b_pred, sub_args, depth + 1, seen)
+                    if self.max_subgoal_results:
+                        sub_results = sub_results[: self.max_subgoal_results]
                     
                     for sub_b in sub_results:
                         merged = b.copy()
@@ -135,6 +165,11 @@ class OntologicalReasoner:
                     except Exception:
                         pass
                 results.append(b)
+                matched_rules += 1
+                if self.max_rule_matches and matched_rules >= self.max_rule_matches:
+                    break
+            if self.max_rule_matches and matched_rules >= self.max_rule_matches:
+                break
 
         return results
 
@@ -182,12 +217,23 @@ class OntologicalILPLearner:
         """
         if examples is None:
             examples = [(goal_pred, args, 0.0)]
+        include_transfer = _agi_transfer_families_enabled()
 
         proposed = []
         if propose_ranked_for_examples is not None:
-            proposed = propose_ranked_for_examples(examples, top_n=3)
+            try:
+                proposed = propose_ranked_for_examples(
+                    examples,
+                    top_n=3,
+                    include_agi_transfer_families=include_transfer,
+                )
+            except TypeError:
+                proposed = propose_ranked_for_examples(examples, top_n=3)
         elif MetaRuleLearner is not None:
-            learner = MetaRuleLearner()
+            try:
+                learner = MetaRuleLearner(include_agi_transfer_families=include_transfer)
+            except TypeError:
+                learner = MetaRuleLearner()
             proposed = learner.propose(examples)
         if not proposed:
             return None

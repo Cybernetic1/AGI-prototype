@@ -2,8 +2,71 @@
 Run as a script to see a small synthetic demo.
 """
 from collections import defaultdict
+import copy
 from difflib import SequenceMatcher
 import itertools
+import os
+
+AGI_TRANSFER_METARULES_ENV = "AGI_ENABLE_TRANSFER_METARULES"
+AGI_TRANSFER_FAMILIES = (
+    "part_whole_balance",
+    "temporal_causal_chain",
+    "unit_compatibility",
+)
+
+_TOGGLE_TRUE_VALUES = {"1", "true", "yes", "on"}
+
+
+def resolve_agi_transfer_toggle(include_agi_transfer_families=None):
+    if include_agi_transfer_families is not None:
+        return bool(include_agi_transfer_families)
+    raw = str(os.getenv(AGI_TRANSFER_METARULES_ENV, "")).strip().lower()
+    return raw in _TOGGLE_TRUE_VALUES
+
+
+UNIT_DIMENSIONS = {
+    "second": "time",
+    "seconds": "time",
+    "minute": "time",
+    "minutes": "time",
+    "hour": "time",
+    "hours": "time",
+    "day": "time",
+    "days": "time",
+    "week": "time",
+    "weeks": "time",
+    "meter": "distance",
+    "meters": "distance",
+    "centimeter": "distance",
+    "centimeters": "distance",
+    "kilometer": "distance",
+    "kilometers": "distance",
+    "mile": "distance",
+    "miles": "distance",
+    "gram": "mass",
+    "grams": "mass",
+    "kilogram": "mass",
+    "kilograms": "mass",
+    "pound": "mass",
+    "pounds": "mass",
+    "liter": "volume",
+    "liters": "volume",
+    "milliliter": "volume",
+    "milliliters": "volume",
+    "dozen": "count",
+    "item": "count",
+    "items": "count",
+    "piece": "count",
+    "pieces": "count",
+    "usd": "currency",
+    "dollar": "currency",
+    "dollars": "currency",
+}
+
+PART_TYPE_HINTS = ("part", "component", "piece", "subset", "segment")
+WHOLE_TYPE_HINTS = ("whole", "total", "group", "set", "collection")
+TEMPORAL_TYPE_HINTS = ("before", "after", "later", "earlier", "time", "step", "stage")
+CAUSAL_TYPE_HINTS = ("cause", "delta", "effect", "impact", "change", "trigger")
 
 # --- Data structures ---
 class Atom:
@@ -44,37 +107,346 @@ def instantiate_metarule_role_pair(q_pred, role_a, role_b):
     return Clause(head, body)
 
 
-def generate_clause_candidates(predicates, roles, existing_hyp=None):
+SEMANTIC_BINDING_ROLES = {
+    "agent",
+    "patient",
+    "recipient",
+    "owner",
+    "item",
+    "name",
+    "relation",
+    "source",
+    "target",
+}
+
+
+def constrain_roles_for_search(roles, action_constraint="none"):
+    role_list = list(dict.fromkeys(roles or []))
+    if str(action_constraint or "none").lower() != "semantic_binding":
+        return role_list
+    constrained = [r for r in role_list if str(r).lower() in SEMANTIC_BINDING_ROLES]
+    return constrained if constrained else role_list
+
+
+def semantic_binding_bonus(body_preds, action_constraint="none", binding_bias=0.0):
+    if str(action_constraint or "none").lower() != "semantic_binding":
+        return 0.0
+    if not body_preds:
+        return 0.0
+    hits = sum(1 for pred in body_preds if str(pred).lower() in SEMANTIC_BINDING_ROLES)
+    ratio = float(hits) / float(len(body_preds))
+    return float(binding_bias) * ratio
+
+
+SEMANTIC_ROLE_PAIR_HINTS = {
+    tuple(sorted(("agent", "patient"))),
+    tuple(sorted(("agent", "recipient"))),
+    tuple(sorted(("owner", "item"))),
+    tuple(sorted(("source", "target"))),
+}
+
+
+def semantic_role_pair_bonus(body_preds, metarule_type="", pair_bias=0.0):
+    if float(pair_bias) == 0.0:
+        return 0.0
+    if str(metarule_type) != "role_pair":
+        return 0.0
+    if len(body_preds) < 2:
+        return 0.0
+    key = tuple(sorted((str(body_preds[0]).lower(), str(body_preds[1]).lower())))
+    if key in SEMANTIC_ROLE_PAIR_HINTS:
+        return float(pair_bias)
+    return 0.0
+
+
+def preferred_role_pair_bonus(body_preds, metarule_type="", preferred_role_pairs=None, pair_match_bias=0.0, pair_miss_penalty=0.0):
+    if str(metarule_type) != "role_pair":
+        return 0.0
+    if len(body_preds) < 2:
+        return 0.0
+    pairs = {tuple(str(a).lower() for a in pair) for pair in (preferred_role_pairs or []) if len(pair) >= 2}
+    if not pairs:
+        return 0.0
+    key = (str(body_preds[0]).lower(), str(body_preds[1]).lower())
+    if key in pairs:
+        return float(pair_match_bias)
+    return float(pair_miss_penalty)
+
+
+def head_preference_bonus(head_pred, preferred_heads=None, class_head_bias=0.0, nonclass_head_penalty=0.0):
+    pred = str(head_pred or "")
+    preferred = set(preferred_heads or [])
+    bonus = 0.0
+    if preferred and pred in preferred:
+        bonus += float(class_head_bias)
+    if pred and not pred.startswith("class_"):
+        bonus += float(nonclass_head_penalty)
+    return bonus
+
+
+def self_reference_penalty(head_pred, body_preds=None, penalty=0.0):
+    if float(penalty) == 0.0:
+        return 0.0
+    if str(head_pred or "") in {str(p) for p in (body_preds or [])}:
+        return float(penalty)
+    return 0.0
+
+
+def event_local_role_bonus(body_preds, preferred_local_roles=None, local_role_bias=0.0):
+    if float(local_role_bias) == 0.0:
+        return 0.0
+    role_set = {str(r).lower() for r in (preferred_local_roles or [])}
+    if not role_set:
+        return 0.0
+    hits = sum(1 for pred in (body_preds or []) if str(pred).lower() in role_set)
+    if hits <= 0:
+        return 0.0
+    ratio = float(hits) / max(1.0, float(len(body_preds or [])))
+    return float(local_role_bias) * ratio
+
+
+def body_predicate_alignment_bonus(
+    body_preds,
+    preferred_body_preds=None,
+    body_predicate_bias=0.0,
+    body_predicate_miss_penalty=0.0,
+):
+    preferred = {str(p).lower() for p in (preferred_body_preds or [])}
+    if not preferred:
+        return 0.0
+    body = {str(p).lower() for p in (body_preds or [])}
+    if body.intersection(preferred):
+        return float(body_predicate_bias)
+    return float(body_predicate_miss_penalty)
+
+
+def clause_economy_penalty(hyp_size, clause_cost=0.0):
+    if float(clause_cost) == 0.0:
+        return 0.0
+    return float(clause_cost) * max(0.0, float(hyp_size) - 1.0)
+
+
+def required_role_coverage_bonus(
+    body_preds,
+    required_roles=None,
+    required_role_bias=0.0,
+    missing_required_role_penalty=0.0,
+):
+    roles = {str(r).lower() for r in (required_roles or [])}
+    if not roles:
+        return 0.0
+    body = {str(p).lower() for p in (body_preds or [])}
+    missing = roles.difference(body)
+    if not missing:
+        return float(required_role_bias)
+    return float(missing_required_role_penalty) * float(len(missing))
+
+
+def _clause_head_and_body_preds(clause):
+    try:
+        head_pred = str(getattr(getattr(clause, "head", None), "pred", ""))
+        body = list(getattr(clause, "body", []) or [])
+        body_preds = [str(getattr(atom, "pred", "")) for atom in body]
+        return head_pred, body_preds
+    except Exception:
+        return "", []
+
+
+def mirrored_role_pair_penalty(existing_hyp, candidate_clause, candidate_type="", penalty=0.0):
+    if float(penalty) == 0.0 or str(candidate_type) != "role_pair":
+        return 0.0
+    cand_head, cand_body = _clause_head_and_body_preds(candidate_clause)
+    if len(cand_body) < 2:
+        return 0.0
+    rev = [cand_body[1], cand_body[0]]
+    for cl in existing_hyp or []:
+        head, body = _clause_head_and_body_preds(cl)
+        if head == cand_head and body[:2] == rev:
+            return float(penalty)
+    return 0.0
+
+
+def repeated_head_penalty(existing_hyp, candidate_clause, penalty=0.0):
+    if float(penalty) == 0.0:
+        return 0.0
+    cand_head, _ = _clause_head_and_body_preds(candidate_clause)
+    for cl in existing_hyp or []:
+        head, _ = _clause_head_and_body_preds(cl)
+        if head == cand_head:
+            return float(penalty)
+    return 0.0
+
+
+def _infer_semantic_type(value):
+    if isinstance(value, (int, float)):
+        return "number"
+    token = str(value).strip().lower()
+    if not token:
+        return "unknown"
+    dimension = UNIT_DIMENSIONS.get(token)
+    if dimension:
+        return f"unit:{dimension}"
+    if any(hint in token for hint in WHOLE_TYPE_HINTS):
+        return "whole_entity"
+    if any(hint in token for hint in PART_TYPE_HINTS):
+        return "part_entity"
+    if any(hint in token for hint in TEMPORAL_TYPE_HINTS):
+        return "temporal_marker"
+    if any(hint in token for hint in CAUSAL_TYPE_HINTS):
+        return "causal_marker"
+    return "entity"
+
+
+def _check_part_whole(tokens):
+    has_part = any(any(hint in tok for hint in PART_TYPE_HINTS) for tok in tokens)
+    has_whole = any(any(hint in tok for hint in WHOLE_TYPE_HINTS) for tok in tokens)
+    return has_part and has_whole
+
+
+def _check_temporal_causal(tokens):
+    has_temporal = any(any(hint in tok for hint in TEMPORAL_TYPE_HINTS) for tok in tokens)
+    has_causal = any(any(hint in tok for hint in CAUSAL_TYPE_HINTS) for tok in tokens)
+    return has_temporal and has_causal
+
+
+def _check_unit_compatibility(tokens):
+    units = [UNIT_DIMENSIONS[tok] for tok in tokens if tok in UNIT_DIMENSIONS]
+    if len(units) < 2:
+        return False
+    return len(set(units)) == 1
+
+
+def evaluate_candidate_constraints(candidate, examples):
+    """Evaluate optional typed constraints for a metarule candidate.
+
+    Returns `(is_valid, report)` where `report` carries `score` and any violations.
+    """
+    constraints = candidate.get("constraints") or {}
+    if not constraints:
+        return True, {"score": 1.0, "violations": [], "checks": []}
+    if not examples:
+        return True, {"score": 1.0, "violations": [], "checks": []}
+
+    body_preds = {
+        str(pred).strip().lower()
+        for pred, _ in (candidate.get("body") or [])
+        if isinstance(pred, str)
+    }
+    required_body_preds = {
+        str(pred).strip().lower()
+        for pred in (constraints.get("required_body_predicates") or [])
+        if str(pred).strip()
+    }
+    missing_body = sorted(required_body_preds.difference(body_preds))
+    violations = []
+    if missing_body:
+        violations.append(f"missing_body_predicates:{','.join(missing_body)}")
+
+    checks = [str(item).strip().lower() for item in (constraints.get("compatibility_checks") or []) if str(item).strip()]
+    required_type_counts = {
+        str(k).strip().lower(): int(v)
+        for k, v in (constraints.get("required_type_counts") or {}).items()
+    }
+
+    pass_count = 0
+    for pred_name, args, _ in examples:
+        tokens = [str(pred_name).strip().lower()]
+        tokens.extend(str(arg).strip().lower() for arg in (args or []))
+
+        inferred = defaultdict(int)
+        for arg in (args or []):
+            ty = _infer_semantic_type(arg)
+            inferred[ty] += 1
+            if ty.startswith("unit:"):
+                inferred["unit"] += 1
+
+        type_ok = True
+        for ty, needed in required_type_counts.items():
+            if inferred.get(ty, 0) < max(0, needed):
+                type_ok = False
+                violations.append(f"type:{ty}:need={needed}:have={inferred.get(ty, 0)}")
+
+        compat_ok = True
+        if "part_whole" in checks:
+            compat_ok = compat_ok and _check_part_whole(tokens)
+        if "temporal_causal" in checks:
+            compat_ok = compat_ok and _check_temporal_causal(tokens)
+        if "unit_compatibility" in checks:
+            compat_ok = compat_ok and _check_unit_compatibility(tokens)
+        if not compat_ok:
+            violations.append(f"compatibility:{candidate.get('family', 'unknown')}:{pred_name}")
+
+        if type_ok and compat_ok:
+            pass_count += 1
+
+    score = float(pass_count) / float(max(1, len(examples)))
+    is_valid = (not missing_body) and score >= 1.0
+    report = {
+        "score": score,
+        "violations": sorted(set(violations)),
+        "checks": checks,
+    }
+    return is_valid, report
+
+
+def generate_clause_candidates(
+    predicates,
+    roles,
+    existing_hyp=None,
+    action_constraint="none",
+    allowed_role_pairs=None,
+    allowed_metarule_types=None,
+):
     """Generate candidate clause actions from the metarule action space."""
     existing = {str(c) for c in (existing_hyp or [])}
     candidates = []
-    for p_pred in predicates:
+    active_roles = constrain_roles_for_search(roles, action_constraint=action_constraint)
+    allowed_pairs = {
+        tuple(str(x).lower() for x in pair)
+        for pair in (allowed_role_pairs or [])
+        if len(pair) >= 2
+    }
+    allowed_types = {str(t) for t in (allowed_metarule_types or [])}
+    allow_transfer = not allowed_types or "role_transfer" in allowed_types
+    allow_pair = not allowed_types or "role_pair" in allowed_types
+    if allow_transfer:
+        for p_pred in predicates:
+            for q_pred in predicates:
+                if p_pred == q_pred:
+                    continue
+                for role_pred in active_roles:
+                    clause = instantiate_metarule_role_transfer(p_pred, q_pred, role_pred)
+                    is_dup = str(clause) in existing
+                    if is_dup:
+                        continue
+                    candidates.append(
+                        {
+                            "clause": clause,
+                            "metarule_type": "role_transfer",
+                            "head_pred": q_pred,
+                            "body_preds": [p_pred, role_pred],
+                            "duplicate": is_dup,
+                        }
+                    )
+    if allow_pair and len(active_roles) >= 2:
         for q_pred in predicates:
-            for role_pred in roles:
-                clause = instantiate_metarule_role_transfer(p_pred, q_pred, role_pred)
-                candidates.append(
-                    {
-                        "clause": clause,
-                        "metarule_type": "role_transfer",
-                        "head_pred": q_pred,
-                        "body_preds": [p_pred, role_pred],
-                        "duplicate": str(clause) in existing,
-                    }
-                )
-    if len(roles) >= 2:
-        for q_pred in predicates:
-            for role_a in roles:
-                for role_b in roles:
+            for role_a in active_roles:
+                for role_b in active_roles:
                     if role_a == role_b:
                         continue
+                    if allowed_pairs and (str(role_a).lower(), str(role_b).lower()) not in allowed_pairs:
+                        continue
                     clause = instantiate_metarule_role_pair(q_pred, role_a, role_b)
+                    is_dup = str(clause) in existing
+                    if is_dup:
+                        continue
                     candidates.append(
                         {
                             "clause": clause,
                             "metarule_type": "role_pair",
                             "head_pred": q_pred,
                             "body_preds": [role_a, role_b],
-                            "duplicate": str(clause) in existing,
+                            "duplicate": is_dup,
                         }
                     )
     return candidates
@@ -155,7 +527,6 @@ def score_hypothesis(clauses, pos_examples, neg_examples, background):
 
 # --- Embedding / Lorentz prior adapter ---
 # Prefer candidates whose predicate embeddings are close in Lorentz space.
-import os
 try:
     import torch
     from logic_transformer.lorentz_math import project_to_hyperboloid, lorentz_distance
@@ -319,7 +690,7 @@ def embedding_prior(head_pred, body_preds, emb_path='/tmp/aligned_hyperbolic_emb
 # they provide the reusable abstractions that later ILP learning can generalize over.
 
 class MetaRule:
-    def __init__(self, family, name, head, body, calc, target, description=""):
+    def __init__(self, family, name, head, body, calc, target, description="", constraints=None):
         self.family = family
         self.name = name
         self.head = head
@@ -327,6 +698,7 @@ class MetaRule:
         self.calc = calc
         self.target = target
         self.description = description
+        self.constraints = constraints or {}
 
     def instantiate(self, binding=None):
         head = self.head
@@ -344,13 +716,15 @@ class MetaRule:
             "calc": self.calc,
             "target": self.target,
             "description": self.description,
+            "constraints": copy.deepcopy(self.constraints),
         }
 
 
 class MetaRuleGrammar:
     @staticmethod
-    def seeded_rules():
-        return [
+    def seeded_rules(include_agi_transfer_families=None):
+        include_transfer = resolve_agi_transfer_toggle(include_agi_transfer_families)
+        rules = [
             MetaRule(
                 "ratio_compose",
                 "ratio_compose",
@@ -488,14 +862,79 @@ class MetaRuleGrammar:
                 "recover original cost from sale price and profit percent",
             ),
         ]
+        if include_transfer:
+            rules.extend(
+                [
+                    MetaRule(
+                        "part_whole_balance",
+                        "part_whole_balance",
+                        ("part_whole_balance", ["?part_entity", "?whole_entity", "?ans"]),
+                        [
+                            ("part_quantity", ["?part_entity", "?whole_entity", "?item", "?part_value"]),
+                            ("quantity", ["?whole_entity", "?item", "?remaining_value"]),
+                        ],
+                        "part_value + remaining_value",
+                        "?ans",
+                        "part-whole aggregation with typed part/whole roles",
+                        constraints={
+                            "required_type_counts": {"part_entity": 1, "whole_entity": 1, "number": 1},
+                            "required_body_predicates": ["part_quantity", "quantity"],
+                            "compatibility_checks": ["part_whole"],
+                        },
+                    ),
+                    MetaRule(
+                        "temporal_causal_chain",
+                        "temporal_causal_chain",
+                        ("temporal_causal_chain", ["?owner", "?item", "?ans"]),
+                        [
+                            ("state", ["?owner", "?item", "?before"]),
+                            ("causal_delta", ["?owner", "?item", "?cause", "?delta", "?after_marker"]),
+                        ],
+                        "before + delta",
+                        "?ans",
+                        "temporal-causal update from prior state and causal delta",
+                        constraints={
+                            "required_type_counts": {"temporal_marker": 1, "causal_marker": 1, "number": 1},
+                            "required_body_predicates": ["state", "causal_delta"],
+                            "compatibility_checks": ["temporal_causal"],
+                        },
+                    ),
+                    MetaRule(
+                        "unit_compatibility",
+                        "unit_compatibility",
+                        ("unit_compatibility", ["?value", "?from_unit", "?to_unit", "?ans"]),
+                        [("unit_rate", ["?value", "?from_unit", "?to_unit", "?factor"])],
+                        "value * factor",
+                        "?ans",
+                        "unit-aware conversion constrained by shared dimensions",
+                        constraints={
+                            "required_type_counts": {"unit": 2, "number": 1},
+                            "required_body_predicates": ["unit_rate"],
+                            "compatibility_checks": ["unit_compatibility"],
+                        },
+                    ),
+                ]
+            )
+        return rules
 
     @staticmethod
-    def infer_family(examples):
+    def infer_family(examples, include_agi_transfer_families=None):
+        include_transfer = resolve_agi_transfer_toggle(include_agi_transfer_families)
         names = []
         for pred, args, expected in examples:
             if isinstance(pred, str):
                 names.append(pred.lower())
+            for arg in args or []:
+                if isinstance(arg, str):
+                    names.append(arg.lower())
         text = " ".join(names)
+        if include_transfer:
+            if "part_whole_balance" in text or ("part" in text and ("whole" in text or "total" in text)):
+                return "part_whole_balance"
+            if "temporal_causal_chain" in text or (("before" in text or "after" in text) and ("cause" in text or "delta" in text)):
+                return "temporal_causal_chain"
+            if "unit_compatibility" in text or ("unit_rate" in text and "convert" in text):
+                return "unit_compatibility"
         if "rate" in text or "hour" in text or "duration" in text or "speed" in text:
             return "rate_product"
         if "ratio_of_total" in text:
@@ -528,12 +967,21 @@ class MetaRuleGrammar:
 
 
 class MetaRuleLearner:
-    def __init__(self, grammar=None):
-        self.grammar = grammar or MetaRuleGrammar.seeded_rules()
+    def __init__(self, grammar=None, include_agi_transfer_families=None):
+        self.include_agi_transfer_families = resolve_agi_transfer_toggle(include_agi_transfer_families)
+        self.grammar = grammar or MetaRuleGrammar.seeded_rules(
+            include_agi_transfer_families=self.include_agi_transfer_families
+        )
 
     def _rule_score(self, rule, examples):
         family = rule.family
-        text = " ".join(str(pred).lower() for pred, _, _ in examples)
+        names = []
+        for pred, args, _ in examples:
+            names.append(str(pred).lower())
+            for arg in args or []:
+                if isinstance(arg, str):
+                    names.append(arg.lower())
+        text = " ".join(names)
         if family == "rate_product" and "rate" not in text and "hour" not in text and "duration" not in text:
             return 0.0
         if family == "ratio_of_total" and "ratio_of_total" not in text:
@@ -564,7 +1012,16 @@ class MetaRuleLearner:
             return 0.0
         if family == "state_transition" and "state" not in text and "buy" not in text and "give" not in text:
             return 0.0
-        return 1.0
+        if family == "part_whole_balance" and ("part" not in text or ("whole" not in text and "total" not in text)):
+            return 0.0
+        if family == "temporal_causal_chain" and (("before" not in text and "after" not in text) or ("cause" not in text and "delta" not in text)):
+            return 0.0
+        if family == "unit_compatibility" and "unit" not in text and "convert" not in text and "hour" not in text and "minute" not in text:
+            return 0.0
+        constraint_ok, report = evaluate_candidate_constraints(rule.instantiate(), examples)
+        if not constraint_ok:
+            return 0.0
+        return float(report.get("score", 1.0))
 
     def _instantiate_family_examples(self, family):
         if family == "rate_product":
@@ -637,13 +1094,31 @@ class MetaRuleLearner:
                 ("final_state", ["alice", "apples", 20.0], 20.0),
                 ("final_state", ["alice", "apples", 17.0], 17.0),
             ]
+        if family == "part_whole_balance":
+            return [
+                ("part_whole_balance", ["part_crate", "whole_crate", 30.0], 30.0),
+                ("part_whole_balance", ["part_batch", "whole_batch", 18.0], 18.0),
+            ]
+        if family == "temporal_causal_chain":
+            return [
+                ("temporal_causal_chain", ["before_stage", "after_stage", "cause_addition", 14.0], 14.0),
+                ("temporal_causal_chain", ["before_state", "after_state", "cause_loss", 9.0], 9.0),
+            ]
+        if family == "unit_compatibility":
+            return [
+                ("unit_compatibility", [3.0, "hour", "minute", 180.0], 180.0),
+                ("unit_compatibility", [2.0, "day", "hour", 48.0], 48.0),
+            ]
         return [
             ("state", ["alice", "apples", 8.0], 8.0),
             ("state", ["alice", "apples", 11.0], 11.0),
         ]
 
     def fit(self, examples):
-        family = MetaRuleGrammar.infer_family(examples)
+        family = MetaRuleGrammar.infer_family(
+            examples,
+            include_agi_transfer_families=self.include_agi_transfer_families,
+        )
         ranked = []
         for rule in self.grammar:
             if rule.family != family:
@@ -651,7 +1126,12 @@ class MetaRuleLearner:
             score = self._rule_score(rule, examples)
             ranked.append((score, rule))
         if not ranked:
-            synthetic = self._instantiate_family_examples(MetaRuleGrammar.infer_family(examples))
+            self._instantiate_family_examples(
+                MetaRuleGrammar.infer_family(
+                    examples,
+                    include_agi_transfer_families=self.include_agi_transfer_families,
+                )
+            )
             for rule in self.grammar:
                 ranked.append((1.0, rule))
             return [rule for _, rule in sorted(ranked, key=lambda x: x[0], reverse=True)][:3]
@@ -662,14 +1142,15 @@ class MetaRuleLearner:
         return [rule.instantiate() for rule in self.fit(examples)]
 
 
-def generate_synthetic_family_examples():
+def generate_synthetic_family_examples(include_agi_transfer_families=None):
     """Generate graph-grounded synthetic NL examples for the seeded metarule families.
 
     The goal here is to keep the training set close to the semantic invariants we already
     understand instead of learning from broad, noisy raw NL. Each family is a compact rule
     pattern with multiple paraphrastic variants.
     """
-    return {
+    include_transfer = resolve_agi_transfer_toggle(include_agi_transfer_families)
+    examples = {
         "rate_product": [
             ("rate_times_duration", ["seller", "hours", 5.0], 90.0),
             ("rate_times_duration", ["worker", "hours", 4.0], 72.0),
@@ -761,30 +1242,152 @@ def generate_synthetic_family_examples():
             ("state", ["carol", "pens", 7.0], 7.0),
         ],
     }
+    if include_transfer:
+        examples.update(
+            {
+                "part_whole_balance": [
+                    ("part_whole_balance", ["part_carton", "whole_carton", 36.0], 36.0),
+                    ("part_whole_balance", ["part_crate", "whole_crate", 18.0], 18.0),
+                    ("part_whole_balance", ["part_bundle", "whole_bundle", 12.0], 12.0),
+                    ("part_whole_balance", ["part_segment", "whole_segment", 24.0], 24.0),
+                ],
+                "temporal_causal_chain": [
+                    ("temporal_causal_chain", ["before_stage", "after_stage", "cause_addition", 14.0], 14.0),
+                    ("temporal_causal_chain", ["before_shift", "after_shift", "cause_loss", 9.0], 9.0),
+                    ("temporal_causal_chain", ["before_step", "after_step", "cause_gain", 22.0], 22.0),
+                    ("temporal_causal_chain", ["before_phase", "after_phase", "cause_drop", 16.0], 16.0),
+                ],
+                "unit_compatibility": [
+                    ("unit_compatibility", [3.0, "hour", "minute", 180.0], 180.0),
+                    ("unit_compatibility", [2.0, "day", "hour", 48.0], 48.0),
+                    ("unit_compatibility", [5.0, "meter", "centimeter", 500.0], 500.0),
+                    ("unit_compatibility", [4.0, "week", "day", 28.0], 28.0),
+                ],
+            }
+        )
+    return examples
 
 
-def generate_synthetic_training_set():
+def generate_synthetic_training_set(include_agi_transfer_families=None):
     dataset = []
-    for family_examples in generate_synthetic_family_examples().values():
+    for family_examples in generate_synthetic_family_examples(
+        include_agi_transfer_families=include_agi_transfer_families
+    ).values():
         dataset.extend(family_examples)
     return dataset
 
 
 # --- Beam search learner ---
 
-def _learn_metagol_beam(predicates, roles, background, pos_examples, neg_examples, beam=5, max_clauses=3, prior_weight=0.5):
+def _learn_metagol_beam(
+    predicates,
+    roles,
+    background,
+    pos_examples,
+    neg_examples,
+    beam=5,
+    max_clauses=3,
+    prior_weight=0.5,
+    action_constraint="none",
+    binding_bias=0.0,
+    preferred_heads=None,
+    class_head_bias=0.0,
+    nonclass_head_penalty=0.0,
+    pair_bias=0.0,
+    preferred_role_pairs=None,
+    pair_match_bias=0.0,
+    pair_miss_penalty=0.0,
+    self_ref_penalty=0.0,
+    allowed_role_pairs=None,
+    allowed_metarule_types=None,
+    preferred_local_roles=None,
+    local_role_bias=0.0,
+    preferred_body_preds=None,
+    body_predicate_bias=0.0,
+    body_predicate_miss_penalty=0.0,
+    clause_cost=0.0,
+    mirrored_pair_penalty_value=0.0,
+    repeated_head_penalty_value=0.0,
+    required_roles=None,
+    required_role_bias=0.0,
+    missing_required_role_penalty=0.0,
+):
     # initial empty hypothesis
     beam_hypos = [([], 0.0)]  # list of (clauses_list, score)
     for step in range(max_clauses):
         candidates = []
         for hy, _ in beam_hypos:
             # expand by adding one clause instantiated from metarule templates
-            for cand in generate_clause_candidates(predicates, roles, existing_hyp=hy):
+            for cand in generate_clause_candidates(
+                predicates,
+                roles,
+                existing_hyp=hy,
+                action_constraint=action_constraint,
+                allowed_role_pairs=allowed_role_pairs,
+                allowed_metarule_types=allowed_metarule_types,
+            ):
                 clause = cand["clause"]
                 new_hyp = hy + [clause]
                 sc = score_hypothesis(new_hyp, pos_examples, neg_examples, background)
                 prior = embedding_prior(cand["head_pred"], cand["body_preds"])
-                total = sc + prior_weight * prior
+                bind_bonus = semantic_binding_bonus(
+                    cand["body_preds"],
+                    action_constraint=action_constraint,
+                    binding_bias=binding_bias,
+                )
+                pair_bonus = semantic_role_pair_bonus(
+                    cand["body_preds"],
+                    metarule_type=cand.get("metarule_type", ""),
+                    pair_bias=pair_bias,
+                )
+                class_pair_bonus = preferred_role_pair_bonus(
+                    cand["body_preds"],
+                    metarule_type=cand.get("metarule_type", ""),
+                    preferred_role_pairs=preferred_role_pairs,
+                    pair_match_bias=pair_match_bias,
+                    pair_miss_penalty=pair_miss_penalty,
+                )
+                head_bonus = head_preference_bonus(
+                    cand.get("head_pred", ""),
+                    preferred_heads=preferred_heads,
+                    class_head_bias=class_head_bias,
+                    nonclass_head_penalty=nonclass_head_penalty,
+                )
+                ref_penalty = self_reference_penalty(
+                    cand.get("head_pred", ""),
+                    cand.get("body_preds", []),
+                    penalty=self_ref_penalty,
+                )
+                local_bonus = event_local_role_bonus(
+                    cand.get("body_preds", []),
+                    preferred_local_roles=preferred_local_roles,
+                    local_role_bias=local_role_bias,
+                )
+                body_bonus = body_predicate_alignment_bonus(
+                    cand.get("body_preds", []),
+                    preferred_body_preds=preferred_body_preds,
+                    body_predicate_bias=body_predicate_bias,
+                    body_predicate_miss_penalty=body_predicate_miss_penalty,
+                )
+                compact_pen = clause_economy_penalty(len(new_hyp), clause_cost=clause_cost)
+                role_coverage = required_role_coverage_bonus(
+                    cand.get("body_preds", []),
+                    required_roles=required_roles,
+                    required_role_bias=required_role_bias,
+                    missing_required_role_penalty=missing_required_role_penalty,
+                )
+                mirror_pen = mirrored_role_pair_penalty(
+                    hy,
+                    clause,
+                    candidate_type=cand.get("metarule_type", ""),
+                    penalty=mirrored_pair_penalty_value,
+                )
+                repeat_pen = repeated_head_penalty(
+                    hy,
+                    clause,
+                    penalty=repeated_head_penalty_value,
+                )
+                total = sc + prior_weight * prior + bind_bonus + pair_bonus + class_pair_bonus + head_bonus + ref_penalty + local_bonus + body_bonus + compact_pen + mirror_pen + repeat_pen + role_coverage
                 candidates.append((new_hyp, total))
         # keep top beam
         candidates.sort(key=lambda x: x[1], reverse=True)
@@ -812,6 +1415,29 @@ def learn_metagol_nds(
     value_learning_rate=0.02,
     value_discount=0.9,
     online_value_updates=True,
+    action_constraint="none",
+    binding_bias=0.0,
+    preferred_heads=None,
+    class_head_bias=0.0,
+    nonclass_head_penalty=0.0,
+    pair_bias=0.0,
+    preferred_role_pairs=None,
+    pair_match_bias=0.0,
+    pair_miss_penalty=0.0,
+    self_ref_penalty=0.0,
+    allowed_role_pairs=None,
+    allowed_metarule_types=None,
+    preferred_local_roles=None,
+    local_role_bias=0.0,
+    preferred_body_preds=None,
+    body_predicate_bias=0.0,
+    body_predicate_miss_penalty=0.0,
+    clause_cost=0.0,
+    mirrored_pair_penalty_value=0.0,
+    repeated_head_penalty_value=0.0,
+    required_roles=None,
+    required_role_bias=0.0,
+    missing_required_role_penalty=0.0,
     trace_out=None,
 ):
     """Learn a clause set for the target using either beam or value-guided search.
@@ -830,6 +1456,29 @@ def learn_metagol_nds(
             beam=beam,
             max_clauses=max_clauses,
             prior_weight=prior_weight,
+            action_constraint=action_constraint,
+            binding_bias=binding_bias,
+            preferred_heads=preferred_heads,
+            class_head_bias=class_head_bias,
+            nonclass_head_penalty=nonclass_head_penalty,
+            pair_bias=pair_bias,
+            preferred_role_pairs=preferred_role_pairs,
+            pair_match_bias=pair_match_bias,
+            pair_miss_penalty=pair_miss_penalty,
+            self_ref_penalty=self_ref_penalty,
+            allowed_role_pairs=allowed_role_pairs,
+            allowed_metarule_types=allowed_metarule_types,
+            preferred_local_roles=preferred_local_roles,
+            local_role_bias=local_role_bias,
+            preferred_body_preds=preferred_body_preds,
+            body_predicate_bias=body_predicate_bias,
+            body_predicate_miss_penalty=body_predicate_miss_penalty,
+            clause_cost=clause_cost,
+            mirrored_pair_penalty_value=mirrored_pair_penalty_value,
+            repeated_head_penalty_value=repeated_head_penalty_value,
+            required_roles=required_roles,
+            required_role_bias=required_role_bias,
+            missing_required_role_penalty=missing_required_role_penalty,
         )
 
     if strategy != "value_guided":
@@ -852,6 +1501,29 @@ def learn_metagol_nds(
         value_learning_rate=value_learning_rate,
         value_discount=value_discount,
         online_value_updates=online_value_updates,
+        action_constraint=action_constraint,
+        binding_bias=binding_bias,
+        preferred_heads=preferred_heads,
+        class_head_bias=class_head_bias,
+        nonclass_head_penalty=nonclass_head_penalty,
+        pair_bias=pair_bias,
+        preferred_role_pairs=preferred_role_pairs,
+        pair_match_bias=pair_match_bias,
+        pair_miss_penalty=pair_miss_penalty,
+        self_ref_penalty=self_ref_penalty,
+        allowed_role_pairs=allowed_role_pairs,
+        allowed_metarule_types=allowed_metarule_types,
+        preferred_local_roles=preferred_local_roles,
+        local_role_bias=local_role_bias,
+        preferred_body_preds=preferred_body_preds,
+        body_predicate_bias=body_predicate_bias,
+        body_predicate_miss_penalty=body_predicate_miss_penalty,
+        clause_cost=clause_cost,
+        mirrored_pair_penalty_value=mirrored_pair_penalty_value,
+        repeated_head_penalty_value=repeated_head_penalty_value,
+        required_roles=required_roles,
+        required_role_bias=required_role_bias,
+        missing_required_role_penalty=missing_required_role_penalty,
     )
     if isinstance(trace_out, list):
         trace_out.extend(trace)

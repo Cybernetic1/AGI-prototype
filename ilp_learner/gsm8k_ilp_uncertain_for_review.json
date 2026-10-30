@@ -1,10 +1,19 @@
 {
   "min_class_confidence": 0.7,
   "search_strategy": "value_guided",
-  "reward_profile": "aggressive",
+  "action_constraint": "semantic_binding",
+  "binding_bias": 0.3,
+  "class_head_bias": 0.5,
+  "nonclass_head_penalty": -0.2,
+  "pair_bias": 0.25,
+  "class_pair_bias": 0.35,
+  "class_pair_miss_penalty": -0.15,
+  "strict_transfer_polarity": true,
+  "self_reference_penalty": -0.6,
+  "reward_profile": "balanced",
   "skip_counts": {
-    "neutral": 8,
-    "low_confidence": 21
+    "neutral": 12,
+    "low_confidence": 31
   },
   "uncertain_for_review": [
     {
@@ -170,6 +179,86 @@
     {
       "index": 56,
       "id": "56",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 60,
+      "id": "60",
+      "verb": "last",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 62,
+      "id": "62",
+      "verb": "hold",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 66,
+      "id": "66",
+      "verb": "plan",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 67,
+      "id": "67",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 68,
+      "id": "68",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 71,
+      "id": "71",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 72,
+      "id": "72",
+      "verb": "be",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 73,
+      "id": "73",
+      "verb": "need",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 77,
+      "id": "77",
+      "verb": "weigh",
+      "proposed_class": "comparison",
+      "confidence": 0.65,
+      "reason": "comparison_default"
+    },
+    {
+      "index": 79,
+      "id": "79",
       "verb": "be",
       "proposed_class": "comparison",
       "confidence": 0.65,

@@ -2,6 +2,7 @@ import argparse
 import concurrent.futures
 import ast
 import json
+import os
 import re
 import sys
 import time
@@ -18,6 +19,7 @@ sys.path.append(str(BASE_DIR / 'ilp_learner'))
 
 from working_memory.working_memory import WMNode, WorkingMemory, EquationGraphSolver
 from working_memory.semantic_schema import SemanticGraphSchema
+from working_memory.symbolic_validation import semantic_candidate_gate
 from working_memory.predicate_logic import wmnode_to_predicate_atoms
 from forward_engine.canonical_system2 import CanonicalSystem2
 from forward_engine.defeasible_logic import load_default_defeasible_reasoner
@@ -28,6 +30,7 @@ from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
 from abductive_ilp import KnowledgeBase, OntologicalReasoner, OntologicalILPLearner, DuckEgg
 from local_proposal_ranker import ProposalRanker
+from semantic_ar import SemanticARConfig, score_semantic_ar, load_semantic_ar_config
 from forward_engine.phase3_synthetic_test import ontology_classify_details
 
 # ==========================================
@@ -79,6 +82,10 @@ def load_local_proposal_ranker():
     except Exception:
         _local_proposal_ranker = None
     return _local_proposal_ranker
+
+
+def _normalize_sar_config(config):
+    return SemanticARConfig.from_mapping(config).to_dict()
 
 
 def load_dln(quiet=False):
@@ -145,8 +152,9 @@ def _lift_semantic_candidates(input_text):
     return facts
 
 
-def system1_step(current_wm, cycle, input_text=None, quiet=False):
+def system1_step(current_wm, cycle, input_text=None, quiet=False, sar_config=None):
     new_facts = set()
+    sar_cfg = SemanticARConfig.from_mapping(sar_config)
     
     if cycle == 1 and input_text:
         # 1. Parse raw structural features via SpacyLogicalFormParser directly (acting as our semantic grounder).
@@ -182,10 +190,22 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False):
             if concept in ["Event", "Predicate", "Agent", "Patient", "Recipient", "Name", "Quantity", "Location", "Time", "Modifier"]:
                 kwargs = {f"arg{j}": arg for j, arg in enumerate(args)}
                 proposal_score = 0.75
+                sar_result = None
                 if proposal_ranker is not None and input_text:
                     proposal_text = f"{concept}({', '.join(str(a) for a in args)})"
                     proposal_score = proposal_ranker.score(input_text, proposal_text)
+                if input_text:
+                    sar_result = score_semantic_ar(
+                        question=input_text,
+                        concept=concept,
+                        args=list(args),
+                        base_score=proposal_score,
+                        config=sar_cfg,
+                    )
+                    proposal_score = sar_result.final_score
                 activation = max(0.15, min(0.95, 0.35 + 0.6 * proposal_score))
+                if sar_cfg.enabled and sar_cfg.emit_metadata and sar_result is not None:
+                    kwargs.update({k: round(float(v), 6) if isinstance(v, float) else v for k, v in sar_result.as_metadata().items()})
                 new_facts.add(WMNode.create(concept, activation=activation, layer="parse", source="system1", provenance_id=f"s1:{concept.lower()}", **kwargs))
 
     # A second pass: take raw parse-layer clauses and lift them into the semantic layer.
@@ -217,26 +237,10 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
     for node in current_wm:
         if node.layer != "semantic":
             continue
-        if node.concept not in {"Quantity", "Has", "StateTransition", "Ratio", "Percent", "Remaining"}:
-            continue
         attrs = node.to_dict()
-        owner = attrs.get("owner")
-        item = attrs.get("item")
-        qty = attrs.get("qty")
-        delta = attrs.get("delta")
-        factor = attrs.get("factor")
-        pct = attrs.get("pct")
-        if not owner or not item:
+        gate_ok, value = semantic_candidate_gate(node.concept, attrs)
+        if not gate_ok:
             continue
-        if node.concept in {"Quantity", "Has", "Remaining"} and qty is None:
-            continue
-        if node.concept == "StateTransition" and delta is None:
-            continue
-        if node.concept == "Ratio" and factor is None:
-            continue
-        if node.concept == "Percent" and pct is None:
-            continue
-        value = qty if qty is not None else (delta if delta is not None else (factor if factor is not None else pct))
         new_facts.add(WMNode.create(
             "Belief",
             activation=0.9,
@@ -244,8 +248,8 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
             source="system2",
             provenance_id=f"validate:{node.provenance_id or node.concept.lower()}",
             label="validated_semantic",
-            owner=owner,
-            item=item,
+            owner=attrs.get("owner"),
+            item=attrs.get("item"),
             qty=value,
         ))
 
@@ -307,6 +311,62 @@ def system2_step(current_wm, cycle, _=None, quiet=False):
             validated.add(WMNode.create(concept, activation=activation, **clean_attrs))
 
     new_facts.update(validated)
+
+    # LT-heavy runs (System-1 + System-2) still need a deterministic final-state
+    # authority path for quantity queries. Mirror the System-3 finality policy here:
+    # for total/remaining queries, prefer the latest PreferredState/FinalState.
+    query_nodes = [n for n in current_wm if n.concept == "Query"]
+    if query_nodes:
+        finality_index = {}
+        for n in current_wm:
+            if n.concept not in {"PreferredState", "FinalState"}:
+                continue
+            attrs = n.to_dict()
+            owner = attrs.get("owner")
+            item = attrs.get("item")
+            if owner is None or item is None:
+                continue
+            qty = attrs.get("qty")
+            if qty is None:
+                qty = attrs.get("after_qty")
+            if qty is None:
+                qty = attrs.get("value")
+            if qty is None:
+                continue
+            event_order = int(attrs.get("event_order") or 0)
+            key = (owner, item)
+            current = finality_index.get(key)
+            if current is None or event_order >= current[0]:
+                finality_index[key] = (event_order, qty)
+
+        for q in query_nodes:
+            q_attrs = q.to_dict()
+            goal = q_attrs.get("goal")
+            args = tuple(q_attrs.get("args") or ())
+            if goal not in {"remaining_quantity", "total_quantity"} or len(args) < 2:
+                continue
+            key = (args[0], args[1])
+            latest = finality_index.get(key)
+            if latest is None:
+                continue
+            _, qty = latest
+            try:
+                qty_value = float(qty)
+            except (TypeError, ValueError):
+                continue
+            new_facts.add(
+                WMNode.create(
+                    "Belief",
+                    label=goal,
+                    value=qty_value,
+                    owner=args[0],
+                    item=args[1],
+                    activation=1.0,
+                    layer="reasoning",
+                    source="system2-finality",
+                    provenance_id="finality:preferred-state",
+                )
+            )
 
     # Canonical predicate integration: keep the legacy engine path for backward
     # compatibility, but also run the arity-limited reasoner over the same WM to
@@ -603,6 +663,9 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
     
     # 2. Generate background KB dynamically from current Working Memory!
     kb = KnowledgeBase()
+    strict_numeric_authority = str(os.getenv("AGI_NUMERIC_AUTHORITY_STRICT", "")).strip().lower() in {"1", "true", "yes", "on"}
+    quantity_goal_owner = goal_args[0] if len(goal_args) >= 1 else None
+    quantity_goal_item = goal_args[1] if len(goal_args) >= 2 else None
     for node in current_wm:
         # Declare all factual relationships from the canonical WM schema into the ILP KB.
         # This is more robust than a raw `arg0/arg1/arg2` scan, because our GSM8K facts are
@@ -610,6 +673,19 @@ def system3_step(current_wm, cycle, _=None, quiet=False):
         attrs = node.to_dict()
         pred = node.concept.lower()
         args = []
+        if (
+            strict_numeric_authority
+            and goal_pred in {"remaining_quantity", "total_quantity"}
+            and quantity_goal_owner is not None
+            and quantity_goal_item is not None
+            and node.concept in {"Produced", "Consumed", "Has", "Total", "Remaining", "Quantity", "ScaleFactor", "Percent", "Ratio"}
+        ):
+            node_owner = attrs.get("owner")
+            node_item = attrs.get("item")
+            if node_owner is not None and node_owner != quantity_goal_owner:
+                continue
+            if node_item is not None and node_item != quantity_goal_item:
+                continue
         if node.concept in {"Produced", "Consumed", "Has", "Total", "Remaining", "Quantity"}:
             args = [attrs.get("owner"), attrs.get("item"), attrs.get("qty")]
         elif node.concept == "Sells":
@@ -2489,6 +2565,7 @@ def run_cognitive_loop(
     use_ltm_recall: bool = False,
     auto_accept_recall: bool = False,
     write_ltm_episode: bool = False,
+    sar_config: dict[str, Any] | None = None,
 ):
     wm = _compile_gsm8k_problem_to_wm(
         input_text,
@@ -2497,6 +2574,7 @@ def run_cognitive_loop(
     )
     if use_ltm_recall:
         wm.ltm_associative_recall(top_k=5, min_score=0.08, inject=auto_accept_recall)
+    normalized_sar_config = _normalize_sar_config(sar_config)
 
     def _record_null_answer(reason: str, cycle: int):
         wm.facts[WMNode.create(
@@ -2530,7 +2608,7 @@ def run_cognitive_loop(
                         print(f"  - {fact.concept}({', '.join(f'{k}={v}' for k, v in fact.to_dict().items())})")
 
             current_wm_snapshot = set(wm.facts.keys())
-            f1 = executor.submit(system1_step, current_wm_snapshot, cycle, input_text, quiet)
+            f1 = executor.submit(system1_step, current_wm_snapshot, cycle, input_text, quiet, normalized_sar_config)
             f2 = executor.submit(system2_step, current_wm_snapshot, cycle, None, quiet)
             f3 = executor.submit(system3_step, current_wm_snapshot, cycle, None, quiet)
 
@@ -2594,6 +2672,7 @@ def benchmark_single_problem(
     use_ltm_recall: bool = False,
     auto_accept_recall: bool = False,
     write_ltm_episode: bool = False,
+    sar_config: dict[str, Any] | None = None,
 ):
     wm = run_cognitive_loop(
         question,
@@ -2604,6 +2683,7 @@ def benchmark_single_problem(
         use_ltm_recall=use_ltm_recall,
         auto_accept_recall=auto_accept_recall,
         write_ltm_episode=write_ltm_episode,
+        sar_config=sar_config,
     )
     belief_values = []
     for fact in wm.facts:
@@ -2637,7 +2717,7 @@ def load_jsonl(path):
     return examples
 
 
-def benchmark_dataset(data_path, limit=None, max_cycles=4, quiet=True):
+def benchmark_dataset(data_path, limit=None, max_cycles=4, quiet=True, *, sar_config: dict[str, Any] | None = None):
     data = load_jsonl(data_path)
     if limit is not None:
         data = data[:limit]
@@ -2647,7 +2727,13 @@ def benchmark_dataset(data_path, limit=None, max_cycles=4, quiet=True):
     for ex in data:
         question = ex.get("question") or ex.get("prompt") or ex.get("text")
         answer = ex.get("answer")
-        result = benchmark_single_problem(question, answer, max_cycles=max_cycles, quiet=quiet)
+        result = benchmark_single_problem(
+            question,
+            answer,
+            max_cycles=max_cycles,
+            quiet=quiet,
+            sar_config=sar_config,
+        )
         if result["solved"]:
             solved += 1
         results.append(result)
@@ -2782,6 +2868,42 @@ GENERALIZED_TEMPLATE_FAMILIES = [
         "family": "percent_sequence_discount",
         "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. What is the final price?",
         "expected": 70.4,
+    },
+]
+
+TINYSTORIES_STATE_TRACKING_FAMILIES = [
+    {
+        "family": "tinystory_basket_lunch_dinner",
+        "question": "In a tiny story, there were 20 apples in a basket. First, 5 were eaten at lunch. Then 25% of the remaining 15 apples were eaten at dinner. How many apples are left now?",
+        "expected": 11.25,
+    },
+    {
+        "family": "tinystory_basket_after_school",
+        "question": "In a tiny story, there were 30 apples in a basket. First, 6 were eaten after school. Then 20% of the remaining 24 apples were eaten. How many apples are left now?",
+        "expected": 19.2,
+    },
+    {
+        "family": "tinystory_ratio_market_day",
+        "question": "TinyStories style: A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have now?",
+        "expected": 15.0,
+    },
+]
+
+MIXED_NARRATIVE_SYMBOLIC_FAMILIES = [
+    {
+        "family": "mixed_symbolic_discount_sequence",
+        "question": "A jacket costs $80 and is discounted by 20%, then marked up by 10%. In symbols: 80*(1-0.20)*(1+0.10). What is the final price?",
+        "expected": 70.4,
+    },
+    {
+        "family": "mixed_symbolic_profit_inverse",
+        "question": "A product sold for $150 after a 20% profit. Symbolically, sell = cost * 1.2. What was the original cost?",
+        "expected": 125.0,
+    },
+    {
+        "family": "mixed_symbolic_percent_projection",
+        "question": "A box has 40 marbles. 25% of them are blue. In equation form, blue = 0.25 * 40. How many marbles are blue?",
+        "expected": 10.0,
     },
 ]
 
@@ -2938,22 +3060,55 @@ if __name__ == "__main__":
     parser.add_argument("--family-benchmark", action="store_true", help="Run the compact semantic failure benchmark instead of a GSM8K dataset file.")
     parser.add_argument("--finality-regression", action="store_true", help="Run the final-state regression set for buy-more / spoilage / donation / percent-of-remaining state transitions.")
     parser.add_argument("--template-generalization", action="store_true", help="Run the adjacent family template set for product totals, rate-time, discount, combined totals, unit conversion, and distance/time patterns.")
+    parser.add_argument("--sar-enabled", action="store_true", help="Enable semantic-AR proposal shaping in System 1.")
+    parser.add_argument("--sar-config-file", default="", help="Optional JSON file containing a trained SAR config.")
+    parser.add_argument("--sar-weight", type=float, default=0.2, help="SAR bonus weight added to proposal scores.")
+    parser.add_argument("--sar-lexical-weight", type=float, default=0.5, help="Weight for lexical alignment inside SAR.")
+    parser.add_argument("--sar-role-weight", type=float, default=0.3, help="Weight for role-coverage inside SAR.")
+    parser.add_argument("--sar-prior-weight", type=float, default=0.2, help="Weight for concept prior inside SAR.")
+    parser.add_argument("--sar-gate-fail-penalty", type=float, default=0.0, help="Penalty applied when symbolic pre-gate fails.")
+    parser.add_argument("--sar-disable-symbolic-gate-coupling", action="store_true", help="Ablation: allow SAR bonus without symbolic pre-gate pass.")
+    parser.add_argument("--sar-emit-metadata", action="store_true", help="Attach SAR score metadata to System-1 parse facts.")
     args = parser.parse_args()
 
+    if str(args.sar_config_file or "").strip():
+        cfg_path = Path(str(args.sar_config_file))
+        if not cfg_path.is_absolute():
+            cfg_path = BASE_DIR / cfg_path
+        loaded = load_semantic_ar_config(cfg_path).to_dict()
+        if args.sar_enabled:
+            loaded["enabled"] = True
+        if args.sar_emit_metadata:
+            loaded["emit_metadata"] = True
+        sar_config = _normalize_sar_config(loaded)
+    else:
+        sar_config = _normalize_sar_config(
+            {
+                "enabled": args.sar_enabled,
+                "weight": args.sar_weight,
+                "lexical_weight": args.sar_lexical_weight,
+                "role_weight": args.sar_role_weight,
+                "prior_weight": args.sar_prior_weight,
+                "gate_fail_penalty": args.sar_gate_fail_penalty,
+                "couple_to_symbolic_gate": not args.sar_disable_symbolic_gate_coupling,
+                "emit_metadata": args.sar_emit_metadata,
+            }
+        )
+
     if args.finality_regression:
-        report = benchmark_finality_regressions(max_cycles=args.cycles, quiet=args.quiet)
+        report = benchmark_finality_regressions(max_cycles=args.cycles, quiet=args.quiet, sar_config=sar_config)
         print(f"Finality regression: {report['solved']} / {report['total']} families solved.")
         if not args.quiet:
             for item in report["results"]:
                 print(f"[{item['family']}] expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")
     elif args.template_generalization:
-        report = benchmark_template_generalization(max_cycles=args.cycles, quiet=args.quiet)
+        report = benchmark_template_generalization(max_cycles=args.cycles, quiet=args.quiet, sar_config=sar_config)
         print(f"Template generalization: {report['solved']} / {report['total']} families solved.")
         if not args.quiet:
             for item in report["results"]:
                 print(f"[{item['family']}] expected={item['expected']} beliefs={item['belief_values']} solved={item['solved']}")
     elif args.family_benchmark or args.data_path is None:
-        report = benchmark_failure_families(max_cycles=args.cycles, quiet=args.quiet)
+        report = benchmark_failure_families(max_cycles=args.cycles, quiet=args.quiet, sar_config=sar_config)
         print(f"Semantic benchmark: {report['solved']} / {report['total']} families solved.")
         if not args.quiet:
             for item in report["results"]:
@@ -2963,7 +3118,13 @@ if __name__ == "__main__":
         if not path.exists():
             raise FileNotFoundError(f"Missing dataset: {path}")
 
-        report = benchmark_dataset(str(path), limit=args.limit, max_cycles=args.cycles, quiet=args.quiet)
+        report = benchmark_dataset(
+            str(path),
+            limit=args.limit,
+            max_cycles=args.cycles,
+            quiet=args.quiet,
+            sar_config=sar_config,
+        )
         print(f"GSM8K benchmark on {report['total']} examples: {report['solved']} solved, {report['total'] - report['solved']} unsolved.")
         if not args.quiet:
             for item in report["results"]:
