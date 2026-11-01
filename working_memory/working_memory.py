@@ -93,6 +93,18 @@ class WorkingMemory:
         self._recall_counter = 0
         self._accounted_meta_keys: set[Tuple[str, frozenset]] = set()
 
+    @staticmethod
+    def _context_id_from_attrs(attrs: Dict[str, Any]) -> str:
+        return str(
+            attrs.get("ctx_id")
+            or attrs.get("context_id")
+            or attrs.get("ctx")
+            or "global"
+        )
+
+    def _fact_context_id(self, fact_node: WMNode) -> str:
+        return self._context_id_from_attrs(fact_node.to_dict())
+
     def to_predicate_atoms(self):
         """Expose a canonical unary/binary predicate view of working memory.
 
@@ -139,6 +151,113 @@ class WorkingMemory:
             self.graph_edges.append(GraphEdge(op_id, var_id, "output", frozenset({('var', var_name)})))
             self.facts[WMNode.create("GraphEdge", layer="semantic", source="equation_graph", source_id=op_id, target_id=var_id, relation="output", var=var_name, value=value)] = self.default_ttl
 
+    def add_context(
+        self,
+        *,
+        ctx_id: str,
+        ctx_type: str,
+        parent_ctx: Optional[str] = None,
+        agent: Optional[str] = None,
+        t: Any = None,
+        assumptions: Any = None,
+        status: str = "active",
+        **attrs,
+    ):
+        payload = SemanticGraphSchema.make_context(
+            ctx_id=ctx_id,
+            ctx_type=ctx_type,
+            parent_ctx=parent_ctx,
+            agent=agent,
+            t=t,
+            assumptions=assumptions,
+            status=status,
+            **attrs,
+        )
+        ok, _ = SemanticGraphSchema.validate_graph_fragment(payload)
+        if not ok:
+            return
+        self.facts[WMNode.create("Ctx", layer="semantic", source="context", **payload)] = self.default_ttl
+
+    def add_proposition(
+        self,
+        *,
+        prop_id: str,
+        pred: str,
+        args: List[Any],
+        polarity: str = "pos",
+        confidence: float = 1.0,
+        **attrs,
+    ):
+        payload = SemanticGraphSchema.make_proposition(
+            prop_id=prop_id,
+            pred=pred,
+            args=args,
+            polarity=polarity,
+            confidence=confidence,
+            **attrs,
+        )
+        payload["args"] = tuple(payload.get("args") or ())
+        ok, _ = SemanticGraphSchema.validate_graph_fragment(payload)
+        if not ok:
+            return
+        self.facts[WMNode.create("Prop", layer="semantic", source="context", **payload)] = self.default_ttl
+
+    def add_in_context(
+        self,
+        *,
+        prop_id: str,
+        ctx_id: str,
+        truth_status: str = "asserted",
+        support: Any = None,
+        **attrs,
+    ):
+        payload = SemanticGraphSchema.make_in_context(
+            prop_id=prop_id,
+            ctx_id=ctx_id,
+            truth_status=truth_status,
+            support=support,
+            **attrs,
+        )
+        ok, _ = SemanticGraphSchema.validate_graph_fragment(payload)
+        if not ok:
+            return
+        self.facts[WMNode.create("InCtx", layer="semantic", source="context", **payload)] = self.default_ttl
+
+    def add_accessibility(
+        self,
+        *,
+        from_ctx: str,
+        to_ctx: str,
+        modality: str,
+        guard: Optional[str] = None,
+        **attrs,
+    ):
+        payload = SemanticGraphSchema.make_accessibility(
+            from_ctx=from_ctx,
+            to_ctx=to_ctx,
+            modality=modality,
+            guard=guard,
+            **attrs,
+        )
+        ok, _ = SemanticGraphSchema.validate_graph_fragment(payload)
+        if not ok:
+            return
+        self.facts[WMNode.create("Accessible", layer="semantic", source="context", **payload)] = self.default_ttl
+
+    def contexts_accessible(self, from_ctx: str, to_ctx: str, modality: Optional[str] = None) -> bool:
+        for fact in self.facts:
+            if fact.concept != "Accessible":
+                continue
+            attrs = fact.to_dict()
+            if str(attrs.get("from_ctx")) != str(from_ctx):
+                continue
+            if str(attrs.get("to_ctx")) != str(to_ctx):
+                continue
+            if modality is not None and str(attrs.get("modality")) != str(modality):
+                continue
+            return True
+        return False
+
     def add_state(self, *, state_id: str, owner: str, item: str, qty: Any, phase: str = "state", **attrs):
         """Persist a discrete quantity state in the graph so later events can update it explicitly."""
         payload = SemanticGraphSchema.make_state(state_id, owner, item, qty, phase, **attrs)
@@ -169,6 +288,7 @@ class WorkingMemory:
         **attrs,
     ):
         """Record a single quantity event that transforms one state into the next."""
+        ctx_id = str(attrs.get("ctx_id") or attrs.get("context_id") or "global")
         payload = SemanticGraphSchema.make_state_transition(
             transition_id,
             owner,
@@ -201,6 +321,7 @@ class WorkingMemory:
             if f.concept == "StateTransition"
             and f.to_dict().get("owner") == owner
             and f.to_dict().get("item") == item
+            and self._fact_context_id(f) == ctx_id
             and int(f.to_dict().get("event_order") or 0) < int(event_order)
         ]
         if prior_transitions:
@@ -212,6 +333,7 @@ class WorkingMemory:
                 source="state_machine",
                 owner=owner,
                 item=item,
+                ctx_id=ctx_id,
                 earlier=earlier_id,
                 later=transition_id,
                 earlier_order=int(earlier.to_dict().get("event_order") or 0),
@@ -227,6 +349,7 @@ class WorkingMemory:
             source="state_machine",
             owner=owner,
             item=item,
+            ctx_id=ctx_id,
             qty=after_qty,
             event_order=event_order,
             phase="final",
@@ -285,17 +408,25 @@ class WorkingMemory:
     def _state_fact_concepts(self):
         return {"FinalState", "PreferredState", "StateTransition", "State", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed"}
 
-    def _latest_state_authority(self, owner, item):
+    def _latest_state_authority(self, owner, item, ctx_id: str = "global"):
         candidates = [
             fact for fact in self.facts
             if fact.concept in {"FinalState", "PreferredState", "StateTransition", "State"}
             and fact.to_dict().get("owner") == owner
             and fact.to_dict().get("item") == item
+            and self._fact_context_id(fact) == ctx_id
             and fact.to_dict().get("event_order") is not None
         ]
         if not candidates:
             return None
         return max(candidates, key=lambda fact: int(fact.to_dict().get("event_order") or 0))
+
+    def final_state_in_context(self, owner: str, item: str, ctx_id: str = "global") -> Optional[Any]:
+        """Return the currently authoritative quantity for owner/item in one context."""
+        latest = self._latest_state_authority(owner, item, ctx_id=ctx_id)
+        if latest is None:
+            return None
+        return self._extract_state_value(latest)
 
     def _fact_semantic_key(self, fact):
         """Return a canonical identity for logically equivalent facts.
@@ -339,11 +470,12 @@ class WorkingMemory:
             attrs = fact.to_dict()
             owner = attrs.get("owner")
             item = attrs.get("item")
+            ctx_id = self._context_id_from_attrs(attrs)
             if owner is None or item is None:
                 continue
             if fact.concept not in {"FinalState", "PreferredState", "StateTransition", "State"}:
                 continue
-            key = (owner, item)
+            key = (owner, item, ctx_id)
             current = latest_by_key.get(key)
             if current is None:
                 latest_by_key[key] = fact
@@ -357,9 +489,10 @@ class WorkingMemory:
             attrs = fact.to_dict()
             owner = attrs.get("owner")
             item = attrs.get("item")
+            ctx_id = self._context_id_from_attrs(attrs)
             if owner is None or item is None:
                 continue
-            latest = latest_by_key.get((owner, item))
+            latest = latest_by_key.get((owner, item, ctx_id))
             if latest is None or fact is latest:
                 continue
             fact_order = attrs.get("event_order")
@@ -370,8 +503,8 @@ class WorkingMemory:
                 if fact.concept in {"BlockedState", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State", "StateTransition", "FinalState", "PreferredState"}:
                     self.facts.pop(fact, None)
 
-    def _reconcile_state_authority(self, owner, item):
-        latest = self._latest_state_authority(owner, item)
+    def _reconcile_state_authority(self, owner, item, ctx_id: str = "global"):
+        latest = self._latest_state_authority(owner, item, ctx_id=ctx_id)
         if latest is None:
             return
         latest_order = int(latest.to_dict().get("event_order") or 0)
@@ -388,6 +521,7 @@ class WorkingMemory:
                 activation=1.0,
                 owner=owner,
                 item=item,
+                ctx_id=ctx_id,
                 qty=latest_value,
                 event_order=latest_order,
                 phase="final",
@@ -396,6 +530,8 @@ class WorkingMemory:
         for fact in list(self.facts):
             attrs = fact.to_dict()
             if attrs.get("owner") != owner or attrs.get("item") != item:
+                continue
+            if self._context_id_from_attrs(attrs) != ctx_id:
                 continue
             if fact.concept in {"FinalState", "PreferredState", "StateTransition", "State"}:
                 continue
@@ -414,6 +550,7 @@ class WorkingMemory:
                     activation=1.0,
                     owner=owner,
                     item=item,
+                    ctx_id=ctx_id,
                     qty=value,
                     event_order=fact_order if fact_order is not None else latest_order,
                     blocked_by="FinalState",
@@ -455,11 +592,12 @@ class WorkingMemory:
             d = fact.to_dict()
             owner = d.get("owner")
             item = d.get("item")
+            ctx_id = self._context_id_from_attrs(d)
             args = d.get("args") or ()
             goal = d.get("goal")
 
             if owner is not None and item is not None:
-                self._reconcile_state_authority(owner, item)
+                self._reconcile_state_authority(owner, item, ctx_id=ctx_id)
 
             if owner is not None and item is not None:
                 state_candidates = [
@@ -467,6 +605,7 @@ class WorkingMemory:
                     if f.concept in {"FinalState", "PreferredState", "StateTransition", "State", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed"}
                     and f.to_dict().get("owner") == owner
                     and f.to_dict().get("item") == item
+                    and self._fact_context_id(f) == ctx_id
                 ]
                 if state_candidates:
                     preferred = max(state_candidates, key=self._state_priority)
@@ -480,6 +619,7 @@ class WorkingMemory:
                             activation=1.0,
                             owner=owner,
                             item=item,
+                            ctx_id=ctx_id,
                             qty=preferred_value,
                             event_order=preferred_payload.get("event_order", 0),
                             phase="final",
@@ -497,6 +637,7 @@ class WorkingMemory:
                                 activation=1.0,
                                 owner=owner,
                                 item=item,
+                                ctx_id=ctx_id,
                                 qty=competitor_value,
                                 event_order=competitor.to_dict().get("event_order", 0),
                                 blocked_by="FinalState",
@@ -515,6 +656,7 @@ class WorkingMemory:
                             activation=1.0,
                             owner=owner,
                             item=item,
+                            ctx_id=ctx_id,
                             values=tuple(competing_values),
                             revision_needed=True,
                         )] = self.default_ttl
@@ -528,6 +670,7 @@ class WorkingMemory:
                     if f.concept in {"FinalState", "StateTransition", "Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State"}
                     and f.to_dict().get("owner") == owner
                     and f.to_dict().get("item") == item
+                    and self._fact_context_id(f) == ctx_id
                 ]
                 if candidates:
                     preferred = max(candidates, key=priority_score)
@@ -540,6 +683,7 @@ class WorkingMemory:
                         activation=1.0,
                         owner=owner,
                         item=item,
+                        ctx_id=ctx_id,
                         qty=preferred_value,
                         event_order=preferred_payload.get("event_order", 0),
                         phase="preferred",
@@ -560,6 +704,7 @@ class WorkingMemory:
                             activation=1.0,
                             owner=owner,
                             item=item,
+                            ctx_id=ctx_id,
                             values=tuple(competing_values),
                             revision_needed=True,
                         )] = self.default_ttl
@@ -577,6 +722,7 @@ class WorkingMemory:
                             activation=1.0,
                             owner=owner,
                             item=item,
+                            ctx_id=ctx_id,
                             preferred_value=preferred_value,
                             weaker_value=competitor_value,
                             preferred_event_order=preferred_payload.get("event_order", 0),
@@ -589,11 +735,14 @@ class WorkingMemory:
                     if f.concept == "PreferredState"
                     and f.to_dict().get("owner") == owner
                     and f.to_dict().get("item") == item
+                    and self._fact_context_id(f) == ctx_id
                 ]
                 for stale in list(self.facts):
                     if stale.concept in {"Quantity", "Remaining", "Total", "Has", "Inventory", "Produced", "Consumed", "State"}:
                         stale_dict = stale.to_dict()
                         if stale_dict.get("owner") == owner and stale_dict.get("item") == item:
+                            if self._context_id_from_attrs(stale_dict) != ctx_id:
+                                continue
                             if current_preferred:
                                 preferred_value = max(current_preferred, key=lambda n: int(n.to_dict().get("event_order") or 0)).to_dict().get("qty")
                                 stale_value = stale_dict.get("qty") or stale_dict.get("value")
@@ -605,6 +754,7 @@ class WorkingMemory:
                                         activation=1.0,
                                         owner=owner,
                                         item=item,
+                                        ctx_id=ctx_id,
                                         qty=stale_value,
                                         event_order=stale_dict.get("event_order", 0),
                                         blocked_by="PreferredState",
@@ -619,6 +769,8 @@ class WorkingMemory:
                     stale_dict = stale.to_dict()
                     if stale_dict.get("owner") != owner or stale_dict.get("item") != item:
                         continue
+                    if self._context_id_from_attrs(stale_dict) != ctx_id:
+                        continue
                     if stale.concept not in {"Inventory", "Quantity", "Has", "Remaining", "Total", "Produced", "Consumed", "State", "FinalState", "StateTransition", "PreferredState"}:
                         continue
                     stale_order = int(stale_dict.get("event_order") or 0)
@@ -632,6 +784,7 @@ class WorkingMemory:
                                 activation=1.0,
                                 owner=owner,
                                 item=item,
+                                ctx_id=ctx_id,
                                 qty=stale_value,
                                 event_order=stale_order,
                                 blocked_by="FinalState",
@@ -749,6 +902,52 @@ class WorkingMemory:
                 priority=priority,
             )] = self.default_ttl
 
+        if family == "belief_transfer":
+            self.facts[WMNode.create(
+                "ContextBridgeRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                modality="belief",
+                rationale="allow guarded transfer from source context to target belief context",
+                priority=priority,
+            )] = self.default_ttl
+
+        if family == "hypothetical_projection":
+            self.facts[WMNode.create(
+                "ContextBridgeRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                modality="hypothetical",
+                rationale="allow guarded projection into hypothetical contexts only",
+                priority=priority,
+            )] = self.default_ttl
+
+        if family == "counterfactual_branch":
+            self.facts[WMNode.create(
+                "CounterfactualRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="counterfactual assertions remain branch-scoped by context",
+                priority=priority,
+            )] = self.default_ttl
+
+        if family == "temporal_next":
+            self.facts[WMNode.create(
+                "TemporalBridgeRule",
+                layer="meta",
+                source=source,
+                provenance_id=final_rule_id,
+                rule_id=final_rule_id,
+                rationale="allow temporal-next propagation only via explicit context edge",
+                priority=priority,
+            )] = self.default_ttl
+
     @staticmethod
     def _utc_now() -> str:
         return datetime.now(timezone.utc).isoformat()
@@ -763,6 +962,40 @@ class WorkingMemory:
             return int(value)
         except Exception:
             return int(default)
+
+    @staticmethod
+    def _as_float(value: Any, default: float = 0.0) -> float:
+        try:
+            return float(value)
+        except Exception:
+            return float(default)
+
+    @staticmethod
+    def _extract_teacher_score(item: Dict[str, Any]) -> float:
+        for key in ("score", "confidence", "priority", "probability"):
+            if key in item:
+                return WorkingMemory._as_float(item.get(key), 0.0)
+        meta = item.get("metadata")
+        if isinstance(meta, dict):
+            for key in ("score", "confidence", "priority", "probability"):
+                if key in meta:
+                    return WorkingMemory._as_float(meta.get(key), 0.0)
+        return 0.0
+
+    def _rank_teacher_proposals(
+        self,
+        items: List[Dict[str, Any]],
+        *,
+        greedy_by_score: bool,
+    ) -> List[Dict[str, Any]]:
+        if not greedy_by_score:
+            return list(items)
+        indexed: List[Tuple[float, int, Dict[str, Any]]] = []
+        for index, item in enumerate(items):
+            score = self._extract_teacher_score(item)
+            indexed.append((score, index, item))
+        indexed.sort(key=lambda row: (-row[0], row[1]))
+        return [item for _, _, item in indexed]
 
     def _teacher_limits(
         self,
@@ -837,6 +1070,8 @@ class WorkingMemory:
         max_facts: int = 1,
         max_counterfactuals: int = 1,
         max_rule_chars: int = 280,
+        greedy_by_score: bool = True,
+        min_score: float = 0.0,
     ) -> Dict[str, Any]:
         normalized_arm = str(ab_arm or "control").strip().lower()
         if normalized_arm not in self.TEACHER_AB_ARMS:
@@ -851,6 +1086,8 @@ class WorkingMemory:
             "teacher_id": teacher_id,
             "teacher_model": teacher_model,
             "runtime_authority": "proposal_only",
+            "greedy_by_score": bool(greedy_by_score),
+            "min_score": float(min_score),
             "events": [],
             "counts": {
                 "submitted": 0,
@@ -892,9 +1129,14 @@ class WorkingMemory:
         total_accepted = 0
 
         for kind in ("rules", "facts", "counterfactuals"):
-            for item in bundles[kind]:
+            ranked_items = self._rank_teacher_proposals(
+                bundles[kind],
+                greedy_by_score=bool(greedy_by_score),
+            )
+            for item in ranked_items:
                 proposal_seq += 1
                 proposal_id = f"teacher-{kind[:-1]}-{proposal_seq:04d}"
+                proposal_score = self._extract_teacher_score(item)
                 base_event = {
                     "proposal_id": proposal_id,
                     "proposal_kind": kind[:-1],
@@ -904,6 +1146,7 @@ class WorkingMemory:
                     "ab_arm": normalized_arm,
                     "low_volume_mode": bool(low_volume_mode),
                     "runtime_authority": "proposal_only",
+                    "score": proposal_score,
                     "received_at": now,
                     "decision": "rejected",
                     "gates": {
@@ -912,6 +1155,13 @@ class WorkingMemory:
                         "lifecycle": "proposed_only",
                     },
                 }
+
+                if proposal_score < float(min_score):
+                    base_event["reason"] = f"score_below_min<{float(min_score):.6f}"
+                    self.rule_registry.append_teacher_proposal_event(base_event)
+                    report["events"].append(base_event)
+                    report["counts"]["rejected"] += 1
+                    continue
 
                 if total_accepted >= limits["total"] or accepted_per_kind[kind] >= limits[kind_cap_key[kind]]:
                     base_event["reason"] = "volume_limit_exceeded"

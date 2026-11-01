@@ -31,6 +31,10 @@ class SemanticGraphSchema:
         "dependency",
         "state",
         "state_transition",
+        "context",
+        "proposition",
+        "in_context",
+        "accessibility",
     }
 
     REQUIRED_BY_KIND = {
@@ -45,6 +49,10 @@ class SemanticGraphSchema:
         "dependency": {"source", "target", "relation"},
         "state": {"id", "owner", "item", "qty", "phase"},
         "state_transition": {"id", "owner", "item", "before_qty", "delta", "after_qty", "event_kind", "event_order"},
+        "context": {"id", "ctx_type"},
+        "proposition": {"id", "pred", "args"},
+        "in_context": {"prop_id", "ctx_id"},
+        "accessibility": {"from_ctx", "to_ctx", "modality"},
     }
 
     @classmethod
@@ -237,6 +245,100 @@ class SemanticGraphSchema:
             "target": target,
             "relation": relation,
         }
+        payload.update(attrs)
+        return payload
+
+    @classmethod
+    def make_context(
+        cls,
+        ctx_id: str,
+        ctx_type: str,
+        *,
+        parent_ctx: str | None = None,
+        agent: str | None = None,
+        t: Any = None,
+        assumptions: Any = None,
+        status: str = "active",
+        **attrs: Any,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "context",
+            "id": ctx_id,
+            "ctx_type": ctx_type,
+            "status": status,
+        }
+        if parent_ctx is not None:
+            payload["parent_ctx"] = parent_ctx
+        if agent is not None:
+            payload["agent"] = agent
+        if t is not None:
+            payload["t"] = t
+        if assumptions is not None:
+            payload["assumptions"] = assumptions
+        payload.update(attrs)
+        return payload
+
+    @classmethod
+    def make_proposition(
+        cls,
+        prop_id: str,
+        pred: str,
+        args: Iterable[Any],
+        *,
+        polarity: str = "pos",
+        confidence: float = 1.0,
+        **attrs: Any,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "proposition",
+            "id": prop_id,
+            "pred": pred,
+            "args": list(args),
+            "polarity": polarity,
+            "confidence": confidence,
+        }
+        payload.update(attrs)
+        return payload
+
+    @classmethod
+    def make_in_context(
+        cls,
+        prop_id: str,
+        ctx_id: str,
+        *,
+        truth_status: str = "asserted",
+        support: Any = None,
+        **attrs: Any,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "in_context",
+            "prop_id": prop_id,
+            "ctx_id": ctx_id,
+            "truth_status": truth_status,
+        }
+        if support is not None:
+            payload["support"] = support
+        payload.update(attrs)
+        return payload
+
+    @classmethod
+    def make_accessibility(
+        cls,
+        from_ctx: str,
+        to_ctx: str,
+        modality: str,
+        *,
+        guard: str | None = None,
+        **attrs: Any,
+    ) -> Dict[str, Any]:
+        payload = {
+            "kind": "accessibility",
+            "from_ctx": from_ctx,
+            "to_ctx": to_ctx,
+            "modality": modality,
+        }
+        if guard:
+            payload["guard"] = guard
         payload.update(attrs)
         return payload
 

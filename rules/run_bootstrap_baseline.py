@@ -350,6 +350,9 @@ def main() -> int:
     parser.add_argument("--teacher-max-facts", type=int, default=1)
     parser.add_argument("--teacher-max-counterfactuals", type=int, default=1)
     parser.add_argument("--teacher-max-rule-chars", type=int, default=280)
+    parser.add_argument("--teacher-greedy-by-score", dest="teacher_greedy_by_score", action="store_true", default=True, help="Greedily rank teacher proposals by score/confidence before applying volume caps.")
+    parser.add_argument("--teacher-no-greedy-by-score", dest="teacher_greedy_by_score", action="store_false", help="Preserve input order for teacher proposal ingestion.")
+    parser.add_argument("--teacher-min-score", type=float, default=0.0, help="Minimum teacher proposal score/confidence to consider for ingestion.")
     parser.add_argument("--seed", type=int, default=0, help="Optional deterministic seed; 0 keeps default runtime behavior.")
     parser.add_argument("--ilp-max-depth", type=int, default=0, help="Optional ILP reasoner max depth; 0 keeps default.")
     parser.add_argument("--ilp-max-fact-matches", type=int, default=0, help="Optional cap on matched facts per predicate; 0 keeps default.")
@@ -395,6 +398,8 @@ def main() -> int:
             max_facts=int(args.teacher_max_facts),
             max_counterfactuals=int(args.teacher_max_counterfactuals),
             max_rule_chars=int(args.teacher_max_rule_chars),
+            greedy_by_score=bool(args.teacher_greedy_by_score),
+            min_score=float(args.teacher_min_score),
         )
         if not args.quiet:
             print(

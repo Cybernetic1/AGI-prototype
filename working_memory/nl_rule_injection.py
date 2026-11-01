@@ -93,6 +93,46 @@ class NLRuleCompiler:
                 metadata={"rule_text": text},
             )
 
+        if "belief transfer" in low or ("belief" in low and "from_ctx" in low and "to_ctx" in low):
+            return NLRuleSpec(
+                rule_id="rule-belief-transfer",
+                family="belief_transfer",
+                condition="from_ctx_to_ctx_accessible_with_belief_modality",
+                effect="transfer_prop_id_belief_to_target_ctx",
+                priority=70,
+                metadata={"rule_text": text},
+            )
+
+        if "hypothetical projection" in low or ("hypothetical" in low and "project" in low):
+            return NLRuleSpec(
+                rule_id="rule-hypothetical-projection",
+                family="hypothetical_projection",
+                condition="from_ctx_to_ctx_accessible_with_hypothetical_modality",
+                effect="project_prop_id_to_hypothetical_target_ctx",
+                priority=70,
+                metadata={"rule_text": text},
+            )
+
+        if "counterfactual branch" in low or ("counterfactual" in low and "branch" in low):
+            return NLRuleSpec(
+                rule_id="rule-counterfactual-branch",
+                family="counterfactual_branch",
+                condition="counterfactual_ctx_branches_from_parent_ctx_with_guard",
+                effect="assert_counterfactual_prop_id_in_child_ctx_only",
+                priority=75,
+                metadata={"rule_text": text},
+            )
+
+        if "temporal next" in low or ("next context" in low and "temporal" in low):
+            return NLRuleSpec(
+                rule_id="rule-temporal-next",
+                family="temporal_next",
+                condition="from_ctx_to_ctx_accessible_with_temporal_next_modality",
+                effect="propagate_temporal_state_to_next_ctx_with_guard",
+                priority=65,
+                metadata={"rule_text": text},
+            )
+
         return NLRuleSpec(
             rule_id="rule-generic",
             family="generic",
@@ -120,7 +160,17 @@ class NLRuleCompiler:
             return False, [f"missing required fields: {missing}"]
 
         family = str(payload.get("family") or "")
-        if family not in {"prefer_latest_state", "bind_same_entity", "remaining_quantity", "state_transition", "generic"}:
+        if family not in {
+            "prefer_latest_state",
+            "bind_same_entity",
+            "remaining_quantity",
+            "state_transition",
+            "belief_transfer",
+            "hypothetical_projection",
+            "counterfactual_branch",
+            "temporal_next",
+            "generic",
+        }:
             return False, [f"unsupported rule family: {family}"]
 
         semantic_ok, semantic_issues = NLRuleCompiler.validate_semantics(payload)
@@ -152,6 +202,22 @@ class NLRuleCompiler:
             "state_transition": (
                 {"state_transition", "owner", "item"},
                 {"delta", "after_quantity"},
+            ),
+            "belief_transfer": (
+                {"from_ctx", "to_ctx", "belief", "modality"},
+                {"transfer", "prop_id", "target_ctx"},
+            ),
+            "hypothetical_projection": (
+                {"from_ctx", "to_ctx", "hypothetical", "modality"},
+                {"project", "prop_id", "target_ctx"},
+            ),
+            "counterfactual_branch": (
+                {"counterfactual", "ctx", "parent_ctx", "guard"},
+                {"assert", "prop_id", "child_ctx"},
+            ),
+            "temporal_next": (
+                {"from_ctx", "to_ctx", "temporal_next", "modality"},
+                {"propagate", "state", "next_ctx"},
             ),
         }
 

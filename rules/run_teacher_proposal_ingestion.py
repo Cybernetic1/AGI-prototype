@@ -44,6 +44,9 @@ def main() -> int:
     parser.add_argument("--max-facts", type=int, default=1)
     parser.add_argument("--max-counterfactuals", type=int, default=1)
     parser.add_argument("--max-rule-chars", type=int, default=280)
+    parser.add_argument("--greedy-by-score", dest="greedy_by_score", action="store_true", default=True, help="Greedily rank proposals by score/confidence before applying caps.")
+    parser.add_argument("--no-greedy-by-score", dest="greedy_by_score", action="store_false", help="Preserve proposal input ordering.")
+    parser.add_argument("--min-score", type=float, default=0.0, help="Minimum score/confidence to accept proposals.")
     parser.add_argument("--output", default="", help="Optional path to write JSON report.")
     args = parser.parse_args()
 
@@ -62,6 +65,8 @@ def main() -> int:
         max_facts=int(args.max_facts),
         max_counterfactuals=int(args.max_counterfactuals),
         max_rule_chars=int(args.max_rule_chars),
+        greedy_by_score=bool(args.greedy_by_score),
+        min_score=float(args.min_score),
     )
 
     content = json.dumps(report, indent=2)

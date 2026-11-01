@@ -38,6 +38,14 @@ def _coerce_arg(value: Any) -> Any:
 
 
 def _event_id_for(node_concept: str, attrs: Mapping[str, Any]) -> str:
+    # Modal/context entities should use stable IDs directly to avoid accidental
+    # collisions with owner/item-derived synthetic IDs.
+    for key in ("ctx_id", "context_id", "id", "prop_id"):
+        value = attrs.get(key)
+        if value is not None:
+            return str(value)
+    if attrs.get("from_ctx") is not None and attrs.get("to_ctx") is not None:
+        return f"{attrs.get('from_ctx')}__{attrs.get('to_ctx')}"
     event_id = attrs.get("id")
     if event_id is not None:
         return str(event_id)
@@ -81,10 +89,10 @@ def wmnode_to_predicate_atoms(node: Any) -> List[PredicateFact]:
         canon_key = normalize_predicate_name(key)
         if key in {"id", "provenance_id", "activation", "layer", "source", "phase", "kind"}:
             continue
-        if key in {"owner", "item", "goal", "label", "status", "reason", "event_kind", "unit", "source_id", "target_id", "relation"}:
+        if key in {"owner", "item", "goal", "label", "status", "reason", "event_kind", "unit", "source_id", "target_id", "relation", "ctx_id", "context_id", "ctx_type", "parent_ctx", "agent", "truth_status", "modality", "from_ctx", "to_ctx", "pred", "prop_id"}:
             atoms.append(PredicateFact(canon_key, (event_id, _coerce_arg(value))))
             continue
-        if key in {"qty", "value", "before_qty", "after_qty", "delta", "factor", "pct", "price", "price_per_unit", "before", "after", "result", "total", "remaining", "event_order"}:
+        if key in {"qty", "value", "before_qty", "after_qty", "delta", "factor", "pct", "price", "price_per_unit", "before", "after", "result", "total", "remaining", "event_order", "confidence", "t"}:
             atoms.append(PredicateFact(canon_key, (event_id, _coerce_arg(value))))
             continue
         atoms.append(PredicateFact(canon_key, (event_id, _coerce_arg(value))))
