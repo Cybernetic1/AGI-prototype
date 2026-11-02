@@ -1,0 +1,655 @@
+{
+  "count": 18,
+  "include_agi_transfer_families": true,
+  "rules": [
+    {
+      "family": "ratio_compose",
+      "name": "ratio_compose",
+      "head": [
+        "quantity",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "ratio",
+          [
+            "?owner",
+            "?ref_owner",
+            "?item",
+            "?factor"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?ref_owner",
+            "?item",
+            "?base"
+          ]
+        ]
+      ],
+      "calc": "base * factor",
+      "target": "?ans",
+      "description": "same-item ratio composition from a reference owner",
+      "constraints": {}
+    },
+    {
+      "family": "remaining_quantity",
+      "name": "remaining_quantity",
+      "head": [
+        "remaining_quantity",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?base"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?owner",
+            "?item",
+            "?pct"
+          ]
+        ]
+      ],
+      "calc": "base * (1 - pct)",
+      "target": "?ans",
+      "description": "percent-of-remaining / remaining-quantity reduction",
+      "constraints": {}
+    },
+    {
+      "family": "state_transition",
+      "name": "state_transition",
+      "head": [
+        "state",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "state_transition",
+          [
+            "?owner",
+            "?item",
+            "?before",
+            "?delta",
+            "?after"
+          ]
+        ]
+      ],
+      "calc": "before + delta",
+      "target": "?ans",
+      "description": "same-owner/item state updates use before + delta",
+      "constraints": {}
+    },
+    {
+      "family": "latest_valid_state",
+      "name": "latest_valid_state",
+      "head": [
+        "final_state",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "state",
+          [
+            "?owner",
+            "?item",
+            "?later"
+          ]
+        ],
+        [
+          "state",
+          [
+            "?owner",
+            "?item",
+            "?earlier"
+          ]
+        ]
+      ],
+      "calc": "later",
+      "target": "?ans",
+      "description": "latest valid state wins over earlier temporally stale candidates",
+      "constraints": {}
+    },
+    {
+      "family": "rate_product",
+      "name": "rate_times_duration",
+      "head": [
+        "rate_times_duration",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "rate",
+          [
+            "?item",
+            "?rate"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?owner",
+            "?duration",
+            "?steps"
+          ]
+        ]
+      ],
+      "calc": "rate * steps",
+      "target": "?ans",
+      "description": "rate \u00d7 duration/quantity pattern",
+      "constraints": {}
+    },
+    {
+      "family": "sum_total",
+      "name": "combined_total",
+      "head": [
+        "combined_total",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?left"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?other",
+            "?item",
+            "?right"
+          ]
+        ]
+      ],
+      "calc": "left + right",
+      "target": "?ans",
+      "description": "sum of two quantities for same item",
+      "constraints": {}
+    },
+    {
+      "family": "unit_convert",
+      "name": "unit_convert",
+      "head": [
+        "unit_convert",
+        [
+          "?value",
+          "?from_unit",
+          "?to_unit",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "unitconvert",
+          [
+            "?value",
+            "?from_unit",
+            "?to_unit",
+            "?result"
+          ]
+        ]
+      ],
+      "calc": "result",
+      "target": "?ans",
+      "description": "canonical unit conversion bridge",
+      "constraints": {}
+    },
+    {
+      "family": "percent_of_total",
+      "name": "percent_of_total",
+      "head": [
+        "percent_of_total",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?base"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?owner",
+            "?item",
+            "?pct"
+          ]
+        ]
+      ],
+      "calc": "base * pct",
+      "target": "?ans",
+      "description": "percent of base quantity",
+      "constraints": {}
+    },
+    {
+      "family": "ratio_of_total",
+      "name": "ratio_of_total",
+      "head": [
+        "ratio_of_total",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?part"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?other",
+            "?item",
+            "?rest"
+          ]
+        ]
+      ],
+      "calc": "part / (part + rest)",
+      "target": "?ans",
+      "description": "ratio over a two-part total",
+      "constraints": {}
+    },
+    {
+      "family": "fraction_of_total",
+      "name": "fraction_of_total",
+      "head": [
+        "fraction_of_total",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?part"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?group",
+            "?item",
+            "?total"
+          ]
+        ]
+      ],
+      "calc": "part / total",
+      "target": "?ans",
+      "description": "fraction of a known total",
+      "constraints": {}
+    },
+    {
+      "family": "percent_growth",
+      "name": "percent_growth",
+      "head": [
+        "percent_growth",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?base"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?owner",
+            "?item",
+            "?pct"
+          ]
+        ]
+      ],
+      "calc": "base * (1 + pct)",
+      "target": "?ans",
+      "description": "single growth step from a base quantity",
+      "constraints": {}
+    },
+    {
+      "family": "percent_sequence",
+      "name": "percent_sequence",
+      "head": [
+        "percent_sequence",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?owner",
+            "?item",
+            "?base"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?owner",
+            "?item",
+            "?pct1"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?owner",
+            "?item",
+            "?pct2"
+          ]
+        ]
+      ],
+      "calc": "base * (1 + pct1) * (1 + pct2)",
+      "target": "?ans",
+      "description": "two-step percent sequence approximation",
+      "constraints": {}
+    },
+    {
+      "family": "average_speed",
+      "name": "average_speed",
+      "head": [
+        "average_speed",
+        [
+          "?trip",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?trip",
+            "distance",
+            "?dist"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?trip",
+            "time",
+            "?dur"
+          ]
+        ]
+      ],
+      "calc": "dist / dur",
+      "target": "?ans",
+      "description": "distance over total time",
+      "constraints": {}
+    },
+    {
+      "family": "simple_interest",
+      "name": "simple_interest",
+      "head": [
+        "simple_interest",
+        [
+          "?bank",
+          "?deposit",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?bank",
+            "principal",
+            "?principal"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?bank",
+            "principal",
+            "?rate"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?bank",
+            "years",
+            "?years"
+          ]
+        ]
+      ],
+      "calc": "principal * rate * years",
+      "target": "?ans",
+      "description": "simple interest: P * r * t",
+      "constraints": {}
+    },
+    {
+      "family": "profit_cost",
+      "name": "profit_cost",
+      "head": [
+        "profit_cost",
+        [
+          "?seller",
+          "?product",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "quantity",
+          [
+            "?seller",
+            "sale_price",
+            "?sale"
+          ]
+        ],
+        [
+          "percent",
+          [
+            "?seller",
+            "sale_price",
+            "?pct"
+          ]
+        ]
+      ],
+      "calc": "sale / (1 + pct)",
+      "target": "?ans",
+      "description": "recover original cost from sale price and profit percent",
+      "constraints": {}
+    },
+    {
+      "family": "part_whole_balance",
+      "name": "part_whole_balance",
+      "head": [
+        "part_whole_balance",
+        [
+          "?part_entity",
+          "?whole_entity",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "part_quantity",
+          [
+            "?part_entity",
+            "?whole_entity",
+            "?item",
+            "?part_value"
+          ]
+        ],
+        [
+          "quantity",
+          [
+            "?whole_entity",
+            "?item",
+            "?remaining_value"
+          ]
+        ]
+      ],
+      "calc": "part_value + remaining_value",
+      "target": "?ans",
+      "description": "part-whole aggregation with typed part/whole roles",
+      "constraints": {
+        "required_type_counts": {
+          "part_entity": 1,
+          "whole_entity": 1,
+          "number": 1
+        },
+        "required_body_predicates": [
+          "part_quantity",
+          "quantity"
+        ],
+        "compatibility_checks": [
+          "part_whole"
+        ]
+      }
+    },
+    {
+      "family": "temporal_causal_chain",
+      "name": "temporal_causal_chain",
+      "head": [
+        "temporal_causal_chain",
+        [
+          "?owner",
+          "?item",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "state",
+          [
+            "?owner",
+            "?item",
+            "?before"
+          ]
+        ],
+        [
+          "causal_delta",
+          [
+            "?owner",
+            "?item",
+            "?cause",
+            "?delta",
+            "?after_marker"
+          ]
+        ]
+      ],
+      "calc": "before + delta",
+      "target": "?ans",
+      "description": "temporal-causal update from prior state and causal delta",
+      "constraints": {
+        "required_type_counts": {
+          "temporal_marker": 1,
+          "causal_marker": 1,
+          "number": 1
+        },
+        "required_body_predicates": [
+          "state",
+          "causal_delta"
+        ],
+        "compatibility_checks": [
+          "temporal_causal"
+        ]
+      }
+    },
+    {
+      "family": "unit_compatibility",
+      "name": "unit_compatibility",
+      "head": [
+        "unit_compatibility",
+        [
+          "?value",
+          "?from_unit",
+          "?to_unit",
+          "?ans"
+        ]
+      ],
+      "body": [
+        [
+          "unit_rate",
+          [
+            "?value",
+            "?from_unit",
+            "?to_unit",
+            "?factor"
+          ]
+        ]
+      ],
+      "calc": "value * factor",
+      "target": "?ans",
+      "description": "unit-aware conversion constrained by shared dimensions",
+      "constraints": {
+        "required_type_counts": {
+          "unit": 2,
+          "number": 1
+        },
+        "required_body_predicates": [
+          "unit_rate"
+        ],
+        "compatibility_checks": [
+          "unit_compatibility"
+        ]
+      }
+    }
+  ]
+}

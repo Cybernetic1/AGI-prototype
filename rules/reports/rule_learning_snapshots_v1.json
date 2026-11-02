@@ -1,0 +1,69 @@
+{
+  "snapshots": [
+    {
+      "captured_at": "2026-11-02T17:01:41.377621+00:00",
+      "label": "manual-check",
+      "tracked_rule_count": 8,
+      "rules_under_learning_count": 8,
+      "utility_total_updates": 16,
+      "top_rules": [
+        {
+          "signature": "3a58ccea9b8c223d6e3ae1b20ee26eb9577faf22",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031549+00:00"
+        },
+        {
+          "signature": "4060aeebea6096f8bae9c8aa4aa1f9f412cdf1ee",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031592+00:00"
+        },
+        {
+          "signature": "41b592f8e6f20cd0c9d95e4941ccd2000320c672",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031606+00:00"
+        },
+        {
+          "signature": "50d545388e24a8100c303eee3cf929f027101057",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031619+00:00"
+        },
+        {
+          "signature": "7254fd85fb4922664a31e341fb3b6a2e2d865309",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031631+00:00"
+        },
+        {
+          "signature": "76bf4d6516909b4d44fcbb8ffae54a56ff55ff1f",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031643+00:00"
+        },
+        {
+          "signature": "b69f037ca34bb5c84f54aaf519077f22dce4d9f4",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031655+00:00"
+        },
+        {
+          "signature": "ef07feaa08101e9244385cbd322d9e4413b6abc1",
+          "count": 2,
+          "avg_reward": 0.525,
+          "last_reward": 0.05,
+          "last_updated": "2026-11-02T16:16:14.031667+00:00"
+        }
+      ]
+    }
+  ]
+}

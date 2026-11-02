@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AGI Prototype Progress Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; color: #111; }
+    h1 { margin-bottom: 4px; }
+    .meta { color: #555; margin-bottom: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f5f5f5; text-align: left; }
+    .bar { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 4px; }
+    .bar > span { display: block; height: 100%; background: #3b82f6; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <h1>AGI Progress Dashboard</h1>
+  <div class="meta">Generated at 2026-11-02T17:01:40.832499+00:00 | Overall progress: <b>42.6%</b></div>
+
+  <div class="card">
+    <h3>Category progress map</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Coverage</th>
+          <th>Symbolic validity</th>
+          <th>Solve utility</th>
+          <th>Rule quality</th>
+          <th>Stability</th>
+          <th>Confidence</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Perceptual/grounding rules</b><br><small>Map language observations to canonical entities/events/quantities/roles/time.</small></td><td>51.2%</td><td>51.2%</td><td>51.2%</td><td>51.2%</td><td>51.2%</td><td>35.0%</td><td><div class='bar'><span style='width:51.2%'></span></div><small>51.2%</small></td></tr><tr><td><b>Type/ontology rules</b><br><small>Category membership, inheritance, and compatibility constraints.</small></td><td>37.6%</td><td>37.6%</td><td>37.6%</td><td>37.6%</td><td>37.6%</td><td>20.0%</td><td><div class='bar'><span style='width:37.6%'></span></div><small>37.6%</small></td></tr><tr><td><b>Compositional semantic rules</b><br><small>Clause composition, reference resolution, scope, quantification, negation.</small></td><td>44.0%</td><td>44.0%</td><td>44.0%</td><td>44.0%</td><td>44.0%</td><td>30.0%</td><td><div class='bar'><span style='width:44.0%'></span></div><small>44.0%</small></td></tr><tr><td><b>State-transition rules</b><br><small>Actions/events update world state over time.</small></td><td>79.0%</td><td>79.0%</td><td>79.0%</td><td>79.0%</td><td>79.0%</td><td>65.0%</td><td><div class='bar'><span style='width:79.0%'></span></div><small>79.0%</small></td></tr><tr><td><b>Temporal/causal rules</b><br><small>Before/after, persistence, cause-effect, intervention effects.</small></td><td>61.5%</td><td>61.5%</td><td>61.5%</td><td>61.5%</td><td>61.5%</td><td>45.0%</td><td><div class='bar'><span style='width:61.5%'></span></div><small>61.5%</small></td></tr><tr><td><b>Default + defeasible rules</b><br><small>Normally-true defaults with explicit exception/override priorities.</small></td><td>37.8%</td><td>37.8%</td><td>37.8%</td><td>37.8%</td><td>37.8%</td><td>25.0%</td><td><div class='bar'><span style='width:37.8%'></span></div><small>37.8%</small></td></tr><tr><td><b>Non-monotonic revision rules</b><br><small>Contradiction handling, belief retraction, preference relations, truth maintenance.</small></td><td>54.7%</td><td>54.7%</td><td>54.7%</td><td>54.7%</td><td>54.7%</td><td>45.0%</td><td><div class='bar'><span style='width:54.7%'></span></div><small>54.7%</small></td></tr><tr><td><b>Numeric/structural reasoning rules</b><br><small>Arithmetic, units, ratios, constraints, graph dependencies.</small></td><td>70.8%</td><td>70.8%</td><td>70.8%</td><td>70.8%</td><td>70.8%</td><td>55.0%</td><td><div class='bar'><span style='width:70.8%'></span></div><small>70.8%</small></td></tr><tr><td><b>Pragmatic/intent rules</b><br><small>Speaker intent, dialogue acts, implicature, goal inference.</small></td><td>19.0%</td><td>19.0%</td><td>19.0%</td><td>19.0%</td><td>19.0%</td><td>10.0%</td><td><div class='bar'><span style='width:19.0%'></span></div><small>19.0%</small></td></tr><tr><td><b>Meta-rules (learning/control)</b><br><small>When to propose/specialize/retract/activate rules and apply evidence policies.</small></td><td>37.5%</td><td>37.5%</td><td>37.5%</td><td>37.5%</td><td>37.5%</td><td>50.0%</td><td><div class='bar'><span style='width:37.5%'></span></div><small>37.5%</small></td></tr><tr><td><b>Planning/action rules</b><br><small>Goal decomposition, preconditions/effects, resources, recovery policies.</small></td><td>13.0%</td><td>13.0%</td><td>13.0%</td><td>13.0%</td><td>13.0%</td><td>10.0%</td><td><div class='bar'><span style='width:13.0%'></span></div><small>13.0%</small></td></tr><tr><td><b>Social/normative rules</b><br><small>Conventions, commitments, permissions/prohibitions, safety boundaries.</small></td><td>5.8%</td><td>5.8%</td><td>5.8%</td><td>5.8%</td><td>5.8%</td><td>5.0%</td><td><div class='bar'><span style='width:5.8%'></span></div><small>5.8%</small></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Background loop trend (from metrics.jsonl)</h3>
+    <ul><li>Rows: 128</li><li>Solve avg: 1.0</li><li>Symbolic-valid avg: 1.0</li><li>Cost/valid avg: 1.368955</li><li>Cost/valid last20 avg: 1.373555</li></ul>
+  </div>
+
+  <div class="card">
+    <h3>Rule learning monitor</h3>
+    <ul>
+      <li>Tracked rules in utility state: <b>8</b></li>
+      <li>Rules under learning (count &lt; 5): <b>8</b></li>
+      <li>Registry proposal-only rules: <b>1</b></li>
+      <li>Registry ILP rules: <b>0</b></li>
+      <li>Utility total updates: <b>16</b></li>
+    </ul>
+    <h4>Top tracked rules</h4>
+    <table>
+      <thead><tr><th>Signature</th><th>Count</th><th>Avg reward</th><th>Last reward</th></tr></thead>
+      <tbody><tr><td><code>3a58ccea9b8c223d6e3a...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>4060aeebea6096f8bae9...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>41b592f8e6f20cd0c9d9...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>50d545388e24a8100c30...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>7254fd85fb4922664a31...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>76bf4d6516909b4d44fc...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>b69f037ca34bb5c84f54...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr><tr><td><code>ef07feaa08101e924438...</code></td><td>2</td><td>0.525</td><td>0.050</td></tr></tbody>
+    </table>
+    <h4>Snapshots (press <code>s</code> in keypress mode)</h4>
+    <table>
+      <thead><tr><th>Captured at</th><th>Label</th><th>Tracked</th><th>Under learning</th><th>Total updates</th></tr></thead>
+      <tbody><tr><td>2026-11-02T17:01:41.377621+00:00</td><td>manual-check</td><td>8</td><td>8</td><td>16</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Accounting notes</h3>
+    <ul>
+      <li>Category progress uses weighted accounting: coverage (20%), symbolic validity (25%), solve utility (25%), rule quality (15%), stability (15%).</li>
+      <li>Rule quality is currently a practical proxy derived from symbolic validity + gate stability; this can be replaced later with explicit information-gain/compressivity metrics.</li>
+      <li>Each AGI category now uses confidence-weighted estimation: estimated_progress = confidence * measured_proxy + (1-confidence) * conservative prior.</li>
+      <li>This prevents narrow-slice 100% scores from being interpreted as near-AGI completion.</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -28,9 +28,16 @@ from cognitive_loop import (
     system2_step,
     system3_step,
 )
+from rules.ilp_candidate_pipeline import (
+    ILPPipelineConfig,
+    candidate_to_raw_rule,
+    run_ilp_learning_stage,
+)
+from rules.ilp_rule_utility import apply_reward_updates, load_utility_state, save_utility_state
 from semantic_ar import SemanticARConfig, load_semantic_ar_config
+from rules.teacher_ollama import request_ollama_teacher_proposals
 from working_memory.pot_dsl import execute_program, propose_program_for_question, wm_nodes_from_trace
-from working_memory.working_memory import WorkingMemory
+from working_memory.working_memory import WMNode, WorkingMemory
 
 
 @dataclass(frozen=True)
@@ -38,6 +45,39 @@ class ProfileSpec:
     profile_id: str
     description: str
     systems: tuple[str, ...]
+
+
+@dataclass
+class TeacherIngestionConfig:
+    enabled: bool
+    source: str
+    teacher_id: str
+    teacher_model: str
+    ab_arm: str
+    low_volume_mode: bool
+    max_total: int
+    max_rules: int
+    max_facts: int
+    max_counterfactuals: int
+    max_rule_chars: int
+    greedy_by_score: bool
+    min_score: float
+    static_proposals: Any
+    ollama_url: str
+    ollama_model: str
+    ollama_timeout_sec: int
+    ollama_cache: dict[str, Any]
+
+
+@dataclass
+class ILPAssistConfig:
+    enabled: bool
+    pipeline: ILPPipelineConfig
+    validation_cache: dict[str, dict[str, Any]]
+    utility_state: dict[str, Any]
+    utility_path: str
+    register_proposals: bool
+    max_registered_per_case: int
 
 
 PROFILE_SPECS: dict[str, ProfileSpec] = {
@@ -159,6 +199,9 @@ def _load_teacher_proposals(path: str) -> Any:
     return payload
 
 
+
+
+
 def _apply_reasoner_budget_env(args: argparse.Namespace) -> dict[str, Any]:
     env_map = {
         "AGI_ILP_MAX_DEPTH": int(args.ilp_max_depth),
@@ -190,8 +233,109 @@ def _run_case(
     max_cycles: int,
     sar_config: dict[str, Any],
     pot_enable: bool,
+    teacher_config: TeacherIngestionConfig | None = None,
+    ilp_assist_config: ILPAssistConfig | None = None,
 ) -> dict[str, Any]:
     wm = _compile_gsm8k_problem_to_wm(question, expected_answer=expected_answer)
+    ilp_stage_report: dict[str, Any] = {"enabled": False, "reason": "not requested"}
+    ilp_registered_rule_ids: list[str] = []
+    if ilp_assist_config is not None and ilp_assist_config.enabled:
+        ilp_stage_report = run_ilp_learning_stage(
+            question=question,
+            family=family,
+            cfg=ilp_assist_config.pipeline,
+            validation_cache=ilp_assist_config.validation_cache,
+            utility_state=ilp_assist_config.utility_state,
+        )
+        if ilp_assist_config.register_proposals:
+            accepted = list(ilp_stage_report.get("accepted_candidates") or [])
+            kept = accepted[: max(0, int(ilp_assist_config.max_registered_per_case))]
+            logged = 0
+            for row in kept:
+                candidate = row.get("candidate") if isinstance(row, dict) else None
+                if not isinstance(candidate, dict):
+                    continue
+                signature = str(row.get("candidate_id") or "candidate").replace(":", "_")
+                rule_id = f"ilp_{family}_{signature}".replace("-", "_").replace(" ", "_")
+                raw_rule = candidate_to_raw_rule(candidate)
+                compiled_payload = {
+                    "rule_id": rule_id,
+                    "family": str(candidate.get("family") or family),
+                    "condition": f"body={candidate.get('body')}",
+                    "effect": f"head={candidate.get('head')}; calc={candidate.get('calc')}",
+                    "priority": 50,
+                }
+                entry = wm.rule_registry.register_proposal(
+                    rule_id=rule_id,
+                    raw_rule=raw_rule,
+                    source="ilp_generator",
+                    compiled_payload=compiled_payload,
+                    proposal_kind="ilp_rule",
+                    runtime_authority="proposal_only",
+                    activation_policy="proposal_only",
+                    evidence={
+                        "case_family": family,
+                        "question": question,
+                        "prescore": row.get("prescore"),
+                        "llm_score": row.get("llm_score"),
+                    },
+                    audit={
+                        "pipeline": "ilp_first_latency_adaptive",
+                        "llm_reason": row.get("llm_reason"),
+                    },
+                )
+                wm.facts[WMNode.create(
+                    "ILPRuleProposal",
+                    layer="meta",
+                    source="ilp_generator",
+                    provenance_id=rule_id,
+                    rule_id=rule_id,
+                    family=compiled_payload.get("family"),
+                    status=entry.get("status", "proposed"),
+                    runtime_authority="proposal_only",
+                )] = wm.default_ttl
+                ilp_registered_rule_ids.append(rule_id)
+                logged += 1
+            ilp_stage_report["registered_proposals"] = logged
+    teacher_report = {
+        "enabled": bool(teacher_config.enabled) if teacher_config else False,
+        "ab_arm": teacher_config.ab_arm if teacher_config else "control",
+        "reason": "not requested",
+    }
+    if teacher_config is not None and (teacher_config.enabled or teacher_config.static_proposals):
+        key = f"{family}::{question}"
+        proposals = teacher_config.static_proposals
+        teacher_fetch_error = ""
+        if teacher_config.ollama_url and teacher_config.ollama_model:
+            if key in teacher_config.ollama_cache:
+                proposals = teacher_config.ollama_cache[key]
+            else:
+                proposals, teacher_fetch_error = request_ollama_teacher_proposals(
+                    ollama_url=teacher_config.ollama_url,
+                    model=teacher_config.ollama_model,
+                    question=question,
+                    family=family,
+                    timeout_sec=teacher_config.ollama_timeout_sec,
+                )
+                teacher_config.ollama_cache[key] = proposals
+        teacher_report = wm.ingest_teacher_proposals(
+            proposals,
+            source=str(teacher_config.source),
+            teacher_id=str(teacher_config.teacher_id),
+            teacher_model=str(teacher_config.teacher_model),
+            ab_arm=str(teacher_config.ab_arm),
+            enable_ingestion=bool(teacher_config.enabled),
+            low_volume_mode=bool(teacher_config.low_volume_mode),
+            max_total=int(teacher_config.max_total),
+            max_rules=int(teacher_config.max_rules),
+            max_facts=int(teacher_config.max_facts),
+            max_counterfactuals=int(teacher_config.max_counterfactuals),
+            max_rule_chars=int(teacher_config.max_rule_chars),
+            greedy_by_score=bool(teacher_config.greedy_by_score),
+            min_score=float(teacher_config.min_score),
+        )
+        if teacher_fetch_error:
+            teacher_report["fetch_error"] = teacher_fetch_error
     pot_report = {
         "enabled": bool(pot_enable),
         "program_id": None,
@@ -246,6 +390,49 @@ def _run_case(
     solved = False
     if expected is not None:
         solved = any(abs(v - expected) < 1e-9 for v in belief_values)
+    solved_and_valid = bool(solved and has_numeric_reasoning_belief)
+    if ilp_assist_config is not None and ilp_assist_config.enabled:
+        base_reward = 1.0 if solved_and_valid else (0.35 if has_numeric_reasoning_belief else -0.35)
+        reward_updates: list[dict[str, Any]] = []
+        accepted_signatures = {
+            str(item.get("signature") or "")
+            for item in (ilp_stage_report.get("accepted_candidates") or [])
+            if isinstance(item, dict)
+        }
+        prescored_signatures = {
+            str(item.get("signature") or "")
+            for item in (ilp_stage_report.get("prescored_candidates") or [])
+            if isinstance(item, dict)
+        }
+        for signature in sorted(s for s in prescored_signatures if s):
+            reward = base_reward if signature in accepted_signatures else (0.05 if has_numeric_reasoning_belief else -0.1)
+            reward_updates.append({"signature": signature, "reward": reward})
+        update_report = apply_reward_updates(ilp_assist_config.utility_state, reward_updates)
+        ilp_stage_report["rl_reward"] = {
+            "base_reward": base_reward,
+            "updates": update_report.get("applied", 0),
+        }
+    if ilp_registered_rule_ids:
+        for rule_id in ilp_registered_rule_ids:
+            wm.rule_registry.record_accounting_event(
+                rule_id,
+                applied=1,
+                wins=1 if solved_and_valid else 0,
+                defeats=0 if solved_and_valid else 1,
+                recall_accepted=1 if has_numeric_reasoning_belief else 0,
+                recall_rejected=0 if has_numeric_reasoning_belief else 1,
+                event="ilp_case_feedback",
+                details={
+                    "family": family,
+                    "solved": bool(solved),
+                    "symbolic_valid": bool(has_numeric_reasoning_belief),
+                },
+            )
+        ilp_stage_report["registered_rule_ids"] = ilp_registered_rule_ids
+        ilp_stage_report["delayed_feedback"] = {
+            "solved_and_symbolic_valid": solved_and_valid,
+            "applied_updates": len(ilp_registered_rule_ids),
+        }
 
     return {
         "expected": expected,
@@ -254,6 +441,8 @@ def _run_case(
         "symbolic_valid": bool(has_numeric_reasoning_belief),
         "cycles_executed": cycles_executed,
         "pot": pot_report,
+        "teacher_ingestion": teacher_report,
+        "ilp_learning_stage": ilp_stage_report,
     }
 
 
@@ -353,6 +542,23 @@ def main() -> int:
     parser.add_argument("--teacher-greedy-by-score", dest="teacher_greedy_by_score", action="store_true", default=True, help="Greedily rank teacher proposals by score/confidence before applying volume caps.")
     parser.add_argument("--teacher-no-greedy-by-score", dest="teacher_greedy_by_score", action="store_false", help="Preserve input order for teacher proposal ingestion.")
     parser.add_argument("--teacher-min-score", type=float, default=0.0, help="Minimum teacher proposal score/confidence to consider for ingestion.")
+    parser.add_argument("--teacher-ollama-url", default="", help="Optional Ollama /api/chat URL for dynamic teacher proposals.")
+    parser.add_argument("--teacher-ollama-model", default="", help="Ollama model tag to query for teacher proposals.")
+    parser.add_argument("--teacher-ollama-timeout-sec", type=int, default=180, help="HTTP timeout in seconds for Ollama teacher calls.")
+    parser.add_argument("--ilp-enable-learning-stage", action="store_true", help="Enable ILP-first candidate generation and selective LLM validation stage per case.")
+    parser.add_argument("--ilp-prescore-min", type=float, default=0.45, help="Minimum pre-score for ILP candidates before LLM validation.")
+    parser.add_argument("--ilp-candidate-top-n", type=int, default=6, help="Top-N ILP candidates to generate per case before filtering.")
+    parser.add_argument("--ilp-max-candidates-per-family", type=int, default=3, help="Per-family cap after pre-scoring.")
+    parser.add_argument("--ilp-include-agi-transfer-families", action="store_true", help="Include transfer-oriented metarule families in ILP candidate generation.")
+    parser.add_argument("--ilp-llm-validate-max", type=int, default=2, help="Maximum ILP candidates to LLM-validate per case.")
+    parser.add_argument("--ilp-llm-latency-budget-sec", type=float, default=12.0, help="Per-case latency budget for ILP LLM validation.")
+    parser.add_argument("--ilp-llm-timeout-sec", type=int, default=20, help="Timeout for each ILP LLM validation request.")
+    parser.add_argument("--ilp-llm-enable-validator", action="store_true", help="Enable remote LLM validation for ILP candidates.")
+    parser.add_argument("--ilp-llm-ollama-url", default="", help="Optional Ollama /api/chat URL for ILP candidate validation (falls back to teacher URL).")
+    parser.add_argument("--ilp-llm-ollama-model", default="", help="Optional Ollama model for ILP candidate validation (falls back to teacher model).")
+    parser.add_argument("--ilp-register-proposals", action="store_true", help="Register accepted ILP candidates in rule registry as proposal-only entries.")
+    parser.add_argument("--ilp-max-registered-per-case", type=int, default=2, help="Max accepted ILP proposals to register per case.")
+    parser.add_argument("--ilp-utility-path", default="rules/reports/ilp_rule_utility_v1.json", help="Path to persisted ILP rule utility state used for RL-style scoring.")
     parser.add_argument("--seed", type=int, default=0, help="Optional deterministic seed; 0 keeps default runtime behavior.")
     parser.add_argument("--ilp-max-depth", type=int, default=0, help="Optional ILP reasoner max depth; 0 keeps default.")
     parser.add_argument("--ilp-max-fact-matches", type=int, default=0, help="Optional cap on matched facts per predicate; 0 keeps default.")
@@ -377,37 +583,52 @@ def main() -> int:
             pass
 
     teacher_proposals = _load_teacher_proposals(args.teacher_proposals)
-    teacher_report = {
-        "enabled": bool(args.teacher_enable_ingestion),
-        "ab_arm": str(args.teacher_ab_arm),
-        "low_volume_mode": bool(args.teacher_low_volume),
-        "reason": "not requested",
-    }
-    if args.teacher_enable_ingestion or args.teacher_proposals:
-        teacher_wm = WorkingMemory(default_ttl=3)
-        teacher_report = teacher_wm.ingest_teacher_proposals(
-            teacher_proposals,
-            source="teacher_llm",
-            teacher_id=str(args.teacher_id),
-            teacher_model=str(args.teacher_model),
-            ab_arm=str(args.teacher_ab_arm),
-            enable_ingestion=bool(args.teacher_enable_ingestion),
-            low_volume_mode=bool(args.teacher_low_volume),
-            max_total=int(args.teacher_max_total),
-            max_rules=int(args.teacher_max_rules),
-            max_facts=int(args.teacher_max_facts),
-            max_counterfactuals=int(args.teacher_max_counterfactuals),
-            max_rule_chars=int(args.teacher_max_rule_chars),
-            greedy_by_score=bool(args.teacher_greedy_by_score),
-            min_score=float(args.teacher_min_score),
-        )
-        if not args.quiet:
-            print(
-                "teacher-ingestion: "
-                f"accepted={teacher_report.get('counts', {}).get('accepted', 0)} "
-                f"rejected={teacher_report.get('counts', {}).get('rejected', 0)} "
-                f"arm={teacher_report.get('ab_arm')}"
-            )
+    teacher_cfg = TeacherIngestionConfig(
+        enabled=bool(args.teacher_enable_ingestion),
+        source="teacher_llm",
+        teacher_id=str(args.teacher_id),
+        teacher_model=str(args.teacher_model or args.teacher_ollama_model or "unknown"),
+        ab_arm=str(args.teacher_ab_arm),
+        low_volume_mode=bool(args.teacher_low_volume),
+        max_total=int(args.teacher_max_total),
+        max_rules=int(args.teacher_max_rules),
+        max_facts=int(args.teacher_max_facts),
+        max_counterfactuals=int(args.teacher_max_counterfactuals),
+        max_rule_chars=int(args.teacher_max_rule_chars),
+        greedy_by_score=bool(args.teacher_greedy_by_score),
+        min_score=float(args.teacher_min_score),
+        static_proposals=teacher_proposals,
+        ollama_url=str(args.teacher_ollama_url),
+        ollama_model=str(args.teacher_ollama_model),
+        ollama_timeout_sec=int(args.teacher_ollama_timeout_sec),
+        ollama_cache={},
+    )
+    ilp_ollama_url = str(args.ilp_llm_ollama_url or args.teacher_ollama_url or "")
+    ilp_ollama_model = str(args.ilp_llm_ollama_model or args.teacher_ollama_model or "")
+    utility_path_obj = Path(str(args.ilp_utility_path))
+    if not utility_path_obj.is_absolute():
+        utility_path_obj = REPO_ROOT / utility_path_obj
+    utility_state = load_utility_state(utility_path_obj)
+    ilp_cfg = ILPAssistConfig(
+        enabled=bool(args.ilp_enable_learning_stage),
+        pipeline=ILPPipelineConfig(
+            candidate_top_n=max(1, int(args.ilp_candidate_top_n)),
+            prescore_min=float(args.ilp_prescore_min),
+            max_candidates_per_family=max(1, int(args.ilp_max_candidates_per_family)),
+            include_agi_transfer_families=bool(args.ilp_include_agi_transfer_families),
+            llm_validate_max=max(0, int(args.ilp_llm_validate_max)),
+            llm_latency_budget_sec=max(0.0, float(args.ilp_llm_latency_budget_sec)),
+            llm_timeout_sec=max(3, int(args.ilp_llm_timeout_sec)),
+            llm_enabled=bool(args.ilp_llm_enable_validator),
+            ollama_url=ilp_ollama_url,
+            ollama_model=ilp_ollama_model,
+        ),
+        validation_cache={},
+        utility_state=utility_state,
+        utility_path=str(utility_path_obj),
+        register_proposals=bool(args.ilp_register_proposals),
+        max_registered_per_case=max(0, int(args.ilp_max_registered_per_case)),
+    )
 
     suite_rows = _suite_cases(args.suite)
     if args.families:
@@ -445,6 +666,8 @@ def main() -> int:
                 max_cycles=max(1, args.max_cycles),
                 sar_config=sar_config,
                 pot_enable=bool(args.pot_enable),
+                teacher_config=teacher_cfg,
+                ilp_assist_config=ilp_cfg,
             )
             run["family"] = row.get("family", "unknown")
             run["question"] = question
@@ -452,7 +675,91 @@ def main() -> int:
         duration_sec = time.perf_counter() - started
         profile_report = _summarize_profile(profile=profile, rows=results, duration_sec=duration_sec)
         profile_report["results"] = results
+        teacher_events = [r.get("teacher_ingestion", {}) for r in results if isinstance(r.get("teacher_ingestion"), dict)]
+        if teacher_events:
+            agg = {"submitted": 0, "processed": 0, "accepted": 0, "rejected": 0, "dropped_by_volume": 0}
+            for ev in teacher_events:
+                counts = ev.get("counts", {}) if isinstance(ev.get("counts"), dict) else {}
+                for key in agg:
+                    agg[key] += int(counts.get(key, 0) or 0)
+            profile_report["teacher_ingestion_summary"] = {
+                "enabled": bool(args.teacher_enable_ingestion),
+                "ab_arm": str(args.teacher_ab_arm),
+                "counts": agg,
+                "dynamic_ollama": bool(args.teacher_ollama_url and args.teacher_ollama_model),
+            }
+        ilp_events = [r.get("ilp_learning_stage", {}) for r in results if isinstance(r.get("ilp_learning_stage"), dict)]
+        if ilp_events:
+            ilp_counts = {
+                "generated": 0,
+                "passed_prescore": 0,
+                "dropped_prescore": 0,
+                "llm_accepted": 0,
+                "llm_rejected": 0,
+                "validated": 0,
+                "cache_hits": 0,
+            }
+            latency_total = 0.0
+            latency_budget_exhausted = 0
+            for ev in ilp_events:
+                counts = ev.get("counts", {}) if isinstance(ev.get("counts"), dict) else {}
+                metrics = ev.get("llm_metrics", {}) if isinstance(ev.get("llm_metrics"), dict) else {}
+                for key in ("generated", "passed_prescore", "dropped_prescore", "llm_accepted", "llm_rejected"):
+                    ilp_counts[key] += int(counts.get(key, 0) or 0)
+                ilp_counts["validated"] += int(metrics.get("validated", 0) or 0)
+                ilp_counts["cache_hits"] += int(metrics.get("cache_hits", 0) or 0)
+                latency_total += float(metrics.get("latency_total_sec", 0.0) or 0.0)
+                if bool(metrics.get("latency_budget_exhausted", False)):
+                    latency_budget_exhausted += 1
+            profile_report["ilp_learning_summary"] = {
+                "enabled": bool(args.ilp_enable_learning_stage),
+                "llm_validator_enabled": bool(args.ilp_llm_enable_validator),
+                "counts": ilp_counts,
+                "latency_total_sec": latency_total,
+                "latency_budget_exhausted_cases": latency_budget_exhausted,
+            }
         profile_reports.append(profile_report)
+
+    teacher_report: dict[str, Any] = {
+        "enabled": bool(args.teacher_enable_ingestion),
+        "ab_arm": str(args.teacher_ab_arm),
+        "low_volume_mode": bool(args.teacher_low_volume),
+        "dynamic_ollama": bool(args.teacher_ollama_url and args.teacher_ollama_model),
+    }
+    total_counts = {"submitted": 0, "processed": 0, "accepted": 0, "rejected": 0, "dropped_by_volume": 0}
+    for prof in profile_reports:
+        summary = prof.get("teacher_ingestion_summary", {})
+        counts = summary.get("counts", {}) if isinstance(summary, dict) else {}
+        for key in total_counts:
+            total_counts[key] += int(counts.get(key, 0) or 0)
+    teacher_report["counts"] = total_counts
+    ilp_report: dict[str, Any] = {
+        "enabled": bool(args.ilp_enable_learning_stage),
+        "llm_validator_enabled": bool(args.ilp_llm_enable_validator),
+        "llm_validator_remote": bool(ilp_ollama_url and ilp_ollama_model),
+        "register_proposals": bool(args.ilp_register_proposals),
+    }
+    ilp_total_counts = {
+        "generated": 0,
+        "passed_prescore": 0,
+        "dropped_prescore": 0,
+        "llm_accepted": 0,
+        "llm_rejected": 0,
+        "validated": 0,
+        "cache_hits": 0,
+    }
+    ilp_latency_total = 0.0
+    for prof in profile_reports:
+        summary = prof.get("ilp_learning_summary", {})
+        counts = summary.get("counts", {}) if isinstance(summary, dict) else {}
+        for key in ilp_total_counts:
+            ilp_total_counts[key] += int(counts.get(key, 0) or 0)
+        ilp_latency_total += float(summary.get("latency_total_sec", 0.0) or 0.0)
+    ilp_report["counts"] = ilp_total_counts
+    ilp_report["latency_total_sec"] = ilp_latency_total
+    ilp_report["utility_path"] = ilp_cfg.utility_path
+    ilp_report["utility_total_updates"] = int((ilp_cfg.utility_state.get("meta", {}) or {}).get("total_updates", 0) or 0)
+    save_utility_state(ilp_cfg.utility_path, ilp_cfg.utility_state)
 
     output = {
         "contract_id": "agi-bootstrap-baseline-contract-v1",
@@ -473,6 +780,7 @@ def main() -> int:
             "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative.",
         },
         "search_budget": reasoner_budget,
+        "ilp_learning_stage": ilp_report,
         "teacher_proposal_ingestion": teacher_report,
         "metric_definitions": METRIC_DEFINITIONS,
         "profiles": profile_reports,

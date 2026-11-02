@@ -1,0 +1,319 @@
+{
+  "dashboard_id": "agi-progress-dashboard-v1",
+  "generated_at": "2026-11-02T17:01:40.832499+00:00",
+  "sources": {
+    "baseline_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_baseline_v1.json",
+    "widening_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v2.json",
+    "ledger_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_unified_contract_ledger_v1.json",
+    "background_metrics": "/home/yky/misc-programs/AGI-prototype/rules/reports/background_loop/metrics.jsonl",
+    "utility_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/ilp_rule_utility_v1.json",
+    "rule_registry": "/home/yky/misc-programs/AGI-prototype/rules/nl_rule_registry.yaml",
+    "snapshot_file": "/home/yky/misc-programs/AGI-prototype/rules/reports/rule_learning_snapshots_v1.json"
+  },
+  "ledger_overall_green": false,
+  "categories": [
+    {
+      "id": "perceptual_grounding",
+      "label": "Perceptual/grounding rules",
+      "description": "Map language observations to canonical entities/events/quantities/roles/time.",
+      "coverage_pct": 51.25,
+      "symbolic_validity_pct": 51.25,
+      "solve_utility_pct": 51.25,
+      "rule_quality_pct": 51.25,
+      "stability_pct": 51.25,
+      "confidence_pct": 35.0,
+      "progress_pct": 51.25,
+      "notes": "Proxy from TinyStories + mixed narrative slices; still narrow domain coverage."
+    },
+    {
+      "id": "type_ontology",
+      "label": "Type/ontology rules",
+      "description": "Category membership, inheritance, and compatibility constraints.",
+      "coverage_pct": 37.6,
+      "symbolic_validity_pct": 37.6,
+      "solve_utility_pct": 37.6,
+      "rule_quality_pct": 37.6,
+      "stability_pct": 37.6,
+      "confidence_pct": 20.0,
+      "progress_pct": 37.6,
+      "notes": "Weak direct measurement; mostly inferred from symbolic parsing behavior."
+    },
+    {
+      "id": "compositional_semantics",
+      "label": "Compositional semantic rules",
+      "description": "Clause composition, reference resolution, scope, quantification, negation.",
+      "coverage_pct": 44.0,
+      "symbolic_validity_pct": 44.0,
+      "solve_utility_pct": 44.0,
+      "rule_quality_pct": 44.0,
+      "stability_pct": 44.0,
+      "confidence_pct": 30.0,
+      "progress_pct": 44.0,
+      "notes": "Partially measured via narrative-symbolic slices; missing explicit scope/negation benchmarks."
+    },
+    {
+      "id": "state_transition",
+      "label": "State-transition rules",
+      "description": "Actions/events update world state over time.",
+      "coverage_pct": 79.0,
+      "symbolic_validity_pct": 79.0,
+      "solve_utility_pct": 79.0,
+      "rule_quality_pct": 79.0,
+      "stability_pct": 79.0,
+      "confidence_pct": 65.0,
+      "progress_pct": 79.0,
+      "notes": "Strongly evidenced by invariant-core-finality slices."
+    },
+    {
+      "id": "temporal_causal",
+      "label": "Temporal/causal rules",
+      "description": "Before/after, persistence, cause-effect, intervention effects.",
+      "coverage_pct": 61.5,
+      "symbolic_validity_pct": 61.5,
+      "solve_utility_pct": 61.5,
+      "rule_quality_pct": 61.5,
+      "stability_pct": 61.5,
+      "confidence_pct": 45.0,
+      "progress_pct": 61.5,
+      "notes": "Some evidence from state order/finality and narrative slices; intervention tests still limited."
+    },
+    {
+      "id": "default_defeasible",
+      "label": "Default + defeasible rules",
+      "description": "Normally-true defaults with explicit exception/override priorities.",
+      "coverage_pct": 37.75,
+      "symbolic_validity_pct": 37.75,
+      "solve_utility_pct": 37.75,
+      "rule_quality_pct": 37.75,
+      "stability_pct": 37.75,
+      "confidence_pct": 25.0,
+      "progress_pct": 37.75,
+      "notes": "Initial support present, but broad defeasible policy coverage is not yet benchmarked."
+    },
+    {
+      "id": "non_monotonic_revision",
+      "label": "Non-monotonic revision rules",
+      "description": "Contradiction handling, belief retraction, preference relations, truth maintenance.",
+      "coverage_pct": 54.7,
+      "symbolic_validity_pct": 54.7,
+      "solve_utility_pct": 54.7,
+      "rule_quality_pct": 54.7,
+      "stability_pct": 54.7,
+      "confidence_pct": 45.0,
+      "progress_pct": 54.7,
+      "notes": "Supported by contradiction/finality machinery; still lacks broad stress tests across domains."
+    },
+    {
+      "id": "numeric_structural",
+      "label": "Numeric/structural reasoning rules",
+      "description": "Arithmetic, units, ratios, constraints, graph dependencies.",
+      "coverage_pct": 70.75,
+      "symbolic_validity_pct": 70.75,
+      "solve_utility_pct": 70.75,
+      "rule_quality_pct": 70.75,
+      "stability_pct": 70.75,
+      "confidence_pct": 55.0,
+      "progress_pct": 70.75,
+      "notes": "Best-evidenced area (GSM-style slices), but still not full GSM8K benchmark breadth."
+    },
+    {
+      "id": "pragmatic_intent",
+      "label": "Pragmatic/intent rules",
+      "description": "Speaker intent, dialogue acts, implicature, goal inference.",
+      "coverage_pct": 19.0,
+      "symbolic_validity_pct": 19.0,
+      "solve_utility_pct": 19.0,
+      "rule_quality_pct": 19.0,
+      "stability_pct": 19.0,
+      "confidence_pct": 10.0,
+      "progress_pct": 19.0,
+      "notes": "Not explicitly benchmarked yet; current score intentionally conservative."
+    },
+    {
+      "id": "meta_rules_control",
+      "label": "Meta-rules (learning/control)",
+      "description": "When to propose/specialize/retract/activate rules and apply evidence policies.",
+      "coverage_pct": 37.5,
+      "symbolic_validity_pct": 37.5,
+      "solve_utility_pct": 37.5,
+      "rule_quality_pct": 37.5,
+      "stability_pct": 37.5,
+      "confidence_pct": 50.0,
+      "progress_pct": 37.5,
+      "notes": "Measured via governance/approval pipeline health and gate behavior."
+    },
+    {
+      "id": "planning_action",
+      "label": "Planning/action rules",
+      "description": "Goal decomposition, preconditions/effects, resources, recovery policies.",
+      "coverage_pct": 13.0,
+      "symbolic_validity_pct": 13.0,
+      "solve_utility_pct": 13.0,
+      "rule_quality_pct": 13.0,
+      "stability_pct": 13.0,
+      "confidence_pct": 10.0,
+      "progress_pct": 13.0,
+      "notes": "Not directly covered by current benchmark suite."
+    },
+    {
+      "id": "social_normative",
+      "label": "Social/normative rules",
+      "description": "Conventions, commitments, permissions/prohibitions, safety boundaries.",
+      "coverage_pct": 5.75,
+      "symbolic_validity_pct": 5.75,
+      "solve_utility_pct": 5.75,
+      "rule_quality_pct": 5.75,
+      "stability_pct": 5.75,
+      "confidence_pct": 5.0,
+      "progress_pct": 5.75,
+      "notes": "No dedicated slices yet; placeholder estimate only."
+    }
+  ],
+  "background_trend": {
+    "available": true,
+    "rows": 128,
+    "first_timestamp": "20261029T203127Z",
+    "last_timestamp": "20261030T050158Z",
+    "solve_rate_avg": 1.0,
+    "symbolic_valid_rate_avg": 1.0,
+    "cost_per_valid_solve_avg": 1.368955,
+    "cost_per_valid_solve_last20_avg": 1.373555
+  },
+  "rule_learning": {
+    "utility_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/ilp_rule_utility_v1.json",
+    "registry_path": "/home/yky/misc-programs/AGI-prototype/rules/nl_rule_registry.yaml",
+    "snapshots_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/rule_learning_snapshots_v1.json",
+    "utility_total_updates": 16,
+    "tracked_rule_count": 8,
+    "rules_under_learning_count": 8,
+    "registry_rule_count": 1,
+    "proposal_only_rule_count": 1,
+    "ilp_rule_count": 0,
+    "top_rules": [
+      {
+        "signature": "3a58ccea9b8c223d6e3ae1b20ee26eb9577faf22",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031549+00:00"
+      },
+      {
+        "signature": "4060aeebea6096f8bae9c8aa4aa1f9f412cdf1ee",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031592+00:00"
+      },
+      {
+        "signature": "41b592f8e6f20cd0c9d95e4941ccd2000320c672",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031606+00:00"
+      },
+      {
+        "signature": "50d545388e24a8100c303eee3cf929f027101057",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031619+00:00"
+      },
+      {
+        "signature": "7254fd85fb4922664a31e341fb3b6a2e2d865309",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031631+00:00"
+      },
+      {
+        "signature": "76bf4d6516909b4d44fcbb8ffae54a56ff55ff1f",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031643+00:00"
+      },
+      {
+        "signature": "b69f037ca34bb5c84f54aaf519077f22dce4d9f4",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031655+00:00"
+      },
+      {
+        "signature": "ef07feaa08101e9244385cbd322d9e4413b6abc1",
+        "count": 2,
+        "avg_reward": 0.525,
+        "last_reward": 0.05,
+        "last_updated": "2026-11-02T16:16:14.031667+00:00"
+      }
+    ],
+    "snapshots": [
+      {
+        "captured_at": "2026-11-02T17:01:41.377621+00:00",
+        "label": "manual-check",
+        "tracked_rule_count": 8,
+        "rules_under_learning_count": 8,
+        "utility_total_updates": 16,
+        "top_rules": [
+          {
+            "signature": "3a58ccea9b8c223d6e3ae1b20ee26eb9577faf22",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031549+00:00"
+          },
+          {
+            "signature": "4060aeebea6096f8bae9c8aa4aa1f9f412cdf1ee",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031592+00:00"
+          },
+          {
+            "signature": "41b592f8e6f20cd0c9d95e4941ccd2000320c672",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031606+00:00"
+          },
+          {
+            "signature": "50d545388e24a8100c303eee3cf929f027101057",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031619+00:00"
+          },
+          {
+            "signature": "7254fd85fb4922664a31e341fb3b6a2e2d865309",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031631+00:00"
+          },
+          {
+            "signature": "76bf4d6516909b4d44fcbb8ffae54a56ff55ff1f",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031643+00:00"
+          },
+          {
+            "signature": "b69f037ca34bb5c84f54aaf519077f22dce4d9f4",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031655+00:00"
+          },
+          {
+            "signature": "ef07feaa08101e9244385cbd322d9e4413b6abc1",
+            "count": 2,
+            "avg_reward": 0.525,
+            "last_reward": 0.05,
+            "last_updated": "2026-11-02T16:16:14.031667+00:00"
+          }
+        ]
+      }
+    ]
+  },
+  "overall_progress_pct": 42.65
+}

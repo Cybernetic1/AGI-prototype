@@ -15,6 +15,23 @@ TEACHER_ENABLE_INGESTION="${TEACHER_ENABLE_INGESTION:-0}"
 TEACHER_AB_ARM="${TEACHER_AB_ARM:-treatment}"
 TEACHER_GREEDY_BY_SCORE="${TEACHER_GREEDY_BY_SCORE:-1}"
 TEACHER_MIN_SCORE="${TEACHER_MIN_SCORE:-0.0}"
+TEACHER_OLLAMA_URL="${TEACHER_OLLAMA_URL:-}"
+TEACHER_OLLAMA_MODEL="${TEACHER_OLLAMA_MODEL:-}"
+TEACHER_OLLAMA_TIMEOUT_SEC="${TEACHER_OLLAMA_TIMEOUT_SEC:-180}"
+ILP_ENABLE_LEARNING_STAGE="${ILP_ENABLE_LEARNING_STAGE:-0}"
+ILP_PRESCORE_MIN="${ILP_PRESCORE_MIN:-0.45}"
+ILP_CANDIDATE_TOP_N="${ILP_CANDIDATE_TOP_N:-6}"
+ILP_MAX_CANDIDATES_PER_FAMILY="${ILP_MAX_CANDIDATES_PER_FAMILY:-3}"
+ILP_INCLUDE_AGI_TRANSFER_FAMILIES="${ILP_INCLUDE_AGI_TRANSFER_FAMILIES:-1}"
+ILP_LLM_ENABLE_VALIDATOR="${ILP_LLM_ENABLE_VALIDATOR:-0}"
+ILP_LLM_VALIDATE_MAX="${ILP_LLM_VALIDATE_MAX:-2}"
+ILP_LLM_LATENCY_BUDGET_SEC="${ILP_LLM_LATENCY_BUDGET_SEC:-12.0}"
+ILP_LLM_TIMEOUT_SEC="${ILP_LLM_TIMEOUT_SEC:-20}"
+ILP_LLM_OLLAMA_URL="${ILP_LLM_OLLAMA_URL:-}"
+ILP_LLM_OLLAMA_MODEL="${ILP_LLM_OLLAMA_MODEL:-}"
+ILP_REGISTER_PROPOSALS="${ILP_REGISTER_PROPOSALS:-0}"
+ILP_MAX_REGISTERED_PER_CASE="${ILP_MAX_REGISTERED_PER_CASE:-2}"
+ILP_UTILITY_PATH="${ILP_UTILITY_PATH:-rules/reports/ilp_rule_utility_v1.json}"
 
 REPORT_DIR="$ROOT_DIR/rules/reports/background_loop"
 RUN_LOG="$REPORT_DIR/runner.log"
@@ -54,6 +71,41 @@ while true; do
       run_args+=(--teacher-greedy-by-score)
     else
       run_args+=(--teacher-no-greedy-by-score)
+    fi
+  fi
+  if [[ -n "$TEACHER_OLLAMA_URL" ]]; then
+    run_args+=(--teacher-ollama-url "$TEACHER_OLLAMA_URL")
+  fi
+  if [[ -n "$TEACHER_OLLAMA_MODEL" ]]; then
+    run_args+=(--teacher-ollama-model "$TEACHER_OLLAMA_MODEL")
+  fi
+  run_args+=(--teacher-ollama-timeout-sec "$TEACHER_OLLAMA_TIMEOUT_SEC")
+  if [[ "$ILP_ENABLE_LEARNING_STAGE" == "1" ]]; then
+    run_args+=(
+      --ilp-enable-learning-stage
+      --ilp-prescore-min "$ILP_PRESCORE_MIN"
+      --ilp-candidate-top-n "$ILP_CANDIDATE_TOP_N"
+      --ilp-max-candidates-per-family "$ILP_MAX_CANDIDATES_PER_FAMILY"
+      --ilp-utility-path "$ILP_UTILITY_PATH"
+      --ilp-llm-validate-max "$ILP_LLM_VALIDATE_MAX"
+      --ilp-llm-latency-budget-sec "$ILP_LLM_LATENCY_BUDGET_SEC"
+      --ilp-llm-timeout-sec "$ILP_LLM_TIMEOUT_SEC"
+      --ilp-max-registered-per-case "$ILP_MAX_REGISTERED_PER_CASE"
+    )
+    if [[ "$ILP_INCLUDE_AGI_TRANSFER_FAMILIES" == "1" ]]; then
+      run_args+=(--ilp-include-agi-transfer-families)
+    fi
+    if [[ "$ILP_LLM_ENABLE_VALIDATOR" == "1" ]]; then
+      run_args+=(--ilp-llm-enable-validator)
+    fi
+    if [[ -n "$ILP_LLM_OLLAMA_URL" ]]; then
+      run_args+=(--ilp-llm-ollama-url "$ILP_LLM_OLLAMA_URL")
+    fi
+    if [[ -n "$ILP_LLM_OLLAMA_MODEL" ]]; then
+      run_args+=(--ilp-llm-ollama-model "$ILP_LLM_OLLAMA_MODEL")
+    fi
+    if [[ "$ILP_REGISTER_PROPOSALS" == "1" ]]; then
+      run_args+=(--ilp-register-proposals)
     fi
   fi
 
