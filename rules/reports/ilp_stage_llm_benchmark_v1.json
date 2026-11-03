@@ -1,0 +1,593 @@
+{
+  "contract_id": "agi-bootstrap-baseline-contract-v1",
+  "suite": "finality_regression",
+  "requested_families": [],
+  "families": [
+    "buy_more_final_gap",
+    "buy_more_final_gap_variant",
+    "donation_after_buy_more",
+    "buy_more_then_donation_and_spoilage"
+  ],
+  "max_cycles": 1,
+  "case_count": 4,
+  "seed": 0,
+  "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+  "proposal_shaping": {
+    "semantic_ar": {
+      "enabled": false,
+      "weight": 0.2,
+      "lexical_weight": 0.5,
+      "role_weight": 0.3,
+      "prior_weight": 0.2,
+      "gate_fail_penalty": 0.0,
+      "couple_to_symbolic_gate": true,
+      "emit_metadata": false
+    },
+    "pot_dsl": {
+      "enabled": false,
+      "mode": "proposal_trace_injection",
+      "runtime_authority": "proposal_only"
+    },
+    "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+  },
+  "search_budget": {
+    "strict_numeric_authority": false,
+    "ilp_max_depth": 0,
+    "ilp_max_fact_matches": 0,
+    "ilp_max_rule_matches": 0,
+    "ilp_max_subgoal_results": 0
+  },
+  "ilp_learning_stage": {
+    "enabled": true,
+    "llm_validator_enabled": true,
+    "llm_validator_remote": true,
+    "register_proposals": false,
+    "counts": {
+      "generated": 4,
+      "passed_prescore": 4,
+      "dropped_prescore": 0,
+      "llm_accepted": 4,
+      "llm_rejected": 0,
+      "validated": 4,
+      "cache_hits": 3
+    },
+    "latency_total_sec": 40.416719269007444
+  },
+  "teacher_proposal_ingestion": {
+    "enabled": false,
+    "ab_arm": "control",
+    "low_volume_mode": true,
+    "dynamic_ollama": false,
+    "counts": {
+      "submitted": 0,
+      "processed": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "dropped_by_volume": 0
+    }
+  },
+  "metric_definitions": {
+    "capability": "solve_rate = solved_cases / total_cases",
+    "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+    "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+    "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+  },
+  "profiles": [
+    {
+      "profile": "lt-heavy",
+      "description": "System-1 proposal + System-2 validation/reasoning only",
+      "systems": [
+        "system1",
+        "system2"
+      ],
+      "total_cases": 4,
+      "solved_cases": 4,
+      "symbolic_valid_cases": 4,
+      "solved_and_symbolic_valid_cases": 4,
+      "capability": {
+        "solve_rate": 1.0
+      },
+      "symbolic_validity": {
+        "symbolic_valid_rate": 1.0
+      },
+      "sample_efficiency": {
+        "valid_solves_per_sample": 1.0,
+        "samples_per_valid_solve": 1.0
+      },
+      "compute_cost": {
+        "wall_time_sec_total": 46.04315707400383,
+        "wall_time_sec_per_case": 11.510789268500957,
+        "wall_time_sec_per_valid_solve": 11.510789268500957
+      },
+      "results": [
+        {
+          "expected": 15.0,
+          "belief_values": [
+            15.0,
+            45.0,
+            15.0,
+            0.0,
+            27.0,
+            10.0,
+            90.0,
+            25.0,
+            30.0,
+            12.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 1,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "teacher_ingestion": {
+            "enabled": false,
+            "ab_arm": "control",
+            "reason": "not requested"
+          },
+          "ilp_learning_stage": {
+            "config": {
+              "candidate_top_n": 4,
+              "prescore_min": 0.4,
+              "max_candidates_per_family": 2,
+              "llm_validate_max": 1,
+              "llm_latency_budget_sec": 40.0,
+              "llm_enabled": true
+            },
+            "counts": {
+              "generated": 1,
+              "passed_prescore": 1,
+              "dropped_prescore": 0,
+              "llm_accepted": 1,
+              "llm_rejected": 0
+            },
+            "llm_metrics": {
+              "validated": 1,
+              "cache_hits": 0,
+              "latency_total_sec": 40.416719269007444,
+              "latency_budget_exhausted": false
+            },
+            "accepted_candidates": [
+              {
+                "candidate_id": "ilp-candidate-001",
+                "family": "remaining_quantity",
+                "prescore": 0.9750000000000001,
+                "llm_score": 1.0,
+                "llm_reason": "Rule correctly applies the remaining quantity calculation formula.",
+                "candidate": {
+                  "family": "remaining_quantity",
+                  "name": "remaining_quantity",
+                  "head": [
+                    "remaining_quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * (1 - pct)",
+                  "target": "?ans",
+                  "description": "percent-of-remaining / remaining-quantity reduction",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 1.05,
+                    "coverage": 1.0,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 1.0,
+                    "constraint_checks": [],
+                    "family_inferred": "remaining_quantity",
+                    "needs_human_guidance": false,
+                    "guidance_reason": "confident",
+                    "top2_margin": 1.05
+                  }
+                }
+              }
+            ],
+            "dropped_candidates": []
+          },
+          "family": "buy_more_final_gap",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+        },
+        {
+          "expected": 19.5,
+          "belief_values": [
+            88.0,
+            22.0,
+            128.0,
+            14.0,
+            78.0,
+            16.5,
+            26.5,
+            32.0,
+            19.0,
+            29.0,
+            9.5,
+            12.0,
+            19.5
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 1,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "teacher_ingestion": {
+            "enabled": false,
+            "ab_arm": "control",
+            "reason": "not requested"
+          },
+          "ilp_learning_stage": {
+            "config": {
+              "candidate_top_n": 4,
+              "prescore_min": 0.4,
+              "max_candidates_per_family": 2,
+              "llm_validate_max": 1,
+              "llm_latency_budget_sec": 40.0,
+              "llm_enabled": true
+            },
+            "counts": {
+              "generated": 1,
+              "passed_prescore": 1,
+              "dropped_prescore": 0,
+              "llm_accepted": 1,
+              "llm_rejected": 0
+            },
+            "llm_metrics": {
+              "validated": 1,
+              "cache_hits": 1,
+              "latency_total_sec": 0.0,
+              "latency_budget_exhausted": false
+            },
+            "accepted_candidates": [
+              {
+                "candidate_id": "ilp-candidate-001",
+                "family": "remaining_quantity",
+                "prescore": 0.9750000000000001,
+                "llm_score": 1.0,
+                "llm_reason": "Rule correctly applies the remaining quantity calculation formula.",
+                "candidate": {
+                  "family": "remaining_quantity",
+                  "name": "remaining_quantity",
+                  "head": [
+                    "remaining_quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * (1 - pct)",
+                  "target": "?ans",
+                  "description": "percent-of-remaining / remaining-quantity reduction",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 1.05,
+                    "coverage": 1.0,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 1.0,
+                    "constraint_checks": [],
+                    "family_inferred": "remaining_quantity",
+                    "needs_human_guidance": false,
+                    "guidance_reason": "confident",
+                    "top2_margin": 1.05
+                  }
+                }
+              }
+            ],
+            "dropped_candidates": []
+          },
+          "family": "buy_more_final_gap_variant",
+          "question": "A has 4 times as many apples as B. B has 8 apples. A gives away 10 apples. 25% of the remaining apples are eaten. A then buys 6 more apples and 3 apples are spoiled. How many apples does A have?"
+        },
+        {
+          "expected": 16.0,
+          "belief_values": [
+            0.0,
+            1.0,
+            27.0,
+            11.0,
+            90.0,
+            48.0,
+            45.0,
+            13.0,
+            16.0,
+            30.0,
+            26.0,
+            15.0,
+            12.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 1,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "teacher_ingestion": {
+            "enabled": false,
+            "ab_arm": "control",
+            "reason": "not requested"
+          },
+          "ilp_learning_stage": {
+            "config": {
+              "candidate_top_n": 4,
+              "prescore_min": 0.4,
+              "max_candidates_per_family": 2,
+              "llm_validate_max": 1,
+              "llm_latency_budget_sec": 40.0,
+              "llm_enabled": true
+            },
+            "counts": {
+              "generated": 1,
+              "passed_prescore": 1,
+              "dropped_prescore": 0,
+              "llm_accepted": 1,
+              "llm_rejected": 0
+            },
+            "llm_metrics": {
+              "validated": 1,
+              "cache_hits": 1,
+              "latency_total_sec": 0.0,
+              "latency_budget_exhausted": false
+            },
+            "accepted_candidates": [
+              {
+                "candidate_id": "ilp-candidate-001",
+                "family": "remaining_quantity",
+                "prescore": 0.9750000000000001,
+                "llm_score": 1.0,
+                "llm_reason": "Rule correctly applies the remaining quantity calculation formula.",
+                "candidate": {
+                  "family": "remaining_quantity",
+                  "name": "remaining_quantity",
+                  "head": [
+                    "remaining_quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * (1 - pct)",
+                  "target": "?ans",
+                  "description": "percent-of-remaining / remaining-quantity reduction",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 1.05,
+                    "coverage": 1.0,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 1.0,
+                    "constraint_checks": [],
+                    "family_inferred": "remaining_quantity",
+                    "needs_human_guidance": false,
+                    "guidance_reason": "confident",
+                    "top2_margin": 1.05
+                  }
+                }
+              }
+            ],
+            "dropped_candidates": []
+          },
+          "family": "donation_after_buy_more",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. How many apples does A have?"
+        },
+        {
+          "expected": 11.0,
+          "belief_values": [
+            0.0,
+            1.0,
+            27.0,
+            11.0,
+            10.0,
+            90.0,
+            7.0,
+            48.0,
+            45.0,
+            8.0,
+            25.0,
+            13.0,
+            11.0,
+            30.0,
+            26.0,
+            -4.0,
+            6.0,
+            15.0,
+            12.0,
+            33.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 1,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "teacher_ingestion": {
+            "enabled": false,
+            "ab_arm": "control",
+            "reason": "not requested"
+          },
+          "ilp_learning_stage": {
+            "config": {
+              "candidate_top_n": 4,
+              "prescore_min": 0.4,
+              "max_candidates_per_family": 2,
+              "llm_validate_max": 1,
+              "llm_latency_budget_sec": 40.0,
+              "llm_enabled": true
+            },
+            "counts": {
+              "generated": 1,
+              "passed_prescore": 1,
+              "dropped_prescore": 0,
+              "llm_accepted": 1,
+              "llm_rejected": 0
+            },
+            "llm_metrics": {
+              "validated": 1,
+              "cache_hits": 1,
+              "latency_total_sec": 0.0,
+              "latency_budget_exhausted": false
+            },
+            "accepted_candidates": [
+              {
+                "candidate_id": "ilp-candidate-001",
+                "family": "remaining_quantity",
+                "prescore": 0.9750000000000001,
+                "llm_score": 1.0,
+                "llm_reason": "Rule correctly applies the remaining quantity calculation formula.",
+                "candidate": {
+                  "family": "remaining_quantity",
+                  "name": "remaining_quantity",
+                  "head": [
+                    "remaining_quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * (1 - pct)",
+                  "target": "?ans",
+                  "description": "percent-of-remaining / remaining-quantity reduction",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 1.05,
+                    "coverage": 1.0,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 1.0,
+                    "constraint_checks": [],
+                    "family_inferred": "remaining_quantity",
+                    "needs_human_guidance": false,
+                    "guidance_reason": "confident",
+                    "top2_margin": 1.05
+                  }
+                }
+              }
+            ],
+            "dropped_candidates": []
+          },
+          "family": "buy_more_then_donation_and_spoilage",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 20% of the remaining apples are donated. Then 5 apples are spoiled. How many apples does A have?"
+        }
+      ],
+      "teacher_ingestion_summary": {
+        "enabled": false,
+        "ab_arm": "control",
+        "counts": {
+          "submitted": 0,
+          "processed": 0,
+          "accepted": 0,
+          "rejected": 0,
+          "dropped_by_volume": 0
+        },
+        "dynamic_ollama": false
+      },
+      "ilp_learning_summary": {
+        "enabled": true,
+        "llm_validator_enabled": true,
+        "counts": {
+          "generated": 4,
+          "passed_prescore": 4,
+          "dropped_prescore": 0,
+          "llm_accepted": 4,
+          "llm_rejected": 0,
+          "validated": 4,
+          "cache_hits": 3
+        },
+        "latency_total_sec": 40.416719269007444,
+        "latency_budget_exhausted_cases": 0
+      }
+    }
+  ]
+}

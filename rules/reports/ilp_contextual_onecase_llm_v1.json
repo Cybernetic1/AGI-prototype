@@ -1,0 +1,1356 @@
+{
+  "contract_id": "agi-bootstrap-baseline-contract-v1",
+  "suite": "finality_regression",
+  "requested_families": [],
+  "families": [
+    "buy_more_final_gap"
+  ],
+  "max_cycles": 1,
+  "case_count": 1,
+  "seed": 0,
+  "baseline_command": "python rules/run_bootstrap_baseline.py --suite combined --max-cycles 2 --output rules/reports/agi_bootstrap_baseline_v1.json",
+  "proposal_shaping": {
+    "semantic_ar": {
+      "enabled": false,
+      "weight": 0.2,
+      "lexical_weight": 0.5,
+      "role_weight": 0.3,
+      "prior_weight": 0.2,
+      "gate_fail_penalty": 0.0,
+      "couple_to_symbolic_gate": true,
+      "emit_metadata": false
+    },
+    "pot_dsl": {
+      "enabled": false,
+      "mode": "proposal_trace_injection",
+      "runtime_authority": "proposal_only"
+    },
+    "symbolic_validator_authority": "System-2 semantic validation and WM equation-graph checks remain authoritative."
+  },
+  "search_budget": {
+    "strict_numeric_authority": false,
+    "ilp_max_depth": 0,
+    "ilp_max_fact_matches": 0,
+    "ilp_max_rule_matches": 0,
+    "ilp_max_subgoal_results": 0
+  },
+  "ilp_learning_stage": {
+    "enabled": true,
+    "llm_validator_enabled": true,
+    "llm_validator_remote": true,
+    "register_proposals": false,
+    "counts": {
+      "generated": 8,
+      "passed_prescore": 8,
+      "dropped_prescore": 0,
+      "llm_accepted": 0,
+      "llm_rejected": 8,
+      "validated": 2,
+      "cache_hits": 0
+    },
+    "latency_total_sec": 5.891490998008521,
+    "utility_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/ilp_rule_utility_v1.json",
+    "utility_total_updates": 16
+  },
+  "teacher_proposal_ingestion": {
+    "enabled": false,
+    "ab_arm": "control",
+    "low_volume_mode": true,
+    "dynamic_ollama": false,
+    "counts": {
+      "submitted": 0,
+      "processed": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "dropped_by_volume": 0
+    }
+  },
+  "metric_definitions": {
+    "capability": "solve_rate = solved_cases / total_cases",
+    "symbolic_validity": "symbolic_valid_rate = cases_with_numeric_reasoning_belief / total_cases; a numeric reasoning belief is a Belief(value=number) not emitted by gsm8k_compiler",
+    "sample_efficiency": "valid_solves_per_sample = solved_and_symbolic_valid_cases / total_cases; samples_per_valid_solve = total_cases / solved_and_symbolic_valid_cases",
+    "compute_cost": "wall_time_sec_total, wall_time_sec_per_case, wall_time_sec_per_valid_solve"
+  },
+  "profiles": [
+    {
+      "profile": "lt-heavy",
+      "description": "System-1 proposal + System-2 validation/reasoning only",
+      "systems": [
+        "system1",
+        "system2"
+      ],
+      "total_cases": 1,
+      "solved_cases": 1,
+      "symbolic_valid_cases": 1,
+      "solved_and_symbolic_valid_cases": 1,
+      "capability": {
+        "solve_rate": 1.0
+      },
+      "symbolic_validity": {
+        "symbolic_valid_rate": 1.0
+      },
+      "sample_efficiency": {
+        "valid_solves_per_sample": 1.0,
+        "samples_per_valid_solve": 1.0
+      },
+      "compute_cost": {
+        "wall_time_sec_total": 7.5511812979966635,
+        "wall_time_sec_per_case": 7.5511812979966635,
+        "wall_time_sec_per_valid_solve": 7.5511812979966635
+      },
+      "results": [
+        {
+          "expected": 15.0,
+          "belief_values": [
+            27.0,
+            15.0,
+            25.0,
+            15.0,
+            0.0,
+            30.0,
+            90.0,
+            12.0,
+            45.0,
+            10.0
+          ],
+          "solved": true,
+          "symbolic_valid": true,
+          "cycles_executed": 1,
+          "pot": {
+            "enabled": false,
+            "program_id": null,
+            "applied": false,
+            "execution_ok": false,
+            "issue_count": 0
+          },
+          "teacher_ingestion": {
+            "enabled": false,
+            "ab_arm": "control",
+            "reason": "not requested"
+          },
+          "ilp_learning_stage": {
+            "config": {
+              "candidate_top_n": 8,
+              "prescore_min": 0.2,
+              "max_candidates_per_family": 3,
+              "include_agi_transfer_families": true,
+              "llm_validate_max": 2,
+              "llm_latency_budget_sec": 40.0,
+              "llm_enabled": true
+            },
+            "counts": {
+              "generated": 8,
+              "passed_prescore": 8,
+              "dropped_prescore": 0,
+              "llm_accepted": 0,
+              "llm_rejected": 8
+            },
+            "llm_metrics": {
+              "validated": 2,
+              "cache_hits": 0,
+              "latency_total_sec": 5.891490998008521,
+              "latency_budget_exhausted": false
+            },
+            "generated_candidates": [
+              {
+                "family": "remaining_quantity",
+                "name": "remaining_quantity",
+                "head": [
+                  "remaining_quantity",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?base"
+                    ]
+                  ],
+                  [
+                    "percent",
+                    [
+                      "?owner",
+                      "?item",
+                      "?pct"
+                    ]
+                  ]
+                ],
+                "calc": "base * (1 - pct)",
+                "target": "?ans",
+                "ranking": {
+                  "score": 1.05,
+                  "coverage": 1.0,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 1.0,
+                  "constraint_checks": [],
+                  "family_inferred": "remaining_quantity",
+                  "needs_human_guidance": false,
+                  "guidance_reason": "confident",
+                  "top2_margin": 1.05
+                }
+              },
+              {
+                "family": "ratio_compose",
+                "name": "ratio_compose",
+                "head": [
+                  "quantity",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "ratio",
+                    [
+                      "?owner",
+                      "?ref_owner",
+                      "?item",
+                      "?factor"
+                    ]
+                  ],
+                  [
+                    "quantity",
+                    [
+                      "?ref_owner",
+                      "?item",
+                      "?base"
+                    ]
+                  ]
+                ],
+                "calc": "base * factor",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              },
+              {
+                "family": "state_transition",
+                "name": "state_transition",
+                "head": [
+                  "state",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "state_transition",
+                    [
+                      "?owner",
+                      "?item",
+                      "?before",
+                      "?delta",
+                      "?after"
+                    ]
+                  ]
+                ],
+                "calc": "before + delta",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 1.0,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              },
+              {
+                "family": "latest_valid_state",
+                "name": "latest_valid_state",
+                "head": [
+                  "final_state",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "state",
+                    [
+                      "?owner",
+                      "?item",
+                      "?later"
+                    ]
+                  ],
+                  [
+                    "state",
+                    [
+                      "?owner",
+                      "?item",
+                      "?earlier"
+                    ]
+                  ]
+                ],
+                "calc": "later",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              },
+              {
+                "family": "percent_of_total",
+                "name": "percent_of_total",
+                "head": [
+                  "percent_of_total",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?base"
+                    ]
+                  ],
+                  [
+                    "percent",
+                    [
+                      "?owner",
+                      "?item",
+                      "?pct"
+                    ]
+                  ]
+                ],
+                "calc": "base * pct",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              },
+              {
+                "family": "ratio_of_total",
+                "name": "ratio_of_total",
+                "head": [
+                  "ratio_of_total",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?part"
+                    ]
+                  ],
+                  [
+                    "quantity",
+                    [
+                      "?other",
+                      "?item",
+                      "?rest"
+                    ]
+                  ]
+                ],
+                "calc": "part / (part + rest)",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              },
+              {
+                "family": "percent_growth",
+                "name": "percent_growth",
+                "head": [
+                  "percent_growth",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?base"
+                    ]
+                  ],
+                  [
+                    "percent",
+                    [
+                      "?owner",
+                      "?item",
+                      "?pct"
+                    ]
+                  ]
+                ],
+                "calc": "base * (1 + pct)",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              },
+              {
+                "family": "temporal_causal_chain",
+                "name": "temporal_causal_chain",
+                "head": [
+                  "temporal_causal_chain",
+                  [
+                    "?owner",
+                    "?item",
+                    "?ans"
+                  ]
+                ],
+                "body": [
+                  [
+                    "state",
+                    [
+                      "?owner",
+                      "?item",
+                      "?before"
+                    ]
+                  ],
+                  [
+                    "causal_delta",
+                    [
+                      "?owner",
+                      "?item",
+                      "?cause",
+                      "?delta",
+                      "?after_marker"
+                    ]
+                  ]
+                ],
+                "calc": "before + delta",
+                "target": "?ans",
+                "ranking": {
+                  "score": 0.45,
+                  "coverage": 0.45,
+                  "simplicity": 0.5,
+                  "symbolic_validity": 1.0,
+                  "constraint_validity": 0.8,
+                  "context_policy": {
+                    "cues": [
+                      "buy_more_final_gap",
+                      "percent",
+                      "ratio",
+                      "remaining",
+                      "temporal",
+                      "transition"
+                    ],
+                    "allowed_families": [
+                      "buy_more_final_gap",
+                      "latest_valid_state",
+                      "percent_growth",
+                      "percent_of_total",
+                      "ratio_compose",
+                      "ratio_of_total",
+                      "remaining_quantity",
+                      "state_transition",
+                      "temporal_causal_chain"
+                    ],
+                    "max_body_len": 4
+                  }
+                }
+              }
+            ],
+            "prescored_candidates": [
+              {
+                "candidate_id": "ilp-candidate-001",
+                "family": "remaining_quantity",
+                "prescore": 1.0604814707396821,
+                "signature": "3a58ccea9b8c223d6e3ae1b20ee26eb9577faf22",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-003",
+                "family": "state_transition",
+                "prescore": 0.7079814707396821,
+                "signature": "b69f037ca34bb5c84f54aaf519077f22dce4d9f4",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-002",
+                "family": "ratio_compose",
+                "prescore": 0.657981470739682,
+                "signature": "ef07feaa08101e9244385cbd322d9e4413b6abc1",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-004",
+                "family": "latest_valid_state",
+                "prescore": 0.657981470739682,
+                "signature": "4060aeebea6096f8bae9c8aa4aa1f9f412cdf1ee",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-005",
+                "family": "percent_of_total",
+                "prescore": 0.657981470739682,
+                "signature": "76bf4d6516909b4d44fcbb8ffae54a56ff55ff1f",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-006",
+                "family": "ratio_of_total",
+                "prescore": 0.657981470739682,
+                "signature": "7254fd85fb4922664a31e341fb3b6a2e2d865309",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-007",
+                "family": "percent_growth",
+                "prescore": 0.657981470739682,
+                "signature": "50d545388e24a8100c303eee3cf929f027101057",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-008",
+                "family": "temporal_causal_chain",
+                "prescore": 0.657981470739682,
+                "signature": "41b592f8e6f20cd0c9d95e4941ccd2000320c672",
+                "rl_utility": {
+                  "count": 1.0,
+                  "value": 1.0,
+                  "exploration": 1.048147073968205,
+                  "bonus": 0.35481470739682053
+                }
+              }
+            ],
+            "accepted_candidates": [],
+            "dropped_candidates": [
+              {
+                "candidate_id": "ilp-candidate-001",
+                "family": "remaining_quantity",
+                "prescore": 1.0604814707396821,
+                "dropped_reason": "ollama_request_failed: <urlopen error [Errno 113] No route to host>",
+                "candidate": {
+                  "family": "remaining_quantity",
+                  "name": "remaining_quantity",
+                  "head": [
+                    "remaining_quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * (1 - pct)",
+                  "target": "?ans",
+                  "description": "percent-of-remaining / remaining-quantity reduction",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 1.05,
+                    "coverage": 1.0,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 1.0,
+                    "constraint_checks": [],
+                    "family_inferred": "remaining_quantity",
+                    "needs_human_guidance": false,
+                    "guidance_reason": "confident",
+                    "top2_margin": 1.05
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-003",
+                "family": "state_transition",
+                "prescore": 0.7079814707396821,
+                "dropped_reason": "ollama_request_failed: <urlopen error [Errno 113] No route to host>",
+                "candidate": {
+                  "family": "state_transition",
+                  "name": "state_transition",
+                  "head": [
+                    "state",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "state_transition",
+                      [
+                        "?owner",
+                        "?item",
+                        "?before",
+                        "?delta",
+                        "?after"
+                      ]
+                    ]
+                  ],
+                  "calc": "before + delta",
+                  "target": "?ans",
+                  "description": "same-owner/item state updates use before + delta",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 1.0,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-002",
+                "family": "ratio_compose",
+                "prescore": 0.657981470739682,
+                "dropped_reason": "llm_topk_limit",
+                "candidate": {
+                  "family": "ratio_compose",
+                  "name": "ratio_compose",
+                  "head": [
+                    "quantity",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "ratio",
+                      [
+                        "?owner",
+                        "?ref_owner",
+                        "?item",
+                        "?factor"
+                      ]
+                    ],
+                    [
+                      "quantity",
+                      [
+                        "?ref_owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * factor",
+                  "target": "?ans",
+                  "description": "same-item ratio composition from a reference owner",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-004",
+                "family": "latest_valid_state",
+                "prescore": 0.657981470739682,
+                "dropped_reason": "llm_topk_limit",
+                "candidate": {
+                  "family": "latest_valid_state",
+                  "name": "latest_valid_state",
+                  "head": [
+                    "final_state",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "state",
+                      [
+                        "?owner",
+                        "?item",
+                        "?later"
+                      ]
+                    ],
+                    [
+                      "state",
+                      [
+                        "?owner",
+                        "?item",
+                        "?earlier"
+                      ]
+                    ]
+                  ],
+                  "calc": "later",
+                  "target": "?ans",
+                  "description": "latest valid state wins over earlier temporally stale candidates",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-005",
+                "family": "percent_of_total",
+                "prescore": 0.657981470739682,
+                "dropped_reason": "llm_topk_limit",
+                "candidate": {
+                  "family": "percent_of_total",
+                  "name": "percent_of_total",
+                  "head": [
+                    "percent_of_total",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * pct",
+                  "target": "?ans",
+                  "description": "percent of base quantity",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-006",
+                "family": "ratio_of_total",
+                "prescore": 0.657981470739682,
+                "dropped_reason": "llm_topk_limit",
+                "candidate": {
+                  "family": "ratio_of_total",
+                  "name": "ratio_of_total",
+                  "head": [
+                    "ratio_of_total",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?part"
+                      ]
+                    ],
+                    [
+                      "quantity",
+                      [
+                        "?other",
+                        "?item",
+                        "?rest"
+                      ]
+                    ]
+                  ],
+                  "calc": "part / (part + rest)",
+                  "target": "?ans",
+                  "description": "ratio over a two-part total",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-007",
+                "family": "percent_growth",
+                "prescore": 0.657981470739682,
+                "dropped_reason": "llm_topk_limit",
+                "candidate": {
+                  "family": "percent_growth",
+                  "name": "percent_growth",
+                  "head": [
+                    "percent_growth",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "quantity",
+                      [
+                        "?owner",
+                        "?item",
+                        "?base"
+                      ]
+                    ],
+                    [
+                      "percent",
+                      [
+                        "?owner",
+                        "?item",
+                        "?pct"
+                      ]
+                    ]
+                  ],
+                  "calc": "base * (1 + pct)",
+                  "target": "?ans",
+                  "description": "single growth step from a base quantity",
+                  "constraints": {},
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              },
+              {
+                "candidate_id": "ilp-candidate-008",
+                "family": "temporal_causal_chain",
+                "prescore": 0.657981470739682,
+                "dropped_reason": "llm_topk_limit",
+                "candidate": {
+                  "family": "temporal_causal_chain",
+                  "name": "temporal_causal_chain",
+                  "head": [
+                    "temporal_causal_chain",
+                    [
+                      "?owner",
+                      "?item",
+                      "?ans"
+                    ]
+                  ],
+                  "body": [
+                    [
+                      "state",
+                      [
+                        "?owner",
+                        "?item",
+                        "?before"
+                      ]
+                    ],
+                    [
+                      "causal_delta",
+                      [
+                        "?owner",
+                        "?item",
+                        "?cause",
+                        "?delta",
+                        "?after_marker"
+                      ]
+                    ]
+                  ],
+                  "calc": "before + delta",
+                  "target": "?ans",
+                  "description": "temporal-causal update from prior state and causal delta",
+                  "constraints": {
+                    "required_type_counts": {
+                      "temporal_marker": 1,
+                      "causal_marker": 1,
+                      "number": 1
+                    },
+                    "required_body_predicates": [
+                      "state",
+                      "causal_delta"
+                    ],
+                    "compatibility_checks": [
+                      "temporal_causal"
+                    ]
+                  },
+                  "ranking": {
+                    "score": 0.45,
+                    "coverage": 0.45,
+                    "simplicity": 0.5,
+                    "symbolic_validity": 1.0,
+                    "constraint_validity": 0.8,
+                    "context_policy": {
+                      "cues": [
+                        "buy_more_final_gap",
+                        "percent",
+                        "ratio",
+                        "remaining",
+                        "temporal",
+                        "transition"
+                      ],
+                      "allowed_families": [
+                        "buy_more_final_gap",
+                        "latest_valid_state",
+                        "percent_growth",
+                        "percent_of_total",
+                        "ratio_compose",
+                        "ratio_of_total",
+                        "remaining_quantity",
+                        "state_transition",
+                        "temporal_causal_chain"
+                      ],
+                      "max_body_len": 4
+                    }
+                  },
+                  "rl_utility": {
+                    "count": 1.0,
+                    "value": 1.0,
+                    "exploration": 1.048147073968205,
+                    "bonus": 0.35481470739682053
+                  }
+                }
+              }
+            ],
+            "rl_reward": {
+              "base_reward": 1.0,
+              "updates": 8
+            }
+          },
+          "family": "buy_more_final_gap",
+          "question": "A has 3 times as many apples as B. B has 10 apples. A gives away 15 apples. 20% of the remaining apples are eaten. A then buys 8 more apples and 5 apples are spoiled. How many apples does A have?"
+        }
+      ],
+      "teacher_ingestion_summary": {
+        "enabled": false,
+        "ab_arm": "control",
+        "counts": {
+          "submitted": 0,
+          "processed": 0,
+          "accepted": 0,
+          "rejected": 0,
+          "dropped_by_volume": 0
+        },
+        "dynamic_ollama": false
+      },
+      "ilp_learning_summary": {
+        "enabled": true,
+        "llm_validator_enabled": true,
+        "counts": {
+          "generated": 8,
+          "passed_prescore": 8,
+          "dropped_prescore": 0,
+          "llm_accepted": 0,
+          "llm_rejected": 8,
+          "validated": 2,
+          "cache_hits": 0
+        },
+        "latency_total_sec": 5.891490998008521,
+        "latency_budget_exhausted_cases": 0
+      }
+    }
+  ]
+}
