@@ -306,6 +306,45 @@ def _read_single_key() -> str:
         termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 
+def _normalize_semantic_graph(raw: Any) -> dict[str, Any]:
+    if not isinstance(raw, dict):
+        return {"nodes": [], "edges": []}
+    nodes = raw.get("nodes") or []
+    edges = raw.get("edges") or []
+
+    if isinstance(nodes, dict):
+        normalized_nodes = []
+        for node_id, node in nodes.items():
+            payload = dict(node) if isinstance(node, dict) else {}
+            payload.setdefault("id", str(node_id))
+            payload.setdefault("label", str(node_id))
+            payload.setdefault("kind", payload.get("kind", "entity"))
+            normalized_nodes.append(payload)
+        nodes = normalized_nodes
+
+    normalized_edges = []
+    for edge in edges:
+        if not isinstance(edge, dict):
+            continue
+        source = edge.get("source") or edge.get("from")
+        target = edge.get("target") or edge.get("to")
+        if source is None or target is None:
+            continue
+        item = {
+            "from": str(source),
+            "to": str(target),
+            "label": str(edge.get("relation") or edge.get("label") or "related"),
+            "arrows": "to",
+            "color": {"color": "#4b5563"},
+        }
+        for key in ("id", "title", "value"):
+            if key in edge:
+                item[key] = edge[key]
+        normalized_edges.append(item)
+
+    return {"nodes": nodes, "edges": normalized_edges}
+
+
 def _render_html(payload: dict[str, Any]) -> str:
     rows = []
     for cat in payload.get("categories", []):
@@ -350,12 +389,17 @@ def _render_html(payload: dict[str, Any]) -> str:
             f"<td>{snap.get('utility_total_updates',0)}</td></tr>"
         )
 
+    semantic_graph = _normalize_semantic_graph(payload.get("semantic_graph"))
+    semantic_nodes = json.dumps(semantic_graph.get("nodes", []), ensure_ascii=False)
+    semantic_edges = json.dumps(semantic_graph.get("edges", []), ensure_ascii=False)
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AGI Prototype Progress Dashboard</title>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
     body {{ font-family: system-ui, sans-serif; margin: 24px; color: #111; }}
     h1 {{ margin-bottom: 4px; }}
@@ -366,6 +410,7 @@ def _render_html(payload: dict[str, Any]) -> str:
     .bar {{ background: #eee; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 4px; }}
     .bar > span {{ display: block; height: 100%; background: #3b82f6; }}
     .card {{ border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin: 16px 0; }}
+    #semantic-graph {{ height: 540px; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; }}
   </style>
 </head>
 <body>
@@ -391,6 +436,40 @@ def _render_html(payload: dict[str, Any]) -> str:
         {''.join(rows)}
       </tbody>
     </table>
+  </div>
+
+  <div class="card">
+    <h3>Semantic graph view</h3>
+    <div id="semantic-graph"></div>
+    <script>
+      const semanticNodes = {semantic_nodes};
+      const semanticEdges = {semantic_edges};
+      const container = document.getElementById('semantic-graph');
+      const nodes = new vis.DataSet(semanticNodes.map((node) => ({{
+        id: String(node.id),
+        label: String(node.label || node.id),
+        title: String(node.kind || 'node'),
+        shape: node.shape || 'box',
+        color: node.color || {{ background: '#dbeafe', border: '#2563eb', highlight: {{ background: '#bfdbfe', border: '#1d4ed8' }} }},
+        font: {{ color: '#111827', face: 'sans-serif' }}
+      }})));
+      const edges = new vis.DataSet(semanticEdges.map((edge) => ({{
+        from: String(edge.from || edge.source),
+        to: String(edge.to || edge.target),
+        label: String(edge.label || ''),
+        arrows: edge.arrows || 'to',
+        color: edge.color || {{ color: '#4b5563' }},
+        font: {{ align: 'middle', color: '#374151' }}
+      }})));
+      const network = new vis.Network(container, {{ nodes, edges }}, {{
+        physics: {{ enabled: true, solver: 'forceAtlas2Based', stabilization: {{ iterations: 200 }} }},
+        interaction: {{ hover: true, tooltipDelay: 150 }},
+        edges: {{ smooth: {{ type: 'dynamic' }} }},
+        layout: {{ improvedLayout: true }},
+        nodes: {{ borderWidth: 1.5 }}
+      }});
+      network.fit();
+    </script>
   </div>
 
   <div class="card">
@@ -442,6 +521,7 @@ def main() -> int:
     parser.add_argument("--utility-report", default="rules/reports/ilp_rule_utility_v1.json")
     parser.add_argument("--rule-registry", default="rules/nl_rule_registry.yaml")
     parser.add_argument("--snapshot-file", default="rules/reports/rule_learning_snapshots_v1.json")
+    parser.add_argument("--semantic-graph", default="rules/reports/semantic_graph_example.json", help="Optional semantic graph JSON to visualize in the dashboard (node/edge graph).")
     parser.add_argument("--snapshot-now", action="store_true", help="Capture one rule-learning snapshot while generating dashboard.")
     parser.add_argument("--snapshot-label", default="", help="Optional label for snapshot entries.")
     parser.add_argument("--snapshot-keypress", action="store_true", help="Interactive mode: press 's' to snapshot and refresh dashboard, 'q' to quit.")
@@ -468,6 +548,9 @@ def main() -> int:
     snapshots_path = Path(args.snapshot_file)
     if not snapshots_path.is_absolute():
         snapshots_path = REPO_ROOT / snapshots_path
+    semantic_graph_path = Path(args.semantic_graph)
+    if not semantic_graph_path.is_absolute():
+        semantic_graph_path = REPO_ROOT / semantic_graph_path
 
     baseline = _load_json(baseline_path)
     widening = _load_json(widening_path)
@@ -648,6 +731,12 @@ def main() -> int:
         ),
     ]
 
+    semantic_graph = {}
+    if semantic_graph_path.exists():
+        semantic_graph = _load_json(semantic_graph_path)
+    else:
+        semantic_graph = {"nodes": [], "edges": []}
+
     payload = {
         "dashboard_id": "agi-progress-dashboard-v1",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -659,10 +748,12 @@ def main() -> int:
             "utility_report": str(utility_path),
             "rule_registry": str(registry_path),
             "snapshot_file": str(snapshots_path),
+            "semantic_graph": str(semantic_graph_path),
         },
         "ledger_overall_green": bool(ledger.get("overall_green")) if isinstance(ledger, dict) else False,
         "categories": categories,
         "background_trend": _background_trend(bg_metrics_path),
+        "semantic_graph": semantic_graph,
         "rule_learning": _rule_learning_summary(
             utility_path=utility_path,
             registry_path=registry_path,

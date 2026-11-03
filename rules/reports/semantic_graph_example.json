@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    {"id": "A", "label": "A", "kind": "entity", "color": {"background": "#dbeafe", "border": "#1d4ed8"}},
+    {"id": "B", "label": "B", "kind": "entity", "color": {"background": "#dbeafe", "border": "#1d4ed8"}},
+    {"id": "ratio_A_B", "label": "A = 3 × B", "kind": "ratio", "color": {"background": "#dcfce7", "border": "#15803d"}},
+    {"id": "qty_B_10", "label": "B = 10", "kind": "quantity", "color": {"background": "#fef3c7", "border": "#d97706"}},
+    {"id": "state_30", "label": "Initial A = 30", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}},
+    {"id": "state_15", "label": "After give-away = 15", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}},
+    {"id": "state_12", "label": "After 20% eaten = 12", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}},
+    {"id": "state_20", "label": "After +8 = 20", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}},
+    {"id": "state_15_final", "label": "Final A = 15", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}}
+  ],
+  "edges": [
+    {"source": "A", "target": "ratio_A_B", "relation": "has_ratio"},
+    {"source": "B", "target": "ratio_A_B", "relation": "base_of_ratio"},
+    {"source": "ratio_A_B", "target": "qty_B_10", "relation": "uses_value"},
+    {"source": "qty_B_10", "target": "state_30", "relation": "computes"},
+    {"source": "state_30", "target": "state_15", "relation": "after_give_away"},
+    {"source": "state_15", "target": "state_12", "relation": "after_percent_loss"},
+    {"source": "state_12", "target": "state_20", "relation": "after_buy"},
+    {"source": "state_20", "target": "state_15_final", "relation": "after_spoilage"}
+  ]
+}

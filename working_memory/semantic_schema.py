@@ -385,3 +385,135 @@ class SemanticGraphSchema:
         if op == "percent":
             return lhs_val * rhs_val
         return None
+
+    @classmethod
+    def make_semantic_graph(cls, nodes: Iterable[Dict[str, Any]] | None = None, edges: Iterable[Dict[str, Any]] | None = None) -> Dict[str, Any]:
+        """Construct the canonical semantic graph used by the graph-reasoning layer.
+
+        The representation is intentionally small and generic: nodes have a {
+        kind, id, ... } payload, and edges are generic labeled relations. This
+        keeps representation separate from inference, so the same graph can be
+        queried by a simple backward-chaining walker without ad hoc predicates.
+        """
+        graph = {"nodes": {}, "edges": []}
+        for node in nodes or []:
+            if not isinstance(node, dict):
+                continue
+            node_id = str(node.get("id") or node.get("node_id") or node.get("name") or "")
+            if not node_id:
+                continue
+            graph["nodes"][node_id] = dict(node)
+        for edge in edges or []:
+            if not isinstance(edge, dict):
+                continue
+            if "source" in edge and "target" in edge and "relation" in edge:
+                graph["edges"].append(dict(edge))
+        return graph
+
+    @classmethod
+    def graph_from_fact_rows(cls, rows: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
+        """Canonicalize rows like {source, target, relation, value} into the graph view."""
+        nodes: Dict[str, Dict[str, Any]] = {}
+        edges: List[Dict[str, Any]] = []
+
+        for row in rows or []:
+            if not isinstance(row, dict):
+                continue
+            payload = dict(row)
+            source = payload.get("source") or payload.get("subject") or payload.get("entity_id")
+            target = payload.get("target") or payload.get("object") or payload.get("entity")
+            relation = payload.get("relation") or payload.get("pred") or payload.get("kind") or "depends_on"
+            if source is not None and target is not None and relation is not None:
+                edges.append({"source": str(source), "target": str(target), "relation": str(relation)})
+                nodes.setdefault(str(source), {"id": str(source), "kind": "entity"})
+                nodes.setdefault(str(target), {"id": str(target), "kind": "entity"})
+                if "value" in payload:
+                    value_id = str(payload.get("value_id") or f"value:{source}:{target}:{relation}")
+                    nodes[value_id] = {
+                        "id": value_id,
+                        "kind": "quantity",
+                        "entity_id": str(source),
+                        "value": payload.get("value"),
+                        "unit": payload.get("unit", "unit"),
+                    }
+                    edges.append({"source": str(source), "target": value_id, "relation": "has_value"})
+
+            if "id" in payload and "kind" in payload:
+                nodes[str(payload["id"])] = {"id": str(payload["id"]), "kind": str(payload["kind"]), **{k: v for k, v in payload.items() if k not in {"id", "kind"}}}
+
+        return {"nodes": nodes, "edges": edges}
+
+    @classmethod
+    def _node_matches(cls, node: Dict[str, Any], constraint: Dict[str, Any] | None) -> bool:
+        if not constraint:
+            return True
+        for key, expected in constraint.items():
+            if node.get(key) != expected:
+                return False
+        return True
+
+    @classmethod
+    def backward_chain(
+        cls,
+        graph: Dict[str, Any],
+        *,
+        target: str | None = None,
+        relation: str | None = None,
+        node_constraint: Dict[str, Any] | None = None,
+        max_depth: int = 3,
+    ) -> List[Dict[str, Any]]:
+        """Retrieve supporting graph paths for a target by walking incoming/outgoing edges.
+
+        This is intentionally a simple backward-chaining interface: the graph stores
+        generic labeled relations and the query asks for all paths that explain a
+        target or relation, without requiring ad hoc domain-specific predicates.
+        """
+        if not isinstance(graph, dict):
+            return []
+        nodes = graph.get("nodes", {}) if isinstance(graph.get("nodes"), dict) else {}
+        edges = graph.get("edges", []) if isinstance(graph.get("edges"), list) else []
+        if not target and not relation and not node_constraint:
+            return []
+
+        matches: List[Dict[str, Any]] = []
+        seen: set[Tuple[str, str, str]] = set()
+
+        def walk(current: str, depth: int, via: str | None = None):
+            if depth > max_depth:
+                return
+            for edge in edges:
+                if not isinstance(edge, dict):
+                    continue
+                src = str(edge.get("source") or "")
+                dst = str(edge.get("target") or "")
+                rel = str(edge.get("relation") or "")
+                if relation and rel != relation:
+                    continue
+                if src == current:
+                    candidate = {"source": src, "target": dst, "relation": rel, **{k: v for k, v in edge.items() if k not in {"source", "target", "relation"}}}
+                    if (src, dst, rel) not in seen:
+                        seen.add((src, dst, rel))
+                        matches.append(candidate)
+                    walk(dst, depth + 1, rel)
+                elif dst == current:
+                    candidate = {"source": src, "target": dst, "relation": rel, **{k: v for k, v in edge.items() if k not in {"source", "target", "relation"}}}
+                    if (src, dst, rel) not in seen:
+                        seen.add((src, dst, rel))
+                        matches.append(candidate)
+                    walk(src, depth + 1, rel)
+
+        if target is not None:
+            target_id = str(target)
+            node = nodes.get(target_id)
+            if node and cls._node_matches(node, node_constraint):
+                walk(target_id, 0)
+            else:
+                for node_id, node_payload in nodes.items():
+                    if node_id == target_id or str(node_payload.get("name")) == target_id:
+                        walk(node_id, 0)
+        elif node_constraint:
+            for node_id, node_payload in nodes.items():
+                if cls._node_matches(node_payload, node_constraint):
+                    walk(node_id, 0)
+
+        return matches

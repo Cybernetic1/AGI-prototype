@@ -87,11 +87,45 @@ class WorkingMemory:
         self.default_ttl = default_ttl
         self.graph_nodes: Dict[str, GraphNode] = {}
         self.graph_edges: List[GraphEdge] = []
+        self.semantic_graph = {"nodes": {}, "edges": []}
         self.rule_registry = RuleRegistry.default()
         self.ltm = LongTermMemory.default()
         self.pending_recall: Dict[str, List[Dict[str, Any]]] = {}
         self._recall_counter = 0
         self._accounted_meta_keys: set[Tuple[str, frozenset]] = set()
+
+    def add_semantic_graph(self, graph: Dict[str, Any]) -> Dict[str, Any]:
+        """Persist a canonical semantic graph and make it queryable through the WM layer.
+
+        This is the representation/inference boundary: the graph stores generic node and
+        edge labels, while the query API resolves answers by graph traversal rather than
+        ad hoc raw WM predicates.
+        """
+        if not isinstance(graph, dict):
+            return {"nodes": 0, "edges": 0}
+        canonical = SemanticGraphSchema.make_semantic_graph(
+            nodes=(graph.get("nodes") or {}).values() if isinstance(graph.get("nodes"), dict) else [],
+            edges=graph.get("edges") or [],
+        )
+        self.semantic_graph = canonical
+        return {"nodes": len(canonical["nodes"]), "edges": len(canonical["edges"])}
+
+    def query_semantic_graph(
+        self,
+        *,
+        target: Optional[str] = None,
+        relation: Optional[str] = None,
+        node_constraint: Optional[Dict[str, Any]] = None,
+        max_depth: int = 3,
+    ) -> List[Dict[str, Any]]:
+        """Backward-chain over the canonical graph to recover supporting evidence."""
+        return SemanticGraphSchema.backward_chain(
+            self.semantic_graph,
+            target=target,
+            relation=relation,
+            node_constraint=node_constraint,
+            max_depth=max_depth,
+        )
 
     @staticmethod
     def _context_id_from_attrs(attrs: Dict[str, Any]) -> str:
