@@ -64,18 +64,19 @@ class LongTermMemory:
 
     def _load(self) -> Dict[str, Any]:
         if not self.path.exists():
-            return {"episodes": [], "semantic_memory": [], "rule_memory": []}
+            return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": []}
         try:
             if self.path.stat().st_size > _MAX_LTM_STORE_BYTES:
                 # Defensive fast path: avoid loading pathological oversized stores in
                 # interactive runtime loops; maintenance can compact/rotate later.
-                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "oversized_store": True}
+                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "oversized_store": True}
         except OSError:
             pass
         payload = yaml.safe_load(self.path.read_text(encoding="utf-8")) or {}
         payload.setdefault("episodes", [])
         payload.setdefault("semantic_memory", [])
         payload.setdefault("rule_memory", [])
+        payload.setdefault("noun_knowledge", [])
         return payload
 
     def _save(self, payload: Dict[str, Any]) -> None:
@@ -405,3 +406,78 @@ class LongTermMemory:
                 archived += 1
         self._save(payload)
         return {"archived": archived, "kept": len(episodes) - archived}
+
+    def upsert_noun_knowledge(
+        self,
+        *,
+        noun: str,
+        facts: List[Dict[str, Any]],
+        source: str = "manual_vetting",
+        vetted_by: str = "human",
+        overwrite: bool = False,
+    ) -> Dict[str, Any]:
+        payload = self._load()
+        noun_key = str(noun or "").strip().lower()
+        if not noun_key:
+            return {"updated": False, "reason": "empty_noun", "entry": None}
+
+        entries = payload.setdefault("noun_knowledge", [])
+        now = _utc_now()
+        cleaned_facts: List[Dict[str, Any]] = []
+        for fact in facts or []:
+            if not isinstance(fact, dict):
+                continue
+            attr = str(fact.get("attribute") or "").strip().lower()
+            value = str(fact.get("value") or "").strip()
+            if not attr or not value:
+                continue
+            cleaned_facts.append(
+                {
+                    "attribute": attr,
+                    "value": value,
+                    "confidence": float(fact.get("confidence", 0.7) or 0.7),
+                    "source": str(fact.get("source") or source),
+                }
+            )
+
+        found = None
+        for item in entries:
+            if str(item.get("noun") or "").strip().lower() == noun_key:
+                found = item
+                break
+
+        if found is None:
+            found = {
+                "noun": noun_key,
+                "facts": [],
+                "created_at": now,
+            }
+            entries.append(found)
+
+        existing = list(found.get("facts") or [])
+        if overwrite:
+            merged = cleaned_facts
+        else:
+            by_key = {(str(f.get("attribute")), str(f.get("value"))): dict(f) for f in existing}
+            for fact in cleaned_facts:
+                by_key[(str(fact["attribute"]), str(fact["value"]))] = dict(fact)
+            merged = list(by_key.values())
+
+        found["facts"] = merged
+        found["source"] = source
+        found["vetted_by"] = vetted_by
+        found["updated_at"] = now
+        self._save(payload)
+        return {"updated": True, "entry": found}
+
+    def recall_noun_facts(self, noun: str, *, max_facts: int = 5) -> List[Dict[str, Any]]:
+        payload = self._load()
+        noun_key = str(noun or "").strip().lower()
+        if not noun_key:
+            return []
+        for item in payload.get("noun_knowledge", []):
+            if str(item.get("noun") or "").strip().lower() == noun_key:
+                facts = list(item.get("facts") or [])
+                facts.sort(key=lambda f: float(f.get("confidence", 0.0)), reverse=True)
+                return facts[: max(1, int(max_facts))]
+        return []

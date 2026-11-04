@@ -118,10 +118,69 @@ def _lift_semantic_candidates(input_text):
     This is intentionally heuristic and narrow: it converts high-value parse patterns
     into canonical Quantity / Has / StateTransition facts so the symbol validator can
     consume them without needing the entire parser stack to be fully trained.
+
+    We intentionally decompose composite phrases like "20% of the remaining apples"
+    into smaller semantic primitives: the base quantity, the percentage, and the
+    resulting remainder/transition. This keeps the schema compositional and makes ILP
+    rule synthesis easier because each rule only needs a few conjuncts rather than a
+    giant ad hoc predicate for the full phrase.
     """
     facts = set()
     if not input_text:
         return facts
+
+    def _emit_percent_of_remaining(owner: str, item: str, base_qty: float, pct: float) -> None:
+        """Emit a finer-grained decomposition for phrases like '20% of the remaining apples'."""
+        base = float(base_qty)
+        pct_value = float(pct) / 100.0
+        remainder = base * (1.0 - pct_value)
+
+        # The base quantity remains explicit instead of being hidden inside a single
+        # composite predicate; ILP can then combine these smaller facts into rules.
+        facts.add(WMNode.create(
+            "Quantity",
+            activation=0.82,
+            layer="semantic",
+            source="system1-grounding",
+            provenance_id=f"sem:base-qty:{owner}:{item}",
+            owner=owner,
+            item=item,
+            qty=base,
+        ))
+        facts.add(WMNode.create(
+            "Percent",
+            activation=0.82,
+            layer="semantic",
+            source="system1-grounding",
+            provenance_id=f"sem:percent:{owner}:{item}:{pct_value}",
+            owner=owner,
+            item=item,
+            pct=pct_value,
+        ))
+        facts.add(WMNode.create(
+            "Remaining",
+            activation=0.82,
+            layer="semantic",
+            source="system1-grounding",
+            provenance_id=f"sem:remainder:{owner}:{item}:{pct_value}",
+            owner=owner,
+            item=item,
+            qty=remainder,
+        ))
+        facts.add(WMNode.create(
+            "StateTransition",
+            activation=0.82,
+            layer="semantic",
+            source="system1-grounding",
+            provenance_id=f"sem:percent-of-remaining:{owner}:{item}:{pct_value}",
+            owner=owner,
+            item=item,
+            before_qty=base,
+            delta=-base * pct_value,
+            after_qty=remainder,
+            event_kind="percent_of_remaining",
+            event_order=1,
+        ))
 
     # Match bare ownership + quantity facts.
     for owner, qty, item in re.findall(r"\b([A-Z][a-z]*)\s+had\s+(\d+(?:\.\d+)?)\s+([A-Za-z]+)\b", input_text):
@@ -146,8 +205,7 @@ def _lift_semantic_candidates(input_text):
     for owner, base_qty, item, pct, rem_item in re.findall(r"\b([A-Z][a-z]*)\s+had\s+(\d+(?:\.\d+)?)\s+([A-Za-z]+)\b.*?(\d+(?:\.\d+)?)%\s+of\s+the\s+remaining\s+([A-Za-z]+)\b", input_text):
         if item != rem_item:
             continue
-        facts.add(WMNode.create("Percent", activation=0.82, layer="semantic", source="system1-grounding", provenance_id=f"sem:pct:{owner}:{item}", owner=owner, item=item, pct=float(pct) / 100.0))
-        facts.add(WMNode.create("Remaining", activation=0.82, layer="semantic", source="system1-grounding", provenance_id=f"sem:rem:{owner}:{item}", owner=owner, item=item, qty=float(base_qty)))
+        _emit_percent_of_remaining(owner, item, float(base_qty), float(pct))
 
     return facts
 
@@ -2661,6 +2719,83 @@ def _extract_numeric_value(value):
     return float(match.group(0))
 
 
+def _wme_goal_relevance(fact, question: str | None = None) -> float:
+    """Soft relevance of an intermediate WME to the active question."""
+    if not question:
+        return 0.0
+    q = str(question).lower()
+    attrs = fact.to_dict()
+    concept = fact.concept
+    score = 0.0
+
+    if "remaining" in q and concept in {"Remaining", "FinalState", "PreferredState", "StateTransition"}:
+        score += 0.45
+    if "percent" in q and concept in {"Percent", "Remaining", "Quantity", "StateTransition"}:
+        score += 0.35
+    if "total" in q and concept in {"Total", "Quantity", "Belief"}:
+        score += 0.35
+    if "ratio" in q and concept in {"Ratio", "Quantity", "Belief"}:
+        score += 0.35
+    if ("more" in q or "less" in q) and concept in {"Quantity", "Remaining", "Total", "Belief"}:
+        score += 0.20
+    if any(token in q for token in ("left", "after", "then")) and concept in {"Remaining", "FinalState", "StateTransition"}:
+        score += 0.25
+    if any(key in attrs for key in ("qty", "value", "after_qty", "result", "total", "remaining", "pct", "factor")):
+        score += 0.10
+    return min(1.0, score)
+
+
+def score_wme_fact(fact, *, question: str | None = None) -> float:
+    """Credit an intermediate WM fact based on utility, relevance, and numeric consistency.
+
+    This is intentionally a heuristic score, not a final answer signal. It lets
+    intermediate WMEs receive partial credit even when the loop has not yet produced a
+    final numeric belief.
+    """
+    if fact is None:
+        return 0.0
+    attrs = fact.to_dict()
+    activation = float(getattr(fact, "activation", 0.0) or 0.0)
+    layer_bonus = {"semantic": 0.25, "reasoning": 0.30, "meta": 0.20, "parse": 0.05}.get(fact.layer, 0.0)
+    concept_bonus = {
+        "FinalState": 0.25,
+        "PreferredState": 0.25,
+        "StateTransition": 0.20,
+        "Quantity": 0.22,
+        "Remaining": 0.22,
+        "Total": 0.22,
+        "Percent": 0.22,
+        "Ratio": 0.22,
+        "Belief": 0.20,
+        "Has": 0.18,
+        "Query": 0.12,
+    }.get(fact.concept, 0.08)
+
+    numeric_value = _extract_numeric_value(
+        attrs.get("value")
+        or attrs.get("qty")
+        or attrs.get("after_qty")
+        or attrs.get("result")
+        or attrs.get("total")
+        or attrs.get("remaining")
+        or attrs.get("factor")
+        or attrs.get("pct")
+    )
+    numeric_plausibility = 0.25 if numeric_value is not None else 0.0
+    support_bonus = min(0.30, max(0.0, activation * 0.2))
+    relevance = _wme_goal_relevance(fact, question=question)
+
+    total = (
+        0.40 * min(1.0, activation)
+        + 0.20 * layer_bonus
+        + 0.15 * concept_bonus
+        + 0.15 * numeric_plausibility
+        + 0.10 * relevance
+        + support_bonus
+    )
+    return max(0.0, min(1.0, total))
+
+
 def benchmark_single_problem(
     question,
     expected_answer=None,
@@ -2686,23 +2821,80 @@ def benchmark_single_problem(
         sar_config=sar_config,
     )
     belief_values = []
+    numeric_fact_count = 0
+    wme_signal = 0.0
+    max_activation = 0.0
+    total_activation = 0.0
+    semantic_fact_count = 0
+    concept_counts = {}
+    numeric_fact_concepts = {
+        "Quantity",
+        "Has",
+        "Remaining",
+        "Total",
+        "Percent",
+        "Ratio",
+        "Add",
+        "Subtract",
+        "Multiply",
+        "Divide",
+        "StateTransition",
+        "FinalState",
+        "PreferredState",
+        "Belief",
+        "Query",
+    }
     for fact in wm.facts:
+        concept = fact.concept
+        concept_counts[concept] = concept_counts.get(concept, 0) + 1
+        activation = float(fact.activation if hasattr(fact, "activation") else 0.0)
+        total_activation += activation
+        max_activation = max(max_activation, activation)
+        if fact.layer in {"semantic", "reasoning", "meta"}:
+            semantic_fact_count += 1
+        if concept in numeric_fact_concepts:
+            numeric_fact_count += 1
         if fact.concept == "Belief":
             value = fact.to_dict().get("value")
             numeric = _extract_numeric_value(value)
             if numeric is not None:
                 belief_values.append(numeric)
+        wme_signal += score_wme_fact(fact, question=question)
 
     expected = _extract_numeric_value(expected_answer)
     solved = False
     if expected is not None:
         solved = any(abs(v - expected) < 1e-9 for v in belief_values)
 
+    answer_generated = bool(belief_values)
+    avg_activation = (total_activation / len(wm.facts)) if wm.facts else 0.0
+    heuristic_scores = {
+        "avg_activation": float(avg_activation),
+        "max_activation": float(max_activation),
+        "semantic_fact_count": int(semantic_fact_count),
+        "numeric_fact_count": int(numeric_fact_count),
+        "intermediate_wme_signal": float(wme_signal),
+        "activation_density": float(avg_activation * max(1, len(wm.facts))) / max(1, len(wm.facts)),
+    }
     return {
         "question": question,
         "expected": expected,
         "belief_values": belief_values,
         "solved": solved,
+        "answer_generated": answer_generated,
+        "intermediate_wme_signal": float(wme_signal),
+        "numeric_fact_count": int(numeric_fact_count),
+        "max_activation": float(max_activation),
+        "heuristic_scores": heuristic_scores,
+        "wm_summary": {
+            "total_facts": len(wm.facts),
+            "concept_counts": concept_counts,
+            "numeric_fact_count": int(numeric_fact_count),
+            "semantic_fact_count": int(semantic_fact_count),
+            "max_activation": float(max_activation),
+            "avg_activation": float(avg_activation),
+            "belief_count": len(belief_values),
+        },
     }
 
 

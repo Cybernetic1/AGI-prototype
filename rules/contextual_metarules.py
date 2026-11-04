@@ -21,6 +21,115 @@ _FAMILY_NEIGHBORS: dict[str, set[str]] = {
     "sum_total": {"sum_total", "ratio_compose", "remaining_quantity"},
 }
 
+METARULE_LIBRARY: dict[str, list[dict[str, Any]]] = {
+    "remaining_quantity": [
+        {
+            "family": "remaining_quantity",
+            "head": ("remaining_quantity", ["?owner", "?item", "?ans"]),
+            "body": [("quantity", ["?owner", "?item", "?base"]), ("state_transition", ["?owner", "?item", "?delta", "?after"])],
+            "calc": "base + delta",
+            "target": "?ans",
+            "rationale": "remaining total is current state plus the delta",
+        },
+        {
+            "family": "remaining_quantity",
+            "head": ("remaining_quantity", ["?owner", "?item", "?ans"]),
+            "body": [("quantity", ["?owner", "?item", "?base"]), ("percent", ["?owner", "?item", "?pct"])],
+            "calc": "base * (1 - pct)",
+            "target": "?ans",
+            "rationale": "percent loss from a remaining base quantity",
+        },
+    ],
+    "state_transition": [
+        {
+            "family": "state_transition",
+            "head": ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+            "body": [("quantity", ["?owner", "?item", "?before"]), ("event_delta", ["?owner", "?item", "?delta"])],
+            "calc": "before + delta",
+            "target": "?after",
+            "rationale": "same owner/item updates follow additive state transitions",
+        },
+        {
+            "family": "state_transition",
+            "head": ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+            "body": [("before_state", ["?owner", "?item", "?before"]), ("after_state", ["?owner", "?item", "?after"])],
+            "calc": "after - before",
+            "target": "?delta",
+            "rationale": "derive delta from ordered state change",
+        },
+    ],
+    "ratio_compose": [
+        {
+            "family": "ratio_compose",
+            "head": ("ratio_compose", ["?owner", "?item", "?ans"]),
+            "body": [("ratio", ["?owner", "?item", "?factor"]), ("quantity", ["?owner", "?item", "?qty"])],
+            "calc": "qty * factor",
+            "target": "?ans",
+            "rationale": "multiply a ratio by a current quantity",
+        },
+    ],
+    "sum_total": [
+        {
+            "family": "sum_total",
+            "head": ("sum_total", ["?owner", "?item", "?ans"]),
+            "body": [("quantity", ["?owner", "?item", "?lhs"]), ("quantity", ["?owner", "?other", "?rhs"])],
+            "calc": "lhs + rhs",
+            "target": "?ans",
+            "rationale": "sum across related quantity slots",
+        },
+    ],
+    "percent_of_total": [
+        {
+            "family": "percent_of_total",
+            "head": ("percent_of_total", ["?owner", "?item", "?ans"]),
+            "body": [("percent", ["?owner", "?item", "?pct"]), ("total", ["?owner", "?item", "?whole"])],
+            "calc": "whole * pct",
+            "target": "?ans",
+            "rationale": "take a percent of a known total",
+        },
+    ],
+    "part_whole_balance": [
+        {
+            "family": "part_whole_balance",
+            "head": ("part_whole_balance", ["?part", "?whole", "?ans"]),
+            "body": [("part_quantity", ["?part", "?whole", "?part_qty"]), ("combined_total", ["?part", "?whole", "?whole_qty"])],
+            "calc": "whole_qty - part_qty",
+            "target": "?ans",
+            "rationale": "balance the missing remainder of a whole",
+        },
+    ],
+    "temporal_causal_chain": [
+        {
+            "family": "temporal_causal_chain",
+            "head": ("temporal_causal_chain", ["?owner", "?item", "?ans"]),
+            "body": [("before_state", ["?owner", "?item", "?before"]), ("state_transition", ["?owner", "?item", "?delta", "?after"])],
+            "calc": "after - before",
+            "target": "?ans",
+            "rationale": "reason over ordered events and their net causal delta",
+        },
+    ],
+    "profit_cost": [
+        {
+            "family": "profit_cost",
+            "head": ("profit_cost", ["?seller", "?product", "?ans"]),
+            "body": [("cost", ["?seller", "?product", "?cost"]), ("percent", ["?seller", "?product", "?pct"])],
+            "calc": "cost * (1 + pct)",
+            "target": "?ans",
+            "rationale": "sell price includes percent profit over base cost",
+        },
+    ],
+    "average_speed": [
+        {
+            "family": "average_speed",
+            "head": ("average_speed", ["?trip", "?ans"]),
+            "body": [("distance", ["?trip", "?dist"]), ("duration", ["?trip", "?time"])],
+            "calc": "dist / time",
+            "target": "?ans",
+            "rationale": "compute average speed from total distance and total time",
+        },
+    ],
+}
+
 
 def _family_predicates() -> dict[str, set[str]]:
     return {
@@ -100,6 +209,36 @@ def build_context_policy(*, question: str, family: str) -> ContextCuePolicy:
         max_body_len=max_body_len,
         rationale=rationale,
     )
+
+
+def broaden_metarule_candidates(*, question: str, family: str) -> list[dict[str, Any]]:
+    """Return a broader, contextually relevant family library for rule generation.
+
+    This widens the search beyond a single immediate family to include adjacent story
+    semantics such as temporal causality, part-whole balancing, and rate-based totals.
+    """
+    cues = extract_context_cues(question=question, family=family)
+    selected: list[dict[str, Any]] = []
+    for fam in sorted(METARULE_LIBRARY):
+        is_relevant = False
+        fam_key = fam.lower()
+        if fam_key == str(family or "").strip().lower():
+            is_relevant = True
+        elif "percent" in cues and fam_key.startswith("percent"):
+            is_relevant = True
+        elif "ratio" in cues and fam_key.startswith("ratio"):
+            is_relevant = True
+        elif "remaining" in cues and fam_key in {"remaining_quantity", "state_transition", "part_whole_balance"}:
+            is_relevant = True
+        elif "transition" in cues and fam_key in {"state_transition", "temporal_causal_chain"}:
+            is_relevant = True
+        elif "total" in cues and fam_key in {"sum_total", "part_whole_balance", "percent_of_total", "profit_cost"}:
+            is_relevant = True
+        elif any(token in cues for token in {"rate", "time", "speed"}) and fam_key in {"average_speed", "profit_cost"}:
+            is_relevant = True
+        if is_relevant:
+            selected.extend(METARULE_LIBRARY.get(fam, []))
+    return selected
 
 
 def candidate_matches_policy(candidate: dict[str, Any], policy: ContextCuePolicy) -> tuple[bool, list[str]]:

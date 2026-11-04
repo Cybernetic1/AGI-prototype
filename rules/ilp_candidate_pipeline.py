@@ -8,7 +8,7 @@ from typing import Any, Callable
 
 from ilp_learner.metagol_nds import MetaRuleLearner
 from ilp_learner.metarule_loop import propose_ranked_for_examples
-from rules.contextual_metarules import build_context_policy, candidate_matches_policy
+from rules.contextual_metarules import broaden_metarule_candidates, build_context_policy, candidate_matches_policy
 from rules.ilp_rule_utility import utility_components
 from rules.teacher_ollama import request_ollama_chat_json
 
@@ -179,6 +179,19 @@ def generate_ranked_candidates(*, question: str, family: str, cfg: ILPPipelineCo
             "allowed_families": sorted(policy.allowed_families),
             "max_body_len": policy.max_body_len,
         }
+        candidates.append(cand)
+
+    for broadened in broaden_metarule_candidates(question=question, family=family):
+        cand = dict(broadened)
+        ok, _ = candidate_matches_policy(cand, policy)
+        if not ok:
+            continue
+        cand.setdefault("ranking", {})
+        cand["ranking"].setdefault("score", 0.56)
+        cand["ranking"].setdefault("coverage", 0.75 if cand.get("family") == family else 0.55)
+        cand["ranking"].setdefault("simplicity", 1.0 / max(1, len(cand.get("body") or [])))
+        cand["ranking"].setdefault("symbolic_validity", 1.0)
+        cand["ranking"].setdefault("constraint_validity", 0.9)
         candidates.append(cand)
 
     dedup: dict[str, dict[str, Any]] = {}
