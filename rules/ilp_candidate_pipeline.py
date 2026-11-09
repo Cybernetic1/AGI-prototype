@@ -15,9 +15,11 @@ from rules.teacher_ollama import request_ollama_chat_json
 
 @dataclass
 class ILPPipelineConfig:
+    # candidate_top_n <= 0 means keep full generated pool (no top-N truncation).
     candidate_top_n: int = 6
     prescore_min: float = 0.45
     max_candidates_per_family: int = 3
+    large_pool_mode: bool = False
     include_agi_transfer_families: bool = True
     llm_validate_max: int = 2
     llm_latency_budget_sec: float = 12.0
@@ -39,6 +41,29 @@ class CandidateRecord:
     llm_score: float = 0.0
     llm_reason: str = ""
     llm_latency_sec: float = 0.0
+
+
+def _is_structurally_valid_candidate(candidate: dict[str, Any]) -> tuple[bool, str]:
+    head = candidate.get("head")
+    body = candidate.get("body")
+    if not isinstance(head, (list, tuple)) or len(head) != 2:
+        return False, "malformed_head"
+    head_pred, head_args = head[0], head[1]
+    if not str(head_pred or "").strip():
+        return False, "empty_head_predicate"
+    if not isinstance(head_args, (list, tuple)) or not head_args:
+        return False, "malformed_head_args"
+    if not isinstance(body, (list, tuple)) or not body:
+        return False, "empty_body"
+    for item in body:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            return False, "malformed_body_clause"
+        pred, args = item[0], item[1]
+        if not str(pred or "").strip():
+            return False, "empty_body_predicate"
+        if not isinstance(args, (list, tuple)) or not args:
+            return False, "malformed_body_args"
+    return True, ""
 
 
 def _normalized_json(value: Any) -> str:
@@ -149,9 +174,10 @@ def generate_ranked_candidates(*, question: str, family: str, cfg: ILPPipelineCo
     policy = build_context_policy(question=question, family=family)
     candidates: list[dict[str, Any]] = []
 
+    ranked_top_n = int(cfg.candidate_top_n) if int(cfg.candidate_top_n) > 0 else 64
     ranked = propose_ranked_for_examples(
         examples,
-        top_n=max(2, int(cfg.candidate_top_n)),
+        top_n=max(2, ranked_top_n),
         include_agi_transfer_families=bool(cfg.include_agi_transfer_families),
     )
     for item in ranked:
@@ -202,6 +228,8 @@ def generate_ranked_candidates(*, question: str, family: str, cfg: ILPPipelineCo
         key=lambda c: float((c.get("ranking") or {}).get("score", 0.0) or 0.0),
         reverse=True,
     )
+    if int(cfg.candidate_top_n) <= 0:
+        return scored
     return scored[: max(1, int(cfg.candidate_top_n))]
 
 
@@ -220,6 +248,19 @@ def prescore_and_filter(
         index += 1
         family = str(candidate.get("family") or "unknown").strip().lower()
         signature = candidate_signature(candidate)
+        valid_structure, structure_reason = _is_structurally_valid_candidate(candidate)
+        if not valid_structure:
+            dropped.append(
+                CandidateRecord(
+                    candidate_id=f"ilp-candidate-{index:03d}",
+                    family=family,
+                    signature=signature,
+                    candidate=candidate,
+                    prescore=0.0,
+                    dropped_reason=structure_reason,
+                )
+            )
+            continue
         utility = utility_components(utility_state or {"meta": {}, "rules": {}}, signature)
         candidate["rl_utility"] = utility
         prescore, budget_reason = _prescore_candidate(
@@ -238,12 +279,8 @@ def prescore_and_filter(
         )
         if budget_reason:
             rec.dropped_reason = budget_reason
-            dropped.append(rec)
-            continue
         if prescore < float(cfg.prescore_min):
-            rec.dropped_reason = f"prescore<{float(cfg.prescore_min):.3f}"
-            dropped.append(rec)
-            continue
+            rec.dropped_reason = f"below_prescore_soft:{float(cfg.prescore_min):.3f}"
         seen_signatures.add(signature)
         family_counts[family] = family_counts.get(family, 0) + 1
         accepted.append(rec)
@@ -317,7 +354,7 @@ def selective_llm_validate(
 ) -> tuple[list[CandidateRecord], list[CandidateRecord], dict[str, Any]]:
     cache_store = cache if cache is not None else {}
     accepted: list[CandidateRecord] = []
-    rejected: list[CandidateRecord] = []
+    flagged: list[CandidateRecord] = []
     metrics = {
         "validated": 0,
         "cache_hits": 0,
@@ -325,7 +362,7 @@ def selective_llm_validate(
         "latency_budget_exhausted": False,
     }
     if not records:
-        return accepted, rejected, metrics
+        return accepted, flagged, metrics
 
     if not cfg.llm_enabled:
         for rec in records:
@@ -333,7 +370,7 @@ def selective_llm_validate(
             rec.llm_score = 0.0
             rec.llm_reason = "llm_disabled_bypass"
             accepted.append(rec)
-        return accepted, rejected, metrics
+        return accepted, flagged, metrics
 
     call_fn = validator_call or _default_validator_call
     max_validate = max(0, int(cfg.llm_validate_max))
@@ -343,13 +380,15 @@ def selective_llm_validate(
         if index >= max_validate:
             rec.llm_valid = False
             rec.llm_reason = "llm_topk_limit"
-            rejected.append(rec)
+            flagged.append(rec)
+            accepted.append(rec)
             continue
         if metrics["latency_total_sec"] >= latency_budget:
             metrics["latency_budget_exhausted"] = True
             rec.llm_valid = False
             rec.llm_reason = "llm_latency_budget_exhausted"
-            rejected.append(rec)
+            flagged.append(rec)
+            accepted.append(rec)
             continue
 
         if rec.signature in cache_store:
@@ -359,10 +398,9 @@ def selective_llm_validate(
             rec.llm_reason = str(cached.get("reason") or "cache_hit")
             metrics["cache_hits"] += 1
             metrics["validated"] += 1
-            if rec.llm_valid:
-                accepted.append(rec)
-            else:
-                rejected.append(rec)
+            if not rec.llm_valid:
+                flagged.append(rec)
+            accepted.append(rec)
             continue
 
         raw_rule = candidate_to_raw_rule(rec.candidate)
@@ -382,7 +420,8 @@ def selective_llm_validate(
             rec.llm_valid = False
             rec.llm_score = 0.0
             rec.llm_reason = err
-            rejected.append(rec)
+            flagged.append(rec)
+            accepted.append(rec)
             continue
 
         valid, score, reason = _parse_validation_result(payload)
@@ -394,11 +433,10 @@ def selective_llm_validate(
             "score": rec.llm_score,
             "reason": rec.llm_reason,
         }
-        if rec.llm_valid:
-            accepted.append(rec)
-        else:
-            rejected.append(rec)
-    return accepted, rejected, metrics
+        if not rec.llm_valid:
+            flagged.append(rec)
+        accepted.append(rec)
+    return accepted, flagged, metrics
 
 
 def run_ilp_learning_stage(
@@ -406,13 +444,39 @@ def run_ilp_learning_stage(
     question: str,
     family: str,
     cfg: ILPPipelineConfig,
+    external_candidates: list[dict[str, Any]] | None = None,
     validation_cache: dict[str, dict[str, Any]] | None = None,
     utility_state: dict[str, Any] | None = None,
     validator_call: Callable[..., tuple[dict[str, Any], str]] | None = None,
 ) -> dict[str, Any]:
     generated = generate_ranked_candidates(question=question, family=family, cfg=cfg)
+    ext_count = 0
+    for ext in external_candidates or []:
+        if not isinstance(ext, dict):
+            continue
+        cand = dict(ext)
+        cand.setdefault("source", "lt_synergy")
+        cand.setdefault("family", family)
+        cand.setdefault("ranking", {})
+        cand["ranking"].setdefault("score", 0.62)
+        cand["ranking"].setdefault("coverage", 0.65 if str(cand.get("family") or "") == str(family or "") else 0.5)
+        cand["ranking"].setdefault("simplicity", 1.0 / max(1, len(cand.get("body") or [])))
+        cand["ranking"].setdefault("symbolic_validity", 1.0)
+        cand["ranking"].setdefault("constraint_validity", 0.85)
+        generated.append(cand)
+        ext_count += 1
+    dedup: dict[str, dict[str, Any]] = {}
+    for cand in generated:
+        dedup.setdefault(candidate_signature(cand), cand)
+    generated = list(dedup.values())
+    generated.sort(
+        key=lambda c: float((c.get("ranking") or {}).get("score", 0.0) or 0.0),
+        reverse=True,
+    )
+    if int(cfg.candidate_top_n) > 0:
+        generated = generated[: max(1, int(cfg.candidate_top_n))]
     prescored, dropped = prescore_and_filter(generated, cfg=cfg, utility_state=utility_state)
-    llm_ok, llm_reject, llm_metrics = selective_llm_validate(
+    llm_ok, llm_flagged, llm_metrics = selective_llm_validate(
         prescored,
         question=question,
         cfg=cfg,
@@ -424,6 +488,7 @@ def run_ilp_learning_stage(
             "candidate_top_n": cfg.candidate_top_n,
             "prescore_min": cfg.prescore_min,
             "max_candidates_per_family": cfg.max_candidates_per_family,
+            "large_pool_mode": cfg.large_pool_mode,
             "include_agi_transfer_families": cfg.include_agi_transfer_families,
             "llm_validate_max": cfg.llm_validate_max,
             "llm_latency_budget_sec": cfg.llm_latency_budget_sec,
@@ -431,16 +496,19 @@ def run_ilp_learning_stage(
         },
         "counts": {
             "generated": len(generated),
+            "external_injected": ext_count,
             "passed_prescore": len(prescored),
             "dropped_prescore": len(dropped),
             "llm_accepted": len(llm_ok),
-            "llm_rejected": len(llm_reject),
+            "llm_rejected": len(llm_flagged),
         },
         "llm_metrics": llm_metrics,
         "generated_candidates": [
             {
                 "family": str(c.get("family") or ""),
                 "name": str(c.get("name") or ""),
+                "source": str(c.get("source") or ""),
+                "signature": candidate_signature(c),
                 "head": c.get("head"),
                 "body": c.get("body"),
                 "calc": c.get("calc"),
@@ -479,6 +547,17 @@ def run_ilp_learning_stage(
                 "dropped_reason": rec.dropped_reason or rec.llm_reason,
                 "candidate": rec.candidate,
             }
-            for rec in (dropped + llm_reject)
+            for rec in dropped
+        ],
+        "llm_flagged_candidates": [
+            {
+                "candidate_id": rec.candidate_id,
+                "family": rec.family,
+                "prescore": rec.prescore,
+                "llm_reason": rec.llm_reason,
+                "llm_score": rec.llm_score,
+                "candidate": rec.candidate,
+            }
+            for rec in llm_flagged
         ],
     }
