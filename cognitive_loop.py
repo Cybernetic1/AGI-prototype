@@ -29,7 +29,6 @@ from spacy_logical_form import SpacyLogicalFormParser
 from train_pot_dln_pointer import DLNPointerDecoder
 import train_pot_clause as tpc
 from abductive_ilp import KnowledgeBase, OntologicalReasoner, OntologicalILPLearner, DuckEgg
-from local_proposal_ranker import ProposalRanker
 from semantic_ar import SemanticARConfig, score_semantic_ar, load_semantic_ar_config
 from forward_engine.phase3_synthetic_test import ontology_classify_details
 
@@ -70,6 +69,17 @@ _dln_model = None
 _dln_vocab = None
 _rev_vocab = None
 _local_proposal_ranker = None
+
+
+def _sys1_lt_parsing_enabled() -> bool:
+    """Feature flag for legacy LT parsing/proposal-scoring path.
+
+    Default is disabled so Sys1 parsing stays delegated to spaCy-based logical
+    form extraction. Set AGI_SYS1_ENABLE_LT_PARSING=1 to re-enable the legacy
+    LT proposal-ranker scoring path for experiments.
+    """
+    raw = str(os.getenv("AGI_SYS1_ENABLE_LT_PARSING", "0")).strip().lower()
+    return raw in {"1", "true", "yes", "on"}
 
 
 def load_local_proposal_ranker():
@@ -237,7 +247,9 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False, sar_config=Non
         if not quiet:
             print(f"[System 1] Semantic Grounding Complete. Extracted {len(core_clauses)} semantic logic predicates.")
 
-        proposal_ranker = load_local_proposal_ranker()
+        # Legacy LT parsing/proposal scoring is intentionally stashed by default.
+        # Sys1 parsing remains spaCy-driven unless explicitly re-enabled.
+        proposal_ranker = load_local_proposal_ranker() if _sys1_lt_parsing_enabled() else None
         
         # Map the output strings back to WMNodes with soft activation (0.85) representing System 1's neural confidence.
         # The layer is explicitly tagged as parse/semantic so it can be consumed by later grounding rules.

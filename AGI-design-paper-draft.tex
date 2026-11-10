@@ -51,8 +51,8 @@ The architecture (Figure \ref{fig:architecture}) has three interacting systems s
 
 \subsection{System 1: Logic Transformer (LT)}
 \begin{itemize}[leftmargin=1.5em]
-  \item Neural proposal and pattern-learning subsystem.
-  \item Produces soft hypotheses and candidate WMEs/rules with confidence/activation.
+  \item Neural-symbolic rule engine and learner on equal footing with System 2.
+  \item Produces and applies soft/hard hypotheses over WMEs and rule trajectories with confidence/activation.
   \item Supports autoregressive (AR) objectives and RL-driven policy/credit updates.
 \end{itemize}
 
@@ -103,7 +103,7 @@ with
 \end{itemize}
 
 \subsection{Practical shape library for AGI training}
-To balance expressivity and batching efficiency, use a small template library:
+To balance expressivity and batching efficiency, use a compact but category-complete template library:
 \begin{enumerate}[leftmargin=1.5em]
   \item Unary type/state: \texttt{type(X,T)}, \texttt{flag(X,S)}
   \item Binary relations: \texttt{isa(X,Y)}, \texttt{part\_of(X,Y)}, \texttt{causes(X,Y)}
@@ -120,11 +120,57 @@ To balance expressivity and batching efficiency, use a small template library:
     \item \texttt{delta(Event,Owner,Item,DV)}
     \item \texttt{state(Owner,Item,Value,Time)}
   \end{itemize}
+  \item Temporal/scheduling forms:
+  \begin{itemize}
+    \item \texttt{before(E1,E2)}, \texttt{after(E1,E2)}
+    \item \texttt{during(E,T)}, \texttt{duration(E,D)}
+    \item \texttt{deadline(Task,T)}
+  \end{itemize}
+  \item Causal/conditional forms:
+  \begin{itemize}
+    \item \texttt{causes(Cause,Effect)}
+    \item \texttt{enables(Cond,Outcome)}
+    \item \texttt{counterfactual(C,NotC,Delta)}
+  \end{itemize}
+  \item Belief/intention and epistemic forms:
+  \begin{itemize}
+    \item \texttt{believes(Agent,Prop,Conf)}
+    \item \texttt{goal(Agent,G)}
+    \item \texttt{knows(Agent,Fact)}
+  \end{itemize}
+  \item Social/normative forms:
+  \begin{itemize}
+    \item \texttt{role(Agent,Role,Context)}
+    \item \texttt{obligation(Agent,Act,Context)}
+    \item \texttt{permitted(Agent,Act,Context)}
+  \end{itemize}
 \end{enumerate}
 
 \subsection{Design note}
 Mixed-size rule sets are acceptable and often desirable.
 For GPU throughput, prefer a \emph{small number of recurrent shapes} rather than unconstrained free-form arity explosion.
+
+\section{AGI Category Coverage Matrix}
+We maintain a category-indexed ontology of rule families (inspired by both the Qwen and Copilot category proposals) to track learning coverage and gaps.
+This matrix acts as a white-box progress meter and curriculum controller.
+
+\subsection{Primary AGI categories}
+\begin{enumerate}[leftmargin=1.5em]
+  \item Physical, quantitative, and spatiotemporal reasoning.
+  \item Commercial/transactional and social interaction reasoning.
+  \item Taxonomy, properties, comparison, and inheritance reasoning.
+  \item Logic, causality, belief/intention, and meta-reasoning.
+\end{enumerate}
+
+\subsection{Coverage tracking}
+For each category/subcategory, define:
+\begin{itemize}[leftmargin=1.5em]
+  \item required predicate families,
+  \item representative benchmark slices,
+  \item current mastery score and uncertainty,
+  \item targeted data/rule augmentation actions.
+\end{itemize}
+This avoids overfocusing on a single narrow benchmark family and supports AGI-oriented curriculum planning.
 
 \section{Learning Objectives}
 
