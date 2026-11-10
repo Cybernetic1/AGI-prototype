@@ -1,0 +1,204 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\title{A Tri-System Neurosymbolic AGI Prototype:\\Design Draft and Experimental Program}
+\author{Project Draft (Living Document)}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document is a living design draft for a tri-system neurosymbolic AGI prototype.
+It summarizes architecture, working-memory semantics, rule forms, learning objectives,
+and an experimental plan focused on compute-efficient common-sense training.
+The draft is intended for both communication and internal memory, and should be updated
+as algorithms and results evolve.
+\end{abstract}
+
+\section{Motivation and Scope}
+The project goal is not narrow benchmark hacking, but a scalable and interpretable learning architecture
+for AGI-like reasoning under practical compute constraints.
+Arithmetic benchmarks (e.g., GSM-style tasks) are treated as diagnostic slices, not the sole objective.
+
+\subsection{Current strategy}
+\begin{itemize}[leftmargin=1.5em]
+  \item Keep the symbolic substrate explicit and inspectable.
+  \item Allow broad rule exploration with soft, relative scoring.
+  \item Use common-sense and semantic grounding as primary capability drivers.
+  \item Evaluate by capability \emph{and} cost efficiency (performance per compute dollar).
+\end{itemize}
+
+\section{System Overview}
+The architecture has three interacting systems sharing a common working memory (WM) and long-term memory (LTM).
+
+\subsection{System 1: Logic Transformer (LT)}
+\begin{itemize}[leftmargin=1.5em]
+  \item Neural proposal and pattern-learning subsystem.
+  \item Produces soft hypotheses and candidate WMEs/rules with confidence/activation.
+  \item Supports autoregressive (AR) objectives and RL-driven policy/credit updates.
+\end{itemize}
+
+\subsection{System 2: Forward-Chaining Rule Engine}
+\begin{itemize}[leftmargin=1.5em]
+  \item Deterministic matching and rule firing over WMEs (Rete-style agenda semantics).
+  \item Performs consistency-oriented symbolic propagation and truth-maintenance routines.
+  \item Works naturally with heterogeneous predicate arity.
+\end{itemize}
+
+\subsection{System 3: Backward-Chaining / Abductive Layer}
+\begin{itemize}[leftmargin=1.5em]
+  \item Goal-directed reasoning and hypothesis testing.
+  \item Supports belief revision logic and abductive completion.
+  \item Feeds revised beliefs/rules back to WM and System 2.
+\end{itemize}
+
+\section{Working Memory and Knowledge Representation}
+
+\subsection{WME form}
+A Working Memory Element (WME) is represented as:
+\[
+\texttt{WME} = (\texttt{concept}, \texttt{args/fields}, \texttt{activation}, \texttt{source}, \texttt{layer}, \texttt{ttl}, \texttt{provenance})
+\]
+Predicate arity is \textbf{not globally uniform}: different predicates may have different numbers of arguments.
+The only arity constraint is per-predicate consistency (e.g., \texttt{has/3} remains arity-3 across uses).
+
+\subsection{Heterogeneous rule/fact shapes}
+From symbolic logic and engine semantics, heterogeneous arity is acceptable.
+For tensor training efficiency in LT, shape management can be done by:
+\begin{enumerate}[leftmargin=1.5em]
+  \item shape bucketing (group by template shape), or
+  \item padding/masking within a bucket.
+\end{enumerate}
+
+\section{Rule Language and Recommended Shapes}
+
+\subsection{Canonical rule schema}
+\[
+\texttt{rule} := (\texttt{head}, \texttt{body}, \texttt{calc}, \texttt{target}, \texttt{metadata})
+\]
+with
+\begin{itemize}[leftmargin=1.5em]
+  \item \texttt{head}: predicate and argument list,
+  \item \texttt{body}: conjunction of predicates and argument lists,
+  \item \texttt{calc}: optional arithmetic/functional expression,
+  \item \texttt{target}: bound output variable.
+\end{itemize}
+
+\subsection{Practical shape library for AGI training}
+To balance expressivity and batching efficiency, use a small template library:
+\begin{enumerate}[leftmargin=1.5em]
+  \item Unary type/state: \texttt{type(X,T)}, \texttt{flag(X,S)}
+  \item Binary relations: \texttt{isa(X,Y)}, \texttt{part\_of(X,Y)}, \texttt{causes(X,Y)}
+  \item Ternary relations: \texttt{rel(S,R,O)}, \texttt{attr(X,A,V)}
+  \item Event-role reification:
+  \begin{itemize}
+    \item \texttt{event(E,Kind)}
+    \item \texttt{role(E,Role,Arg)}
+    \item \texttt{time(E,T)}, \texttt{loc(E,L)}
+  \end{itemize}
+  \item Quantity/change forms:
+  \begin{itemize}
+    \item \texttt{qty(Owner,Item,Value,Unit)}
+    \item \texttt{delta(Event,Owner,Item,DV)}
+    \item \texttt{state(Owner,Item,Value,Time)}
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Design note}
+Mixed-size rule sets are acceptable and often desirable.
+For GPU throughput, prefer a \emph{small number of recurrent shapes} rather than unconstrained free-form arity explosion.
+
+\section{Learning Objectives}
+
+\subsection{Autoregressive objective}
+System 1 learns to predict structured next-step representations:
+\[
+\mathcal{L}_{AR} = -\sum_t \log p(y_t \mid y_{<t}, x)
+\]
+
+\subsection{RL objective}
+RL updates policy/selection over candidate rules and inference actions:
+\[
+\nabla_\theta J(\theta) = \mathbb{E}\left[\sum_t \nabla_\theta \log \pi_\theta(a_t|s_t)\hat{A}_t\right]
+\]
+where rewards include delayed task outcomes and intermediate reasoning utility.
+
+\subsection{Semantic-AR objective}
+Semantic-AR adds reward shaping from semantic consistency:
+\[
+R_t = \alpha R^{task}_t + \beta R^{semantic}_t + \gamma R^{symbolic}_t
+\]
+with tunable weights for capability-vs-stability tradeoffs.
+
+\section{Scoring and Rule Utility Philosophy}
+Rule quality is treated as \textbf{soft and relative}, not binary.
+Candidate rules remain in a large pool and accrue utility over trajectories.
+Utility is updated from delayed outcomes and intermediate contributions.
+
+\subsection{Candidate score decomposition (example)}
+\[
+\texttt{score}(r)=
+w_c C(r)+w_s S(r)+w_u U(r)+w_t T(r)-w_d D(r)
+\]
+where $C$ is compressivity/complexity signal, $S$ symbolic consistency, $U$ learned utility, $T$ teacher/heuristic priors, and $D$ duplication/instability penalty.
+
+\section{Experimental Program}
+
+\subsection{Primary research question}
+Can LT+RL(+semantic-AR), with symbolic scaffolding, achieve better reasoning-per-dollar than small dense LLM baselines?
+
+\subsection{Benchmark layers}
+\begin{itemize}[leftmargin=1.5em]
+  \item Common-sense/general reasoning layer (primary).
+  \item Arithmetic transfer layer (secondary diagnostic).
+\end{itemize}
+
+\subsection{Efficiency-first metrics}
+\begin{itemize}[leftmargin=1.5em]
+  \item task score per GPU dollar,
+  \item score per training hour,
+  \item score per parameter,
+  \item improvement slope per added compute.
+\end{itemize}
+
+\section{Human-in-the-Loop Trial Governance}
+Paid GPU trials should use explicit checkpoints:
+\begin{enumerate}[leftmargin=1.5em]
+  \item Pre-run budget cap confirmation.
+  \item Post-first-run quality/cost review.
+  \item Post-pilot go/no-go decision.
+  \item Mid-batch stop/continue/scale decision.
+  \item Post-batch budget forecast and next-phase decision.
+\end{enumerate}
+
+\section{Open Technical Questions}
+\begin{itemize}[leftmargin=1.5em]
+  \item What semantic-AR shaping terms provide stable gains without reward hacking?
+  \item What rule-shape library gives best tradeoff between expressivity and GPU efficiency?
+  \item How should delayed credit be distributed across chained WMEs and mixed-source rules?
+  \item Which benchmark mix best reflects AGI-relevant progress under tight budgets?
+\end{itemize}
+
+\section{Planned Figure/Table Placeholders}
+\begin{itemize}[leftmargin=1.5em]
+  \item Figure: Tri-system architecture and WM/LTM data flow.
+  \item Table: Rule-shape template library and intended semantic role.
+  \item Table: Trial matrix (arms, seeds, cost caps, checkpoint policy).
+  \item Figure: Capability-vs-cost frontier across runs.
+\end{itemize}
+
+\section{Conclusion}
+This draft frames the project around an interpretable tri-system architecture with soft utility-driven rule learning,
+semantic grounding, and cost-aware experimentation.
+It is intended to be incrementally revised as evidence accumulates.
+
+\end{document}
+
