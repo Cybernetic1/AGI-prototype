@@ -1,27 +1,53 @@
 \begin{tikzpicture}
-\node[draw, rounded corners, node font=\sffamily] (node1) at (2.1,2) {Working Memory};
-\node[draw, rounded corners, node font=\sffamily] (node2) at (2.09,0.5) {Long-Term Memory};
+  \node[draw, rounded corners, node font=\sffamily] (node1) at (2.1,2) {Working Memory};
+  \node[draw, rounded corners, node font=\sffamily] (node2) at (2.09,0.5) {Long-Term Memory};
 
-\node[draw, align=center, node font=\sffamily, rounded corners, label={above:{System 1}}, minimum height=1pt] at (-1.2,4.14) {
-\footnotesize Logic Transformer\\
-(neural network)};
+  \node[
+    draw,
+    align=center,
+    node font=\sffamily,
+    rounded corners,
+    label={above:{System 1}},
+    minimum height=1pt
+  ] at (-1.2,4.14) {
+    \footnotesize Logic Transformer\\
+    (neural network)};
 
-\node[draw, align=center, rounded corners, label={above:{System 2}}, node font=\sffamily] at (2.08,4.14) {
-\footnotesize Rete Engine\\
-(forward-chaining)
-};
+    \node[
+      draw,
+      align=center,
+      rounded corners,
+      label={above:{System 2}},
+      node font=\sffamily
+    ] at (2.08,4.14) {
+      \footnotesize Rete Engine\\
+      (forward-chaining)
+    };
 
-\node[draw, rounded corners, label={above:{System 3}}, align=center, node font=\sffamily] at (5.49,4.14) {
-\footnotesize
-ProbLog Engine\\
-(backward-chaining)
-};
-  \draw[arrows=Latex-Latex] (node1.south) -- (node2.north);
-  \draw[arrows=Latex-Latex] (adornment_main_path_2_2.south) -- (node1.north west);
-  \draw[arrows=Latex-Latex] (adornment_main_path_3_2.south) -- (node1.north);
-  \draw[arrows=Latex-Latex] (adornment_main_path_4_2.south) -- (node1.north east);
-  \node[draw, node font=\sffamily, rounded corners] (node3) at (3.68,6) {ILP learner};
-  \draw[arrows=Latex-Latex] (node3.south) -- (adornment_main_path_4_2.north west);
-  \node[draw=red, rectangle, rounded corners=10pt, minimum width=294pt, minimum height=190pt, dashed] at (2.17,3.34) {};
-  \node[align=center, text=red] at (-0.8,6.1) {Reinforcement Learning \\framework};
-\end{tikzpicture}
+    \node[
+      draw,
+      rounded corners,
+      label={above:{System 3}},
+      align=center,
+      node font=\sffamily
+    ] at (5.49,4.14) {
+      \footnotesize
+      ProbLog Engine\\
+      (backward-chaining)
+    };
+    \draw[arrows=Triangle-Triangle] (node1.south) -- (node2.north);
+    \draw[arrows=Triangle-Triangle] (-1.2,3.71) -- (0.71,2.27);
+    \draw[arrows=Triangle-Triangle] (2.17,3.71) -- (node1.north);
+    \draw[arrows=Triangle-Triangle] (5.49,3.71) -- (node1.north east);
+    \node[draw, node font=\sffamily, rounded corners] (node3) at (3.68,6) {ILP learner};
+    \draw[arrows=Triangle-Triangle] (3.68,5.71) -- (4.18,4.57);
+    \node[
+      draw=red,
+      rectangle,
+      rounded corners=10pt,
+      minimum width=294pt,
+      minimum height=190pt,
+      dashed
+    ] at (2.17,3.34) {};
+    \node[align=center, text=red] at (-0.8,6.1) {Reinforcement Learning \\framework};
+  \end{tikzpicture}

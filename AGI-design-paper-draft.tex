@@ -7,6 +7,8 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, decorations, decorations.markings}
 
 \title{A Tri-System Neurosymbolic AGI Prototype:\\Design Draft and Experimental Program}
 \author{Project Draft (Living Document)}
@@ -37,7 +39,15 @@ Arithmetic benchmarks (e.g., GSM-style tasks) are treated as diagnostic slices, 
 \end{itemize}
 
 \section{System Overview}
-The architecture has three interacting systems sharing a common working memory (WM) and long-term memory (LTM).
+
+\subsection{Architecture}
+The architecture (Figure \ref{fig:architecture}) has three interacting systems sharing a common working memory (WM) and long-term memory (LTM).
+\begin{figure}[h]
+	\centering
+	\include{AGI-architecture.tex}
+	\caption{AGI architecture}
+	\label{fig:architecture}
+\end{figure}
 
 \subsection{System 1: Logic Transformer (LT)}
 \begin{itemize}[leftmargin=1.5em]
