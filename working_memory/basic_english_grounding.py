@@ -64,6 +64,17 @@ POS_KIND_DEFAULTS: Dict[str, str] = {
     "number": "quantity",
 }
 
+# Frame-style paradigms for systematic verb grounding.
+# This extends GSM-focused event labels into a broader story-understanding taxonomy.
+VERB_PARADIGMS: Dict[str, Dict[str, Any]] = {
+    "existence_state": {"frames": {"be", "have", "remain", "exist"}, "default_roles": ["entity", "state"]},
+    "causation_creation": {"frames": {"cause_change", "create", "build", "produce"}, "default_roles": ["agent", "patient"]},
+    "transfer_possession_change": {"frames": {"transfer", "give", "receive", "sell", "buy"}, "default_roles": ["source", "recipient", "item"]},
+    "space_motion": {"frames": {"move", "travel", "carry", "transport"}, "default_roles": ["agent", "theme", "path"]},
+    "perception_information": {"frames": {"perceive", "know", "tell", "inform"}, "default_roles": ["experiencer", "content"]},
+    "quantitative_change": {"frames": {"increase", "decrease", "consume", "gain", "loss"}, "default_roles": ["owner", "item", "delta"]},
+}
+
 
 def _tokenize(text: str) -> List[str]:
     return [tok.lower() for tok in re.findall(r"[A-Za-z%]+", str(text or ""))]
@@ -199,6 +210,137 @@ def ingest_pos_lexicon(entries: Iterable[Dict[str, Any]], *, register: bool = Fa
         "registered": registered,
         "skipped": skipped,
         "candidates": candidates,
+    }
+
+
+def _event_label_to_frame(event_label: str) -> tuple[str, str]:
+    label = str(event_label or "").strip().lower()
+    if label == "transfer":
+        return "transfer_possession_change", "transfer"
+    if label == "creation":
+        return "causation_creation", "create"
+    if label == "loss":
+        return "quantitative_change", "loss"
+    if label == "comparison":
+        return "existence_state", "state_compare"
+    return "existence_state", "be"
+
+
+def _guess_paradigm_from_gloss(*, verb: str, gloss: str) -> tuple[str, str, List[str], float]:
+    token = _normalize_term(verb)
+    text = f"{token} {str(gloss or '').strip().lower()}"
+    if any(k in text for k in {"give", "send", "donate", "receive", "lend", "borrow", "sell", "buy"}):
+        return "transfer_possession_change", "transfer", ["source", "recipient", "item"], 0.88
+    if any(k in text for k in {"create", "make", "build", "cause", "produce"}):
+        return "causation_creation", "create", ["agent", "patient"], 0.86
+    if any(k in text for k in {"move", "travel", "walk", "drive", "carry", "transport"}):
+        return "space_motion", "move", ["agent", "theme", "path"], 0.84
+    if any(k in text for k in {"see", "hear", "tell", "know", "learn", "inform", "read", "say"}):
+        return "perception_information", "inform", ["experiencer", "content"], 0.83
+    if any(k in text for k in {"spend", "lose", "consume", "eat", "gain", "increase", "decrease"}):
+        return "quantitative_change", "consume", ["owner", "item", "delta"], 0.82
+    if any(k in text for k in {"be", "have", "remain", "exist", "stay"}):
+        return "existence_state", "be", ["entity", "state"], 0.8
+    return "existence_state", "be", ["entity", "state"], 0.55
+
+
+def propose_verb_frames(
+    *,
+    verb: str,
+    gloss: str = "",
+    max_frames: int = 5,
+) -> List[Dict[str, Any]]:
+    """Generate frame-style candidates for a verb using heuristics + event classifier."""
+    token = _normalize_term(verb)
+    candidates: List[Dict[str, Any]] = []
+
+    def add(paradigm: str, frame: str, roles: List[str], confidence: float, source: str) -> None:
+        if not paradigm or not frame:
+            return
+        key = (paradigm, frame)
+        if any((c.get("paradigm"), c.get("frame")) == key for c in candidates):
+            return
+        candidates.append(
+            {
+                "paradigm": paradigm,
+                "frame": frame,
+                "roles": list(roles),
+                "confidence": float(confidence),
+                "source": source,
+            }
+        )
+
+    paradigm, frame, roles, conf = _guess_paradigm_from_gloss(verb=token, gloss=gloss)
+    add(paradigm, frame, roles, conf, "gloss_heuristic")
+
+    try:
+        from forward_engine.ontology import classify_event_details
+
+        details = classify_event_details(token)
+        evt_label = str(details.get("label", "neutral"))
+        evt_conf = float(details.get("confidence", 0.0) or 0.0)
+        evt_reason = str(details.get("reason", "event_classifier"))
+        par2, frame2 = _event_label_to_frame(evt_label)
+        roles2 = list((VERB_PARADIGMS.get(par2) or {}).get("default_roles") or ["agent", "patient"])
+        add(par2, frame2, roles2, max(0.5, evt_conf), f"event_classifier:{evt_reason}")
+    except Exception:
+        pass
+
+    if len(candidates) < max(2, int(max_frames)):
+        # Add one conservative fallback frame from the same paradigm so later
+        # human vetting has at least a small alternative to choose from.
+        defaults = VERB_PARADIGMS.get(paradigm, {}).get("frames", set())
+        for fallback_frame in sorted(defaults):
+            add(paradigm, str(fallback_frame), roles, max(0.45, conf - 0.15), "paradigm_fallback")
+            if len(candidates) >= max(2, int(max_frames)):
+                break
+    return candidates[: max(1, int(max_frames))]
+
+
+def vet_verb_frames(
+    *,
+    verb: str,
+    candidates: List[Dict[str, Any]],
+    decision_callback: Optional[Any] = None,
+) -> Dict[str, Any]:
+    accepted: List[Dict[str, Any]] = []
+    rejected: List[Dict[str, Any]] = []
+    for cand in candidates:
+        keep = bool(float(cand.get("confidence", 0.0)) >= 0.7)
+        if decision_callback is not None:
+            keep = bool(decision_callback(verb, cand))
+        if keep:
+            accepted.append(cand)
+        else:
+            rejected.append(cand)
+    return {"verb": _normalize_term(verb), "accepted": accepted, "rejected": rejected}
+
+
+def curate_verb_knowledge(
+    *,
+    verb: str,
+    gloss: str = "",
+    decision_callback: Optional[Any] = None,
+    ltm: Optional[LongTermMemory] = None,
+    max_frames: int = 5,
+    overwrite: bool = False,
+) -> Dict[str, Any]:
+    candidates = propose_verb_frames(verb=verb, gloss=gloss, max_frames=max_frames)
+    vet = vet_verb_frames(verb=verb, candidates=candidates, decision_callback=decision_callback)
+    memory = ltm or LongTermMemory.default()
+    store = memory.upsert_verb_knowledge(
+        verb=verb,
+        frames=vet["accepted"],
+        source="basic_english_verb_curation",
+        vetted_by="human" if decision_callback is not None else "auto_threshold",
+        overwrite=overwrite,
+    )
+    return {
+        "verb": _normalize_term(verb),
+        "candidates": candidates,
+        "accepted": vet["accepted"],
+        "rejected": vet["rejected"],
+        "store": store,
     }
 
 

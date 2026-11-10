@@ -1,0 +1,196 @@
+{
+  "trial_id": "gpu-trial-v1",
+  "description": "Cost-aware first GPU trial matrix for LT+RL and hybrid symbolic systems.",
+  "output_dir": "rules/reports/trials/gpu_trial_v1",
+  "gpu_hourly_usd": 1.5,
+  "max_cycles": 2,
+  "baseline_suite": "combined",
+  "baseline_limit": 0,
+  "real_gsm8k_sample_size": 20,
+  "real_gsm8k_cycles": 4,
+  "default_flags": [
+    "--ilp-enable-learning-stage",
+    "--ilp-large-pool-mode",
+    "--ilp-candidate-top-n",
+    "0",
+    "--ilp-enable-lt-synergy",
+    "--ilp-lt-synergy-max-candidates",
+    "4",
+    "--ilp-activate-generated-pool-rules",
+    "--ilp-include-agi-transfer-families"
+  ],
+  "pilot_runs": [
+    {
+      "run_id": "arm_a_lt_only_seed11",
+      "seed": 11,
+      "arm": "lt_rl_ar_only",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_b_hybrid_light_seed11",
+      "seed": 11,
+      "arm": "hybrid_light",
+      "enabled": true,
+      "profiles": [
+        "hybrid"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_c_tri_system_seed11",
+      "seed": 11,
+      "arm": "tri_system_full",
+      "enabled": true,
+      "profiles": [
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "extra_flags": [
+        "--max-cycles",
+        "3"
+      ]
+    }
+  ],
+  "batch_runs": [
+    {
+      "run_id": "arm_a_lt_only_seed11",
+      "seed": 11,
+      "arm": "lt_rl_ar_only",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_a_lt_only_seed23",
+      "seed": 23,
+      "arm": "lt_rl_ar_only",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_a_lt_only_seed37",
+      "seed": 37,
+      "arm": "lt_rl_ar_only",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_a_lt_only_seed53",
+      "seed": 53,
+      "arm": "lt_rl_ar_only",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_b_hybrid_light_seed11",
+      "seed": 11,
+      "arm": "hybrid_light",
+      "enabled": true,
+      "profiles": [
+        "hybrid"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_b_hybrid_light_seed23",
+      "seed": 23,
+      "arm": "hybrid_light",
+      "enabled": true,
+      "profiles": [
+        "hybrid"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_b_hybrid_light_seed37",
+      "seed": 37,
+      "arm": "hybrid_light",
+      "enabled": true,
+      "profiles": [
+        "hybrid"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_b_hybrid_light_seed53",
+      "seed": 53,
+      "arm": "hybrid_light",
+      "enabled": true,
+      "profiles": [
+        "hybrid"
+      ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_c_tri_system_seed11",
+      "seed": 11,
+      "arm": "tri_system_full",
+      "enabled": true,
+      "profiles": [
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "extra_flags": [
+        "--max-cycles",
+        "3"
+      ]
+    },
+    {
+      "run_id": "arm_c_tri_system_seed23",
+      "seed": 23,
+      "arm": "tri_system_full",
+      "enabled": true,
+      "profiles": [
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "extra_flags": [
+        "--max-cycles",
+        "3"
+      ]
+    },
+    {
+      "run_id": "arm_c_tri_system_seed37",
+      "seed": 37,
+      "arm": "tri_system_full",
+      "enabled": false,
+      "profiles": [
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "extra_flags": [
+        "--max-cycles",
+        "3"
+      ]
+    },
+    {
+      "run_id": "arm_c_tri_system_seed53",
+      "seed": 53,
+      "arm": "tri_system_full",
+      "enabled": false,
+      "profiles": [
+        "hybrid",
+        "ilp-heavy"
+      ],
+      "extra_flags": [
+        "--max-cycles",
+        "3"
+      ]
+    }
+  ]
+}

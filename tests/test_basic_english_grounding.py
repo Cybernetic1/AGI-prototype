@@ -5,10 +5,12 @@ from pathlib import Path
 from working_memory.basic_english_grounding import (
     bootstrap_grounding,
     curate_noun_knowledge,
+    curate_verb_knowledge,
     extract_unknown_terms,
     generate_pos_grounding_candidate,
     ground_term,
     ingest_pos_lexicon,
+    propose_verb_frames,
     propose_noun_facts,
 )
 from working_memory.ltm import LongTermMemory
@@ -92,6 +94,37 @@ class BasicEnglishGroundingTest(unittest.TestCase):
             self.assertTrue(recalled)
             self.assertFalse(any(f["attribute"] == "color" for f in recalled))
             self.assertTrue(any(f["attribute"] == "isa" and f["value"] == "fruit" for f in recalled))
+
+    def test_propose_verb_frames_maps_transfer_paradigm(self):
+        frames = propose_verb_frames(verb="give", gloss="to transfer something to another person", max_frames=4)
+        self.assertTrue(frames)
+        self.assertTrue(
+            any(
+                f.get("paradigm") == "transfer_possession_change" and f.get("frame") == "transfer"
+                for f in frames
+            )
+        )
+
+    def test_curate_verb_knowledge_persists_vetted_frames_in_ltm(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ltm = LongTermMemory(Path(tmpdir) / "ltm.yaml")
+
+            def reviewer(verb, candidate):
+                return candidate["paradigm"] != "existence_state"
+
+            report = curate_verb_knowledge(
+                verb="give",
+                gloss="to transfer possession to someone",
+                decision_callback=reviewer,
+                ltm=ltm,
+                max_frames=5,
+                overwrite=True,
+            )
+            self.assertTrue(report["store"]["updated"])
+            recalled = ltm.recall_verb_frames("give", max_frames=5)
+            self.assertTrue(recalled)
+            self.assertFalse(any(f["paradigm"] == "existence_state" for f in recalled))
+            self.assertTrue(any(f["paradigm"] == "transfer_possession_change" for f in recalled))
 
 
 if __name__ == "__main__":

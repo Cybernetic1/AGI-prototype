@@ -1,0 +1,48 @@
+{
+  "seed_pack_id": "metarule-seed-pack-v1",
+  "description": "Minimal non-interactive starter seeds for GPU trial runs.",
+  "notes": [
+    "These are proposal-level seeds meant to warm-start candidate search.",
+    "Keep this pack intentionally small to avoid manual-vetting bottlenecks."
+  ],
+  "rules": [
+    {
+      "family": "state_transition",
+      "name": "seed_state_transition_add",
+      "head": ["state_transition", ["?owner", "?item", "?delta", "?after"]],
+      "body": [
+        ["before_state", ["?owner", "?item", "?before"]],
+        ["event_delta", ["?owner", "?item", "?delta"]]
+      ],
+      "calc": "before + delta",
+      "target": "?after",
+      "source": "seed_pack_v1",
+      "ranking": {
+        "score": 0.62,
+        "coverage": 0.65,
+        "simplicity": 0.5,
+        "symbolic_validity": 1.0,
+        "constraint_validity": 0.9
+      }
+    },
+    {
+      "family": "remaining_quantity",
+      "name": "seed_remaining_from_percent",
+      "head": ["remaining_quantity", ["?owner", "?item", "?ans"]],
+      "body": [
+        ["quantity", ["?owner", "?item", "?base"]],
+        ["percent", ["?owner", "?item", "?pct"]]
+      ],
+      "calc": "base * (1 - pct)",
+      "target": "?ans",
+      "source": "seed_pack_v1",
+      "ranking": {
+        "score": 0.64,
+        "coverage": 0.66,
+        "simplicity": 0.5,
+        "symbolic_validity": 1.0,
+        "constraint_validity": 0.9
+      }
+    }
+  ]
+}

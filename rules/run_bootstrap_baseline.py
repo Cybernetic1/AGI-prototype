@@ -36,6 +36,8 @@ from rules.ilp_candidate_pipeline import (
 from rules.ilp_rule_utility import apply_reward_updates, load_utility_state, save_utility_state
 from semantic_ar import SemanticARConfig, load_semantic_ar_config
 from rules.teacher_ollama import request_ollama_teacher_proposals
+from spacy_logical_form import SpacyLogicalFormParser, canonicalize_form, parse_clause_line
+from working_memory.basic_english_grounding import propose_verb_frames
 from working_memory.pot_dsl import execute_program, propose_program_for_question, wm_nodes_from_trace
 from working_memory.working_memory import WMNode, WorkingMemory
 
@@ -76,6 +78,10 @@ class ILPAssistConfig:
     validation_cache: dict[str, dict[str, Any]]
     utility_state: dict[str, Any]
     utility_path: str
+    lt_synergy_enable: bool
+    lt_synergy_max_candidates: int
+    large_pool_mode: bool
+    activate_generated_pool_rules: bool
     register_proposals: bool
     max_registered_per_case: int
 
@@ -224,6 +230,125 @@ def _apply_reasoner_budget_env(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
+def _lt_synergy_candidates(question: str, family: str, max_candidates: int) -> list[dict[str, Any]]:
+    """Generate LT-informed symbolic candidates to mix with ILP candidates."""
+    limit = max(0, int(max_candidates))
+    if limit <= 0:
+        return []
+    try:
+        parser = SpacyLogicalFormParser()
+        lf = parser.parse(question)
+    except Exception:
+        return []
+
+    lemmas: list[str] = []
+    for line in canonicalize_form(lf.render()).splitlines():
+        parsed = parse_clause_line(line)
+        if parsed is None:
+            continue
+        pred, args = parsed
+        if pred != "predicate" or len(args) < 2:
+            continue
+        lemma = str(args[1]).strip().lower()
+        if lemma and lemma not in lemmas:
+            lemmas.append(lemma)
+
+    candidates: list[dict[str, Any]] = []
+
+    def add(cand: dict[str, Any]) -> None:
+        if len(candidates) >= limit:
+            return
+        candidates.append(cand)
+
+    for lemma in lemmas:
+        for frame in propose_verb_frames(verb=lemma, gloss="", max_frames=2):
+            paradigm = str(frame.get("paradigm") or "")
+            if paradigm == "transfer_possession_change":
+                add(
+                    {
+                        "family": "state_transition",
+                        "head": ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+                        "body": [
+                            ("before_state", ["?owner", "?item", "?before"]),
+                            ("event_delta", ["?owner", "?item", "?delta"]),
+                        ],
+                        "calc": "before + delta",
+                        "target": "?after",
+                        "source": "lt_synergy",
+                        "name": f"lt_transfer_{lemma}",
+                        "ranking": {"score": 0.66, "coverage": 0.68, "constraint_validity": 0.9},
+                    }
+                )
+            elif paradigm == "causation_creation":
+                add(
+                    {
+                        "family": "state_transition",
+                        "head": ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+                        "body": [
+                            ("quantity", ["?owner", "?item", "?before"]),
+                            ("event_delta", ["?owner", "?item", "?delta"]),
+                        ],
+                        "calc": "before + delta",
+                        "target": "?after",
+                        "source": "lt_synergy",
+                        "name": f"lt_create_{lemma}",
+                        "ranking": {"score": 0.63, "coverage": 0.64, "constraint_validity": 0.88},
+                    }
+                )
+            elif paradigm == "quantitative_change":
+                add(
+                    {
+                        "family": "remaining_quantity",
+                        "head": ("remaining_quantity", ["?owner", "?item", "?ans"]),
+                        "body": [
+                            ("quantity", ["?owner", "?item", "?base"]),
+                            ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+                        ],
+                        "calc": "base + delta",
+                        "target": "?ans",
+                        "source": "lt_synergy",
+                        "name": f"lt_quant_{lemma}",
+                        "ranking": {"score": 0.64, "coverage": 0.66, "constraint_validity": 0.9},
+                    }
+                )
+            elif paradigm == "existence_state":
+                add(
+                    {
+                        "family": "latest_valid_state",
+                        "head": ("latest_valid_state", ["?owner", "?item", "?ans"]),
+                        "body": [
+                            ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+                            ("quantity", ["?owner", "?item", "?before"]),
+                        ],
+                        "calc": "after",
+                        "target": "?ans",
+                        "source": "lt_synergy",
+                        "name": f"lt_state_{lemma}",
+                        "ranking": {"score": 0.61, "coverage": 0.6, "constraint_validity": 0.86},
+                    }
+                )
+            if len(candidates) >= limit:
+                break
+        if len(candidates) >= limit:
+            break
+
+    # Ensure at least one fallback candidate when parser yields weak verb signal.
+    if not candidates and limit > 0:
+        candidates.append(
+            {
+                "family": family,
+                "head": ("state_transition", ["?owner", "?item", "?delta", "?after"]),
+                "body": [("before_state", ["?owner", "?item", "?before"]), ("event_delta", ["?owner", "?item", "?delta"])],
+                "calc": "before + delta",
+                "target": "?after",
+                "source": "lt_synergy",
+                "name": "lt_fallback_state_transition",
+                "ranking": {"score": 0.58, "coverage": 0.55, "constraint_validity": 0.82},
+            }
+        )
+    return candidates[:limit]
+
+
 def _run_case(
     *,
     question: str,
@@ -239,14 +364,72 @@ def _run_case(
     wm = _compile_gsm8k_problem_to_wm(question, expected_answer=expected_answer)
     ilp_stage_report: dict[str, Any] = {"enabled": False, "reason": "not requested"}
     ilp_registered_rule_ids: list[str] = []
+    ilp_activated_rule_ids: list[str] = []
     if ilp_assist_config is not None and ilp_assist_config.enabled:
+        lt_synergy = []
+        if ilp_assist_config.lt_synergy_enable:
+            lt_synergy = _lt_synergy_candidates(
+                question=question,
+                family=family,
+                max_candidates=ilp_assist_config.lt_synergy_max_candidates,
+            )
         ilp_stage_report = run_ilp_learning_stage(
             question=question,
             family=family,
             cfg=ilp_assist_config.pipeline,
+            external_candidates=lt_synergy,
             validation_cache=ilp_assist_config.validation_cache,
             utility_state=ilp_assist_config.utility_state,
         )
+        if ilp_assist_config.activate_generated_pool_rules:
+            generated_rows = list(ilp_stage_report.get("generated_candidates") or [])
+            activated = 0
+            seen_sig: set[str] = set()
+            for row in generated_rows:
+                if not isinstance(row, dict):
+                    continue
+                signature = str(row.get("signature") or "").strip()
+                if signature and signature in seen_sig:
+                    continue
+                head = row.get("head")
+                body = row.get("body") or []
+                calc = row.get("calc")
+                target = row.get("target")
+                if not isinstance(head, (list, tuple)) or len(head) != 2:
+                    continue
+                head_pred, head_args = head[0], head[1]
+                if not head_pred or not isinstance(head_args, (list, tuple)):
+                    continue
+                normalized_body = []
+                for item in body:
+                    if not isinstance(item, (list, tuple)) or len(item) != 2:
+                        continue
+                    b_pred, b_args = item[0], item[1]
+                    if not b_pred:
+                        continue
+                    if not isinstance(b_args, (list, tuple)):
+                        b_args = [b_args]
+                    normalized_body.append((b_pred, tuple(b_args)))
+                if not normalized_body:
+                    continue
+                rule_id = f"ilp_pool_{family}_{signature or activated}".replace("-", "_")
+                wm.facts[WMNode.create(
+                    "Inducedrule",
+                    activation=0.85,
+                    layer="meta",
+                    source="ilp_pool_generated",
+                    provenance_id=rule_id,
+                    head_pred=str(head_pred),
+                    head_args=tuple(head_args),
+                    body=tuple(normalized_body),
+                    calc=str(calc or ""),
+                    target=str(target or ""),
+                )] = wm.default_ttl
+                ilp_activated_rule_ids.append(rule_id)
+                if signature:
+                    seen_sig.add(signature)
+                activated += 1
+            ilp_stage_report["activated_generated_pool_rules"] = activated
         if ilp_assist_config.register_proposals:
             accepted = list(ilp_stage_report.get("accepted_candidates") or [])
             kept = accepted[: max(0, int(ilp_assist_config.max_registered_per_case))]
@@ -399,17 +582,29 @@ def _run_case(
             for item in (ilp_stage_report.get("accepted_candidates") or [])
             if isinstance(item, dict)
         }
+        generated_signatures = {
+            str(item.get("signature") or "")
+            for item in (ilp_stage_report.get("generated_candidates") or [])
+            if isinstance(item, dict)
+        }
         prescored_signatures = {
             str(item.get("signature") or "")
             for item in (ilp_stage_report.get("prescored_candidates") or [])
             if isinstance(item, dict)
         }
-        for signature in sorted(s for s in prescored_signatures if s):
-            reward = base_reward if signature in accepted_signatures else (0.05 if has_numeric_reasoning_belief else -0.1)
+        pool_signatures = generated_signatures if ilp_assist_config.large_pool_mode else prescored_signatures
+        for signature in sorted(s for s in pool_signatures if s):
+            if signature in accepted_signatures:
+                reward = base_reward
+            elif signature in prescored_signatures:
+                reward = 0.05 if has_numeric_reasoning_belief else -0.1
+            else:
+                reward = 0.02 if has_numeric_reasoning_belief else -0.03
             reward_updates.append({"signature": signature, "reward": reward})
         update_report = apply_reward_updates(ilp_assist_config.utility_state, reward_updates)
         ilp_stage_report["rl_reward"] = {
             "base_reward": base_reward,
+            "pool_size": len([s for s in pool_signatures if s]),
             "updates": update_report.get("applied", 0),
         }
     if ilp_registered_rule_ids:
@@ -433,6 +628,8 @@ def _run_case(
             "solved_and_symbolic_valid": solved_and_valid,
             "applied_updates": len(ilp_registered_rule_ids),
         }
+    if ilp_activated_rule_ids:
+        ilp_stage_report["activated_rule_ids"] = ilp_activated_rule_ids
 
     return {
         "expected": expected,
@@ -547,9 +744,13 @@ def main() -> int:
     parser.add_argument("--teacher-ollama-timeout-sec", type=int, default=180, help="HTTP timeout in seconds for Ollama teacher calls.")
     parser.add_argument("--ilp-enable-learning-stage", action="store_true", help="Enable ILP-first candidate generation and selective LLM validation stage per case.")
     parser.add_argument("--ilp-prescore-min", type=float, default=0.45, help="Minimum pre-score for ILP candidates before LLM validation.")
-    parser.add_argument("--ilp-candidate-top-n", type=int, default=6, help="Top-N ILP candidates to generate per case before filtering.")
+    parser.add_argument("--ilp-candidate-top-n", type=int, default=6, help="Top-N ILP candidates to generate per case before filtering; use <=0 to keep full generated pool.")
     parser.add_argument("--ilp-max-candidates-per-family", type=int, default=3, help="Per-family cap after pre-scoring.")
+    parser.add_argument("--ilp-large-pool-mode", action="store_true", help="Keep a broad candidate pool for Q-value accrual instead of hard prescore pruning.")
+    parser.add_argument("--ilp-activate-generated-pool-rules", action="store_true", help="Activate the full generated candidate pool as Inducedrule WM facts for the reasoner.")
     parser.add_argument("--ilp-include-agi-transfer-families", action="store_true", help="Include transfer-oriented metarule families in ILP candidate generation.")
+    parser.add_argument("--ilp-enable-lt-synergy", action="store_true", help="Inject LT-derived symbolic candidates into the ILP learning stage.")
+    parser.add_argument("--ilp-lt-synergy-max-candidates", type=int, default=3, help="Max LT-derived candidates to inject per case when LT synergy is enabled.")
     parser.add_argument("--ilp-llm-validate-max", type=int, default=2, help="Maximum ILP candidates to LLM-validate per case.")
     parser.add_argument("--ilp-llm-latency-budget-sec", type=float, default=12.0, help="Per-case latency budget for ILP LLM validation.")
     parser.add_argument("--ilp-llm-timeout-sec", type=int, default=20, help="Timeout for each ILP LLM validation request.")
@@ -612,9 +813,10 @@ def main() -> int:
     ilp_cfg = ILPAssistConfig(
         enabled=bool(args.ilp_enable_learning_stage),
         pipeline=ILPPipelineConfig(
-            candidate_top_n=max(1, int(args.ilp_candidate_top_n)),
+            candidate_top_n=int(args.ilp_candidate_top_n),
             prescore_min=float(args.ilp_prescore_min),
             max_candidates_per_family=max(1, int(args.ilp_max_candidates_per_family)),
+            large_pool_mode=bool(args.ilp_large_pool_mode),
             include_agi_transfer_families=bool(args.ilp_include_agi_transfer_families),
             llm_validate_max=max(0, int(args.ilp_llm_validate_max)),
             llm_latency_budget_sec=max(0.0, float(args.ilp_llm_latency_budget_sec)),
@@ -626,6 +828,10 @@ def main() -> int:
         validation_cache={},
         utility_state=utility_state,
         utility_path=str(utility_path_obj),
+        lt_synergy_enable=bool(args.ilp_enable_lt_synergy),
+        lt_synergy_max_candidates=max(0, int(args.ilp_lt_synergy_max_candidates)),
+        large_pool_mode=bool(args.ilp_large_pool_mode),
+        activate_generated_pool_rules=bool(args.ilp_activate_generated_pool_rules),
         register_proposals=bool(args.ilp_register_proposals),
         max_registered_per_case=max(0, int(args.ilp_max_registered_per_case)),
     )
@@ -692,6 +898,7 @@ def main() -> int:
         if ilp_events:
             ilp_counts = {
                 "generated": 0,
+                "external_injected": 0,
                 "passed_prescore": 0,
                 "dropped_prescore": 0,
                 "llm_accepted": 0,
@@ -704,7 +911,7 @@ def main() -> int:
             for ev in ilp_events:
                 counts = ev.get("counts", {}) if isinstance(ev.get("counts"), dict) else {}
                 metrics = ev.get("llm_metrics", {}) if isinstance(ev.get("llm_metrics"), dict) else {}
-                for key in ("generated", "passed_prescore", "dropped_prescore", "llm_accepted", "llm_rejected"):
+                for key in ("generated", "external_injected", "passed_prescore", "dropped_prescore", "llm_accepted", "llm_rejected"):
                     ilp_counts[key] += int(counts.get(key, 0) or 0)
                 ilp_counts["validated"] += int(metrics.get("validated", 0) or 0)
                 ilp_counts["cache_hits"] += int(metrics.get("cache_hits", 0) or 0)

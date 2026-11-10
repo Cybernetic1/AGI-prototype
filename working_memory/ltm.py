@@ -64,12 +64,12 @@ class LongTermMemory:
 
     def _load(self) -> Dict[str, Any]:
         if not self.path.exists():
-            return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": []}
+            return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "verb_knowledge": []}
         try:
             if self.path.stat().st_size > _MAX_LTM_STORE_BYTES:
                 # Defensive fast path: avoid loading pathological oversized stores in
                 # interactive runtime loops; maintenance can compact/rotate later.
-                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "oversized_store": True}
+                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "verb_knowledge": [], "oversized_store": True}
         except OSError:
             pass
         payload = yaml.safe_load(self.path.read_text(encoding="utf-8")) or {}
@@ -77,6 +77,7 @@ class LongTermMemory:
         payload.setdefault("semantic_memory", [])
         payload.setdefault("rule_memory", [])
         payload.setdefault("noun_knowledge", [])
+        payload.setdefault("verb_knowledge", [])
         return payload
 
     def _save(self, payload: Dict[str, Any]) -> None:
@@ -480,4 +481,81 @@ class LongTermMemory:
                 facts = list(item.get("facts") or [])
                 facts.sort(key=lambda f: float(f.get("confidence", 0.0)), reverse=True)
                 return facts[: max(1, int(max_facts))]
+        return []
+
+    def upsert_verb_knowledge(
+        self,
+        *,
+        verb: str,
+        frames: List[Dict[str, Any]],
+        source: str = "manual_vetting",
+        vetted_by: str = "human",
+        overwrite: bool = False,
+    ) -> Dict[str, Any]:
+        payload = self._load()
+        verb_key = str(verb or "").strip().lower()
+        if not verb_key:
+            return {"updated": False, "reason": "empty_verb", "entry": None}
+
+        entries = payload.setdefault("verb_knowledge", [])
+        now = _utc_now()
+        cleaned_frames: List[Dict[str, Any]] = []
+        for frame in frames or []:
+            if not isinstance(frame, dict):
+                continue
+            paradigm = str(frame.get("paradigm") or "").strip().lower()
+            frame_name = str(frame.get("frame") or "").strip().lower()
+            if not paradigm or not frame_name:
+                continue
+            roles = [str(r).strip().lower() for r in (frame.get("roles") or []) if str(r).strip()]
+            cleaned_frames.append(
+                {
+                    "paradigm": paradigm,
+                    "frame": frame_name,
+                    "roles": roles,
+                    "confidence": float(frame.get("confidence", 0.7) or 0.7),
+                    "source": str(frame.get("source") or source),
+                }
+            )
+
+        found = None
+        for item in entries:
+            if str(item.get("verb") or "").strip().lower() == verb_key:
+                found = item
+                break
+
+        if found is None:
+            found = {
+                "verb": verb_key,
+                "frames": [],
+                "created_at": now,
+            }
+            entries.append(found)
+
+        existing = list(found.get("frames") or [])
+        if overwrite:
+            merged = cleaned_frames
+        else:
+            by_key = {(str(f.get("paradigm")), str(f.get("frame"))): dict(f) for f in existing}
+            for frame in cleaned_frames:
+                by_key[(str(frame["paradigm"]), str(frame["frame"]))] = dict(frame)
+            merged = list(by_key.values())
+
+        found["frames"] = merged
+        found["source"] = source
+        found["vetted_by"] = vetted_by
+        found["updated_at"] = now
+        self._save(payload)
+        return {"updated": True, "entry": found}
+
+    def recall_verb_frames(self, verb: str, *, max_frames: int = 5) -> List[Dict[str, Any]]:
+        payload = self._load()
+        verb_key = str(verb or "").strip().lower()
+        if not verb_key:
+            return []
+        for item in payload.get("verb_knowledge", []):
+            if str(item.get("verb") or "").strip().lower() == verb_key:
+                frames = list(item.get("frames") or [])
+                frames.sort(key=lambda f: float(f.get("confidence", 0.0)), reverse=True)
+                return frames[: max(1, int(max_frames))]
         return []
