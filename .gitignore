@@ -19,6 +19,12 @@ results/
 .venv/
 venv/
 
+# Latex generated files
+*.aux
+*.out
+*.pdf
+*.synctex.gz
+
 # Data directory (large datasets - can be re-downloaded)
 data/
 
