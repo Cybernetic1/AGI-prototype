@@ -54,6 +54,19 @@ def _tokenize_fact(concept: str, attrs: Dict[str, Any]) -> List[str]:
     return tokens
 
 
+def _tokenize_semantic_signature(signature: str) -> List[str]:
+    parts = [str(p).strip().lower() for p in str(signature or "").split("|")]
+    labels = ["concept", "owner", "item", "goal", "label"]
+    tokens: List[str] = []
+    for i, value in enumerate(parts):
+        if not value or value == "none":
+            continue
+        tokens.append(value)
+        if i < len(labels):
+            tokens.append(f"{labels[i]}:{value}")
+    return tokens
+
+
 @dataclass
 class LongTermMemory:
     path: Path
@@ -64,12 +77,12 @@ class LongTermMemory:
 
     def _load(self) -> Dict[str, Any]:
         if not self.path.exists():
-            return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "verb_knowledge": []}
+            return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "verb_knowledge": [], "ontology_triples": []}
         try:
             if self.path.stat().st_size > _MAX_LTM_STORE_BYTES:
                 # Defensive fast path: avoid loading pathological oversized stores in
                 # interactive runtime loops; maintenance can compact/rotate later.
-                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "verb_knowledge": [], "oversized_store": True}
+                return {"episodes": [], "semantic_memory": [], "rule_memory": [], "noun_knowledge": [], "verb_knowledge": [], "ontology_triples": [], "oversized_store": True}
         except OSError:
             pass
         payload = yaml.safe_load(self.path.read_text(encoding="utf-8")) or {}
@@ -78,6 +91,7 @@ class LongTermMemory:
         payload.setdefault("rule_memory", [])
         payload.setdefault("noun_knowledge", [])
         payload.setdefault("verb_knowledge", [])
+        payload.setdefault("ontology_triples", [])
         return payload
 
     def _save(self, payload: Dict[str, Any]) -> None:
@@ -206,6 +220,8 @@ class LongTermMemory:
         min_score: float = 0.1,
         max_total_propositions: int = 300,
         max_episode_propositions: int = 2000,
+        include_semantic_memory: bool = True,
+        semantic_top_k: int = 50,
     ) -> Dict[str, Any]:
         payload = self._load()
         episodes = payload.get("episodes", [])
@@ -237,6 +253,45 @@ class LongTermMemory:
             ep["updated_at"] = _utc_now()
             if len(propositions) >= int(max_total_propositions):
                 break
+
+        semantic_hits = 0
+        if include_semantic_memory and len(propositions) < int(max_total_propositions):
+            semantic_rows = list(payload.get("semantic_memory", []) or [])
+            scored_semantic: List[Tuple[float, Dict[str, Any]]] = []
+            for row in semantic_rows:
+                if not isinstance(row, dict):
+                    continue
+                signature_tokens = _tokenize_semantic_signature(str(row.get("signature", "")))
+                sim = self._cue_similarity(cues, signature_tokens)
+                support = float(row.get("support", 0) or 0.0)
+                reward = float(row.get("avg_reward", 0.0) or 0.0)
+                score = sim + min(0.25, support / 20.0) + max(0.0, min(0.15, reward * 0.05))
+                if score >= min_score:
+                    scored_semantic.append((score, row))
+            scored_semantic.sort(key=lambda x: x[0], reverse=True)
+            for _, row in scored_semantic[: max(1, int(semantic_top_k))]:
+                prop = row.get("proposition") or {}
+                if not isinstance(prop, dict):
+                    continue
+                attrs = prop.get("attrs") or {}
+                if not isinstance(attrs, dict):
+                    continue
+                key = (prop.get("concept"), tuple(sorted(attrs.items())))
+                if key in seen:
+                    continue
+                seen.add(key)
+                propositions.append(
+                    {
+                        "concept": prop.get("concept"),
+                        "attrs": dict(attrs),
+                        "layer": prop.get("layer", "semantic"),
+                        "source": "ltm-semantic-memory",
+                        "activation": max(0.7, float(prop.get("activation", 0.7) or 0.7)),
+                    }
+                )
+                semantic_hits += 1
+                if len(propositions) >= int(max_total_propositions):
+                    break
         self._save(payload)
 
         return {
@@ -247,6 +302,7 @@ class LongTermMemory:
             ],
             "propositions": propositions,
             "rules": payload.get("rule_memory", []),
+            "semantic_hits": semantic_hits,
         }
 
     def consolidate(self, *, min_support: int = 2) -> Dict[str, Any]:
@@ -559,3 +615,69 @@ class LongTermMemory:
                 frames.sort(key=lambda f: float(f.get("confidence", 0.0)), reverse=True)
                 return frames[: max(1, int(max_frames))]
         return []
+
+    def upsert_ontology_triples(
+        self,
+        *,
+        triples: List[Dict[str, Any]],
+        source: str = "ontology_unifier",
+        overwrite: bool = False,
+    ) -> Dict[str, Any]:
+        payload = self._load()
+        store = payload.setdefault("ontology_triples", [])
+        now = _utc_now()
+        cleaned: List[Dict[str, Any]] = []
+        for triple in triples or []:
+            if not isinstance(triple, dict):
+                continue
+            head = str(triple.get("head") or "").strip().lower()
+            relation = str(triple.get("relation") or "").strip().lower()
+            tail = str(triple.get("tail") or "").strip().lower()
+            if not head or not relation or not tail:
+                continue
+            confidence = float(triple.get("confidence", 0.0) or 0.0)
+            cleaned.append(
+                {
+                    "head": head,
+                    "relation": relation,
+                    "tail": tail,
+                    "confidence": max(0.0, min(1.0, confidence)),
+                    "source": str(triple.get("source") or source),
+                    "updated_at": now,
+                }
+            )
+        if overwrite:
+            merged = cleaned
+        else:
+            by_key = {(item.get("head"), item.get("relation"), item.get("tail")): dict(item) for item in store}
+            for triple in cleaned:
+                by_key[(triple["head"], triple["relation"], triple["tail"])] = dict(triple)
+            merged = list(by_key.values())
+        merged.sort(key=lambda item: float(item.get("confidence", 0.0)), reverse=True)
+        payload["ontology_triples"] = merged
+        self._save(payload)
+        return {"updated": True, "count": len(merged)}
+
+    def recall_ontology_triples(
+        self,
+        *,
+        lemma: str = "",
+        max_edges: int = 20,
+        min_confidence: float = 0.0,
+    ) -> List[Dict[str, Any]]:
+        payload = self._load()
+        rows = list(payload.get("ontology_triples", []) or [])
+        lemma_key = str(lemma or "").strip().lower()
+        selected: List[Dict[str, Any]] = []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            conf = float(row.get("confidence", 0.0) or 0.0)
+            if conf < float(min_confidence):
+                continue
+            if lemma_key:
+                if str(row.get("head") or "").strip().lower() != lemma_key:
+                    continue
+            selected.append(row)
+        selected.sort(key=lambda item: float(item.get("confidence", 0.0)), reverse=True)
+        return selected[: max(1, int(max_edges))]

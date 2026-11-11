@@ -31,6 +31,22 @@
       "extra_flags": []
     },
     {
+      "run_id": "arm_a_lt_only_ontology_prior_seed11",
+      "seed": 11,
+      "arm": "lt_rl_ar_ontology_prior",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "env": {
+        "AGI_SYS1_ONTOLOGY_PRIOR_ENABLE": "1",
+        "AGI_SYS1_ONTOLOGY_PRIOR_BONUS": "0.12",
+        "AGI_SYS1_LTM_EDGE_RECALL_ENABLE": "1",
+        "AGI_SYS1_LTM_EDGE_RECALL_BONUS": "0.08"
+      },
+      "extra_flags": []
+    },
+    {
       "run_id": "arm_b_hybrid_light_seed11",
       "seed": 11,
       "arm": "hybrid_light",
@@ -67,6 +83,22 @@
       "extra_flags": []
     },
     {
+      "run_id": "arm_a_lt_only_ontology_prior_seed11",
+      "seed": 11,
+      "arm": "lt_rl_ar_ontology_prior",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "env": {
+        "AGI_SYS1_ONTOLOGY_PRIOR_ENABLE": "1",
+        "AGI_SYS1_ONTOLOGY_PRIOR_BONUS": "0.12",
+        "AGI_SYS1_LTM_EDGE_RECALL_ENABLE": "1",
+        "AGI_SYS1_LTM_EDGE_RECALL_BONUS": "0.08"
+      },
+      "extra_flags": []
+    },
+    {
       "run_id": "arm_a_lt_only_seed23",
       "seed": 23,
       "arm": "lt_rl_ar_only",
@@ -74,6 +106,22 @@
       "profiles": [
         "lt-heavy"
       ],
+      "extra_flags": []
+    },
+    {
+      "run_id": "arm_a_lt_only_ontology_prior_seed23",
+      "seed": 23,
+      "arm": "lt_rl_ar_ontology_prior",
+      "enabled": true,
+      "profiles": [
+        "lt-heavy"
+      ],
+      "env": {
+        "AGI_SYS1_ONTOLOGY_PRIOR_ENABLE": "1",
+        "AGI_SYS1_ONTOLOGY_PRIOR_BONUS": "0.12",
+        "AGI_SYS1_LTM_EDGE_RECALL_ENABLE": "1",
+        "AGI_SYS1_LTM_EDGE_RECALL_BONUS": "0.08"
+      },
       "extra_flags": []
     },
     {

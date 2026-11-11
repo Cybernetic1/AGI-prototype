@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import collections
 import collections.abc
+import json
+import os
 import re
 from functools import lru_cache
+from pathlib import Path
 from typing import Dict, List, Tuple, Type
 
 collections.Mapping = collections.abc.Mapping
@@ -178,6 +181,56 @@ def _event_label_from_class(cls: Type[Event]) -> str:
     return "neutral"
 
 
+def _event_class_from_label(label: str) -> Type[Event]:
+    norm = str(label or "").strip().lower()
+    if norm == "transfer":
+        return TransferEvent
+    if norm == "creation":
+        return CreationEvent
+    if norm == "loss":
+        return LossEvent
+    if norm == "comparison":
+        return ComparisonEvent
+    return NeutralEvent
+
+
+def _unified_ontology_enabled() -> bool:
+    raw = str(os.getenv("AGI_USE_UNIFIED_ONTOLOGY", "0")).strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
+@lru_cache(maxsize=1)
+def _load_unified_ontology() -> Dict[str, object]:
+    default_path = Path(__file__).resolve().parents[1] / "rules" / "reports" / "unified_ontology_v1.json"
+    src = Path(str(os.getenv("AGI_UNIFIED_ONTOLOGY_PATH", str(default_path))))
+    if not src.is_absolute():
+        src = Path(__file__).resolve().parents[1] / src
+    if not src.exists():
+        return {}
+    try:
+        payload = json.loads(src.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+    return payload
+
+
+def _unified_ontology_category(lemma: str) -> Tuple[Type[Event] | None, float, str]:
+    if not _unified_ontology_enabled():
+        return None, 0.0, ""
+    payload = _load_unified_ontology()
+    lemma_index = payload.get("lemma_index") if isinstance(payload, dict) else None
+    if not isinstance(lemma_index, dict):
+        return None, 0.0, ""
+    row = lemma_index.get(str(lemma))
+    if not isinstance(row, dict):
+        return None, 0.0, ""
+    label = str(row.get("event_label") or "neutral")
+    conf = float(row.get("event_confidence") or 0.0)
+    return _event_class_from_label(label), conf, "unified_ontology"
+
+
 def classify_event_details(lemma: str) -> Dict[str, object]:
     """Defeasible lexical classifier with confidence for ILP labeling.
 
@@ -204,6 +257,10 @@ def classify_event_details(lemma: str) -> Dict[str, object]:
         candidates.append((58, 0.7, LossEvent, "loss_default"))
     if norm in _WEAK_COMPARISON_VERBS:
         candidates.append((52, 0.65, ComparisonEvent, "comparison_default"))
+
+    unified_cls, unified_conf, unified_reason = _unified_ontology_category(norm)
+    if unified_cls is not None:
+        candidates.append((65, max(0.55, unified_conf), unified_cls, unified_reason))
 
     wordnet_cls = _wordnet_category(norm)
     if wordnet_cls is not None:

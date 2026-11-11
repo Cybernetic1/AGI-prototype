@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -45,7 +46,7 @@ def _profile_metrics(report: dict[str, Any]) -> dict[str, float]:
     }
 
 
-def _run_command(*, cmd: list[str], cwd: Path, dry_run: bool) -> dict[str, Any]:
+def _run_command(*, cmd: list[str], cwd: Path, dry_run: bool, env_overrides: dict[str, Any] | None = None) -> dict[str, Any]:
     started = time.perf_counter()
     if dry_run:
         return {
@@ -56,7 +57,10 @@ def _run_command(*, cmd: list[str], cwd: Path, dry_run: bool) -> dict[str, Any]:
             "stdout": "",
             "stderr": "",
         }
-    proc = subprocess.run(cmd, cwd=str(cwd), text=True, capture_output=True)
+    env = os.environ.copy()
+    for key, value in (env_overrides or {}).items():
+        env[str(key)] = str(value)
+    proc = subprocess.run(cmd, cwd=str(cwd), text=True, capture_output=True, env=env)
     duration = max(0.0, time.perf_counter() - started)
     return {
         "ok": proc.returncode == 0,
@@ -200,8 +204,19 @@ def main() -> int:
             validator_out=validator_out,
         )
 
-        baseline_exec = _run_command(cmd=baseline_cmd, cwd=REPO_ROOT, dry_run=bool(args.dry_run))
-        validator_exec = _run_command(cmd=validator_cmd, cwd=REPO_ROOT, dry_run=bool(args.dry_run))
+        env_overrides = run_cfg.get("env") if isinstance(run_cfg.get("env"), dict) else {}
+        baseline_exec = _run_command(
+            cmd=baseline_cmd,
+            cwd=REPO_ROOT,
+            dry_run=bool(args.dry_run),
+            env_overrides=env_overrides,
+        )
+        validator_exec = _run_command(
+            cmd=validator_cmd,
+            cwd=REPO_ROOT,
+            dry_run=bool(args.dry_run),
+            env_overrides=env_overrides,
+        )
         total_wall_sec = float(baseline_exec["duration_sec"]) + float(validator_exec["duration_sec"])
         hourly_usd = _arm_hourly_cost(config, arm)
         cost_usd = (total_wall_sec / 3600.0) * hourly_usd
@@ -226,6 +241,7 @@ def main() -> int:
                 "arm": arm,
                 "seed": int(run_cfg.get("seed", 0) or 0),
                 "profiles": [str(x) for x in (run_cfg.get("profiles") or [])],
+                "env": env_overrides,
                 "baseline_cmd": baseline_cmd,
                 "validator_cmd": validator_cmd,
                 "baseline_exec": baseline_exec,

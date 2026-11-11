@@ -31,6 +31,12 @@ import train_pot_clause as tpc
 from abductive_ilp import KnowledgeBase, OntologicalReasoner, OntologicalILPLearner, DuckEgg
 from semantic_ar import SemanticARConfig, score_semantic_ar, load_semantic_ar_config
 from forward_engine.phase3_synthetic_test import ontology_classify_details
+from working_memory.ltm import LongTermMemory
+from working_memory.ontology_hyperbolic_prior import (
+    DEFAULT_ONTOLOGY_PRIOR_PATH,
+    lemma_prior_score,
+    load_ontology_prior,
+)
 
 # ==========================================
 # A compact GSM8K predicate vocabulary.
@@ -69,6 +75,7 @@ _dln_model = None
 _dln_vocab = None
 _rev_vocab = None
 _local_proposal_ranker = None
+_ontology_hyperbolic_prior = None
 
 
 def _sys1_lt_parsing_enabled() -> bool:
@@ -82,6 +89,34 @@ def _sys1_lt_parsing_enabled() -> bool:
     return raw in {"1", "true", "yes", "on"}
 
 
+def _sys1_ontology_prior_enabled() -> bool:
+    raw = str(os.getenv("AGI_SYS1_ONTOLOGY_PRIOR_ENABLE", "0")).strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
+def _sys1_ontology_prior_bonus() -> float:
+    raw = str(os.getenv("AGI_SYS1_ONTOLOGY_PRIOR_BONUS", "0.12")).strip()
+    try:
+        value = float(raw)
+    except Exception:
+        value = 0.12
+    return max(0.0, min(0.5, value))
+
+
+def _sys1_ltm_edge_recall_enabled() -> bool:
+    raw = str(os.getenv("AGI_SYS1_LTM_EDGE_RECALL_ENABLE", "0")).strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
+def _sys1_ltm_edge_recall_bonus() -> float:
+    raw = str(os.getenv("AGI_SYS1_LTM_EDGE_RECALL_BONUS", "0.08")).strip()
+    try:
+        value = float(raw)
+    except Exception:
+        value = 0.08
+    return max(0.0, min(0.4, value))
+
+
 def load_local_proposal_ranker():
     global _local_proposal_ranker
     if _local_proposal_ranker is not None:
@@ -92,6 +127,24 @@ def load_local_proposal_ranker():
     except Exception:
         _local_proposal_ranker = None
     return _local_proposal_ranker
+
+
+def load_sys1_ontology_hyperbolic_prior():
+    global _ontology_hyperbolic_prior
+    if _ontology_hyperbolic_prior is not None:
+        return _ontology_hyperbolic_prior
+    path = Path(str(os.getenv("AGI_SYS1_ONTOLOGY_PRIOR_PATH", str(DEFAULT_ONTOLOGY_PRIOR_PATH))))
+    if not path.is_absolute():
+        path = BASE_DIR / path
+    _ontology_hyperbolic_prior = load_ontology_prior(path)
+    return _ontology_hyperbolic_prior
+
+
+def _load_sys1_ltm():
+    path = Path(str(os.getenv("AGI_SYS1_LTM_PATH", str(LongTermMemory.default().path))))
+    if not path.is_absolute():
+        path = BASE_DIR / path
+    return LongTermMemory(path)
 
 
 def _normalize_sar_config(config):
@@ -250,6 +303,10 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False, sar_config=Non
         # Legacy LT parsing/proposal scoring is intentionally stashed by default.
         # Sys1 parsing remains spaCy-driven unless explicitly re-enabled.
         proposal_ranker = load_local_proposal_ranker() if _sys1_lt_parsing_enabled() else None
+        ontology_prior = load_sys1_ontology_hyperbolic_prior() if _sys1_ontology_prior_enabled() else {}
+        ontology_bonus_scale = _sys1_ontology_prior_bonus()
+        ltm = _load_sys1_ltm() if _sys1_ltm_edge_recall_enabled() else None
+        ltm_edge_bonus_scale = _sys1_ltm_edge_recall_bonus()
         
         # Map the output strings back to WMNodes with soft activation (0.85) representing System 1's neural confidence.
         # The layer is explicitly tagged as parse/semantic so it can be consumed by later grounding rules.
@@ -264,6 +321,24 @@ def system1_step(current_wm, cycle, input_text=None, quiet=False, sar_config=Non
                 if proposal_ranker is not None and input_text:
                     proposal_text = f"{concept}({', '.join(str(a) for a in args)})"
                     proposal_score = proposal_ranker.score(input_text, proposal_text)
+                # LT-only ontology prior path: optional hyperbolic ontology score boost.
+                # This does not require Sys2 runtime inference; it only shapes Sys1 confidence.
+                if concept == "Predicate" and len(args) >= 2 and ontology_prior:
+                    lemma = str(args[1]).strip().lower()
+                    prior_score, prior_label, prior_conf = lemma_prior_score(ontology_prior, lemma)
+                    proposal_score = min(1.0, proposal_score + ontology_bonus_scale * prior_score)
+                    if sar_cfg.enabled and sar_cfg.emit_metadata:
+                        kwargs["ontology_prior_label"] = prior_label
+                        kwargs["ontology_prior_conf"] = round(float(prior_conf), 6)
+                if concept == "Predicate" and len(args) >= 2 and ltm is not None:
+                    lemma = str(args[1]).strip().lower()
+                    triples = ltm.recall_ontology_triples(lemma=lemma, max_edges=6, min_confidence=0.2)
+                    if triples:
+                        avg_conf = sum(float(t.get("confidence", 0.0) or 0.0) for t in triples) / float(len(triples))
+                        proposal_score = min(1.0, proposal_score + ltm_edge_bonus_scale * avg_conf)
+                        if sar_cfg.enabled and sar_cfg.emit_metadata:
+                            kwargs["ltm_edge_hits"] = len(triples)
+                            kwargs["ltm_edge_avg_conf"] = round(float(avg_conf), 6)
                 if input_text:
                     sar_result = score_semantic_ar(
                         question=input_text,
@@ -2635,6 +2710,11 @@ def run_cognitive_loop(
     use_ltm_recall: bool = False,
     auto_accept_recall: bool = False,
     write_ltm_episode: bool = False,
+    run_ltm_sleep_maintenance: bool = False,
+    ltm_sleep_interval: int = 2,
+    ltm_sleep_min_support: int = 2,
+    ltm_sleep_forget_threshold: float = 0.25,
+    ltm_sleep_keep_last: int = 50,
     sar_config: dict[str, Any] | None = None,
 ):
     wm = _compile_gsm8k_problem_to_wm(
@@ -2699,6 +2779,13 @@ def run_cognitive_loop(
             prior_fact_count = fact_count_after
             prior_belief_count = belief_count_after
 
+            if run_ltm_sleep_maintenance and cycle % max(1, int(ltm_sleep_interval)) == 0:
+                wm.ltm_sleep_maintenance(
+                    min_support=max(1, int(ltm_sleep_min_support)),
+                    forget_threshold=max(0.0, min(1.0, float(ltm_sleep_forget_threshold))),
+                    keep_last=max(0, int(ltm_sleep_keep_last)),
+                )
+
             if not quiet:
                 time.sleep(0.5)
 
@@ -2712,6 +2799,12 @@ def run_cognitive_loop(
             outcome="solved" if solved else "null",
             extra_cues=["mode:runtime", "ltm:enabled" if use_ltm_recall else "ltm:disabled"],
         )
+        if run_ltm_sleep_maintenance:
+            wm.ltm_sleep_maintenance(
+                min_support=max(1, int(ltm_sleep_min_support)),
+                forget_threshold=max(0.0, min(1.0, float(ltm_sleep_forget_threshold))),
+                keep_last=max(0, int(ltm_sleep_keep_last)),
+            )
 
     if not quiet:
         print(f"\n--- Halt ---")
@@ -2819,6 +2912,11 @@ def benchmark_single_problem(
     use_ltm_recall: bool = False,
     auto_accept_recall: bool = False,
     write_ltm_episode: bool = False,
+    run_ltm_sleep_maintenance: bool = False,
+    ltm_sleep_interval: int = 2,
+    ltm_sleep_min_support: int = 2,
+    ltm_sleep_forget_threshold: float = 0.25,
+    ltm_sleep_keep_last: int = 50,
     sar_config: dict[str, Any] | None = None,
 ):
     wm = run_cognitive_loop(
@@ -2830,6 +2928,11 @@ def benchmark_single_problem(
         use_ltm_recall=use_ltm_recall,
         auto_accept_recall=auto_accept_recall,
         write_ltm_episode=write_ltm_episode,
+        run_ltm_sleep_maintenance=run_ltm_sleep_maintenance,
+        ltm_sleep_interval=ltm_sleep_interval,
+        ltm_sleep_min_support=ltm_sleep_min_support,
+        ltm_sleep_forget_threshold=ltm_sleep_forget_threshold,
+        ltm_sleep_keep_last=ltm_sleep_keep_last,
         sar_config=sar_config,
     )
     belief_values = []
