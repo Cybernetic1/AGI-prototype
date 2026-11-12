@@ -7,7 +7,11 @@ from typing import Any, Dict, Tuple
 
 import torch
 
-from logic_transformer.lorentz_math import project_to_hyperboloid
+try:
+    from logic_transformer.lorentz_math import project_to_hyperboloid
+except Exception:
+    # Fallback for script entrypoints that place logic_transformer/ directly on sys.path.
+    from lorentz_math import project_to_hyperboloid
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_UNIFIED_ONTOLOGY_PATH = REPO_ROOT / "rules" / "reports" / "unified_ontology_v1.json"
