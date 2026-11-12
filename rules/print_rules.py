@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -11,10 +12,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SYS2_RULES = REPO_ROOT / "rules" / "sys2_rule_kb.yaml"
 DEFEASIBLE_RULES = REPO_ROOT / "rules" / "defeasible_rule_kb.yaml"
 NL_RULE_REGISTRY = REPO_ROOT / "rules" / "nl_rule_registry.yaml"
+NL_RULE_EXAMPLES = REPO_ROOT / "rules" / "nl_rules.txt"
 LTM_STORE = REPO_ROOT / "rules" / "ltm_store.yaml"
 LT_RULE_CANDIDATES = [
     REPO_ROOT / "logic_transformer" / "semantic_wme_rules.txt",
     REPO_ROOT / "logic_transformer" / "ratio_rules.txt",
+]
+RULE_SNAPSHOT_PATHS = [
+    REPO_ROOT / "rules" / "reports" / "metarules_snapshot_v1.json",
+    REPO_ROOT / "rules" / "reports" / "rule_learning_snapshots_v1.json",
 ]
 SYS3_SEED_FILE = REPO_ROOT / "ilp_learner" / "metagol_nds.py"
 SYS3_SEED_FILE_2 = REPO_ROOT / "ilp_learner" / "abductive_ilp.py"
@@ -135,6 +141,41 @@ def print_nl_rule_registry(path: Path) -> None:
         )
 
 
+def print_nl_rule_examples(path: Path) -> None:
+    if not path.exists():
+        print(f"[missing] {path}")
+        return
+    print(f"NL authoring examples: {path}")
+    print("=" * 72)
+    print(path.read_text(encoding="utf-8").strip() or "<empty>")
+    print()
+
+
+def print_rule_snapshot(path: Path) -> None:
+    if not path.exists():
+        print(f"[missing] {path}")
+        return
+    print(f"Rule snapshot: {path}")
+    print("=" * 72)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(payload, dict):
+        if "rules" in payload:
+            rules = payload["rules"]
+            print(f"count: {len(rules)}")
+            for rule in rules:
+                print(f"- {rule.get('name', rule.get('family', 'unnamed'))}: {rule.get('description', rule.get('head', ''))}")
+        elif "snapshots" in payload:
+            snapshots = payload["snapshots"]
+            print(f"snapshots: {len(snapshots)}")
+            for snap in snapshots[:3]:
+                print(f"- {snap.get('label', 'snapshot')}: tracked={snap.get('tracked_rule_count', 0)} learning={snap.get('rules_under_learning_count', 0)}")
+        else:
+            print(payload)
+    else:
+        print(payload)
+    print()
+
+
 def print_ltm_summary(path: Path) -> None:
     if not path.exists():
         print(f"[missing] {path}")
@@ -170,13 +211,15 @@ def main() -> int:
     parser.add_argument("--sys2", action="store_true", help="Print the file-backed Sys-2 rule KB.")
     parser.add_argument("--defeasible", action="store_true", help="Print the defeasible rule KB and priorities.")
     parser.add_argument("--registry", action="store_true", help="Print the NL rule registry with lifecycle status.")
+    parser.add_argument("--nl", action="store_true", help="Print authoring examples from the NL rule text file.")
+    parser.add_argument("--snapshot", action="store_true", help="Print metarule/rule-learning snapshots in JSON reports.")
     parser.add_argument("--ltm", action="store_true", help="Print a summary of the LTM store.")
     parser.add_argument("--lt", action="store_true", help="Print saved LT rule summaries from logic_transformer/.")
     parser.add_argument("--sys3", action="store_true", help="Print the current Sys-3 rule base status.")
     parser.add_argument("--all", action="store_true", help="Print all available persisted rule sources.")
     args = parser.parse_args()
 
-    if not any([args.sys2, args.defeasible, args.registry, args.ltm, args.lt, args.sys3, args.all]):
+    if not any([args.sys2, args.defeasible, args.registry, args.nl, args.snapshot, args.ltm, args.lt, args.sys3, args.all]):
         args.all = True
 
     if args.all or args.sys2:
@@ -188,6 +231,12 @@ def main() -> int:
     if args.all or args.registry:
         print_nl_rule_registry(NL_RULE_REGISTRY)
         print()
+    if args.all or args.nl:
+        print_nl_rule_examples(NL_RULE_EXAMPLES)
+        print()
+    if args.all or args.snapshot:
+        for path in RULE_SNAPSHOT_PATHS:
+            print_rule_snapshot(path)
     if args.all or args.ltm:
         print_ltm_summary(LTM_STORE)
         print()
