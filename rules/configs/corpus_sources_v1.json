@@ -1,0 +1,45 @@
+{
+  "manifest_id": "corpus-manifest-v1",
+  "target_total_gb": 300,
+  "sources": [
+    {
+      "source_id": "fineweb",
+      "repo_id": "HuggingFaceFW/fineweb",
+      "repo_type": "dataset",
+      "target_gb": 135,
+      "target_root": "disk1",
+      "include_globs": [
+        "**/*.parquet"
+      ],
+      "exclude_globs": []
+    },
+    {
+      "source_id": "c4",
+      "repo_id": "allenai/c4",
+      "repo_type": "dataset",
+      "target_gb": 90,
+      "target_root": "disk2",
+      "include_globs": [
+        "**/*.json.gz",
+        "**/*.jsonl.gz",
+        "**/*.parquet",
+        "**/*.tfrecord*"
+      ],
+      "exclude_globs": []
+    },
+    {
+      "source_id": "redpajama",
+      "repo_id": "togethercomputer/RedPajama-Data-1T",
+      "repo_type": "dataset",
+      "target_gb": 75,
+      "target_root": "disk1",
+      "include_globs": [
+        "**/*.jsonl",
+        "**/*.jsonl.zst",
+        "**/*.zst",
+        "**/*.parquet"
+      ],
+      "exclude_globs": []
+    }
+  ]
+}
