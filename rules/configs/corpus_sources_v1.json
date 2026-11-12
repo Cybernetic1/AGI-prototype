@@ -9,6 +9,7 @@
       "target_gb": 135,
       "target_root": "disk1",
       "include_globs": [
+        "*.parquet",
         "**/*.parquet"
       ],
       "exclude_globs": []
@@ -20,6 +21,10 @@
       "target_gb": 90,
       "target_root": "disk2",
       "include_globs": [
+        "*.json.gz",
+        "*.jsonl.gz",
+        "*.parquet",
+        "*.tfrecord*",
         "**/*.json.gz",
         "**/*.jsonl.gz",
         "**/*.parquet",
@@ -34,6 +39,10 @@
       "target_gb": 75,
       "target_root": "disk1",
       "include_globs": [
+        "*.jsonl",
+        "*.jsonl.zst",
+        "*.zst",
+        "*.parquet",
         "**/*.jsonl",
         "**/*.jsonl.zst",
         "**/*.zst",

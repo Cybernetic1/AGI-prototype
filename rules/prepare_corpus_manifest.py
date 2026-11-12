@@ -39,19 +39,23 @@ def _matches_any(path: str, globs: list[str]) -> bool:
     return any(fnmatch.fnmatch(path, pattern) for pattern in globs)
 
 
-def _list_repo_files_with_sizes(*, api: HfApi, repo_id: str, repo_type: str) -> list[HFFile]:
+def _list_repo_files_with_sizes(*, api: HfApi, repo_id: str, repo_type: str) -> tuple[list[HFFile], int, int]:
     nodes = api.list_repo_tree(repo_id=repo_id, repo_type=repo_type, recursive=True, expand=True)
     files: list[HFFile] = []
+    file_nodes = 0
+    missing_size = 0
     for node in nodes:
         path = getattr(node, "path", None)
         node_type = getattr(node, "type", None)
         size = getattr(node, "size", None)
         if not path or str(node_type) != "file":
             continue
+        file_nodes += 1
         if size is None:
+            missing_size += 1
             continue
         files.append(HFFile(path=str(path), size=int(size)))
-    return files
+    return files, file_nodes, missing_size
 
 
 def _select_files(
@@ -89,6 +93,8 @@ def main() -> int:
     parser.add_argument("--disk2-root", default="/media/yky/old-dreams2")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     parser.add_argument("--hf-token", default="", help="Optional Hugging Face token.")
+    parser.add_argument("--quiet", action="store_true", help="Suppress per-source progress logs.")
+    parser.add_argument("--allow-empty", action="store_true", help="Allow writing an empty manifest selection.")
     args = parser.parse_args()
 
     config_path = _resolve_output(args.config)
@@ -124,7 +130,10 @@ def main() -> int:
         if target_root_key not in root_map:
             raise ValueError(f"Unknown target_root '{target_root_key}' for source {source_id}")
 
-        files = _list_repo_files_with_sizes(api=api, repo_id=repo_id, repo_type=repo_type)
+        if not args.quiet:
+            print(f"[manifest] scanning source={source_id} repo={repo_id} target={target_gb:.1f}GB root={target_root_key}")
+
+        files, file_nodes, missing_size = _list_repo_files_with_sizes(api=api, repo_id=repo_id, repo_type=repo_type)
         selected, selected_bytes = _select_files(
             files=files,
             include_globs=include_globs,
@@ -134,6 +143,31 @@ def main() -> int:
         target_root = root_map[target_root_key]
         totals_by_root[target_root_key] += selected_bytes
         total_selected += selected_bytes
+        if not args.quiet:
+            print(
+                "[manifest] source={src} file_nodes={nodes} size_known={known} size_missing={missing} "
+                "selected={sel} selected_gb={gb}".format(
+                    src=source_id,
+                    nodes=file_nodes,
+                    known=len(files),
+                    missing=missing_size,
+                    sel=len(selected),
+                    gb=round(selected_bytes / (1024 ** 3), 3),
+                )
+            )
+            if file_nodes > 0 and len(files) == 0:
+                print(
+                    "[manifest][warn] all file sizes were missing from HF metadata; "
+                    "upgrade huggingface_hub and rerun."
+                )
+            elif file_nodes == 0:
+                print("[manifest][warn] repo returned zero file nodes; check repo id, access, or connectivity.")
+            elif len(selected) == 0:
+                print(
+                    "[manifest][warn] no files matched include/exclude globs for this source. "
+                    f"include={include_globs} exclude={exclude_globs}"
+                )
+
         manifest_entries.append(
             {
                 "source_id": source_id,
@@ -144,6 +178,9 @@ def main() -> int:
                 "target_gb": target_gb,
                 "selected_gb": round(selected_bytes / (1024 ** 3), 3),
                 "selected_count": len(selected),
+                "repo_file_nodes": file_nodes,
+                "repo_size_known_nodes": len(files),
+                "repo_size_missing_nodes": missing_size,
                 "files": [{"path": item.path, "size": item.size} for item in selected],
             }
         )
@@ -160,12 +197,19 @@ def main() -> int:
             "selected_total_gb": round(total_selected / (1024 ** 3), 3),
             "selected_disk1_gb": round(totals_by_root["disk1"] / (1024 ** 3), 3),
             "selected_disk2_gb": round(totals_by_root["disk2"] / (1024 ** 3), 3),
+            "empty_selection": total_selected <= 0,
         },
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(f"Saved corpus manifest to {output_path}")
     print(json.dumps(manifest["summary"], indent=2))
+    if total_selected <= 0 and not args.allow_empty:
+        raise RuntimeError(
+            "Manifest selection is empty (0 bytes). Common causes: outdated huggingface_hub "
+            "returning missing sizes, no connectivity/access to repo, or glob mismatch. "
+            "Use --allow-empty only for debugging."
+        )
     return 0
 
 
