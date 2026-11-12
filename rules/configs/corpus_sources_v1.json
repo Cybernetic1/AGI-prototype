@@ -33,19 +33,13 @@
       "exclude_globs": []
     },
     {
-      "source_id": "redpajama",
-      "repo_id": "togethercomputer/RedPajama-Data-1T",
+      "source_id": "fineweb_edu",
+      "repo_id": "HuggingFaceFW/fineweb-edu",
       "repo_type": "dataset",
       "target_gb": 75,
       "target_root": "disk1",
       "include_globs": [
-        "*.jsonl",
-        "*.jsonl.zst",
-        "*.zst",
         "*.parquet",
-        "**/*.jsonl",
-        "**/*.jsonl.zst",
-        "**/*.zst",
         "**/*.parquet"
       ],
       "exclude_globs": []
