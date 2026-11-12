@@ -1,0 +1,136 @@
+{
+  "artifact_id": "rule-shape-allocation-300m-v1",
+  "generated_at": "2026-11-12T09:37:09.429441+00:00",
+  "model_profile": {
+    "parameter_budget": "300M-class",
+    "rule_embedding_dim": 256,
+    "rule_bank_total": 4096,
+    "target_gpu": "rtx_5090_32gb",
+    "corpus_cap_gb": 300
+  },
+  "rule_shapes": [
+    {
+      "shape": "unary_attribute",
+      "count": 704,
+      "slots": 2,
+      "tensor_shape": [
+        704,
+        2,
+        256
+      ],
+      "rationale": "entity/property typing and priors",
+      "memory_bindings": {
+        "episodic_trigger": false,
+        "semantic_abstraction": true,
+        "rule_lifecycle_tracking": true
+      }
+    },
+    {
+      "shape": "binary_relation",
+      "count": 1024,
+      "slots": 3,
+      "tensor_shape": [
+        1024,
+        3,
+        256
+      ],
+      "rationale": "owner-item and agent-patient style relations",
+      "memory_bindings": {
+        "episodic_trigger": false,
+        "semantic_abstraction": true,
+        "rule_lifecycle_tracking": true
+      }
+    },
+    {
+      "shape": "transition_state",
+      "count": 832,
+      "slots": 5,
+      "tensor_shape": [
+        832,
+        5,
+        256
+      ],
+      "rationale": "before/delta/after transitions",
+      "memory_bindings": {
+        "episodic_trigger": true,
+        "semantic_abstraction": false,
+        "rule_lifecycle_tracking": true
+      }
+    },
+    {
+      "shape": "arithmetic_operator",
+      "count": 640,
+      "slots": 4,
+      "tensor_shape": [
+        640,
+        4,
+        256
+      ],
+      "rationale": "add/sub/mul/div/percent transforms",
+      "memory_bindings": {
+        "episodic_trigger": false,
+        "semantic_abstraction": false,
+        "rule_lifecycle_tracking": true
+      }
+    },
+    {
+      "shape": "temporal_causal",
+      "count": 384,
+      "slots": 4,
+      "tensor_shape": [
+        384,
+        4,
+        256
+      ],
+      "rationale": "event ordering and causal links",
+      "memory_bindings": {
+        "episodic_trigger": false,
+        "semantic_abstraction": true,
+        "rule_lifecycle_tracking": true
+      }
+    },
+    {
+      "shape": "frame_role",
+      "count": 320,
+      "slots": 6,
+      "tensor_shape": [
+        320,
+        6,
+        256
+      ],
+      "rationale": "frame-semantic role bindings",
+      "memory_bindings": {
+        "episodic_trigger": true,
+        "semantic_abstraction": false,
+        "rule_lifecycle_tracking": true
+      }
+    },
+    {
+      "shape": "control_query",
+      "count": 192,
+      "slots": 3,
+      "tensor_shape": [
+        192,
+        3,
+        256
+      ],
+      "rationale": "goal routing, query focus, and verification",
+      "memory_bindings": {
+        "episodic_trigger": true,
+        "semantic_abstraction": false,
+        "rule_lifecycle_tracking": true
+      }
+    }
+  ],
+  "allocation_summary": {
+    "shape_count": 7,
+    "total_rules": 4096,
+    "total_rule_tensor_values": 3899392
+  },
+  "readiness_checks": {
+    "requires_chain_completeness_eval": true,
+    "min_chain_success_rate": 0.85,
+    "max_dead_end_ratio": 0.1,
+    "max_contradiction_ratio": 0.05
+  }
+}

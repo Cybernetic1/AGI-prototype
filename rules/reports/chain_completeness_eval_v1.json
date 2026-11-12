@@ -1,0 +1,72 @@
+{
+  "artifact_id": "chain-completeness-eval-v1",
+  "generated_at": "2026-11-12T09:37:09.543328+00:00",
+  "sources": {
+    "worked_examples_id": "semantic-ar-worked-examples-v1",
+    "rule_allocation_id": "rule-shape-allocation-300m-v1"
+  },
+  "summary": {
+    "total_examples": 180,
+    "chain_success_rate": 1.0,
+    "dead_end_ratio": 0.0,
+    "contradiction_ratio": 0.0,
+    "shape_coverage_rate": 1.0
+  },
+  "thresholds": {
+    "min_chain_success_rate": 0.85,
+    "max_dead_end_ratio": 0.1,
+    "max_contradiction_ratio": 0.05,
+    "min_shape_coverage_rate": 0.95
+  },
+  "gates": {
+    "chain_success": true,
+    "dead_end": true,
+    "contradiction": true,
+    "shape_coverage": true
+  },
+  "all_gates_green": true,
+  "per_category": {
+    "causal_intervention": {
+      "total": 30,
+      "chain_success_rate": 1.0,
+      "dead_end_ratio": 0.0,
+      "contradiction_ratio": 0.0,
+      "shape_coverage_rate": 1.0
+    },
+    "epistemic_defeasible": {
+      "total": 30,
+      "chain_success_rate": 1.0,
+      "dead_end_ratio": 0.0,
+      "contradiction_ratio": 0.0,
+      "shape_coverage_rate": 1.0
+    },
+    "physical_inventory": {
+      "total": 30,
+      "chain_success_rate": 1.0,
+      "dead_end_ratio": 0.0,
+      "contradiction_ratio": 0.0,
+      "shape_coverage_rate": 1.0
+    },
+    "quantitative_arithmetic": {
+      "total": 30,
+      "chain_success_rate": 1.0,
+      "dead_end_ratio": 0.0,
+      "contradiction_ratio": 0.0,
+      "shape_coverage_rate": 1.0
+    },
+    "social_intent": {
+      "total": 30,
+      "chain_success_rate": 1.0,
+      "dead_end_ratio": 0.0,
+      "contradiction_ratio": 0.0,
+      "shape_coverage_rate": 1.0
+    },
+    "temporal_event": {
+      "total": 30,
+      "chain_success_rate": 1.0,
+      "dead_end_ratio": 0.0,
+      "contradiction_ratio": 0.0,
+      "shape_coverage_rate": 1.0
+    }
+  }
+}
