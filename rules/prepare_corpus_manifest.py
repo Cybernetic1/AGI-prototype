@@ -39,23 +39,52 @@ def _matches_any(path: str, globs: list[str]) -> bool:
     return any(fnmatch.fnmatch(path, pattern) for pattern in globs)
 
 
-def _list_repo_files_with_sizes(*, api: HfApi, repo_id: str, repo_type: str) -> tuple[list[HFFile], int, int]:
-    nodes = api.list_repo_tree(repo_id=repo_id, repo_type=repo_type, recursive=True, expand=True)
+def _list_repo_files_with_sizes(
+    *,
+    api: HfApi,
+    repo_id: str,
+    repo_type: str,
+) -> tuple[list[HFFile], int, int, str, str]:
+    tree_error = ""
+    source = "repo_tree"
     files: list[HFFile] = []
     file_nodes = 0
     missing_size = 0
-    for node in nodes:
-        path = getattr(node, "path", None)
-        node_type = getattr(node, "type", None)
-        size = getattr(node, "size", None)
-        if not path or str(node_type) != "file":
-            continue
-        file_nodes += 1
-        if size is None:
-            missing_size += 1
-            continue
-        files.append(HFFile(path=str(path), size=int(size)))
-    return files, file_nodes, missing_size
+    try:
+        nodes = api.list_repo_tree(repo_id=repo_id, repo_type=repo_type, recursive=True, expand=True)
+        for node in nodes:
+            path = getattr(node, "path", None)
+            node_type = getattr(node, "type", None)
+            size = getattr(node, "size", None)
+            if not path or str(node_type) != "file":
+                continue
+            file_nodes += 1
+            if size is None:
+                missing_size += 1
+                continue
+            files.append(HFFile(path=str(path), size=int(size)))
+    except Exception as exc:
+        tree_error = str(exc)
+
+    if file_nodes == 0 or not files:
+        source = "dataset_info"
+        files = []
+        file_nodes = 0
+        missing_size = 0
+        info = api.dataset_info(repo_id, files_metadata=True)
+        siblings = list(getattr(info, "siblings", []) or [])
+        for sib in siblings:
+            path = getattr(sib, "rfilename", None)
+            if not path:
+                continue
+            file_nodes += 1
+            size = getattr(sib, "size", None)
+            if size is None:
+                missing_size += 1
+                continue
+            files.append(HFFile(path=str(path), size=int(size)))
+
+    return files, file_nodes, missing_size, source, tree_error
 
 
 def _select_files(
@@ -133,7 +162,11 @@ def main() -> int:
         if not args.quiet:
             print(f"[manifest] scanning source={source_id} repo={repo_id} target={target_gb:.1f}GB root={target_root_key}")
 
-        files, file_nodes, missing_size = _list_repo_files_with_sizes(api=api, repo_id=repo_id, repo_type=repo_type)
+        files, file_nodes, missing_size, listing_source, tree_error = _list_repo_files_with_sizes(
+            api=api,
+            repo_id=repo_id,
+            repo_type=repo_type,
+        )
         selected, selected_bytes = _select_files(
             files=files,
             include_globs=include_globs,
@@ -146,15 +179,18 @@ def main() -> int:
         if not args.quiet:
             print(
                 "[manifest] source={src} file_nodes={nodes} size_known={known} size_missing={missing} "
-                "selected={sel} selected_gb={gb}".format(
+                "selected={sel} selected_gb={gb} listing={listing}".format(
                     src=source_id,
                     nodes=file_nodes,
                     known=len(files),
                     missing=missing_size,
                     sel=len(selected),
                     gb=round(selected_bytes / (1024 ** 3), 3),
+                    listing=listing_source,
                 )
             )
+            if tree_error:
+                print(f"[manifest][note] repo_tree error: {tree_error}")
             if file_nodes > 0 and len(files) == 0:
                 print(
                     "[manifest][warn] all file sizes were missing from HF metadata; "
@@ -178,9 +214,11 @@ def main() -> int:
                 "target_gb": target_gb,
                 "selected_gb": round(selected_bytes / (1024 ** 3), 3),
                 "selected_count": len(selected),
+                "listing_source": listing_source,
                 "repo_file_nodes": file_nodes,
                 "repo_size_known_nodes": len(files),
                 "repo_size_missing_nodes": missing_size,
+                "repo_tree_error": tree_error,
                 "files": [{"path": item.path, "size": item.size} for item in selected],
             }
         )
