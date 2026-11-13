@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AGI Prototype Progress Dashboard</title>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
     body { font-family: system-ui, sans-serif; margin: 24px; color: #111; }
     h1 { margin-bottom: 4px; }
@@ -14,11 +15,12 @@
     .bar { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 4px; }
     .bar > span { display: block; height: 100%; background: #3b82f6; }
     .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin: 16px 0; }
+    #semantic-graph { height: 540px; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; }
   </style>
 </head>
 <body>
   <h1>AGI Progress Dashboard</h1>
-  <div class="meta">Generated at 2026-11-02T17:01:40.832499+00:00 | Overall progress: <b>42.6%</b></div>
+  <div class="meta">Generated at 2026-11-13T22:29:02.502173+00:00 | Overall progress: <b>42.6%</b></div>
 
   <div class="card">
     <h3>Category progress map</h3>
@@ -39,6 +41,40 @@
         <tr><td><b>Perceptual/grounding rules</b><br><small>Map language observations to canonical entities/events/quantities/roles/time.</small></td><td>51.2%</td><td>51.2%</td><td>51.2%</td><td>51.2%</td><td>51.2%</td><td>35.0%</td><td><div class='bar'><span style='width:51.2%'></span></div><small>51.2%</small></td></tr><tr><td><b>Type/ontology rules</b><br><small>Category membership, inheritance, and compatibility constraints.</small></td><td>37.6%</td><td>37.6%</td><td>37.6%</td><td>37.6%</td><td>37.6%</td><td>20.0%</td><td><div class='bar'><span style='width:37.6%'></span></div><small>37.6%</small></td></tr><tr><td><b>Compositional semantic rules</b><br><small>Clause composition, reference resolution, scope, quantification, negation.</small></td><td>44.0%</td><td>44.0%</td><td>44.0%</td><td>44.0%</td><td>44.0%</td><td>30.0%</td><td><div class='bar'><span style='width:44.0%'></span></div><small>44.0%</small></td></tr><tr><td><b>State-transition rules</b><br><small>Actions/events update world state over time.</small></td><td>79.0%</td><td>79.0%</td><td>79.0%</td><td>79.0%</td><td>79.0%</td><td>65.0%</td><td><div class='bar'><span style='width:79.0%'></span></div><small>79.0%</small></td></tr><tr><td><b>Temporal/causal rules</b><br><small>Before/after, persistence, cause-effect, intervention effects.</small></td><td>61.5%</td><td>61.5%</td><td>61.5%</td><td>61.5%</td><td>61.5%</td><td>45.0%</td><td><div class='bar'><span style='width:61.5%'></span></div><small>61.5%</small></td></tr><tr><td><b>Default + defeasible rules</b><br><small>Normally-true defaults with explicit exception/override priorities.</small></td><td>37.8%</td><td>37.8%</td><td>37.8%</td><td>37.8%</td><td>37.8%</td><td>25.0%</td><td><div class='bar'><span style='width:37.8%'></span></div><small>37.8%</small></td></tr><tr><td><b>Non-monotonic revision rules</b><br><small>Contradiction handling, belief retraction, preference relations, truth maintenance.</small></td><td>54.7%</td><td>54.7%</td><td>54.7%</td><td>54.7%</td><td>54.7%</td><td>45.0%</td><td><div class='bar'><span style='width:54.7%'></span></div><small>54.7%</small></td></tr><tr><td><b>Numeric/structural reasoning rules</b><br><small>Arithmetic, units, ratios, constraints, graph dependencies.</small></td><td>70.8%</td><td>70.8%</td><td>70.8%</td><td>70.8%</td><td>70.8%</td><td>55.0%</td><td><div class='bar'><span style='width:70.8%'></span></div><small>70.8%</small></td></tr><tr><td><b>Pragmatic/intent rules</b><br><small>Speaker intent, dialogue acts, implicature, goal inference.</small></td><td>19.0%</td><td>19.0%</td><td>19.0%</td><td>19.0%</td><td>19.0%</td><td>10.0%</td><td><div class='bar'><span style='width:19.0%'></span></div><small>19.0%</small></td></tr><tr><td><b>Meta-rules (learning/control)</b><br><small>When to propose/specialize/retract/activate rules and apply evidence policies.</small></td><td>37.5%</td><td>37.5%</td><td>37.5%</td><td>37.5%</td><td>37.5%</td><td>50.0%</td><td><div class='bar'><span style='width:37.5%'></span></div><small>37.5%</small></td></tr><tr><td><b>Planning/action rules</b><br><small>Goal decomposition, preconditions/effects, resources, recovery policies.</small></td><td>13.0%</td><td>13.0%</td><td>13.0%</td><td>13.0%</td><td>13.0%</td><td>10.0%</td><td><div class='bar'><span style='width:13.0%'></span></div><small>13.0%</small></td></tr><tr><td><b>Social/normative rules</b><br><small>Conventions, commitments, permissions/prohibitions, safety boundaries.</small></td><td>5.8%</td><td>5.8%</td><td>5.8%</td><td>5.8%</td><td>5.8%</td><td>5.0%</td><td><div class='bar'><span style='width:5.8%'></span></div><small>5.8%</small></td></tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="card">
+    <h3>Semantic graph view</h3>
+    <div id="semantic-graph"></div>
+    <script>
+      const semanticNodes = [{"id": "A", "label": "A", "kind": "entity", "color": {"background": "#dbeafe", "border": "#1d4ed8"}}, {"id": "B", "label": "B", "kind": "entity", "color": {"background": "#dbeafe", "border": "#1d4ed8"}}, {"id": "ratio_A_B", "label": "A = 3 × B", "kind": "ratio", "color": {"background": "#dcfce7", "border": "#15803d"}}, {"id": "qty_B_10", "label": "B = 10", "kind": "quantity", "color": {"background": "#fef3c7", "border": "#d97706"}}, {"id": "state_30", "label": "Initial A = 30", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}}, {"id": "state_15", "label": "After give-away = 15", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}}, {"id": "state_12", "label": "After 20% eaten = 12", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}}, {"id": "state_20", "label": "After +8 = 20", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}}, {"id": "state_15_final", "label": "Final A = 15", "kind": "state", "color": {"background": "#f3e8ff", "border": "#7c3aed"}}];
+      const semanticEdges = [{"from": "A", "to": "ratio_A_B", "label": "has_ratio", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "B", "to": "ratio_A_B", "label": "base_of_ratio", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "ratio_A_B", "to": "qty_B_10", "label": "uses_value", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "qty_B_10", "to": "state_30", "label": "computes", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "state_30", "to": "state_15", "label": "after_give_away", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "state_15", "to": "state_12", "label": "after_percent_loss", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "state_12", "to": "state_20", "label": "after_buy", "arrows": "to", "color": {"color": "#4b5563"}}, {"from": "state_20", "to": "state_15_final", "label": "after_spoilage", "arrows": "to", "color": {"color": "#4b5563"}}];
+      const container = document.getElementById('semantic-graph');
+      const nodes = new vis.DataSet(semanticNodes.map((node) => ({
+        id: String(node.id),
+        label: String(node.label || node.id),
+        title: String(node.kind || 'node'),
+        shape: node.shape || 'box',
+        color: node.color || { background: '#dbeafe', border: '#2563eb', highlight: { background: '#bfdbfe', border: '#1d4ed8' } },
+        font: { color: '#111827', face: 'sans-serif' }
+      })));
+      const edges = new vis.DataSet(semanticEdges.map((edge) => ({
+        from: String(edge.from || edge.source),
+        to: String(edge.to || edge.target),
+        label: String(edge.label || ''),
+        arrows: edge.arrows || 'to',
+        color: edge.color || { color: '#4b5563' },
+        font: { align: 'middle', color: '#374151' }
+      })));
+      const network = new vis.Network(container, { nodes, edges }, {
+        physics: { enabled: true, solver: 'forceAtlas2Based', stabilization: { iterations: 200 } },
+        interaction: { hover: true, tooltipDelay: 150 },
+        edges: { smooth: { type: 'dynamic' } },
+        layout: { improvedLayout: true },
+        nodes: { borderWidth: 1.5 }
+      });
+      network.fit();
+    </script>
   </div>
 
   <div class="card">
@@ -64,6 +100,27 @@
     <table>
       <thead><tr><th>Captured at</th><th>Label</th><th>Tracked</th><th>Under learning</th><th>Total updates</th></tr></thead>
       <tbody><tr><td>2026-11-02T17:01:41.377621+00:00</td><td>manual-check</td><td>8</td><td>8</td><td>16</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Rule inventory overview</h3>
+    <ul>
+      <li>Total observed rules across sources: <b>32</b></li>
+      <li>Unclassified rules: <b>0</b></li>
+      <li>Tracked utility rule IDs: <b>8</b></li>
+      <li>Missing expected categories: <b>none</b></li>
+      <li>Missing shapes for observed requirements: <b>none</b></li>
+    </ul>
+    <h4>By source</h4>
+    <table>
+      <thead><tr><th>Source</th><th>Count</th></tr></thead>
+      <tbody><tr><td>metarules</td><td>18</td></tr><tr><td>registry</td><td>1</td></tr><tr><td>semantic_ar_seed</td><td>13</td></tr></tbody>
+    </table>
+    <h4>By category</h4>
+    <table>
+      <thead><tr><th>Category</th><th>Count</th><th>Examples</th></tr></thead>
+      <tbody><tr><td>causal_intervention</td><td>2</td><td><small>Intervention(v,factor,k) & Percent(o,rise,p) -> Cause(v,o), Cause(v,o) & Quantity(system,o,q0) & Percent(o,rise,p) -> FinalState(system,o,q0*(1+p))</small></td></tr><tr><td>epistemic_defeasible</td><td>2</td><td><small>Belief(a,fact,v1,c1) & Belief(b,fact,v2,c2) & c2>c1 -> Conflict(fact), Conflict(fact) & HigherConfidenceSource(s) -> RevisedBelief(fact,v_s)</small></td></tr><tr><td>physical_inventory</td><td>6</td><td><small>teacher-prop-prefer-latest, ratio_compose</small></td></tr><tr><td>quantitative_arithmetic</td><td>14</td><td><small>remaining_quantity, rate_times_duration</small></td></tr><tr><td>social_intent</td><td>2</td><td><small>Intent(a,gift,b,item,q) & Has(a,item,q0) -> Event(transfer,a,b,item,q), Event(transfer,a,b,item,q) & Has(a,item,q0) -> Remaining(a,item,q0-q)</small></td></tr><tr><td>temporal_event</td><td>6</td><td><small>latest_valid_state, average_speed</small></td></tr></tbody>
     </table>
   </div>
 

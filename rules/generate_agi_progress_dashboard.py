@@ -16,6 +16,35 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_RULE_CATEGORIES = [
+    "physical_inventory",
+    "quantitative_arithmetic",
+    "temporal_event",
+    "causal_intervention",
+    "social_intent",
+    "epistemic_defeasible",
+]
+
+_CATEGORY_KEYWORDS = {
+    "physical_inventory": {
+        "inventory", "has", "remaining", "state", "state_transition", "owner", "item", "transfer", "buy", "sell", "give",
+    },
+    "quantitative_arithmetic": {
+        "add", "subtract", "multiply", "divide", "percent", "ratio", "total", "quantity", "price", "cost", "rate", "unit",
+    },
+    "temporal_event": {
+        "temporal", "event", "before", "after", "later", "earlier", "duration", "time", "order",
+    },
+    "causal_intervention": {
+        "cause", "effect", "delta", "change", "intervention", "trigger", "impact",
+    },
+    "social_intent": {
+        "social", "agent", "recipient", "beneficiary", "intend", "goal", "promise", "commit",
+    },
+    "epistemic_defeasible": {
+        "belief", "default", "defeasible", "revise", "contradiction", "exception", "prefer", "uncertain", "abduce",
+    },
+}
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -293,6 +322,137 @@ def _capture_rule_snapshot(*, summary: dict[str, Any], snapshots_path: Path, lab
     return snapshot
 
 
+def _classify_rule_category(*, text: str, family: str = "", preferred: str = "") -> str:
+    preferred_norm = str(preferred or "").strip().lower()
+    if preferred_norm in EXPECTED_RULE_CATEGORIES:
+        return preferred_norm
+
+    haystack = f"{family} {text}".lower()
+    scores: dict[str, int] = {}
+    for cat, keys in _CATEGORY_KEYWORDS.items():
+        score = sum(1 for k in keys if k in haystack)
+        if score > 0:
+            scores[cat] = score
+    if not scores:
+        return "unclassified"
+    return sorted(scores.items(), key=lambda item: (item[1], item[0]), reverse=True)[0][0]
+
+
+def _rule_inventory_summary(
+    *,
+    registry_path: Path,
+    metarules_path: Path,
+    semantic_ar_path: Path,
+    rule_shape_path: Path,
+    utility_path: Path,
+) -> dict[str, Any]:
+    entries: list[dict[str, Any]] = []
+
+    registry = _load_yaml(registry_path)
+    for row in registry.get("rules", []) if isinstance(registry.get("rules"), list) else []:
+        if not isinstance(row, dict):
+            continue
+        compiled = row.get("compiled") if isinstance(row.get("compiled"), dict) else {}
+        family = str(compiled.get("family") or row.get("proposal_kind") or "")
+        text = str(compiled.get("rule_text") or row.get("raw_rule") or "")
+        category = _classify_rule_category(text=text, family=family)
+        entries.append(
+            {
+                "source": "registry",
+                "category": category,
+                "signature": str(row.get("rule_id") or compiled.get("rule_id") or family or "registry-rule"),
+                "status": str(row.get("status") or "unknown"),
+            }
+        )
+
+    metarules = _load_json(metarules_path) if metarules_path.exists() else {}
+    for row in metarules.get("rules", []) if isinstance(metarules.get("rules"), list) else []:
+        if not isinstance(row, dict):
+            continue
+        family = str(row.get("family") or "")
+        name = str(row.get("name") or family or "metarule")
+        text = f"{row.get('description') or ''} {row.get('calc') or ''}"
+        category = _classify_rule_category(text=text, family=family)
+        entries.append(
+            {
+                "source": "metarules",
+                "category": category,
+                "signature": name,
+                "status": "snapshot",
+            }
+        )
+
+    semantic_ar = _load_json(semantic_ar_path) if semantic_ar_path.exists() else {}
+    seen_seed_rules: set[tuple[str, str]] = set()
+    for ex in semantic_ar.get("examples", []) if isinstance(semantic_ar.get("examples"), list) else []:
+        if not isinstance(ex, dict):
+            continue
+        cat = str(ex.get("category") or "").strip().lower()
+        for rule in ex.get("seed_rules", []) if isinstance(ex.get("seed_rules"), list) else []:
+            rule_text = str(rule or "").strip()
+            if not rule_text:
+                continue
+            key = (cat, rule_text)
+            if key in seen_seed_rules:
+                continue
+            seen_seed_rules.add(key)
+            category = _classify_rule_category(text=rule_text, preferred=cat)
+            entries.append(
+                {
+                    "source": "semantic_ar_seed",
+                    "category": category,
+                    "signature": rule_text[:120],
+                    "status": "template",
+                }
+            )
+
+    by_source: dict[str, int] = {}
+    by_category: dict[str, int] = {}
+    category_examples: dict[str, list[str]] = {}
+    for row in entries:
+        src = str(row.get("source") or "unknown")
+        cat = str(row.get("category") or "unclassified")
+        by_source[src] = by_source.get(src, 0) + 1
+        by_category[cat] = by_category.get(cat, 0) + 1
+        category_examples.setdefault(cat, [])
+        if len(category_examples[cat]) < 3:
+            category_examples[cat].append(str(row.get("signature") or ""))
+
+    shape_report = _load_json(rule_shape_path) if rule_shape_path.exists() else {}
+    allocated_shapes = {
+        str(item.get("shape"))
+        for item in shape_report.get("rule_shapes", [])
+        if isinstance(item, dict) and item.get("shape")
+    }
+    observed_required_shapes = set()
+    for ex in semantic_ar.get("examples", []) if isinstance(semantic_ar.get("examples"), list) else []:
+        if not isinstance(ex, dict):
+            continue
+        for shape in ex.get("required_shapes", []) if isinstance(ex.get("required_shapes"), list) else []:
+            if str(shape).strip():
+                observed_required_shapes.add(str(shape).strip())
+
+    utility = _load_json(utility_path) if utility_path.exists() else {}
+    utility_rules = utility.get("rules", {}) if isinstance(utility.get("rules"), dict) else {}
+
+    missing_categories = [cat for cat in EXPECTED_RULE_CATEGORIES if by_category.get(cat, 0) <= 0]
+    unclassified = int(by_category.get("unclassified", 0))
+
+    return {
+        "total_rules_observed": len(entries),
+        "by_source": dict(sorted(by_source.items())),
+        "by_category": dict(sorted(by_category.items())),
+        "category_examples": category_examples,
+        "missing_categories": missing_categories,
+        "unclassified_count": unclassified,
+        "allocated_shapes": sorted(allocated_shapes),
+        "observed_required_shapes": sorted(observed_required_shapes),
+        "missing_shapes_for_observed_requirements": sorted(observed_required_shapes - allocated_shapes),
+        "unused_allocated_shapes": sorted(allocated_shapes - observed_required_shapes),
+        "tracked_utility_rules": len(utility_rules),
+    }
+
+
 def _read_single_key() -> str:
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
@@ -363,6 +523,7 @@ def _render_html(payload: dict[str, Any]) -> str:
         )
     trend = payload.get("background_trend", {})
     rule_learning = payload.get("rule_learning", {})
+    rule_inventory = payload.get("rule_inventory", {}) if isinstance(payload.get("rule_inventory"), dict) else {}
     snapshots = rule_learning.get("snapshots", []) if isinstance(rule_learning.get("snapshots"), list) else []
     trend_html = (
         f"<li>Rows: {trend.get('rows')}</li>"
@@ -388,6 +549,17 @@ def _render_html(payload: dict[str, Any]) -> str:
             f"<td>{snap.get('rules_under_learning_count',0)}</td>"
             f"<td>{snap.get('utility_total_updates',0)}</td></tr>"
         )
+    source_rows = []
+    for src, count in (rule_inventory.get("by_source") or {}).items():
+        source_rows.append(f"<tr><td>{src}</td><td>{int(count)}</td></tr>")
+    category_rows = []
+    for cat, count in (rule_inventory.get("by_category") or {}).items():
+        examples = ", ".join((rule_inventory.get("category_examples") or {}).get(cat, [])[:2])
+        category_rows.append(
+            f"<tr><td>{cat}</td><td>{int(count)}</td><td><small>{examples}</small></td></tr>"
+        )
+    missing_categories = rule_inventory.get("missing_categories") or []
+    missing_shapes = rule_inventory.get("missing_shapes_for_observed_requirements") or []
 
     semantic_graph = _normalize_semantic_graph(payload.get("semantic_graph"))
     semantic_nodes = json.dumps(semantic_graph.get("nodes", []), ensure_ascii=False)
@@ -499,6 +671,27 @@ def _render_html(payload: dict[str, Any]) -> str:
   </div>
 
   <div class="card">
+    <h3>Rule inventory overview</h3>
+    <ul>
+      <li>Total observed rules across sources: <b>{rule_inventory.get('total_rules_observed', 0)}</b></li>
+      <li>Unclassified rules: <b>{rule_inventory.get('unclassified_count', 0)}</b></li>
+      <li>Tracked utility rule IDs: <b>{rule_inventory.get('tracked_utility_rules', 0)}</b></li>
+      <li>Missing expected categories: <b>{', '.join(missing_categories) if missing_categories else 'none'}</b></li>
+      <li>Missing shapes for observed requirements: <b>{', '.join(missing_shapes) if missing_shapes else 'none'}</b></li>
+    </ul>
+    <h4>By source</h4>
+    <table>
+      <thead><tr><th>Source</th><th>Count</th></tr></thead>
+      <tbody>{''.join(source_rows) if source_rows else "<tr><td colspan='2'>No rule sources found.</td></tr>"}</tbody>
+    </table>
+    <h4>By category</h4>
+    <table>
+      <thead><tr><th>Category</th><th>Count</th><th>Examples</th></tr></thead>
+      <tbody>{''.join(category_rows) if category_rows else "<tr><td colspan='3'>No categorized rules found.</td></tr>"}</tbody>
+    </table>
+  </div>
+
+  <div class="card">
     <h3>Accounting notes</h3>
     <ul>
       <li>Category progress uses weighted accounting: coverage (20%), symbolic validity (25%), solve utility (25%), rule quality (15%), stability (15%).</li>
@@ -520,6 +713,9 @@ def main() -> int:
     parser.add_argument("--background-metrics", default="rules/reports/background_loop/metrics.jsonl")
     parser.add_argument("--utility-report", default="rules/reports/ilp_rule_utility_v1.json")
     parser.add_argument("--rule-registry", default="rules/nl_rule_registry.yaml")
+    parser.add_argument("--metarules-report", default="rules/reports/metarules_snapshot_v1.json")
+    parser.add_argument("--semantic-ar-report", default="rules/reports/semantic_ar_worked_examples_v1.json")
+    parser.add_argument("--rule-shape-report", default="rules/reports/rule_shape_allocation_300m_v1.json")
     parser.add_argument("--snapshot-file", default="rules/reports/rule_learning_snapshots_v1.json")
     parser.add_argument("--semantic-graph", default="rules/reports/semantic_graph_example.json", help="Optional semantic graph JSON to visualize in the dashboard (node/edge graph).")
     parser.add_argument("--snapshot-now", action="store_true", help="Capture one rule-learning snapshot while generating dashboard.")
@@ -545,6 +741,15 @@ def main() -> int:
     registry_path = Path(args.rule_registry)
     if not registry_path.is_absolute():
         registry_path = REPO_ROOT / registry_path
+    metarules_path = Path(args.metarules_report)
+    if not metarules_path.is_absolute():
+        metarules_path = REPO_ROOT / metarules_path
+    semantic_ar_path = Path(args.semantic_ar_report)
+    if not semantic_ar_path.is_absolute():
+        semantic_ar_path = REPO_ROOT / semantic_ar_path
+    rule_shape_path = Path(args.rule_shape_report)
+    if not rule_shape_path.is_absolute():
+        rule_shape_path = REPO_ROOT / rule_shape_path
     snapshots_path = Path(args.snapshot_file)
     if not snapshots_path.is_absolute():
         snapshots_path = REPO_ROOT / snapshots_path
@@ -747,6 +952,9 @@ def main() -> int:
             "background_metrics": str(bg_metrics_path),
             "utility_report": str(utility_path),
             "rule_registry": str(registry_path),
+            "metarules_report": str(metarules_path),
+            "semantic_ar_report": str(semantic_ar_path),
+            "rule_shape_report": str(rule_shape_path),
             "snapshot_file": str(snapshots_path),
             "semantic_graph": str(semantic_graph_path),
         },
@@ -758,6 +966,13 @@ def main() -> int:
             utility_path=utility_path,
             registry_path=registry_path,
             snapshots_path=snapshots_path,
+        ),
+        "rule_inventory": _rule_inventory_summary(
+            registry_path=registry_path,
+            metarules_path=metarules_path,
+            semantic_ar_path=semantic_ar_path,
+            rule_shape_path=rule_shape_path,
+            utility_path=utility_path,
         ),
         "overall_progress_pct": _overall_progress(categories),
     }

@@ -1,6 +1,6 @@
 {
   "dashboard_id": "agi-progress-dashboard-v1",
-  "generated_at": "2026-11-02T17:01:40.832499+00:00",
+  "generated_at": "2026-11-13T22:29:02.502173+00:00",
   "sources": {
     "baseline_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_baseline_v1.json",
     "widening_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v2.json",
@@ -8,7 +8,11 @@
     "background_metrics": "/home/yky/misc-programs/AGI-prototype/rules/reports/background_loop/metrics.jsonl",
     "utility_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/ilp_rule_utility_v1.json",
     "rule_registry": "/home/yky/misc-programs/AGI-prototype/rules/nl_rule_registry.yaml",
-    "snapshot_file": "/home/yky/misc-programs/AGI-prototype/rules/reports/rule_learning_snapshots_v1.json"
+    "metarules_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/metarules_snapshot_v1.json",
+    "semantic_ar_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/semantic_ar_worked_examples_v1.json",
+    "rule_shape_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/rule_shape_allocation_300m_v1.json",
+    "snapshot_file": "/home/yky/misc-programs/AGI-prototype/rules/reports/rule_learning_snapshots_v1.json",
+    "semantic_graph": "/home/yky/misc-programs/AGI-prototype/rules/reports/semantic_graph_example.json"
   },
   "ledger_overall_green": false,
   "categories": [
@@ -179,6 +183,133 @@
     "cost_per_valid_solve_avg": 1.368955,
     "cost_per_valid_solve_last20_avg": 1.373555
   },
+  "semantic_graph": {
+    "nodes": [
+      {
+        "id": "A",
+        "label": "A",
+        "kind": "entity",
+        "color": {
+          "background": "#dbeafe",
+          "border": "#1d4ed8"
+        }
+      },
+      {
+        "id": "B",
+        "label": "B",
+        "kind": "entity",
+        "color": {
+          "background": "#dbeafe",
+          "border": "#1d4ed8"
+        }
+      },
+      {
+        "id": "ratio_A_B",
+        "label": "A = 3 \u00d7 B",
+        "kind": "ratio",
+        "color": {
+          "background": "#dcfce7",
+          "border": "#15803d"
+        }
+      },
+      {
+        "id": "qty_B_10",
+        "label": "B = 10",
+        "kind": "quantity",
+        "color": {
+          "background": "#fef3c7",
+          "border": "#d97706"
+        }
+      },
+      {
+        "id": "state_30",
+        "label": "Initial A = 30",
+        "kind": "state",
+        "color": {
+          "background": "#f3e8ff",
+          "border": "#7c3aed"
+        }
+      },
+      {
+        "id": "state_15",
+        "label": "After give-away = 15",
+        "kind": "state",
+        "color": {
+          "background": "#f3e8ff",
+          "border": "#7c3aed"
+        }
+      },
+      {
+        "id": "state_12",
+        "label": "After 20% eaten = 12",
+        "kind": "state",
+        "color": {
+          "background": "#f3e8ff",
+          "border": "#7c3aed"
+        }
+      },
+      {
+        "id": "state_20",
+        "label": "After +8 = 20",
+        "kind": "state",
+        "color": {
+          "background": "#f3e8ff",
+          "border": "#7c3aed"
+        }
+      },
+      {
+        "id": "state_15_final",
+        "label": "Final A = 15",
+        "kind": "state",
+        "color": {
+          "background": "#f3e8ff",
+          "border": "#7c3aed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "A",
+        "target": "ratio_A_B",
+        "relation": "has_ratio"
+      },
+      {
+        "source": "B",
+        "target": "ratio_A_B",
+        "relation": "base_of_ratio"
+      },
+      {
+        "source": "ratio_A_B",
+        "target": "qty_B_10",
+        "relation": "uses_value"
+      },
+      {
+        "source": "qty_B_10",
+        "target": "state_30",
+        "relation": "computes"
+      },
+      {
+        "source": "state_30",
+        "target": "state_15",
+        "relation": "after_give_away"
+      },
+      {
+        "source": "state_15",
+        "target": "state_12",
+        "relation": "after_percent_loss"
+      },
+      {
+        "source": "state_12",
+        "target": "state_20",
+        "relation": "after_buy"
+      },
+      {
+        "source": "state_20",
+        "target": "state_15_final",
+        "relation": "after_spoilage"
+      }
+    ]
+  },
   "rule_learning": {
     "utility_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/ilp_rule_utility_v1.json",
     "registry_path": "/home/yky/misc-programs/AGI-prototype/rules/nl_rule_registry.yaml",
@@ -314,6 +445,74 @@
         ]
       }
     ]
+  },
+  "rule_inventory": {
+    "total_rules_observed": 32,
+    "by_source": {
+      "metarules": 18,
+      "registry": 1,
+      "semantic_ar_seed": 13
+    },
+    "by_category": {
+      "causal_intervention": 2,
+      "epistemic_defeasible": 2,
+      "physical_inventory": 6,
+      "quantitative_arithmetic": 14,
+      "social_intent": 2,
+      "temporal_event": 6
+    },
+    "category_examples": {
+      "physical_inventory": [
+        "teacher-prop-prefer-latest",
+        "ratio_compose",
+        "state_transition"
+      ],
+      "quantitative_arithmetic": [
+        "remaining_quantity",
+        "rate_times_duration",
+        "combined_total"
+      ],
+      "temporal_event": [
+        "latest_valid_state",
+        "average_speed",
+        "temporal_causal_chain"
+      ],
+      "causal_intervention": [
+        "Intervention(v,factor,k) & Percent(o,rise,p) -> Cause(v,o)",
+        "Cause(v,o) & Quantity(system,o,q0) & Percent(o,rise,p) -> FinalState(system,o,q0*(1+p))"
+      ],
+      "social_intent": [
+        "Intent(a,gift,b,item,q) & Has(a,item,q0) -> Event(transfer,a,b,item,q)",
+        "Event(transfer,a,b,item,q) & Has(a,item,q0) -> Remaining(a,item,q0-q)"
+      ],
+      "epistemic_defeasible": [
+        "Belief(a,fact,v1,c1) & Belief(b,fact,v2,c2) & c2>c1 -> Conflict(fact)",
+        "Conflict(fact) & HigherConfidenceSource(s) -> RevisedBelief(fact,v_s)"
+      ]
+    },
+    "missing_categories": [],
+    "unclassified_count": 0,
+    "allocated_shapes": [
+      "arithmetic_operator",
+      "binary_relation",
+      "control_query",
+      "frame_role",
+      "temporal_causal",
+      "transition_state",
+      "unary_attribute"
+    ],
+    "observed_required_shapes": [
+      "arithmetic_operator",
+      "binary_relation",
+      "control_query",
+      "frame_role",
+      "temporal_causal",
+      "transition_state",
+      "unary_attribute"
+    ],
+    "missing_shapes_for_observed_requirements": [],
+    "unused_allocated_shapes": [],
+    "tracked_utility_rules": 8
   },
   "overall_progress_pct": 42.65
 }
