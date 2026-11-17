@@ -1,5 +1,4 @@
 \documentclass[14pt]{article}
-
 \usepackage[a4paper,margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
@@ -9,6 +8,8 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, decorations, decorations.markings}
+
+\setlength{\parindent}{0em}
 
 \title{A Tri-System Neurosymbolic AGI Prototype:\\Design Draft and Experimental Program}
 \author{Project Draft (Living Document)}
@@ -72,7 +73,7 @@ The architecture (Figure \ref{fig:architecture}) has three interacting systems s
 
 \section{Working Memory and Knowledge Representation}
 
-\subsection{WME form}
+\subsection{WME format}
 A Working Memory Element (WME) is represented as:
 \[
 \texttt{WME} = (\texttt{concept}, \texttt{args/fields}, \texttt{activation}, \texttt{source}, \texttt{layer}, \texttt{ttl}, \texttt{provenance})
@@ -80,7 +81,7 @@ A Working Memory Element (WME) is represented as:
 Predicate arity is \textbf{not globally uniform}: different predicates may have different numbers of arguments.
 The only arity constraint is per-predicate consistency (e.g., \texttt{has/3} remains arity-3 across uses).
 
-\subsection{Heterogeneous rule/fact shapes}
+\subsubsection{Heterogeneous rule/fact shapes}
 From symbolic logic and engine semantics, heterogeneous arity is acceptable.
 For tensor training efficiency in LT, shape management can be done by:
 \begin{enumerate}[leftmargin=1.5em]
@@ -88,7 +89,55 @@ For tensor training efficiency in LT, shape management can be done by:
   \item padding/masking within a bucket.
 \end{enumerate}
 
-\section{Rule Language and Recommended Shapes}
+\subsection{Examples of everyday inference}
+
+\subsubsection{Calling spaCy to parse an NL sentence}
+
+Currently we use spaCy to produce dependency parsing of NL sentences, and then use custom Python script to convert them into neo-Davidsonian semantics.
+
+Example sentence: \textit{``Janet's ducks lay 16 eggs per day.''}
+
+Example output from \texttt{logic\_transformer/spacy\_logical\_form.py}:
+\begin{verbatim}
+agent(?e1, ?x1).
+entity(?x1).
+entity(?x2).
+entity(?x3).
+event(?e1).
+name(?x1, duck).
+name(?x2, egg).
+name(?x3, day).
+patient(?e1, ?x2).
+predicate(?e1, lie).
+quantity(?x2, 16).
+tense(?e1, past).
+type(?x1, noun).
+type(?x2, noun).
+type(?x3, noun).
+\end{verbatim}
+
+Notice that the name ``Janet'' is not yet extracted, among other missing information.  There are gaps in the current parsing.  We will update the examples to show our progress.
+
+\subsubsection{Example of Semantic Auto-Regression}
+
+The current Semantic-AR pipeline emits ontology-aligned symbolic traces.
+
+Example output from
+\texttt{rules/reports/semantic\_ar\_worked\_examples\_ontology\_aligned\_v1.json}
+(\texttt{example\_id = sar\_physical\_inventory\_001}):
+\begin{verbatim}
+trace alignments:
+  step=observe,    predicate=Has,             chosen_concept=transfer,   confidence=0.9
+  step=transition, predicate=StateTransition, chosen_concept=comparison, confidence=0.8
+  step=infer,      predicate=Remaining,       chosen_concept=comparison, confidence=0.9
+
+seed_rule_1:
+  Has(x,item,q0) & StateTransition(x,item,delta=d1) -> Has(x,item,q0+d1)
+seed_rule_2:
+  Has(x,item,q1) & StateTransition(x,item,delta=d2) -> Remaining(x,item,q1+d2)
+\end{verbatim}
+
+\section{Rule Language and Pre-configured Rule Shapes}
 
 \subsection{Canonical rule schema}
 \[
