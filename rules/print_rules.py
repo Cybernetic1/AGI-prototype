@@ -24,6 +24,74 @@ RULE_SNAPSHOT_PATHS = [
 ]
 SYS3_SEED_FILE = REPO_ROOT / "ilp_learner" / "metagol_nds.py"
 SYS3_SEED_FILE_2 = REPO_ROOT / "ilp_learner" / "abductive_ilp.py"
+ANSI_BOLD_YELLOW = "\033[1;93m"
+ANSI_BRIGHT_BLUE = "\033[94m"
+ANSI_RESET = "\033[0m"
+
+
+def _use_color() -> bool:
+    return hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
+
+
+def _bold_yellow(text: str) -> str:
+    return f"{ANSI_BOLD_YELLOW}{text}{ANSI_RESET}" if _use_color() else text
+
+
+def _bright_blue(text: str) -> str:
+    return f"{ANSI_BRIGHT_BLUE}{text}{ANSI_RESET}" if _use_color() else text
+
+
+def _format_rule_text(text: str | None) -> str:
+    if not text:
+        return "<empty>"
+    return str(text).replace(" and ", " ∧ ").replace(chr(10), " ").strip()
+
+
+def _print_rule_dict(rule: dict, label: str, *, show_body: bool = True) -> None:
+    if not isinstance(rule, dict):
+        print(f"  - {label}: {rule}")
+        return
+
+    name = rule.get("name") or rule.get("rule_id") or rule.get("id") or rule.get("family") or label
+    family = rule.get("family") or "generic"
+    print(f"- {_bold_yellow(str(name))} [{family}]")
+
+    template = rule.get("template")
+    if template:
+        print(f"  template: {_bright_blue(_format_rule_text(template))}")
+
+    raw_rule = rule.get("raw_rule")
+    if raw_rule:
+        print(f"  raw_rule: {_bright_blue(_format_rule_text(raw_rule))}")
+
+    compiled = rule.get("compiled")
+    if isinstance(compiled, dict):
+        rule_text = compiled.get("rule_text") or compiled.get("template") or compiled.get("condition")
+        if rule_text:
+            print(f"  compiled_rule: {_bright_blue(_format_rule_text(str(rule_text)))}")
+        for key in ("condition", "effect", "family", "priority", "kind"):
+            value = compiled.get(key)
+            if value not in (None, ""):
+                print(f"  compiled.{key}: {value}")
+
+    if show_body:
+        for key in ("head", "body", "calc", "target", "description"):
+            value = rule.get(key)
+            if value not in (None, ""):
+                if key in {"calc", "target"}:
+                    print(f"  {key}: {_bright_blue(str(value))}")
+                elif key == "description":
+                    print(f"  {key}: {value}")
+                else:
+                    print(f"  {key}: {value}")
+
+    notes = rule.get("notes") or []
+    if isinstance(notes, list):
+        for note in notes:
+            print(f"  note: {note}")
+
+    if not any(v for v in (template, raw_rule, compiled, rule.get("head"), rule.get("body"), rule.get("calc"), rule.get("description"), notes)):
+        print("  <no concrete rule body recorded>")
 
 
 def print_sys2_rules(path: Path) -> None:
@@ -38,16 +106,8 @@ def print_sys2_rules(path: Path) -> None:
 
     print(f"System 2 rule base: {path}")
     print("=" * 72)
-    for rule in payload:
-        name = rule.get("name", "unnamed")
-        family = rule.get("family", "generic")
-        template = (rule.get("template") or "").strip()
-        notes = rule.get("notes") or []
-        pretty = template.replace(" and ", " ∧ ")
-        print(f"- {name} [{family}]")
-        print(f"  template: {pretty.replace(chr(10), ' ')}")
-        for note in notes:
-            print(f"    note: {note}")
+    for i, rule in enumerate(payload, start=1):
+        _print_rule_dict(rule, f"rule_{i}")
         print()
 
 
@@ -69,8 +129,8 @@ def print_defeasible_rules(path: Path) -> None:
         kind = rule.get("kind", "defeasible")
         expr = str(rule.get("rule", "")).replace(" and ", " ∧ ").replace("=>", "⟹")
         note = rule.get("notes", "")
-        print(f"- {rid} [{kind}]")
-        print(f"  rule: {expr}")
+        print(f"- {_bold_yellow(rid)} [{kind}]")
+        print(f"  rule: {_bright_blue(expr)}")
         if note:
             print(f"  note: {note}")
         print()
@@ -113,11 +173,12 @@ def print_nl_rule_registry(path: Path) -> None:
             rid = entry.get("rule_id", "unknown")
             status = entry.get("status", "proposed")
             version = entry.get("version", 1)
-            family = (entry.get("compiled") or {}).get("family", "unknown")
+            compiled = entry.get("compiled") or {}
+            family = compiled.get("family", "unknown")
             provenance = entry.get("provenance", "unknown")
             mutability = entry.get("mutability", "priority_only")
             accounting = entry.get("accounting") or {}
-            print(f"- {rid} [status={status}, version={version}, family={family}]")
+            print(f"- {_bold_yellow(rid)} [status={status}, version={version}, family={family}]")
             print(f"  provenance: {provenance}  mutability: {mutability}")
             print(
                 "  accounting: "
@@ -129,6 +190,14 @@ def print_nl_rule_registry(path: Path) -> None:
             )
             print(f"  source: {entry.get('source', 'unknown')}")
             print(f"  updated_at: {entry.get('updated_at', 'n/a')}")
+            raw_rule = entry.get("raw_rule")
+            if raw_rule:
+                print(f"  raw_rule: {_bright_blue(_format_rule_text(raw_rule))}")
+            if isinstance(compiled, dict):
+                for key in ("rule_text", "condition", "effect", "priority"):
+                    value = compiled.get(key)
+                    if value not in (None, ""):
+                        print(f"  compiled.{key}: {_bright_blue(_format_rule_text(str(value)))}")
             print()
 
     print(f"teacher_proposals_logged: {len(teacher_events)}")
@@ -159,16 +228,31 @@ def print_rule_snapshot(path: Path) -> None:
     print("=" * 72)
     payload = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(payload, dict):
-        if "rules" in payload:
+        if "rules" in payload and isinstance(payload["rules"], list):
             rules = payload["rules"]
             print(f"count: {len(rules)}")
-            for rule in rules:
-                print(f"- {rule.get('name', rule.get('family', 'unnamed'))}: {rule.get('description', rule.get('head', ''))}")
-        elif "snapshots" in payload:
+            for i, rule in enumerate(rules, start=1):
+                _print_rule_dict(rule, f"rule_{i}")
+                print()
+        elif "snapshots" in payload and isinstance(payload["snapshots"], list):
             snapshots = payload["snapshots"]
             print(f"snapshots: {len(snapshots)}")
             for snap in snapshots[:3]:
-                print(f"- {snap.get('label', 'snapshot')}: tracked={snap.get('tracked_rule_count', 0)} learning={snap.get('rules_under_learning_count', 0)}")
+                label = snap.get("label", "snapshot")
+                tracked = snap.get("tracked_rule_count", 0)
+                learning = snap.get("rules_under_learning_count", 0)
+                print(f"- {label}: tracked={tracked} learning={learning}")
+                top_rules = snap.get("top_rules") or []
+                if top_rules:
+                    for item in top_rules[:5]:
+                        print(
+                            "    top_rule: "
+                            f"signature={item.get('signature', 'unknown')} "
+                            f"count={item.get('count', 0)} "
+                            f"avg_reward={item.get('avg_reward', 0)}"
+                        )
+                if not top_rules:
+                    print("    <no concrete rule bodies recorded in this snapshot>")
         else:
             print(payload)
     else:
@@ -179,6 +263,7 @@ def print_rule_snapshot(path: Path) -> None:
 def print_ltm_summary(path: Path) -> None:
     if not path.exists():
         print(f"[missing] {path}")
+        print("LTM store is not yet persisted as a concrete YAML file; snapshot summaries are therefore partial-only.")
         return
     payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     episodes = payload.get("episodes") or []
@@ -191,6 +276,60 @@ def print_ltm_summary(path: Path) -> None:
     print(f"episodes_active: {len(active_episodes)}")
     print(f"semantic_memory_entries: {len(semantic)}")
     print(f"rule_memory_entries: {len(rules)}")
+
+
+def _count_rule_entries(path: Path) -> tuple[int, int, str]:
+    if not path.exists():
+        return 0, 0, "missing"
+    try:
+        if path.suffix.lower() in {".yaml", ".yml"}:
+            payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            if isinstance(payload, list):
+                return len(payload), 0, "list"
+            if isinstance(payload, dict):
+                rule_count = len(payload.get("rules") or [])
+                proposal_count = len(payload.get("teacher_proposals") or [])
+                return rule_count, proposal_count, "dict"
+        else:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(payload, dict):
+                if "rules" in payload:
+                    return len(payload.get("rules") or []), 0, "json_rules"
+                if "snapshots" in payload:
+                    tracked = []
+                    for snap in payload.get("snapshots") or []:
+                        tracked.extend(snap.get("top_rules") or [])
+                    return len(payload.get("snapshots") or []), len(tracked), "json_snapshots"
+    except Exception:
+        return 0, 0, "parse_error"
+    return 0, 0, "empty"
+
+
+def print_rule_inventory_summary() -> None:
+    sys2_rules, _, _ = _count_rule_entries(SYS2_RULES)
+    defeasible_rules, _, _ = _count_rule_entries(DEFEASIBLE_RULES)
+    registry_rules, registry_proposals, _ = _count_rule_entries(NL_RULE_REGISTRY)
+    metarules, _, _ = _count_rule_entries(RULE_SNAPSHOT_PATHS[0])
+    learning_snapshots, learning_candidates, _ = _count_rule_entries(RULE_SNAPSHOT_PATHS[1])
+    active_runtime = sys2_rules + defeasible_rules + registry_rules
+    total_materialized = sys2_rules + defeasible_rules + registry_rules + metarules + learning_candidates
+    print("Rule inventory summary:")
+    print("=" * 72)
+    print(f"System 2 file-backed rules: {sys2_rules}")
+    print(f"Defeasible rules: {defeasible_rules}")
+    print(f"NL registry compiled rules: {registry_rules}")
+    print(f"NL registry proposal records: {registry_proposals}")
+    print(f"Metarule snapshot entries: {metarules}")
+    print(f"Learning snapshot tracked groups: {learning_snapshots}")
+    print(f"Learning snapshot candidate signatures: {learning_candidates}")
+    print(f"Active runtime KB (file-backed + compiled): {active_runtime}")
+    print(f"Total materialized rule/metarule count: {total_materialized}")
+    if not LTM_STORE.exists():
+        print("LTM store: missing (0 persisted rule-memory entries)")
+    else:
+        ltm_rules, _, _ = _count_rule_entries(LTM_STORE)
+        print(f"LTM rule-memory entries: {ltm_rules}")
+    print()
 
 
 def print_sys3_rules_summary() -> None:
@@ -222,6 +361,7 @@ def main() -> int:
     if not any([args.sys2, args.defeasible, args.registry, args.nl, args.snapshot, args.ltm, args.lt, args.sys3, args.all]):
         args.all = True
 
+    print_rule_inventory_summary()
     if args.all or args.sys2:
         print_sys2_rules(SYS2_RULES)
         print()

@@ -1,0 +1,240 @@
+{
+  "version": "v1",
+  "record_count": 22,
+  "lemma_count": 22,
+  "source_counts": {
+    "framenet": 8,
+    "verbnet": 7,
+    "wordnet": 7
+  },
+  "lemma_index": {
+    "apple": {
+      "lemma": "apple",
+      "sources": ["wordnet"],
+      "event_label": "neutral",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["apple.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": []
+    },
+    "buy": {
+      "lemma": "buy",
+      "sources": ["wordnet", "verbnet", "framenet"],
+      "event_label": "creation",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["buy.v.01"],
+      "verbnet_classes": ["purchase-13.5.2"],
+      "framenet_frames": ["commerce_buy"]
+    },
+    "change": {
+      "lemma": "change",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "comparison",
+      "event_confidence": 0.75,
+      "wordnet_senses": ["change.v.01"],
+      "verbnet_classes": ["turn-26.6.1"],
+      "framenet_frames": []
+    },
+    "compare": {
+      "lemma": "compare",
+      "sources": ["wordnet", "verbnet", "framenet"],
+      "event_label": "comparison",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["compare.v.01"],
+      "verbnet_classes": ["evaluate-34.1"],
+      "framenet_frames": ["comparing"]
+    },
+    "give": {
+      "lemma": "give",
+      "sources": ["wordnet", "verbnet", "framenet"],
+      "event_label": "transfer",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["give.v.01"],
+      "verbnet_classes": ["give-13.1"],
+      "framenet_frames": ["giving"]
+    },
+    "have": {
+      "lemma": "have",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "transfer",
+      "event_confidence": 0.8,
+      "wordnet_senses": ["have.v.01"],
+      "verbnet_classes": ["own-100"],
+      "framenet_frames": []
+    },
+    "intend": {
+      "lemma": "intend",
+      "sources": ["wordnet", "framenet"],
+      "event_label": "neutral",
+      "event_confidence": 0.7,
+      "wordnet_senses": ["intend.v.01"],
+      "verbnet_classes": [],
+      "framenet_frames": ["purpose"]
+    },
+    "know": {
+      "lemma": "know",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "neutral",
+      "event_confidence": 0.75,
+      "wordnet_senses": ["know.v.01"],
+      "verbnet_classes": ["know-31.1"],
+      "framenet_frames": []
+    },
+    "lose": {
+      "lemma": "lose",
+      "sources": ["wordnet", "verbnet", "framenet"],
+      "event_label": "loss",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["lose.v.01"],
+      "verbnet_classes": ["destroy-44"],
+      "framenet_frames": ["destroying"]
+    },
+    "remain": {
+      "lemma": "remain",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "comparison",
+      "event_confidence": 0.8,
+      "wordnet_senses": ["remain.v.01"],
+      "verbnet_classes": ["remain-47.1"],
+      "framenet_frames": []
+    },
+    "sell": {
+      "lemma": "sell",
+      "sources": ["wordnet", "verbnet", "framenet"],
+      "event_label": "transfer",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["sell.v.01"],
+      "verbnet_classes": ["trade-13.6"],
+      "framenet_frames": ["commerce_sell"]
+    },
+    "state": {
+      "lemma": "state",
+      "sources": ["wordnet", "framenet"],
+      "event_label": "neutral",
+      "event_confidence": 0.75,
+      "wordnet_senses": ["state.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": ["state"]
+    },
+    "state_transition": {
+      "lemma": "state_transition",
+      "sources": ["verbnet", "framenet"],
+      "event_label": "comparison",
+      "event_confidence": 0.7,
+      "wordnet_senses": [],
+      "verbnet_classes": ["turn-26.6.1"],
+      "framenet_frames": ["change_position_on_a_scale"]
+    },
+    "total": {
+      "lemma": "total",
+      "sources": ["wordnet"],
+      "event_label": "comparison",
+      "event_confidence": 0.75,
+      "wordnet_senses": ["total.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": []
+    },
+    "ratio": {
+      "lemma": "ratio",
+      "sources": ["wordnet"],
+      "event_label": "comparison",
+      "event_confidence": 0.8,
+      "wordnet_senses": ["ratio.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": []
+    },
+    "gain": {
+      "lemma": "gain",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "creation",
+      "event_confidence": 0.9,
+      "wordnet_senses": ["gain.v.01"],
+      "verbnet_classes": ["get-13.5.1"],
+      "framenet_frames": []
+    },
+    "transfer": {
+      "lemma": "transfer",
+      "sources": ["wordnet", "verbnet", "framenet"],
+      "event_label": "transfer",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["transfer.v.01"],
+      "verbnet_classes": ["give-13.1"],
+      "framenet_frames": ["transfer"]
+    },
+    "reason": {
+      "lemma": "reason",
+      "sources": ["wordnet", "framenet"],
+      "event_label": "neutral",
+      "event_confidence": 0.7,
+      "wordnet_senses": ["reason.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": ["reasoning"]
+    },
+    "believe": {
+      "lemma": "believe",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "neutral",
+      "event_confidence": 0.8,
+      "wordnet_senses": ["believe.v.01"],
+      "verbnet_classes": ["consider-29.9"],
+      "framenet_frames": []
+    },
+    "decide": {
+      "lemma": "decide",
+      "sources": ["wordnet", "verbnet"],
+      "event_label": "neutral",
+      "event_confidence": 0.75,
+      "wordnet_senses": ["decide.v.01"],
+      "verbnet_classes": ["decide-62"],
+      "framenet_frames": []
+    },
+    "cause": {
+      "lemma": "cause",
+      "sources": ["wordnet", "framenet"],
+      "event_label": "neutral",
+      "event_confidence": 0.75,
+      "wordnet_senses": ["cause.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": ["causation"]
+    },
+    "happen": {
+      "lemma": "happen",
+      "sources": ["wordnet"],
+      "event_label": "neutral",
+      "event_confidence": 0.7,
+      "wordnet_senses": ["happen.v.01"],
+      "verbnet_classes": [],
+      "framenet_frames": []
+    },
+    "agent": {
+      "lemma": "agent",
+      "sources": ["wordnet"],
+      "event_label": "neutral",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["agent.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": []
+    },
+    "item": {
+      "lemma": "item",
+      "sources": ["wordnet"],
+      "event_label": "neutral",
+      "event_confidence": 1.0,
+      "wordnet_senses": ["item.n.01"],
+      "verbnet_classes": [],
+      "framenet_frames": []
+    }
+  },
+  "alignment_edges": [
+    {"from": "lemma:give:wordnet", "to": "lemma:give:verbnet", "relation": "same_lemma", "confidence": 1.0},
+    {"from": "lemma:buy:wordnet", "to": "lemma:buy:verbnet", "relation": "same_lemma", "confidence": 1.0},
+    {"from": "lemma:remain:wordnet", "to": "lemma:remain:verbnet", "relation": "same_lemma", "confidence": 0.9},
+    {"from": "lemma:compare:wordnet", "to": "lemma:compare:verbnet", "relation": "same_lemma", "confidence": 1.0}
+  ],
+  "settings": {
+    "include_wordnet": true,
+    "include_verbnet": true,
+    "include_framenet": true,
+    "framenet_verb_focused": true
+  }
+}
