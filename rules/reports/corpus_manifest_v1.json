@@ -1,0 +1,1446 @@
+{
+  "manifest_id": "corpus-manifest-v1",
+  "generated_at": "2026-11-12T14:18:57.587730+00:00",
+  "config_path": "/home/yky/misc-programs/AGI-prototype/rules/configs/corpus_sources_v1.json",
+  "target_total_gb": 300.0,
+  "roots": {
+    "disk1": "/media/yky/old-dreams1",
+    "disk2": "/media/yky/old-dreams2"
+  },
+  "entries": [
+    {
+      "source_id": "fineweb",
+      "repo_id": "HuggingFaceFW/fineweb",
+      "repo_type": "dataset",
+      "target_root_key": "disk1",
+      "target_root_path": "/media/yky/old-dreams1",
+      "target_gb": 135.0,
+      "selected_gb": 133.979,
+      "selected_count": 67,
+      "listing_source": "dataset_info",
+      "repo_file_nodes": 28147,
+      "repo_size_known_nodes": 28147,
+      "repo_size_missing_nodes": 0,
+      "repo_tree_error": "",
+      "files": [
+        {
+          "path": "data/CC-MAIN-2013-20/000_00000.parquet",
+          "size": 2147531358
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00001.parquet",
+          "size": 2146853893
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00002.parquet",
+          "size": 2147044098
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00003.parquet",
+          "size": 2147412271
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00004.parquet",
+          "size": 2146991341
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00005.parquet",
+          "size": 2148146096
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00006.parquet",
+          "size": 2147169070
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00007.parquet",
+          "size": 2146979432
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00008.parquet",
+          "size": 2147298729
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00009.parquet",
+          "size": 2147114414
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00010.parquet",
+          "size": 2147817437
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00011.parquet",
+          "size": 2146604858
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00012.parquet",
+          "size": 2147790908
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00013.parquet",
+          "size": 2147883182
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00014.parquet",
+          "size": 2147892661
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00015.parquet",
+          "size": 2147404363
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00016.parquet",
+          "size": 2148239815
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00017.parquet",
+          "size": 2146120615
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00018.parquet",
+          "size": 2147399348
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00019.parquet",
+          "size": 2148250021
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00020.parquet",
+          "size": 2146801250
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00021.parquet",
+          "size": 2147793433
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00022.parquet",
+          "size": 2146939760
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00023.parquet",
+          "size": 2146586753
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00024.parquet",
+          "size": 2147249850
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00025.parquet",
+          "size": 2147692063
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00026.parquet",
+          "size": 2147592649
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00027.parquet",
+          "size": 2147755158
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00028.parquet",
+          "size": 2146887963
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00029.parquet",
+          "size": 2147887687
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00030.parquet",
+          "size": 2146336746
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00031.parquet",
+          "size": 2147663631
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00032.parquet",
+          "size": 2147995792
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00033.parquet",
+          "size": 2146471430
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00034.parquet",
+          "size": 2148054215
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00035.parquet",
+          "size": 2147728653
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00036.parquet",
+          "size": 2147209087
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00037.parquet",
+          "size": 2147706779
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00038.parquet",
+          "size": 2147461765
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00039.parquet",
+          "size": 2146306819
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00040.parquet",
+          "size": 2147723105
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00041.parquet",
+          "size": 2146631109
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00042.parquet",
+          "size": 2147029949
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00043.parquet",
+          "size": 2146139072
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00044.parquet",
+          "size": 2146178953
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00045.parquet",
+          "size": 2146623690
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00046.parquet",
+          "size": 2146800721
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00047.parquet",
+          "size": 2146452978
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00048.parquet",
+          "size": 2147271170
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/000_00049.parquet",
+          "size": 2146723269
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00000.parquet",
+          "size": 2147264039
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00001.parquet",
+          "size": 2147188971
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00002.parquet",
+          "size": 2146360871
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00003.parquet",
+          "size": 2146444275
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00004.parquet",
+          "size": 2147990568
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00005.parquet",
+          "size": 2146366528
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00006.parquet",
+          "size": 2146782845
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00007.parquet",
+          "size": 2146745863
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00008.parquet",
+          "size": 2147195345
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00009.parquet",
+          "size": 2146454705
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00010.parquet",
+          "size": 2146921354
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00011.parquet",
+          "size": 2146340521
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00012.parquet",
+          "size": 2146565909
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00013.parquet",
+          "size": 2147073791
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00014.parquet",
+          "size": 2147163233
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00015.parquet",
+          "size": 2147005891
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/001_00016.parquet",
+          "size": 2146951147
+        }
+      ]
+    },
+    {
+      "source_id": "c4",
+      "repo_id": "allenai/c4",
+      "repo_type": "dataset",
+      "target_root_key": "disk2",
+      "target_root_path": "/media/yky/old-dreams2",
+      "target_gb": 90.0,
+      "selected_gb": 89.887,
+      "selected_count": 243,
+      "listing_source": "dataset_info",
+      "repo_file_nodes": 69221,
+      "repo_size_known_nodes": 69221,
+      "repo_size_missing_nodes": 0,
+      "repo_tree_error": "",
+      "files": [
+        {
+          "path": "en.noblocklist/c4-train.00000-of-01024.json.gz",
+          "size": 396728190
+        },
+        {
+          "path": "en.noblocklist/c4-train.00001-of-01024.json.gz",
+          "size": 395686133
+        },
+        {
+          "path": "en.noblocklist/c4-train.00002-of-01024.json.gz",
+          "size": 397762165
+        },
+        {
+          "path": "en.noblocklist/c4-train.00003-of-01024.json.gz",
+          "size": 395307518
+        },
+        {
+          "path": "en.noblocklist/c4-train.00004-of-01024.json.gz",
+          "size": 396280504
+        },
+        {
+          "path": "en.noblocklist/c4-train.00005-of-01024.json.gz",
+          "size": 396636600
+        },
+        {
+          "path": "en.noblocklist/c4-train.00006-of-01024.json.gz",
+          "size": 395364336
+        },
+        {
+          "path": "en.noblocklist/c4-train.00007-of-01024.json.gz",
+          "size": 396428805
+        },
+        {
+          "path": "en.noblocklist/c4-train.00008-of-01024.json.gz",
+          "size": 395030041
+        },
+        {
+          "path": "en.noblocklist/c4-train.00009-of-01024.json.gz",
+          "size": 398255693
+        },
+        {
+          "path": "en.noblocklist/c4-train.00010-of-01024.json.gz",
+          "size": 397825333
+        },
+        {
+          "path": "en.noblocklist/c4-train.00011-of-01024.json.gz",
+          "size": 397877458
+        },
+        {
+          "path": "en.noblocklist/c4-train.00012-of-01024.json.gz",
+          "size": 398317059
+        },
+        {
+          "path": "en.noblocklist/c4-train.00013-of-01024.json.gz",
+          "size": 398518794
+        },
+        {
+          "path": "en.noblocklist/c4-train.00014-of-01024.json.gz",
+          "size": 397026214
+        },
+        {
+          "path": "en.noblocklist/c4-train.00015-of-01024.json.gz",
+          "size": 395621683
+        },
+        {
+          "path": "en.noblocklist/c4-train.00016-of-01024.json.gz",
+          "size": 398138551
+        },
+        {
+          "path": "en.noblocklist/c4-train.00017-of-01024.json.gz",
+          "size": 398720813
+        },
+        {
+          "path": "en.noblocklist/c4-train.00018-of-01024.json.gz",
+          "size": 398538940
+        },
+        {
+          "path": "en.noblocklist/c4-train.00019-of-01024.json.gz",
+          "size": 396834319
+        },
+        {
+          "path": "en.noblocklist/c4-train.00020-of-01024.json.gz",
+          "size": 396402861
+        },
+        {
+          "path": "en.noblocklist/c4-train.00021-of-01024.json.gz",
+          "size": 397560852
+        },
+        {
+          "path": "en.noblocklist/c4-train.00022-of-01024.json.gz",
+          "size": 397210987
+        },
+        {
+          "path": "en.noblocklist/c4-train.00023-of-01024.json.gz",
+          "size": 397563062
+        },
+        {
+          "path": "en.noblocklist/c4-train.00024-of-01024.json.gz",
+          "size": 395799120
+        },
+        {
+          "path": "en.noblocklist/c4-train.00025-of-01024.json.gz",
+          "size": 398336372
+        },
+        {
+          "path": "en.noblocklist/c4-train.00026-of-01024.json.gz",
+          "size": 396819084
+        },
+        {
+          "path": "en.noblocklist/c4-train.00027-of-01024.json.gz",
+          "size": 397912380
+        },
+        {
+          "path": "en.noblocklist/c4-train.00028-of-01024.json.gz",
+          "size": 399078461
+        },
+        {
+          "path": "en.noblocklist/c4-train.00029-of-01024.json.gz",
+          "size": 397303107
+        },
+        {
+          "path": "en.noblocklist/c4-train.00030-of-01024.json.gz",
+          "size": 396602401
+        },
+        {
+          "path": "en.noblocklist/c4-train.00031-of-01024.json.gz",
+          "size": 395941329
+        },
+        {
+          "path": "en.noblocklist/c4-train.00032-of-01024.json.gz",
+          "size": 398049663
+        },
+        {
+          "path": "en.noblocklist/c4-train.00033-of-01024.json.gz",
+          "size": 398044404
+        },
+        {
+          "path": "en.noblocklist/c4-train.00034-of-01024.json.gz",
+          "size": 396885224
+        },
+        {
+          "path": "en.noblocklist/c4-train.00035-of-01024.json.gz",
+          "size": 396185021
+        },
+        {
+          "path": "en.noblocklist/c4-train.00036-of-01024.json.gz",
+          "size": 396702503
+        },
+        {
+          "path": "en.noblocklist/c4-train.00037-of-01024.json.gz",
+          "size": 397582277
+        },
+        {
+          "path": "en.noblocklist/c4-train.00038-of-01024.json.gz",
+          "size": 396186761
+        },
+        {
+          "path": "en.noblocklist/c4-train.00039-of-01024.json.gz",
+          "size": 397056953
+        },
+        {
+          "path": "en.noblocklist/c4-train.00040-of-01024.json.gz",
+          "size": 397809786
+        },
+        {
+          "path": "en.noblocklist/c4-train.00041-of-01024.json.gz",
+          "size": 396944358
+        },
+        {
+          "path": "en.noblocklist/c4-train.00042-of-01024.json.gz",
+          "size": 394327995
+        },
+        {
+          "path": "en.noblocklist/c4-train.00043-of-01024.json.gz",
+          "size": 396476043
+        },
+        {
+          "path": "en.noblocklist/c4-train.00044-of-01024.json.gz",
+          "size": 396893614
+        },
+        {
+          "path": "en.noblocklist/c4-train.00045-of-01024.json.gz",
+          "size": 395885483
+        },
+        {
+          "path": "en.noblocklist/c4-train.00046-of-01024.json.gz",
+          "size": 396963386
+        },
+        {
+          "path": "en.noblocklist/c4-train.00047-of-01024.json.gz",
+          "size": 395856712
+        },
+        {
+          "path": "en.noblocklist/c4-train.00048-of-01024.json.gz",
+          "size": 396091027
+        },
+        {
+          "path": "en.noblocklist/c4-train.00049-of-01024.json.gz",
+          "size": 396892998
+        },
+        {
+          "path": "en.noblocklist/c4-train.00050-of-01024.json.gz",
+          "size": 396308050
+        },
+        {
+          "path": "en.noblocklist/c4-train.00051-of-01024.json.gz",
+          "size": 396137777
+        },
+        {
+          "path": "en.noblocklist/c4-train.00052-of-01024.json.gz",
+          "size": 398302544
+        },
+        {
+          "path": "en.noblocklist/c4-train.00053-of-01024.json.gz",
+          "size": 399616791
+        },
+        {
+          "path": "en.noblocklist/c4-train.00054-of-01024.json.gz",
+          "size": 397332881
+        },
+        {
+          "path": "en.noblocklist/c4-train.00055-of-01024.json.gz",
+          "size": 397075146
+        },
+        {
+          "path": "en.noblocklist/c4-train.00056-of-01024.json.gz",
+          "size": 397827600
+        },
+        {
+          "path": "en.noblocklist/c4-train.00057-of-01024.json.gz",
+          "size": 397533583
+        },
+        {
+          "path": "en.noblocklist/c4-train.00058-of-01024.json.gz",
+          "size": 396411363
+        },
+        {
+          "path": "en.noblocklist/c4-train.00059-of-01024.json.gz",
+          "size": 396735510
+        },
+        {
+          "path": "en.noblocklist/c4-train.00060-of-01024.json.gz",
+          "size": 395694553
+        },
+        {
+          "path": "en.noblocklist/c4-train.00061-of-01024.json.gz",
+          "size": 397740757
+        },
+        {
+          "path": "en.noblocklist/c4-train.00062-of-01024.json.gz",
+          "size": 397358263
+        },
+        {
+          "path": "en.noblocklist/c4-train.00063-of-01024.json.gz",
+          "size": 396826654
+        },
+        {
+          "path": "en.noblocklist/c4-train.00064-of-01024.json.gz",
+          "size": 395781869
+        },
+        {
+          "path": "en.noblocklist/c4-train.00065-of-01024.json.gz",
+          "size": 398192274
+        },
+        {
+          "path": "en.noblocklist/c4-train.00066-of-01024.json.gz",
+          "size": 397133438
+        },
+        {
+          "path": "en.noblocklist/c4-train.00067-of-01024.json.gz",
+          "size": 397204214
+        },
+        {
+          "path": "en.noblocklist/c4-train.00068-of-01024.json.gz",
+          "size": 396489592
+        },
+        {
+          "path": "en.noblocklist/c4-train.00069-of-01024.json.gz",
+          "size": 397697351
+        },
+        {
+          "path": "en.noblocklist/c4-train.00070-of-01024.json.gz",
+          "size": 398449973
+        },
+        {
+          "path": "en.noblocklist/c4-train.00071-of-01024.json.gz",
+          "size": 395498960
+        },
+        {
+          "path": "en.noblocklist/c4-train.00072-of-01024.json.gz",
+          "size": 396170387
+        },
+        {
+          "path": "en.noblocklist/c4-train.00073-of-01024.json.gz",
+          "size": 395915819
+        },
+        {
+          "path": "en.noblocklist/c4-train.00074-of-01024.json.gz",
+          "size": 396986018
+        },
+        {
+          "path": "en.noblocklist/c4-train.00075-of-01024.json.gz",
+          "size": 398555103
+        },
+        {
+          "path": "en.noblocklist/c4-train.00076-of-01024.json.gz",
+          "size": 396357420
+        },
+        {
+          "path": "en.noblocklist/c4-train.00077-of-01024.json.gz",
+          "size": 396666167
+        },
+        {
+          "path": "en.noblocklist/c4-train.00078-of-01024.json.gz",
+          "size": 398167446
+        },
+        {
+          "path": "en.noblocklist/c4-train.00079-of-01024.json.gz",
+          "size": 399696096
+        },
+        {
+          "path": "en.noblocklist/c4-train.00080-of-01024.json.gz",
+          "size": 398755610
+        },
+        {
+          "path": "en.noblocklist/c4-train.00081-of-01024.json.gz",
+          "size": 396606787
+        },
+        {
+          "path": "en.noblocklist/c4-train.00082-of-01024.json.gz",
+          "size": 395714484
+        },
+        {
+          "path": "en.noblocklist/c4-train.00083-of-01024.json.gz",
+          "size": 396807173
+        },
+        {
+          "path": "en.noblocklist/c4-train.00084-of-01024.json.gz",
+          "size": 397241529
+        },
+        {
+          "path": "en.noblocklist/c4-train.00085-of-01024.json.gz",
+          "size": 398357369
+        },
+        {
+          "path": "en.noblocklist/c4-train.00086-of-01024.json.gz",
+          "size": 396997317
+        },
+        {
+          "path": "en.noblocklist/c4-train.00087-of-01024.json.gz",
+          "size": 397978000
+        },
+        {
+          "path": "en.noblocklist/c4-train.00088-of-01024.json.gz",
+          "size": 398468913
+        },
+        {
+          "path": "en.noblocklist/c4-train.00089-of-01024.json.gz",
+          "size": 397071121
+        },
+        {
+          "path": "en.noblocklist/c4-train.00090-of-01024.json.gz",
+          "size": 395753807
+        },
+        {
+          "path": "en.noblocklist/c4-train.00091-of-01024.json.gz",
+          "size": 397039764
+        },
+        {
+          "path": "en.noblocklist/c4-train.00092-of-01024.json.gz",
+          "size": 397058578
+        },
+        {
+          "path": "en.noblocklist/c4-train.00093-of-01024.json.gz",
+          "size": 395855981
+        },
+        {
+          "path": "en.noblocklist/c4-train.00094-of-01024.json.gz",
+          "size": 399516118
+        },
+        {
+          "path": "en.noblocklist/c4-train.00095-of-01024.json.gz",
+          "size": 398236235
+        },
+        {
+          "path": "en.noblocklist/c4-train.00096-of-01024.json.gz",
+          "size": 399526010
+        },
+        {
+          "path": "en.noblocklist/c4-train.00097-of-01024.json.gz",
+          "size": 397935028
+        },
+        {
+          "path": "en.noblocklist/c4-train.00098-of-01024.json.gz",
+          "size": 398645934
+        },
+        {
+          "path": "en.noblocklist/c4-train.00099-of-01024.json.gz",
+          "size": 398110916
+        },
+        {
+          "path": "en.noblocklist/c4-train.00100-of-01024.json.gz",
+          "size": 397631228
+        },
+        {
+          "path": "en.noblocklist/c4-train.00101-of-01024.json.gz",
+          "size": 395102356
+        },
+        {
+          "path": "en.noblocklist/c4-train.00102-of-01024.json.gz",
+          "size": 398926159
+        },
+        {
+          "path": "en.noblocklist/c4-train.00103-of-01024.json.gz",
+          "size": 398383820
+        },
+        {
+          "path": "en.noblocklist/c4-train.00104-of-01024.json.gz",
+          "size": 396628542
+        },
+        {
+          "path": "en.noblocklist/c4-train.00105-of-01024.json.gz",
+          "size": 398737797
+        },
+        {
+          "path": "en.noblocklist/c4-train.00106-of-01024.json.gz",
+          "size": 397281064
+        },
+        {
+          "path": "en.noblocklist/c4-train.00107-of-01024.json.gz",
+          "size": 397919761
+        },
+        {
+          "path": "en.noblocklist/c4-train.00108-of-01024.json.gz",
+          "size": 398810219
+        },
+        {
+          "path": "en.noblocklist/c4-train.00109-of-01024.json.gz",
+          "size": 396605124
+        },
+        {
+          "path": "en.noblocklist/c4-train.00110-of-01024.json.gz",
+          "size": 397491755
+        },
+        {
+          "path": "en.noblocklist/c4-train.00111-of-01024.json.gz",
+          "size": 395754897
+        },
+        {
+          "path": "en.noblocklist/c4-train.00112-of-01024.json.gz",
+          "size": 398567649
+        },
+        {
+          "path": "en.noblocklist/c4-train.00113-of-01024.json.gz",
+          "size": 396706569
+        },
+        {
+          "path": "en.noblocklist/c4-train.00114-of-01024.json.gz",
+          "size": 397384355
+        },
+        {
+          "path": "en.noblocklist/c4-train.00115-of-01024.json.gz",
+          "size": 397702826
+        },
+        {
+          "path": "en.noblocklist/c4-train.00116-of-01024.json.gz",
+          "size": 397252590
+        },
+        {
+          "path": "en.noblocklist/c4-train.00117-of-01024.json.gz",
+          "size": 395506730
+        },
+        {
+          "path": "en.noblocklist/c4-train.00118-of-01024.json.gz",
+          "size": 396452136
+        },
+        {
+          "path": "en.noblocklist/c4-train.00119-of-01024.json.gz",
+          "size": 396777389
+        },
+        {
+          "path": "en.noblocklist/c4-train.00120-of-01024.json.gz",
+          "size": 397730478
+        },
+        {
+          "path": "en.noblocklist/c4-train.00121-of-01024.json.gz",
+          "size": 396593647
+        },
+        {
+          "path": "en.noblocklist/c4-train.00122-of-01024.json.gz",
+          "size": 396576172
+        },
+        {
+          "path": "en.noblocklist/c4-train.00123-of-01024.json.gz",
+          "size": 397378329
+        },
+        {
+          "path": "en.noblocklist/c4-train.00124-of-01024.json.gz",
+          "size": 396545003
+        },
+        {
+          "path": "en.noblocklist/c4-train.00125-of-01024.json.gz",
+          "size": 397630505
+        },
+        {
+          "path": "en.noblocklist/c4-train.00126-of-01024.json.gz",
+          "size": 395483747
+        },
+        {
+          "path": "en.noblocklist/c4-train.00127-of-01024.json.gz",
+          "size": 397295159
+        },
+        {
+          "path": "en.noblocklist/c4-train.00128-of-01024.json.gz",
+          "size": 396276865
+        },
+        {
+          "path": "en.noblocklist/c4-train.00129-of-01024.json.gz",
+          "size": 395314703
+        },
+        {
+          "path": "en.noblocklist/c4-train.00130-of-01024.json.gz",
+          "size": 397411481
+        },
+        {
+          "path": "en.noblocklist/c4-train.00131-of-01024.json.gz",
+          "size": 396925311
+        },
+        {
+          "path": "en.noblocklist/c4-train.00132-of-01024.json.gz",
+          "size": 395826124
+        },
+        {
+          "path": "en.noblocklist/c4-train.00133-of-01024.json.gz",
+          "size": 398892794
+        },
+        {
+          "path": "en.noblocklist/c4-train.00134-of-01024.json.gz",
+          "size": 398206890
+        },
+        {
+          "path": "en.noblocklist/c4-train.00135-of-01024.json.gz",
+          "size": 397161888
+        },
+        {
+          "path": "en.noblocklist/c4-train.00136-of-01024.json.gz",
+          "size": 396185585
+        },
+        {
+          "path": "en.noblocklist/c4-train.00137-of-01024.json.gz",
+          "size": 396933735
+        },
+        {
+          "path": "en.noblocklist/c4-train.00138-of-01024.json.gz",
+          "size": 396371698
+        },
+        {
+          "path": "en.noblocklist/c4-train.00139-of-01024.json.gz",
+          "size": 397289537
+        },
+        {
+          "path": "en.noblocklist/c4-train.00140-of-01024.json.gz",
+          "size": 396983259
+        },
+        {
+          "path": "en.noblocklist/c4-train.00141-of-01024.json.gz",
+          "size": 394947050
+        },
+        {
+          "path": "en.noblocklist/c4-train.00142-of-01024.json.gz",
+          "size": 396852755
+        },
+        {
+          "path": "en.noblocklist/c4-train.00143-of-01024.json.gz",
+          "size": 397579248
+        },
+        {
+          "path": "en.noblocklist/c4-train.00144-of-01024.json.gz",
+          "size": 398800367
+        },
+        {
+          "path": "en.noblocklist/c4-train.00145-of-01024.json.gz",
+          "size": 396709510
+        },
+        {
+          "path": "en.noblocklist/c4-train.00146-of-01024.json.gz",
+          "size": 396042389
+        },
+        {
+          "path": "en.noblocklist/c4-train.00147-of-01024.json.gz",
+          "size": 399840661
+        },
+        {
+          "path": "en.noblocklist/c4-train.00148-of-01024.json.gz",
+          "size": 397098215
+        },
+        {
+          "path": "en.noblocklist/c4-train.00149-of-01024.json.gz",
+          "size": 397540697
+        },
+        {
+          "path": "en.noblocklist/c4-train.00150-of-01024.json.gz",
+          "size": 396347701
+        },
+        {
+          "path": "en.noblocklist/c4-train.00151-of-01024.json.gz",
+          "size": 394890490
+        },
+        {
+          "path": "en.noblocklist/c4-train.00152-of-01024.json.gz",
+          "size": 399584675
+        },
+        {
+          "path": "en.noblocklist/c4-train.00153-of-01024.json.gz",
+          "size": 395606567
+        },
+        {
+          "path": "en.noblocklist/c4-train.00154-of-01024.json.gz",
+          "size": 397925578
+        },
+        {
+          "path": "en.noblocklist/c4-train.00155-of-01024.json.gz",
+          "size": 395428741
+        },
+        {
+          "path": "en.noblocklist/c4-train.00156-of-01024.json.gz",
+          "size": 396799274
+        },
+        {
+          "path": "en.noblocklist/c4-train.00157-of-01024.json.gz",
+          "size": 397321211
+        },
+        {
+          "path": "en.noblocklist/c4-train.00158-of-01024.json.gz",
+          "size": 398736992
+        },
+        {
+          "path": "en.noblocklist/c4-train.00159-of-01024.json.gz",
+          "size": 397250687
+        },
+        {
+          "path": "en.noblocklist/c4-train.00160-of-01024.json.gz",
+          "size": 397492158
+        },
+        {
+          "path": "en.noblocklist/c4-train.00161-of-01024.json.gz",
+          "size": 398383574
+        },
+        {
+          "path": "en.noblocklist/c4-train.00162-of-01024.json.gz",
+          "size": 397126197
+        },
+        {
+          "path": "en.noblocklist/c4-train.00163-of-01024.json.gz",
+          "size": 398201223
+        },
+        {
+          "path": "en.noblocklist/c4-train.00164-of-01024.json.gz",
+          "size": 397914908
+        },
+        {
+          "path": "en.noblocklist/c4-train.00165-of-01024.json.gz",
+          "size": 398142696
+        },
+        {
+          "path": "en.noblocklist/c4-train.00166-of-01024.json.gz",
+          "size": 397533050
+        },
+        {
+          "path": "en.noblocklist/c4-train.00167-of-01024.json.gz",
+          "size": 396241119
+        },
+        {
+          "path": "en.noblocklist/c4-train.00168-of-01024.json.gz",
+          "size": 396041761
+        },
+        {
+          "path": "en.noblocklist/c4-train.00169-of-01024.json.gz",
+          "size": 396350882
+        },
+        {
+          "path": "en.noblocklist/c4-train.00170-of-01024.json.gz",
+          "size": 396885157
+        },
+        {
+          "path": "en.noblocklist/c4-train.00171-of-01024.json.gz",
+          "size": 397266368
+        },
+        {
+          "path": "en.noblocklist/c4-train.00172-of-01024.json.gz",
+          "size": 397140430
+        },
+        {
+          "path": "en.noblocklist/c4-train.00173-of-01024.json.gz",
+          "size": 397069631
+        },
+        {
+          "path": "en.noblocklist/c4-train.00174-of-01024.json.gz",
+          "size": 396743897
+        },
+        {
+          "path": "en.noblocklist/c4-train.00175-of-01024.json.gz",
+          "size": 395780705
+        },
+        {
+          "path": "en.noblocklist/c4-train.00176-of-01024.json.gz",
+          "size": 396205053
+        },
+        {
+          "path": "en.noblocklist/c4-train.00177-of-01024.json.gz",
+          "size": 396248718
+        },
+        {
+          "path": "en.noblocklist/c4-train.00178-of-01024.json.gz",
+          "size": 396634813
+        },
+        {
+          "path": "en.noblocklist/c4-train.00179-of-01024.json.gz",
+          "size": 396524113
+        },
+        {
+          "path": "en.noblocklist/c4-train.00180-of-01024.json.gz",
+          "size": 397938782
+        },
+        {
+          "path": "en.noblocklist/c4-train.00181-of-01024.json.gz",
+          "size": 399155769
+        },
+        {
+          "path": "en.noblocklist/c4-train.00182-of-01024.json.gz",
+          "size": 396136228
+        },
+        {
+          "path": "en.noblocklist/c4-train.00183-of-01024.json.gz",
+          "size": 397083292
+        },
+        {
+          "path": "en.noblocklist/c4-train.00184-of-01024.json.gz",
+          "size": 397402964
+        },
+        {
+          "path": "en.noblocklist/c4-train.00185-of-01024.json.gz",
+          "size": 398411052
+        },
+        {
+          "path": "en.noblocklist/c4-train.00186-of-01024.json.gz",
+          "size": 397122443
+        },
+        {
+          "path": "en.noblocklist/c4-train.00187-of-01024.json.gz",
+          "size": 397244868
+        },
+        {
+          "path": "en.noblocklist/c4-train.00188-of-01024.json.gz",
+          "size": 395677432
+        },
+        {
+          "path": "en.noblocklist/c4-train.00189-of-01024.json.gz",
+          "size": 393653750
+        },
+        {
+          "path": "en.noblocklist/c4-train.00190-of-01024.json.gz",
+          "size": 395437920
+        },
+        {
+          "path": "en.noblocklist/c4-train.00191-of-01024.json.gz",
+          "size": 396944861
+        },
+        {
+          "path": "en.noblocklist/c4-train.00192-of-01024.json.gz",
+          "size": 396611165
+        },
+        {
+          "path": "en.noblocklist/c4-train.00193-of-01024.json.gz",
+          "size": 398283211
+        },
+        {
+          "path": "en.noblocklist/c4-train.00194-of-01024.json.gz",
+          "size": 398915952
+        },
+        {
+          "path": "en.noblocklist/c4-train.00195-of-01024.json.gz",
+          "size": 396352694
+        },
+        {
+          "path": "en.noblocklist/c4-train.00196-of-01024.json.gz",
+          "size": 398582922
+        },
+        {
+          "path": "en.noblocklist/c4-train.00197-of-01024.json.gz",
+          "size": 398839554
+        },
+        {
+          "path": "en.noblocklist/c4-train.00198-of-01024.json.gz",
+          "size": 396202192
+        },
+        {
+          "path": "en.noblocklist/c4-train.00199-of-01024.json.gz",
+          "size": 398029364
+        },
+        {
+          "path": "en.noblocklist/c4-train.00200-of-01024.json.gz",
+          "size": 395867629
+        },
+        {
+          "path": "en.noblocklist/c4-train.00201-of-01024.json.gz",
+          "size": 396858169
+        },
+        {
+          "path": "en.noblocklist/c4-train.00202-of-01024.json.gz",
+          "size": 397955766
+        },
+        {
+          "path": "en.noblocklist/c4-train.00203-of-01024.json.gz",
+          "size": 397737882
+        },
+        {
+          "path": "en.noblocklist/c4-train.00204-of-01024.json.gz",
+          "size": 396094006
+        },
+        {
+          "path": "en.noblocklist/c4-train.00205-of-01024.json.gz",
+          "size": 399027636
+        },
+        {
+          "path": "en.noblocklist/c4-train.00206-of-01024.json.gz",
+          "size": 399406254
+        },
+        {
+          "path": "en.noblocklist/c4-train.00207-of-01024.json.gz",
+          "size": 396291803
+        },
+        {
+          "path": "en.noblocklist/c4-train.00208-of-01024.json.gz",
+          "size": 397807368
+        },
+        {
+          "path": "en.noblocklist/c4-train.00209-of-01024.json.gz",
+          "size": 398085408
+        },
+        {
+          "path": "en.noblocklist/c4-train.00210-of-01024.json.gz",
+          "size": 397670254
+        },
+        {
+          "path": "en.noblocklist/c4-train.00211-of-01024.json.gz",
+          "size": 399643598
+        },
+        {
+          "path": "en.noblocklist/c4-train.00212-of-01024.json.gz",
+          "size": 397390768
+        },
+        {
+          "path": "en.noblocklist/c4-train.00213-of-01024.json.gz",
+          "size": 398657925
+        },
+        {
+          "path": "en.noblocklist/c4-train.00214-of-01024.json.gz",
+          "size": 398282324
+        },
+        {
+          "path": "en.noblocklist/c4-train.00215-of-01024.json.gz",
+          "size": 399178235
+        },
+        {
+          "path": "en.noblocklist/c4-train.00216-of-01024.json.gz",
+          "size": 397630870
+        },
+        {
+          "path": "en.noblocklist/c4-train.00217-of-01024.json.gz",
+          "size": 398628848
+        },
+        {
+          "path": "en.noblocklist/c4-train.00218-of-01024.json.gz",
+          "size": 395087998
+        },
+        {
+          "path": "en.noblocklist/c4-train.00219-of-01024.json.gz",
+          "size": 397622792
+        },
+        {
+          "path": "en.noblocklist/c4-train.00220-of-01024.json.gz",
+          "size": 395112655
+        },
+        {
+          "path": "en.noblocklist/c4-train.00221-of-01024.json.gz",
+          "size": 397132000
+        },
+        {
+          "path": "en.noblocklist/c4-train.00222-of-01024.json.gz",
+          "size": 397138513
+        },
+        {
+          "path": "en.noblocklist/c4-train.00223-of-01024.json.gz",
+          "size": 397167661
+        },
+        {
+          "path": "en.noblocklist/c4-train.00224-of-01024.json.gz",
+          "size": 397905941
+        },
+        {
+          "path": "en.noblocklist/c4-train.00225-of-01024.json.gz",
+          "size": 397218123
+        },
+        {
+          "path": "en.noblocklist/c4-train.00226-of-01024.json.gz",
+          "size": 396619135
+        },
+        {
+          "path": "en.noblocklist/c4-train.00227-of-01024.json.gz",
+          "size": 396654998
+        },
+        {
+          "path": "en.noblocklist/c4-train.00228-of-01024.json.gz",
+          "size": 396899165
+        },
+        {
+          "path": "en.noblocklist/c4-train.00229-of-01024.json.gz",
+          "size": 397489378
+        },
+        {
+          "path": "en.noblocklist/c4-train.00230-of-01024.json.gz",
+          "size": 397462301
+        },
+        {
+          "path": "en.noblocklist/c4-train.00231-of-01024.json.gz",
+          "size": 396097584
+        },
+        {
+          "path": "en.noblocklist/c4-train.00232-of-01024.json.gz",
+          "size": 398984795
+        },
+        {
+          "path": "en.noblocklist/c4-train.00233-of-01024.json.gz",
+          "size": 397258012
+        },
+        {
+          "path": "en.noblocklist/c4-train.00234-of-01024.json.gz",
+          "size": 398350453
+        },
+        {
+          "path": "en.noblocklist/c4-train.00235-of-01024.json.gz",
+          "size": 397147353
+        },
+        {
+          "path": "en.noblocklist/c4-train.00236-of-01024.json.gz",
+          "size": 396963006
+        },
+        {
+          "path": "en.noblocklist/c4-train.00237-of-01024.json.gz",
+          "size": 397087111
+        },
+        {
+          "path": "en.noblocklist/c4-train.00238-of-01024.json.gz",
+          "size": 396984031
+        },
+        {
+          "path": "en.noblocklist/c4-train.00239-of-01024.json.gz",
+          "size": 395915197
+        },
+        {
+          "path": "en.noblocklist/c4-train.00240-of-01024.json.gz",
+          "size": 398321096
+        },
+        {
+          "path": "en.noblocklist/c4-train.00241-of-01024.json.gz",
+          "size": 396626980
+        },
+        {
+          "path": "en.noblocklist/c4-train.00242-of-01024.json.gz",
+          "size": 398220596
+        }
+      ]
+    },
+    {
+      "source_id": "fineweb_edu",
+      "repo_id": "HuggingFaceFW/fineweb-edu",
+      "repo_type": "dataset",
+      "target_root_key": "disk1",
+      "target_root_path": "/media/yky/old-dreams1",
+      "target_gb": 75.0,
+      "selected_gb": 73.4,
+      "selected_count": 34,
+      "listing_source": "dataset_info",
+      "repo_file_nodes": 3038,
+      "repo_size_known_nodes": 3038,
+      "repo_size_missing_nodes": 0,
+      "repo_tree_error": "",
+      "files": [
+        {
+          "path": "data/CC-MAIN-2013-20/train-00000-of-00014.parquet",
+          "size": 2369456837
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00001-of-00014.parquet",
+          "size": 2376360695
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00002-of-00014.parquet",
+          "size": 2366714674
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00003-of-00014.parquet",
+          "size": 2349721791
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00004-of-00014.parquet",
+          "size": 2347567335
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00005-of-00014.parquet",
+          "size": 2344454381
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00006-of-00014.parquet",
+          "size": 2336964549
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00007-of-00014.parquet",
+          "size": 2320625373
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00008-of-00014.parquet",
+          "size": 2307363915
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00009-of-00014.parquet",
+          "size": 2310654336
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00010-of-00014.parquet",
+          "size": 2294070592
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00011-of-00014.parquet",
+          "size": 2294546063
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00012-of-00014.parquet",
+          "size": 2295986307
+        },
+        {
+          "path": "data/CC-MAIN-2013-20/train-00013-of-00014.parquet",
+          "size": 2284902248
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00000-of-00014.parquet",
+          "size": 2329592314
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00001-of-00014.parquet",
+          "size": 2332353351
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00002-of-00014.parquet",
+          "size": 2327303340
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00003-of-00014.parquet",
+          "size": 2316277195
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00004-of-00014.parquet",
+          "size": 2295811884
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00005-of-00014.parquet",
+          "size": 2299104720
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00006-of-00014.parquet",
+          "size": 2278623295
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00007-of-00014.parquet",
+          "size": 2274629249
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00008-of-00014.parquet",
+          "size": 2273053146
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00009-of-00014.parquet",
+          "size": 2269555721
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00010-of-00014.parquet",
+          "size": 2255912359
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00011-of-00014.parquet",
+          "size": 2258788899
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00012-of-00014.parquet",
+          "size": 2252159861
+        },
+        {
+          "path": "data/CC-MAIN-2013-48/train-00013-of-00014.parquet",
+          "size": 2251108466
+        },
+        {
+          "path": "data/CC-MAIN-2014-10/train-00000-of-00014.parquet",
+          "size": 2378402603
+        },
+        {
+          "path": "data/CC-MAIN-2014-10/train-00001-of-00014.parquet",
+          "size": 2374581082
+        },
+        {
+          "path": "data/CC-MAIN-2014-10/train-00002-of-00014.parquet",
+          "size": 2370839030
+        },
+        {
+          "path": "data/CC-MAIN-2014-10/train-00003-of-00014.parquet",
+          "size": 2367174733
+        },
+        {
+          "path": "data/CC-MAIN-2014-10/train-00004-of-00014.parquet",
+          "size": 2355201629
+        },
+        {
+          "path": "data/CC-MAIN-2014-10/train-00005-of-00014.parquet",
+          "size": 2353220675
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_sources": 3,
+    "selected_total_gb": 297.266,
+    "selected_disk1_gb": 207.379,
+    "selected_disk2_gb": 89.887,
+    "empty_selection": false
+  }
+}

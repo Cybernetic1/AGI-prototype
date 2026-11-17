@@ -1,0 +1,2069 @@
+{
+  "completed": {
+    "fineweb:data/CC-MAIN-2013-20/000_00000.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00000.parquet",
+      "size": 2147531358,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:24:32.371030+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00001.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00001.parquet",
+      "size": 2146853893,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:25:55.930921+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00002.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00002.parquet",
+      "size": 2147044098,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:27:22.077746+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00003.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00003.parquet",
+      "size": 2147412271,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:28:24.499205+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00004.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00004.parquet",
+      "size": 2146991341,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:29:48.907879+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00005.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00005.parquet",
+      "size": 2148146096,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:48:22.233327+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00006.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00006.parquet",
+      "size": 2147169070,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:49:26.051846+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00007.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00007.parquet",
+      "size": 2146979432,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:50:29.137834+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00008.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00008.parquet",
+      "size": 2147298729,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:51:33.227756+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00009.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00009.parquet",
+      "size": 2147114414,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:52:35.846539+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00010.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00010.parquet",
+      "size": 2147817437,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:53:40.464543+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00011.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00011.parquet",
+      "size": 2146604858,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:54:46.282181+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00012.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00012.parquet",
+      "size": 2147790908,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:55:51.404481+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00013.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00013.parquet",
+      "size": 2147883182,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:56:57.461928+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00014.parquet",
+      "size": 2147892661,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:58:04.157676+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00015.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00015.parquet",
+      "size": 2147404363,
+      "sha256": "",
+      "completed_at": "2026-11-12T14:59:50.632663+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00016.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00016.parquet",
+      "size": 2148239815,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:00:56.491191+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00017.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00017.parquet",
+      "size": 2146120615,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:02:03.130976+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00018.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00018.parquet",
+      "size": 2147399348,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:03:09.913683+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00019.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00019.parquet",
+      "size": 2148250021,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:04:16.417036+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00020.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00020.parquet",
+      "size": 2146801250,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:05:23.909049+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00021.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00021.parquet",
+      "size": 2147793433,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:06:30.261842+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00022.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00022.parquet",
+      "size": 2146939760,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:07:42.768155+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00023.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00023.parquet",
+      "size": 2146586753,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:09:01.932540+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00024.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00024.parquet",
+      "size": 2147249850,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:10:13.052569+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00025.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00025.parquet",
+      "size": 2147692063,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:11:23.794113+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00026.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00026.parquet",
+      "size": 2147592649,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:12:48.624421+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00027.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00027.parquet",
+      "size": 2147755158,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:13:56.793493+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00028.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00028.parquet",
+      "size": 2146887963,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:15:12.365269+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00029.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00029.parquet",
+      "size": 2147887687,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:16:37.292318+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00030.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00030.parquet",
+      "size": 2146336746,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:18:10.272285+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00031.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00031.parquet",
+      "size": 2147663631,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:20:03.942400+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00032.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00032.parquet",
+      "size": 2147995792,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:21:11.932302+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00033.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00033.parquet",
+      "size": 2146471430,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:22:50.662480+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00034.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00034.parquet",
+      "size": 2148054215,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:24:00.503554+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00035.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00035.parquet",
+      "size": 2147728653,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:25:08.339425+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00036.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00036.parquet",
+      "size": 2147209087,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:26:39.679056+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00037.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00037.parquet",
+      "size": 2147706779,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:27:58.650530+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00038.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00038.parquet",
+      "size": 2147461765,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:29:07.698264+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00039.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00039.parquet",
+      "size": 2146306819,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:30:16.370224+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00040.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00040.parquet",
+      "size": 2147723105,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:31:31.226761+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00041.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00041.parquet",
+      "size": 2146631109,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:33:08.259030+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00042.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00042.parquet",
+      "size": 2147029949,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:34:15.712109+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00043.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00043.parquet",
+      "size": 2146139072,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:35:24.080392+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00044.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00044.parquet",
+      "size": 2146178953,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:36:31.265957+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00045.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00045.parquet",
+      "size": 2146623690,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:37:38.639856+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00046.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00046.parquet",
+      "size": 2146800721,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:38:46.487284+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00047.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00047.parquet",
+      "size": 2146452978,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:39:55.012252+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00048.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00048.parquet",
+      "size": 2147271170,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:41:05.721264+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/000_00049.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/000_00049.parquet",
+      "size": 2146723269,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:42:12.990998+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00000.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00000.parquet",
+      "size": 2147264039,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:43:24.370423+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00001.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00001.parquet",
+      "size": 2147188971,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:44:34.839999+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00002.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00002.parquet",
+      "size": 2146360871,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:45:46.516244+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00003.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00003.parquet",
+      "size": 2146444275,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:47:05.986817+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00004.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00004.parquet",
+      "size": 2147990568,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:48:13.699725+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00005.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00005.parquet",
+      "size": 2146366528,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:49:23.649138+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00006.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00006.parquet",
+      "size": 2146782845,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:50:31.206281+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00007.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00007.parquet",
+      "size": 2146745863,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:51:40.229471+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00008.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00008.parquet",
+      "size": 2147195345,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:52:48.310618+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00009.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00009.parquet",
+      "size": 2146454705,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:53:56.488013+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00010.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00010.parquet",
+      "size": 2146921354,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:55:06.069706+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00011.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00011.parquet",
+      "size": 2146340521,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:56:18.914584+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00012.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00012.parquet",
+      "size": 2146565909,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:57:41.828100+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00013.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00013.parquet",
+      "size": 2147073791,
+      "sha256": "",
+      "completed_at": "2026-11-12T15:58:58.443792+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00014.parquet",
+      "size": 2147163233,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:00:25.583604+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00015.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00015.parquet",
+      "size": 2147005891,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:01:38.230540+00:00"
+    },
+    "fineweb:data/CC-MAIN-2013-20/001_00016.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb/data/CC-MAIN-2013-20/001_00016.parquet",
+      "size": 2146951147,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:02:51.960160+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00000-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00000-of-01024.json.gz",
+      "size": 396728190,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:03:11.306750+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00001-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00001-of-01024.json.gz",
+      "size": 395686133,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:03:32.012757+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00002-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00002-of-01024.json.gz",
+      "size": 397762165,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:03:58.446275+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00003-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00003-of-01024.json.gz",
+      "size": 395307518,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:04:17.572055+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00004-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00004-of-01024.json.gz",
+      "size": 396280504,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:04:36.749539+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00005-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00005-of-01024.json.gz",
+      "size": 396636600,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:04:57.476751+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00006-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00006-of-01024.json.gz",
+      "size": 395364336,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:05:40.859003+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00007-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00007-of-01024.json.gz",
+      "size": 396428805,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:06:08.412384+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00008-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00008-of-01024.json.gz",
+      "size": 395030041,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:06:32.210588+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00009-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00009-of-01024.json.gz",
+      "size": 398255693,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:06:51.920160+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00010-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00010-of-01024.json.gz",
+      "size": 397825333,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:07:15.231863+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00011-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00011-of-01024.json.gz",
+      "size": 397877458,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:07:32.724161+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00012-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00012-of-01024.json.gz",
+      "size": 398317059,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:07:50.488055+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00013-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00013-of-01024.json.gz",
+      "size": 398518794,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:08:07.940697+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00014-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00014-of-01024.json.gz",
+      "size": 397026214,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:08:25.988692+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00015-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00015-of-01024.json.gz",
+      "size": 395621683,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:08:44.386908+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00016-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00016-of-01024.json.gz",
+      "size": 398138551,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:09:01.940381+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00017-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00017-of-01024.json.gz",
+      "size": 398720813,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:09:20.257541+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00018-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00018-of-01024.json.gz",
+      "size": 398538940,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:09:38.484619+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00019-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00019-of-01024.json.gz",
+      "size": 396834319,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:10:01.957775+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00020-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00020-of-01024.json.gz",
+      "size": 396402861,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:10:20.647411+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00021-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00021-of-01024.json.gz",
+      "size": 397560852,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:10:39.257704+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00022-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00022-of-01024.json.gz",
+      "size": 397210987,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:10:58.176908+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00023-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00023-of-01024.json.gz",
+      "size": 397563062,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:11:17.773935+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00024-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00024-of-01024.json.gz",
+      "size": 395799120,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:11:36.348806+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00025-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00025-of-01024.json.gz",
+      "size": 398336372,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:11:56.014971+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00026-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00026-of-01024.json.gz",
+      "size": 396819084,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:12:15.937313+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00027-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00027-of-01024.json.gz",
+      "size": 397912380,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:12:37.362768+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00028-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00028-of-01024.json.gz",
+      "size": 399078461,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:12:55.643334+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00029-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00029-of-01024.json.gz",
+      "size": 397303107,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:13:13.883167+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00030-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00030-of-01024.json.gz",
+      "size": 396602401,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:13:32.521390+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00031-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00031-of-01024.json.gz",
+      "size": 395941329,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:13:50.816110+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00032-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00032-of-01024.json.gz",
+      "size": 398049663,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:14:08.595022+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00033-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00033-of-01024.json.gz",
+      "size": 398044404,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:14:27.425137+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00034-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00034-of-01024.json.gz",
+      "size": 396885224,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:14:44.907913+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00035-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00035-of-01024.json.gz",
+      "size": 396185021,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:15:03.140436+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00036-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00036-of-01024.json.gz",
+      "size": 396702503,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:15:21.180242+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00037-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00037-of-01024.json.gz",
+      "size": 397582277,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:15:39.177796+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00038-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00038-of-01024.json.gz",
+      "size": 396186761,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:15:57.977830+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00039-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00039-of-01024.json.gz",
+      "size": 397056953,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:16:15.642752+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00040-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00040-of-01024.json.gz",
+      "size": 397809786,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:16:33.437789+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00041-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00041-of-01024.json.gz",
+      "size": 396944358,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:16:53.670572+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00042-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00042-of-01024.json.gz",
+      "size": 394327995,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:17:16.164389+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00043-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00043-of-01024.json.gz",
+      "size": 396476043,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:17:35.199159+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00044-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00044-of-01024.json.gz",
+      "size": 396893614,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:17:55.003305+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00045-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00045-of-01024.json.gz",
+      "size": 395885483,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:18:28.887779+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00046-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00046-of-01024.json.gz",
+      "size": 396963386,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:18:53.418140+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00047-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00047-of-01024.json.gz",
+      "size": 395856712,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:19:12.831641+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00048-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00048-of-01024.json.gz",
+      "size": 396091027,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:19:44.944632+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00049-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00049-of-01024.json.gz",
+      "size": 396892998,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:20:04.620450+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00050-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00050-of-01024.json.gz",
+      "size": 396308050,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:20:26.102335+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00051-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00051-of-01024.json.gz",
+      "size": 396137777,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:20:59.901162+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00052-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00052-of-01024.json.gz",
+      "size": 398302544,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:21:29.301287+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00053-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00053-of-01024.json.gz",
+      "size": 399616791,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:21:49.090110+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00054-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00054-of-01024.json.gz",
+      "size": 397332881,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:22:11.546064+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00055-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00055-of-01024.json.gz",
+      "size": 397075146,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:22:35.503772+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00056-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00056-of-01024.json.gz",
+      "size": 397827600,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:22:56.461222+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00057-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00057-of-01024.json.gz",
+      "size": 397533583,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:23:20.691588+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00058-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00058-of-01024.json.gz",
+      "size": 396411363,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:23:40.069210+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00059-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00059-of-01024.json.gz",
+      "size": 396735510,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:24:00.924501+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00060-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00060-of-01024.json.gz",
+      "size": 395694553,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:24:20.792601+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00061-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00061-of-01024.json.gz",
+      "size": 397740757,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:24:40.423947+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00062-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00062-of-01024.json.gz",
+      "size": 397358263,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:24:59.792673+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00063-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00063-of-01024.json.gz",
+      "size": 396826654,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:25:20.136341+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00064-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00064-of-01024.json.gz",
+      "size": 395781869,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:25:39.956874+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00065-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00065-of-01024.json.gz",
+      "size": 398192274,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:26:01.066996+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00066-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00066-of-01024.json.gz",
+      "size": 397133438,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:26:20.668806+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00067-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00067-of-01024.json.gz",
+      "size": 397204214,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:26:40.493928+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00068-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00068-of-01024.json.gz",
+      "size": 396489592,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:27:02.366758+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00069-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00069-of-01024.json.gz",
+      "size": 397697351,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:27:22.908823+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00070-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00070-of-01024.json.gz",
+      "size": 398449973,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:27:44.706015+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00071-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00071-of-01024.json.gz",
+      "size": 395498960,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:28:14.864416+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00072-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00072-of-01024.json.gz",
+      "size": 396170387,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:28:37.973038+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00073-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00073-of-01024.json.gz",
+      "size": 395915819,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:29:03.074113+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00074-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00074-of-01024.json.gz",
+      "size": 396986018,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:29:26.768902+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00075-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00075-of-01024.json.gz",
+      "size": 398555103,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:29:47.216885+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00076-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00076-of-01024.json.gz",
+      "size": 396357420,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:30:06.451593+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00077-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00077-of-01024.json.gz",
+      "size": 396666167,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:30:28.742035+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00078-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00078-of-01024.json.gz",
+      "size": 398167446,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:30:48.086155+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00079-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00079-of-01024.json.gz",
+      "size": 399696096,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:31:15.204655+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00080-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00080-of-01024.json.gz",
+      "size": 398755610,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:31:36.277200+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00081-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00081-of-01024.json.gz",
+      "size": 396606787,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:31:57.309769+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00082-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00082-of-01024.json.gz",
+      "size": 395714484,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:32:19.828180+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00083-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00083-of-01024.json.gz",
+      "size": 396807173,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:32:39.582115+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00084-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00084-of-01024.json.gz",
+      "size": 397241529,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:32:59.376723+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00085-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00085-of-01024.json.gz",
+      "size": 398357369,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:33:20.180551+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00086-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00086-of-01024.json.gz",
+      "size": 396997317,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:33:39.426961+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00087-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00087-of-01024.json.gz",
+      "size": 397978000,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:33:59.413727+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00088-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00088-of-01024.json.gz",
+      "size": 398468913,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:34:19.227919+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00089-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00089-of-01024.json.gz",
+      "size": 397071121,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:34:38.927021+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00090-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00090-of-01024.json.gz",
+      "size": 395753807,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:34:58.865782+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00091-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00091-of-01024.json.gz",
+      "size": 397039764,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:35:18.553247+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00092-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00092-of-01024.json.gz",
+      "size": 397058578,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:35:47.995375+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00093-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00093-of-01024.json.gz",
+      "size": 395855981,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:36:08.881312+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00094-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00094-of-01024.json.gz",
+      "size": 399516118,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:36:29.084566+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00095-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00095-of-01024.json.gz",
+      "size": 398236235,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:36:48.011024+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00096-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00096-of-01024.json.gz",
+      "size": 399526010,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:37:07.989060+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00097-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00097-of-01024.json.gz",
+      "size": 397935028,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:37:27.541967+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00098-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00098-of-01024.json.gz",
+      "size": 398645934,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:37:49.670221+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00099-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00099-of-01024.json.gz",
+      "size": 398110916,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:38:08.861895+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00100-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00100-of-01024.json.gz",
+      "size": 397631228,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:38:28.284037+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00101-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00101-of-01024.json.gz",
+      "size": 395102356,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:38:50.329945+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00102-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00102-of-01024.json.gz",
+      "size": 398926159,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:39:21.721419+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00103-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00103-of-01024.json.gz",
+      "size": 398383820,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:39:50.596388+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00104-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00104-of-01024.json.gz",
+      "size": 396628542,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:40:16.416532+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00105-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00105-of-01024.json.gz",
+      "size": 398737797,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:40:39.153362+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00106-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00106-of-01024.json.gz",
+      "size": 397281064,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:40:58.497762+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00107-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00107-of-01024.json.gz",
+      "size": 397919761,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:41:24.667752+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00108-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00108-of-01024.json.gz",
+      "size": 398810219,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:41:45.142958+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00109-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00109-of-01024.json.gz",
+      "size": 396605124,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:42:07.825817+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00110-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00110-of-01024.json.gz",
+      "size": 397491755,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:43:04.410920+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00111-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00111-of-01024.json.gz",
+      "size": 395754897,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:43:25.356429+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00112-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00112-of-01024.json.gz",
+      "size": 398567649,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:43:46.991466+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00113-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00113-of-01024.json.gz",
+      "size": 396706569,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:44:08.409655+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00114-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00114-of-01024.json.gz",
+      "size": 397384355,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:44:36.174786+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00115-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00115-of-01024.json.gz",
+      "size": 397702826,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:44:57.028114+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00116-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00116-of-01024.json.gz",
+      "size": 397252590,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:45:17.472449+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00117-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00117-of-01024.json.gz",
+      "size": 395506730,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:45:39.287427+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00118-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00118-of-01024.json.gz",
+      "size": 396452136,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:45:59.395151+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00119-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00119-of-01024.json.gz",
+      "size": 396777389,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:46:19.893759+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00120-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00120-of-01024.json.gz",
+      "size": 397730478,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:46:40.711349+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00121-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00121-of-01024.json.gz",
+      "size": 396593647,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:47:00.415317+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00122-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00122-of-01024.json.gz",
+      "size": 396576172,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:47:20.512643+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00123-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00123-of-01024.json.gz",
+      "size": 397378329,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:47:47.831236+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00124-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00124-of-01024.json.gz",
+      "size": 396545003,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:48:20.112006+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00125-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00125-of-01024.json.gz",
+      "size": 397630505,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:48:39.938731+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00126-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00126-of-01024.json.gz",
+      "size": 395483747,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:49:08.988552+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00127-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00127-of-01024.json.gz",
+      "size": 397295159,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:49:28.435289+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00128-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00128-of-01024.json.gz",
+      "size": 396276865,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:49:50.112003+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00129-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00129-of-01024.json.gz",
+      "size": 395314703,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:50:11.338373+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00130-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00130-of-01024.json.gz",
+      "size": 397411481,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:50:30.704702+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00131-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00131-of-01024.json.gz",
+      "size": 396925311,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:51:02.645824+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00132-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00132-of-01024.json.gz",
+      "size": 395826124,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:51:21.241847+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00133-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00133-of-01024.json.gz",
+      "size": 398892794,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:51:40.753387+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00134-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00134-of-01024.json.gz",
+      "size": 398206890,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:52:01.109658+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00135-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00135-of-01024.json.gz",
+      "size": 397161888,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:52:20.504750+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00136-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00136-of-01024.json.gz",
+      "size": 396185585,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:52:39.758240+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00137-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00137-of-01024.json.gz",
+      "size": 396933735,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:53:01.135516+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00138-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00138-of-01024.json.gz",
+      "size": 396371698,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:53:23.371672+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00139-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00139-of-01024.json.gz",
+      "size": 397289537,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:53:44.369011+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00140-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00140-of-01024.json.gz",
+      "size": 396983259,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:54:04.383201+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00141-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00141-of-01024.json.gz",
+      "size": 394947050,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:54:23.251295+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00142-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00142-of-01024.json.gz",
+      "size": 396852755,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:54:44.965809+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00143-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00143-of-01024.json.gz",
+      "size": 397579248,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:55:04.325763+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00144-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00144-of-01024.json.gz",
+      "size": 398800367,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:55:23.638117+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00145-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00145-of-01024.json.gz",
+      "size": 396709510,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:55:43.801433+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00146-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00146-of-01024.json.gz",
+      "size": 396042389,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:56:03.214444+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00147-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00147-of-01024.json.gz",
+      "size": 399840661,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:56:24.073558+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00148-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00148-of-01024.json.gz",
+      "size": 397098215,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:56:43.805285+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00149-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00149-of-01024.json.gz",
+      "size": 397540697,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:57:03.788629+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00150-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00150-of-01024.json.gz",
+      "size": 396347701,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:57:26.146879+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00151-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00151-of-01024.json.gz",
+      "size": 394890490,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:57:47.994623+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00152-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00152-of-01024.json.gz",
+      "size": 399584675,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:58:08.553478+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00153-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00153-of-01024.json.gz",
+      "size": 395606567,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:58:29.064939+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00154-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00154-of-01024.json.gz",
+      "size": 397925578,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:58:49.064551+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00155-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00155-of-01024.json.gz",
+      "size": 395428741,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:59:09.445911+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00156-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00156-of-01024.json.gz",
+      "size": 396799274,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:59:29.062267+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00157-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00157-of-01024.json.gz",
+      "size": 397321211,
+      "sha256": "",
+      "completed_at": "2026-11-12T16:59:48.681023+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00158-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00158-of-01024.json.gz",
+      "size": 398736992,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:00:09.571455+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00159-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00159-of-01024.json.gz",
+      "size": 397250687,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:00:30.322014+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00160-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00160-of-01024.json.gz",
+      "size": 397492158,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:00:49.434882+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00161-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00161-of-01024.json.gz",
+      "size": 398383574,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:01:07.968767+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00162-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00162-of-01024.json.gz",
+      "size": 397126197,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:01:26.745859+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00163-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00163-of-01024.json.gz",
+      "size": 398201223,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:01:49.101872+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00164-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00164-of-01024.json.gz",
+      "size": 397914908,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:02:08.928027+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00165-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00165-of-01024.json.gz",
+      "size": 398142696,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:02:30.233484+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00166-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00166-of-01024.json.gz",
+      "size": 397533050,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:02:55.297011+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00167-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00167-of-01024.json.gz",
+      "size": 396241119,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:03:14.623445+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00168-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00168-of-01024.json.gz",
+      "size": 396041761,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:03:35.148607+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00169-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00169-of-01024.json.gz",
+      "size": 396350882,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:03:55.738393+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00170-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00170-of-01024.json.gz",
+      "size": 396885157,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:04:15.248895+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00171-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00171-of-01024.json.gz",
+      "size": 397266368,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:04:35.824546+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00172-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00172-of-01024.json.gz",
+      "size": 397140430,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:04:57.082841+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00173-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00173-of-01024.json.gz",
+      "size": 397069631,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:05:17.399880+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00174-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00174-of-01024.json.gz",
+      "size": 396743897,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:05:38.162611+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00175-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00175-of-01024.json.gz",
+      "size": 395780705,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:05:58.405248+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00176-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00176-of-01024.json.gz",
+      "size": 396205053,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:06:21.514279+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00177-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00177-of-01024.json.gz",
+      "size": 396248718,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:06:41.035512+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00178-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00178-of-01024.json.gz",
+      "size": 396634813,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:07:00.404922+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00179-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00179-of-01024.json.gz",
+      "size": 396524113,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:07:20.795985+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00180-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00180-of-01024.json.gz",
+      "size": 397938782,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:07:41.583957+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00181-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00181-of-01024.json.gz",
+      "size": 399155769,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:08:01.033774+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00182-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00182-of-01024.json.gz",
+      "size": 396136228,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:08:24.171748+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00183-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00183-of-01024.json.gz",
+      "size": 397083292,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:08:45.239556+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00184-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00184-of-01024.json.gz",
+      "size": 397402964,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:09:04.872432+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00185-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00185-of-01024.json.gz",
+      "size": 398411052,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:09:24.395239+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00186-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00186-of-01024.json.gz",
+      "size": 397122443,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:09:47.345436+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00187-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00187-of-01024.json.gz",
+      "size": 397244868,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:10:07.107270+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00188-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00188-of-01024.json.gz",
+      "size": 395677432,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:10:27.424590+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00189-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00189-of-01024.json.gz",
+      "size": 393653750,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:10:47.595204+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00190-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00190-of-01024.json.gz",
+      "size": 395437920,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:11:09.213453+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00191-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00191-of-01024.json.gz",
+      "size": 396944861,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:11:30.659107+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00192-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00192-of-01024.json.gz",
+      "size": 396611165,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:11:51.018402+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00193-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00193-of-01024.json.gz",
+      "size": 398283211,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:12:11.690160+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00194-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00194-of-01024.json.gz",
+      "size": 398915952,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:12:32.781781+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00195-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00195-of-01024.json.gz",
+      "size": 396352694,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:12:51.928539+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00196-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00196-of-01024.json.gz",
+      "size": 398582922,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:13:11.555754+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00197-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00197-of-01024.json.gz",
+      "size": 398839554,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:13:31.364900+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00198-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00198-of-01024.json.gz",
+      "size": 396202192,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:13:51.508448+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00199-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00199-of-01024.json.gz",
+      "size": 398029364,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:14:12.911369+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00200-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00200-of-01024.json.gz",
+      "size": 395867629,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:14:32.693959+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00201-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00201-of-01024.json.gz",
+      "size": 396858169,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:14:53.167990+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00202-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00202-of-01024.json.gz",
+      "size": 397955766,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:15:13.195274+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00203-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00203-of-01024.json.gz",
+      "size": 397737882,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:15:33.817214+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00204-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00204-of-01024.json.gz",
+      "size": 396094006,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:15:56.447655+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00205-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00205-of-01024.json.gz",
+      "size": 399027636,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:16:16.036840+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00206-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00206-of-01024.json.gz",
+      "size": 399406254,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:16:35.721227+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00207-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00207-of-01024.json.gz",
+      "size": 396291803,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:16:55.413314+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00208-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00208-of-01024.json.gz",
+      "size": 397807368,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:17:14.112514+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00209-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00209-of-01024.json.gz",
+      "size": 398085408,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:17:33.707228+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00210-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00210-of-01024.json.gz",
+      "size": 397670254,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:17:54.801164+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00211-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00211-of-01024.json.gz",
+      "size": 399643598,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:18:15.389718+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00212-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00212-of-01024.json.gz",
+      "size": 397390768,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:18:36.767771+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00213-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00213-of-01024.json.gz",
+      "size": 398657925,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:18:56.605640+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00214-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00214-of-01024.json.gz",
+      "size": 398282324,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:19:16.005853+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00215-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00215-of-01024.json.gz",
+      "size": 399178235,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:19:36.289637+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00216-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00216-of-01024.json.gz",
+      "size": 397630870,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:19:56.490208+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00217-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00217-of-01024.json.gz",
+      "size": 398628848,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:20:16.115896+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00218-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00218-of-01024.json.gz",
+      "size": 395087998,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:20:35.176224+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00219-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00219-of-01024.json.gz",
+      "size": 397622792,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:20:53.685331+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00220-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00220-of-01024.json.gz",
+      "size": 395112655,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:21:12.612025+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00221-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00221-of-01024.json.gz",
+      "size": 397132000,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:21:32.150326+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00222-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00222-of-01024.json.gz",
+      "size": 397138513,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:21:53.760556+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00223-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00223-of-01024.json.gz",
+      "size": 397167661,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:22:13.926986+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00224-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00224-of-01024.json.gz",
+      "size": 397905941,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:22:33.595970+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00225-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00225-of-01024.json.gz",
+      "size": 397218123,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:22:53.591061+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00226-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00226-of-01024.json.gz",
+      "size": 396619135,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:23:15.376798+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00227-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00227-of-01024.json.gz",
+      "size": 396654998,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:23:35.013563+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00228-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00228-of-01024.json.gz",
+      "size": 396899165,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:23:55.804169+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00229-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00229-of-01024.json.gz",
+      "size": 397489378,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:24:14.631338+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00230-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00230-of-01024.json.gz",
+      "size": 397462301,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:24:35.570751+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00231-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00231-of-01024.json.gz",
+      "size": 396097584,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:24:56.737984+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00232-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00232-of-01024.json.gz",
+      "size": 398984795,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:25:15.837699+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00233-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00233-of-01024.json.gz",
+      "size": 397258012,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:25:35.181500+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00234-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00234-of-01024.json.gz",
+      "size": 398350453,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:25:54.464818+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00235-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00235-of-01024.json.gz",
+      "size": 397147353,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:26:14.721514+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00236-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00236-of-01024.json.gz",
+      "size": 396963006,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:26:35.066457+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00237-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00237-of-01024.json.gz",
+      "size": 397087111,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:26:54.599684+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00238-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00238-of-01024.json.gz",
+      "size": 396984031,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:27:15.934563+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00239-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00239-of-01024.json.gz",
+      "size": 395915197,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:27:36.912918+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00240-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00240-of-01024.json.gz",
+      "size": 398321096,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:27:56.580995+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00241-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00241-of-01024.json.gz",
+      "size": 396626980,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:28:15.830171+00:00"
+    },
+    "c4:en.noblocklist/c4-train.00242-of-01024.json.gz": {
+      "local_path": "/media/yky/old-dreams2/c4/en.noblocklist/c4-train.00242-of-01024.json.gz",
+      "size": 398220596,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:28:35.520937+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00000-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00000-of-00014.parquet",
+      "size": 2369456837,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:29:47.873908+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00001-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00001-of-00014.parquet",
+      "size": 2376360695,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:31:00.152629+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00002-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00002-of-00014.parquet",
+      "size": 2366714674,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:32:12.512357+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00003-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00003-of-00014.parquet",
+      "size": 2349721791,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:33:24.242953+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00004-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00004-of-00014.parquet",
+      "size": 2347567335,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:34:36.978091+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00005-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00005-of-00014.parquet",
+      "size": 2344454381,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:35:48.463895+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00006-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00006-of-00014.parquet",
+      "size": 2336964549,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:37:00.459443+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00007-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00007-of-00014.parquet",
+      "size": 2320625373,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:38:11.404042+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00008-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00008-of-00014.parquet",
+      "size": 2307363915,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:39:22.009429+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00009-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00009-of-00014.parquet",
+      "size": 2310654336,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:40:33.305631+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00010-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00010-of-00014.parquet",
+      "size": 2294070592,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:41:43.844991+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00011-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00011-of-00014.parquet",
+      "size": 2294546063,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:42:54.143746+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00012-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00012-of-00014.parquet",
+      "size": 2295986307,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:44:05.513588+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-20/train-00013-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-20/train-00013-of-00014.parquet",
+      "size": 2284902248,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:45:17.839556+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00000-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00000-of-00014.parquet",
+      "size": 2329592314,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:46:28.907034+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00001-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00001-of-00014.parquet",
+      "size": 2332353351,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:47:41.960553+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00002-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00002-of-00014.parquet",
+      "size": 2327303340,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:48:55.855115+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00003-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00003-of-00014.parquet",
+      "size": 2316277195,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:50:07.182742+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00004-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00004-of-00014.parquet",
+      "size": 2295811884,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:51:18.128991+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00005-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00005-of-00014.parquet",
+      "size": 2299104720,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:52:29.154943+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00006-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00006-of-00014.parquet",
+      "size": 2278623295,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:53:41.520995+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00007-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00007-of-00014.parquet",
+      "size": 2274629249,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:54:51.239114+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00008-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00008-of-00014.parquet",
+      "size": 2273053146,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:56:00.831374+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00009-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00009-of-00014.parquet",
+      "size": 2269555721,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:57:10.084302+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00010-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00010-of-00014.parquet",
+      "size": 2255912359,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:58:19.104622+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00011-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00011-of-00014.parquet",
+      "size": 2258788899,
+      "sha256": "",
+      "completed_at": "2026-11-12T17:59:28.436055+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00012-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00012-of-00014.parquet",
+      "size": 2252159861,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:00:36.563595+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2013-48/train-00013-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2013-48/train-00013-of-00014.parquet",
+      "size": 2251108466,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:01:45.598398+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2014-10/train-00000-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2014-10/train-00000-of-00014.parquet",
+      "size": 2378402603,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:03:00.719872+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2014-10/train-00001-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2014-10/train-00001-of-00014.parquet",
+      "size": 2374581082,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:04:13.687024+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2014-10/train-00002-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2014-10/train-00002-of-00014.parquet",
+      "size": 2370839030,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:05:26.770666+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2014-10/train-00003-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2014-10/train-00003-of-00014.parquet",
+      "size": 2367174733,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:06:42.623382+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2014-10/train-00004-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2014-10/train-00004-of-00014.parquet",
+      "size": 2355201629,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:07:54.456629+00:00"
+    },
+    "fineweb_edu:data/CC-MAIN-2014-10/train-00005-of-00014.parquet": {
+      "local_path": "/media/yky/old-dreams1/fineweb_edu/data/CC-MAIN-2014-10/train-00005-of-00014.parquet",
+      "size": 2353220675,
+      "sha256": "",
+      "completed_at": "2026-11-12T18:09:09.074110+00:00"
+    }
+  },
+  "updated_at": "2026-11-12T18:09:09.074143+00:00"
+}

@@ -1,0 +1,2411 @@
+{
+  "manifest_id": "corpus-manifest-v1",
+  "generated_at": "2026-11-12T18:09:09.082806+00:00",
+  "manifest_path": "/home/yky/misc-programs/AGI-prototype/rules/reports/corpus_manifest_v1.json",
+  "dry_run": false,
+  "only_source": "",
+  "processed_files": 344,
+  "downloaded": 339,
+  "skipped": 5,
+  "failed": 0,
+  "rows": [
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00000.parquet",
+      "status": "skipped_completed"
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00001.parquet",
+      "status": "skipped_completed"
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00002.parquet",
+      "status": "skipped_completed"
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00003.parquet",
+      "status": "skipped_completed"
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00004.parquet",
+      "status": "skipped_completed"
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00005.parquet",
+      "status": "downloaded",
+      "size": 2148146096,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00006.parquet",
+      "status": "downloaded",
+      "size": 2147169070,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00007.parquet",
+      "status": "downloaded",
+      "size": 2146979432,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00008.parquet",
+      "status": "downloaded",
+      "size": 2147298729,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00009.parquet",
+      "status": "downloaded",
+      "size": 2147114414,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00010.parquet",
+      "status": "downloaded",
+      "size": 2147817437,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00011.parquet",
+      "status": "downloaded",
+      "size": 2146604858,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00012.parquet",
+      "status": "downloaded",
+      "size": 2147790908,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00013.parquet",
+      "status": "downloaded",
+      "size": 2147883182,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00014.parquet",
+      "status": "downloaded",
+      "size": 2147892661,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00015.parquet",
+      "status": "downloaded",
+      "size": 2147404363,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00016.parquet",
+      "status": "downloaded",
+      "size": 2148239815,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00017.parquet",
+      "status": "downloaded",
+      "size": 2146120615,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00018.parquet",
+      "status": "downloaded",
+      "size": 2147399348,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00019.parquet",
+      "status": "downloaded",
+      "size": 2148250021,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00020.parquet",
+      "status": "downloaded",
+      "size": 2146801250,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00021.parquet",
+      "status": "downloaded",
+      "size": 2147793433,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00022.parquet",
+      "status": "downloaded",
+      "size": 2146939760,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00023.parquet",
+      "status": "downloaded",
+      "size": 2146586753,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00024.parquet",
+      "status": "downloaded",
+      "size": 2147249850,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00025.parquet",
+      "status": "downloaded",
+      "size": 2147692063,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00026.parquet",
+      "status": "downloaded",
+      "size": 2147592649,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00027.parquet",
+      "status": "downloaded",
+      "size": 2147755158,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00028.parquet",
+      "status": "downloaded",
+      "size": 2146887963,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00029.parquet",
+      "status": "downloaded",
+      "size": 2147887687,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00030.parquet",
+      "status": "downloaded",
+      "size": 2146336746,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00031.parquet",
+      "status": "downloaded",
+      "size": 2147663631,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00032.parquet",
+      "status": "downloaded",
+      "size": 2147995792,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00033.parquet",
+      "status": "downloaded",
+      "size": 2146471430,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00034.parquet",
+      "status": "downloaded",
+      "size": 2148054215,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00035.parquet",
+      "status": "downloaded",
+      "size": 2147728653,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00036.parquet",
+      "status": "downloaded",
+      "size": 2147209087,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00037.parquet",
+      "status": "downloaded",
+      "size": 2147706779,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00038.parquet",
+      "status": "downloaded",
+      "size": 2147461765,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00039.parquet",
+      "status": "downloaded",
+      "size": 2146306819,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00040.parquet",
+      "status": "downloaded",
+      "size": 2147723105,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00041.parquet",
+      "status": "downloaded",
+      "size": 2146631109,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00042.parquet",
+      "status": "downloaded",
+      "size": 2147029949,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00043.parquet",
+      "status": "downloaded",
+      "size": 2146139072,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00044.parquet",
+      "status": "downloaded",
+      "size": 2146178953,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00045.parquet",
+      "status": "downloaded",
+      "size": 2146623690,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00046.parquet",
+      "status": "downloaded",
+      "size": 2146800721,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00047.parquet",
+      "status": "downloaded",
+      "size": 2146452978,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00048.parquet",
+      "status": "downloaded",
+      "size": 2147271170,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/000_00049.parquet",
+      "status": "downloaded",
+      "size": 2146723269,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00000.parquet",
+      "status": "downloaded",
+      "size": 2147264039,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00001.parquet",
+      "status": "downloaded",
+      "size": 2147188971,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00002.parquet",
+      "status": "downloaded",
+      "size": 2146360871,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00003.parquet",
+      "status": "downloaded",
+      "size": 2146444275,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00004.parquet",
+      "status": "downloaded",
+      "size": 2147990568,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00005.parquet",
+      "status": "downloaded",
+      "size": 2146366528,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00006.parquet",
+      "status": "downloaded",
+      "size": 2146782845,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00007.parquet",
+      "status": "downloaded",
+      "size": 2146745863,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00008.parquet",
+      "status": "downloaded",
+      "size": 2147195345,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00009.parquet",
+      "status": "downloaded",
+      "size": 2146454705,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00010.parquet",
+      "status": "downloaded",
+      "size": 2146921354,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00011.parquet",
+      "status": "downloaded",
+      "size": 2146340521,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00012.parquet",
+      "status": "downloaded",
+      "size": 2146565909,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00013.parquet",
+      "status": "downloaded",
+      "size": 2147073791,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00014.parquet",
+      "status": "downloaded",
+      "size": 2147163233,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00015.parquet",
+      "status": "downloaded",
+      "size": 2147005891,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb",
+      "path": "data/CC-MAIN-2013-20/001_00016.parquet",
+      "status": "downloaded",
+      "size": 2146951147,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00000-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396728190,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00001-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395686133,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00002-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397762165,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00003-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395307518,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00004-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396280504,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00005-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396636600,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00006-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395364336,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00007-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396428805,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00008-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395030041,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00009-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398255693,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00010-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397825333,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00011-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397877458,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00012-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398317059,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00013-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398518794,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00014-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397026214,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00015-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395621683,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00016-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398138551,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00017-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398720813,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00018-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398538940,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00019-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396834319,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00020-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396402861,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00021-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397560852,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00022-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397210987,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00023-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397563062,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00024-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395799120,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00025-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398336372,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00026-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396819084,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00027-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397912380,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00028-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399078461,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00029-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397303107,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00030-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396602401,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00031-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395941329,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00032-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398049663,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00033-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398044404,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00034-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396885224,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00035-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396185021,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00036-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396702503,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00037-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397582277,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00038-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396186761,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00039-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397056953,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00040-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397809786,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00041-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396944358,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00042-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 394327995,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00043-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396476043,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00044-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396893614,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00045-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395885483,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00046-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396963386,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00047-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395856712,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00048-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396091027,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00049-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396892998,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00050-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396308050,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00051-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396137777,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00052-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398302544,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00053-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399616791,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00054-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397332881,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00055-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397075146,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00056-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397827600,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00057-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397533583,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00058-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396411363,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00059-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396735510,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00060-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395694553,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00061-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397740757,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00062-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397358263,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00063-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396826654,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00064-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395781869,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00065-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398192274,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00066-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397133438,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00067-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397204214,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00068-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396489592,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00069-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397697351,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00070-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398449973,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00071-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395498960,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00072-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396170387,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00073-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395915819,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00074-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396986018,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00075-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398555103,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00076-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396357420,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00077-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396666167,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00078-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398167446,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00079-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399696096,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00080-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398755610,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00081-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396606787,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00082-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395714484,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00083-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396807173,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00084-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397241529,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00085-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398357369,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00086-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396997317,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00087-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397978000,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00088-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398468913,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00089-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397071121,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00090-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395753807,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00091-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397039764,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00092-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397058578,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00093-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395855981,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00094-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399516118,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00095-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398236235,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00096-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399526010,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00097-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397935028,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00098-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398645934,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00099-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398110916,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00100-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397631228,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00101-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395102356,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00102-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398926159,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00103-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398383820,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00104-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396628542,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00105-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398737797,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00106-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397281064,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00107-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397919761,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00108-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398810219,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00109-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396605124,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00110-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397491755,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00111-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395754897,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00112-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398567649,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00113-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396706569,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00114-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397384355,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00115-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397702826,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00116-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397252590,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00117-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395506730,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00118-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396452136,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00119-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396777389,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00120-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397730478,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00121-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396593647,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00122-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396576172,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00123-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397378329,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00124-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396545003,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00125-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397630505,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00126-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395483747,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00127-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397295159,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00128-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396276865,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00129-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395314703,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00130-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397411481,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00131-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396925311,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00132-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395826124,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00133-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398892794,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00134-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398206890,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00135-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397161888,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00136-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396185585,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00137-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396933735,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00138-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396371698,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00139-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397289537,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00140-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396983259,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00141-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 394947050,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00142-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396852755,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00143-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397579248,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00144-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398800367,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00145-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396709510,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00146-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396042389,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00147-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399840661,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00148-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397098215,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00149-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397540697,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00150-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396347701,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00151-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 394890490,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00152-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399584675,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00153-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395606567,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00154-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397925578,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00155-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395428741,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00156-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396799274,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00157-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397321211,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00158-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398736992,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00159-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397250687,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00160-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397492158,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00161-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398383574,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00162-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397126197,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00163-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398201223,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00164-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397914908,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00165-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398142696,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00166-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397533050,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00167-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396241119,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00168-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396041761,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00169-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396350882,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00170-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396885157,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00171-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397266368,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00172-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397140430,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00173-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397069631,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00174-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396743897,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00175-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395780705,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00176-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396205053,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00177-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396248718,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00178-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396634813,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00179-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396524113,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00180-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397938782,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00181-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399155769,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00182-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396136228,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00183-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397083292,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00184-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397402964,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00185-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398411052,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00186-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397122443,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00187-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397244868,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00188-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395677432,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00189-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 393653750,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00190-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395437920,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00191-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396944861,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00192-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396611165,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00193-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398283211,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00194-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398915952,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00195-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396352694,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00196-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398582922,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00197-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398839554,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00198-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396202192,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00199-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398029364,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00200-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395867629,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00201-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396858169,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00202-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397955766,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00203-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397737882,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00204-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396094006,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00205-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399027636,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00206-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399406254,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00207-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396291803,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00208-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397807368,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00209-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398085408,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00210-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397670254,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00211-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399643598,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00212-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397390768,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00213-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398657925,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00214-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398282324,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00215-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 399178235,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00216-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397630870,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00217-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398628848,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00218-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395087998,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00219-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397622792,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00220-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395112655,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00221-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397132000,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00222-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397138513,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00223-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397167661,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00224-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397905941,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00225-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397218123,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00226-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396619135,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00227-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396654998,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00228-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396899165,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00229-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397489378,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00230-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397462301,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00231-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396097584,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00232-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398984795,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00233-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397258012,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00234-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398350453,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00235-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397147353,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00236-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396963006,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00237-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 397087111,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00238-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396984031,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00239-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 395915197,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00240-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398321096,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00241-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 396626980,
+      "sha256": ""
+    },
+    {
+      "source_id": "c4",
+      "path": "en.noblocklist/c4-train.00242-of-01024.json.gz",
+      "status": "downloaded",
+      "size": 398220596,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00000-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2369456837,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00001-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2376360695,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00002-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2366714674,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00003-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2349721791,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00004-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2347567335,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00005-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2344454381,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00006-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2336964549,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00007-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2320625373,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00008-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2307363915,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00009-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2310654336,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00010-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2294070592,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00011-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2294546063,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00012-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2295986307,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-20/train-00013-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2284902248,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00000-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2329592314,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00001-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2332353351,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00002-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2327303340,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00003-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2316277195,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00004-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2295811884,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00005-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2299104720,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00006-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2278623295,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00007-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2274629249,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00008-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2273053146,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00009-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2269555721,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00010-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2255912359,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00011-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2258788899,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00012-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2252159861,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2013-48/train-00013-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2251108466,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2014-10/train-00000-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2378402603,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2014-10/train-00001-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2374581082,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2014-10/train-00002-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2370839030,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2014-10/train-00003-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2367174733,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2014-10/train-00004-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2355201629,
+      "sha256": ""
+    },
+    {
+      "source_id": "fineweb_edu",
+      "path": "data/CC-MAIN-2014-10/train-00005-of-00014.parquet",
+      "status": "downloaded",
+      "size": 2353220675,
+      "sha256": ""
+    }
+  ]
+}
