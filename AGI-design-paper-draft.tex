@@ -120,22 +120,34 @@ Notice that the name ``Janet'' is not yet extracted, among other missing informa
 
 \subsubsection{Example of Semantic Auto-Regression}
 
-The current Semantic-AR pipeline emits ontology-aligned symbolic traces.
-
-Example output from
-\texttt{rules/reports/semantic\_ar\_worked\_examples\_ontology\_aligned\_v1.json}
-(\texttt{example\_id = sar\_physical\_inventory\_001}):
+The following is an actual inference produced by
+\texttt{cognitive\_loop.run\_cognitive\_loop}, with Semantic-AR enabled, using one
+cycle on the input
+\textit{``Alex had 18 apples and gave away 4. How many apples remain?''}.
+Selected working-memory facts at the end of the cycle were:
 \begin{verbatim}
-trace alignments:
-  step=observe,    predicate=Has,             chosen_concept=transfer,   confidence=0.9
-  step=transition, predicate=StateTransition, chosen_concept=comparison, confidence=0.8
-  step=infer,      predicate=Remaining,       chosen_concept=comparison, confidence=0.9
-
-seed_rule_1:
-  Has(x,item,q0) & StateTransition(x,item,delta=d1) -> Has(x,item,q0+d1)
-seed_rule_2:
-  Has(x,item,q1) & StateTransition(x,item,delta=d2) -> Remaining(x,item,q1+d2)
+Has(owner=Alex, item=apples, qty=18.0)
+Consumed(owner=unknown, item=apples, qty=4.0)
+Subtract(lhs=18.0, rhs=4.0, result=14.0)
+StateTransition(
+  owner=unknown, item=apples,
+  before_qty=18.0, delta=-4.0, after_qty=14.0,
+  event_kind=gave_away
+)
+Query(
+  goal=remaining_quantity,
+  args=(unknown, apples, ?ans),
+  expected_value=14.0
+)
+Belief(label=remaining_quantity, value=14.0,
+       owner=unknown, item=apples)
 \end{verbatim}
+
+The final belief is correct, but this trace also exposes two current limitations:
+the owner is not consistently propagated from \texttt{Alex} to the final state,
+and the run emits additional competing beliefs, including a lower-value fallback
+belief.  Thus this is a genuine end-to-end inference trace, but not yet a clean,
+minimal derivation.
 
 \section{Rule Language and Pre-configured Rule Shapes}
 
