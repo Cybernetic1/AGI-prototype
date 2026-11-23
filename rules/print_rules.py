@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import sys
 from pathlib import Path
@@ -24,6 +25,7 @@ RULE_SNAPSHOT_PATHS = [
 ]
 SYS3_SEED_FILE = REPO_ROOT / "ilp_learner" / "metagol_nds.py"
 SYS3_SEED_FILE_2 = REPO_ROOT / "ilp_learner" / "abductive_ilp.py"
+SYS2_EXPERTA_FILE = REPO_ROOT / "forward_engine" / "system2_poc.py"
 ANSI_BOLD_YELLOW = "\033[1;93m"
 ANSI_BRIGHT_BLUE = "\033[94m"
 ANSI_RESET = "\033[0m"
@@ -45,6 +47,55 @@ def _format_rule_text(text: str | None) -> str:
     if not text:
         return "<empty>"
     return str(text).replace(" and ", " ∧ ").replace(chr(10), " ").strip()
+
+
+def _extract_experta_rules(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    src = path.read_text(encoding="utf-8")
+    tree = ast.parse(src)
+    extracted: list[dict] = []
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        has_rule_decorator = False
+        patterns: list[str] = []
+        action_lines: list[str] = []
+        for dec in node.decorator_list:
+            if not isinstance(dec, ast.Call):
+                continue
+            if isinstance(dec.func, ast.Name) and dec.func.id == "Rule":
+                has_rule_decorator = True
+                for arg in dec.args:
+                    segment = ast.get_source_segment(src, arg) or ""
+                    line = " ".join(segment.split())
+                    if line:
+                        patterns.append(line)
+        if not has_rule_decorator:
+            continue
+
+        body_nodes = list(node.body)
+        if body_nodes and isinstance(body_nodes[0], ast.Expr):
+            value = getattr(body_nodes[0], "value", None)
+            if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                body_nodes = body_nodes[1:]
+
+        for stmt in body_nodes:
+            segment = ast.get_source_segment(src, stmt) or ""
+            cleaned = " ".join(line.strip() for line in segment.splitlines() if line.strip())
+            if cleaned:
+                action_lines.append(cleaned)
+
+        extracted.append(
+            {
+                "name": node.name,
+                "doc": (ast.get_docstring(node) or "").strip(),
+                "patterns": patterns,
+                "actions": action_lines,
+            }
+        )
+    return extracted
 
 
 def _print_rule_dict(rule: dict, label: str, *, show_body: bool = True) -> None:
@@ -278,6 +329,27 @@ def print_ltm_summary(path: Path) -> None:
     print(f"rule_memory_entries: {len(rules)}")
 
 
+def print_sys2_experta_rules(path: Path) -> None:
+    if not path.exists():
+        print(f"[missing] {path}")
+        return
+    rules = _extract_experta_rules(path)
+    print(f"System 2 Experta rules (code-defined): {path}")
+    print("=" * 72)
+    print(f"count: {len(rules)}")
+    for row in rules:
+        print(f"- {_bold_yellow(row['name'])} [experta]")
+        for pat in row.get("patterns") or []:
+            print(f"  when: {_bright_blue(_format_rule_text(pat))}")
+        for action in row.get("actions") or []:
+            print(f"  action: {_bright_blue(_format_rule_text(action))}")
+        doc = str(row.get("doc") or "").strip()
+        if doc:
+            one_line = " ".join(doc.split())
+            print(f"  doc: {one_line}")
+        print()
+
+
 def _count_rule_entries(path: Path) -> tuple[int, int, str]:
     if not path.exists():
         return 0, 0, "missing"
@@ -311,6 +383,7 @@ def print_rule_inventory_summary() -> None:
     registry_rules, registry_proposals, _ = _count_rule_entries(NL_RULE_REGISTRY)
     metarules, _, _ = _count_rule_entries(RULE_SNAPSHOT_PATHS[0])
     learning_snapshots, learning_candidates, _ = _count_rule_entries(RULE_SNAPSHOT_PATHS[1])
+    experta_rules = len(_extract_experta_rules(SYS2_EXPERTA_FILE))
     active_runtime = sys2_rules + defeasible_rules + registry_rules
     total_materialized = sys2_rules + defeasible_rules + registry_rules + metarules + learning_candidates
     print("Rule inventory summary:")
@@ -322,7 +395,9 @@ def print_rule_inventory_summary() -> None:
     print(f"Metarule snapshot entries: {metarules}")
     print(f"Learning snapshot tracked groups: {learning_snapshots}")
     print(f"Learning snapshot candidate signatures: {learning_candidates}")
+    print(f"System 2 Experta code-defined rules: {experta_rules}")
     print(f"Active runtime KB (file-backed + compiled): {active_runtime}")
+    print(f"Operational total incl. Experta code rules: {active_runtime + experta_rules}")
     print(f"Total materialized rule/metarule count: {total_materialized}")
     if not LTM_STORE.exists():
         print("LTM store: missing (0 persisted rule-memory entries)")
@@ -354,11 +429,12 @@ def main() -> int:
     parser.add_argument("--snapshot", action="store_true", help="Print metarule/rule-learning snapshots in JSON reports.")
     parser.add_argument("--ltm", action="store_true", help="Print a summary of the LTM store.")
     parser.add_argument("--lt", action="store_true", help="Print saved LT rule summaries from logic_transformer/.")
+    parser.add_argument("--experta", action="store_true", help="Print code-defined System-2 Experta @Rule methods.")
     parser.add_argument("--sys3", action="store_true", help="Print the current Sys-3 rule base status.")
     parser.add_argument("--all", action="store_true", help="Print all available persisted rule sources.")
     args = parser.parse_args()
 
-    if not any([args.sys2, args.defeasible, args.registry, args.nl, args.snapshot, args.ltm, args.lt, args.sys3, args.all]):
+    if not any([args.sys2, args.defeasible, args.registry, args.nl, args.snapshot, args.ltm, args.lt, args.experta, args.sys3, args.all]):
         args.all = True
 
     print_rule_inventory_summary()
@@ -382,6 +458,9 @@ def main() -> int:
         print()
     if args.all or args.lt:
         print_lt_rules(LT_RULE_CANDIDATES)
+    if args.all or args.experta:
+        print_sys2_experta_rules(SYS2_EXPERTA_FILE)
+        print()
     if args.all or args.sys3:
         print_sys3_rules_summary()
 

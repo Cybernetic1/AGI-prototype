@@ -82,6 +82,17 @@ class PrintRulesTest(unittest.TestCase):
         self.assertIn("Metarule snapshot entries: 18", text)
         self.assertIn("Total materialized rule/metarule count: 34", text)
 
+    def test_print_sys2_experta_rules_lists_code_defined_rules(self):
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            print_rules.print_sys2_experta_rules(print_rules.SYS2_EXPERTA_FILE)
+        text = output.getvalue()
+        self.assertIn("System 2 Experta rules (code-defined)", text)
+        self.assertIn("count: 36", text)
+        self.assertIn("execute_transfer", text)
+        self.assertIn("action:", text)
+        self.assertIn("self.modify(", text)
+
 
 if __name__ == "__main__":
     unittest.main()
