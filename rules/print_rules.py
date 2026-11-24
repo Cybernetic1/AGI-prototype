@@ -6,6 +6,7 @@ import ast
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -25,6 +26,7 @@ RULE_SNAPSHOT_PATHS = [
 ]
 SYS3_SEED_FILE = REPO_ROOT / "ilp_learner" / "metagol_nds.py"
 SYS3_SEED_FILE_2 = REPO_ROOT / "ilp_learner" / "abductive_ilp.py"
+LT_DEFAULT_CHECKPOINT = REPO_ROOT / "checkpoints" / "lt_gsm8k_demo.pt"
 SYS2_EXPERTA_FILE = REPO_ROOT / "forward_engine" / "system2_poc.py"
 ANSI_BOLD_YELLOW = "\033[1;93m"
 ANSI_BRIGHT_BLUE = "\033[94m"
@@ -206,6 +208,189 @@ def print_lt_rules(paths: list[Path]) -> None:
         print()
     if not found:
         print("No LT rule summaries found yet. Run a demo first.")
+
+
+def decode_lt_checkpoint(
+    checkpoint_path: Path,
+    data_path: Path,
+    *,
+    nearest_per_premise: int = 3,
+) -> dict[str, Any]:
+    """Approximate soft LT rule patterns with nearest observed symbolic propositions."""
+    try:
+        import torch
+        if str(REPO_ROOT) not in sys.path:
+            sys.path.insert(0, str(REPO_ROOT))
+        lt_dir = REPO_ROOT / "logic_transformer"
+        if str(lt_dir) not in sys.path:
+            sys.path.insert(0, str(lt_dir))
+        from model import LTArithmeticModel
+        from preprocess_gsm8k import build_example_props
+    except ImportError as exc:
+        raise RuntimeError(
+            "LT checkpoint decoding requires the repository PyTorch environment "
+            "(/home/yky/misc-programs/.venv/bin/python)."
+        ) from exc
+
+    if not checkpoint_path.exists():
+        raise FileNotFoundError(f"LT checkpoint not found: {checkpoint_path}")
+    if not data_path.exists():
+        raise FileNotFoundError(f"LT decode vocabulary dataset not found: {data_path}")
+
+    rows: list[dict[str, Any]] = []
+    with data_path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if line:
+                payload = json.loads(line)
+                if isinstance(payload, dict):
+                    rows.append(payload)
+    if not rows:
+        raise ValueError(f"No JSONL rows found in {data_path}")
+
+    checkpoint = torch.load(checkpoint_path, map_location="cpu")
+    model = LTArithmeticModel(
+        feature_dim=int(checkpoint.get("feature_dim", 32)),
+        num_buckets=int(checkpoint.get("num_buckets", 2048)),
+    )
+    model.load_state_dict(checkpoint["state_dict"])
+    model.eval()
+
+    # The feature tensor has 16 named coordinates. A rule constant lives in this
+    # space, so nearest-neighbour decoding is a transparent approximation rather
+    # than a claim that the soft rule is an exact Horn clause.
+    feature_names = [
+        "predicate_hash",
+        "arg1_hash",
+        "arg2_hash",
+        "arg3_hash",
+        "numeric_value",
+        "numeric_magnitude",
+        "numeric_sign",
+        "number_predicate",
+        "source",
+        "argument_count",
+        "add_op",
+        "sub_op",
+        "mul_op",
+        "div_op",
+        "bias",
+        "padding",
+    ]
+    vocabulary: list[tuple[str, dict[str, Any], torch.Tensor]] = []
+    seen: set[str] = set()
+    for row in rows:
+        props = build_example_props(row.get("question", ""), row.get("cot", ""), row)
+        for prop in props:
+            symbol = f"{prop.get('pred', '')}({', '.join(str(a) for a in prop.get('args', []))})"
+            if symbol in seen:
+                continue
+            seen.add(symbol)
+            features = model.encode_prop_features(prop).detach()
+            vocabulary.append((symbol, prop, features))
+    if not vocabulary:
+        raise ValueError("Dataset did not produce proposition vocabulary.")
+
+    decoded_rules = []
+    for rule_index, rule in enumerate(model.logic_core.rules, start=1):
+        gamma = torch.clamp(rule.γs.detach(), 0.0, 1.0)
+        constants = rule.constants.detach()
+        decoded_premises = []
+        for premise_index in range(rule.J):
+            g = gamma[premise_index]
+            constant = constants[premise_index]
+            ranked = []
+            for symbol, prop, features in vocabulary:
+                weights = (1.0 - g)
+                denominator = float(weights.sum().item()) or 1.0
+                distance = float(
+                    (weights * (constant - features).pow(2)).sum().div(denominator).sqrt().item()
+                )
+                ranked.append((distance, symbol, prop))
+            ranked.sort(key=lambda item: item[0])
+            variable_dims = [
+                feature_names[index]
+                for index, value in enumerate(g.tolist())
+                if value >= 0.7
+            ]
+            constant_dims = [
+                feature_names[index]
+                for index, value in enumerate(g.tolist())
+                if value <= 0.3
+            ]
+            decoded_premises.append(
+                {
+                    "premise": premise_index + 1,
+                    "nearest_symbols": [
+                        {"symbol": symbol, "distance": round(distance, 6)}
+                        for distance, symbol, _ in ranked[:nearest_per_premise]
+                    ],
+                    "variable_dimensions": variable_dims,
+                    "constant_dimensions": constant_dims,
+                    "average_gamma": round(float(g.mean().item()), 4),
+                }
+            )
+
+        with torch.no_grad():
+            head_bias_logits = model.op_head(rule.head.bias.detach())
+            head_bias_probs = torch.softmax(head_bias_logits, dim=-1)
+        operation_names = ["add", "subtract", "multiply", "divide", "other"]
+        best_operation = int(torch.argmax(head_bias_probs).item())
+        decoded_rules.append(
+            {
+                "rule": rule_index,
+                "premises": decoded_premises,
+                "head": {
+                    "op_projection": operation_names[best_operation],
+                    "op_probability": round(float(head_bias_probs[best_operation].item()), 4),
+                    "weight_norm": round(float(rule.head.weight.detach().norm().item()), 4),
+                    "qualifier": "head-bias projection; not an exact decoded conclusion",
+                },
+            }
+        )
+
+    return {
+        "checkpoint": str(checkpoint_path),
+        "data": str(data_path),
+        "completed_epoch": int(checkpoint.get("completed_epoch", 0)),
+        "vocabulary_size": len(vocabulary),
+        "rule_count": len(decoded_rules),
+        "decoding": "nearest-neighbour soft-feature approximation",
+        "rules": decoded_rules,
+    }
+
+
+def print_decoded_lt_rules(checkpoint_path: Path, data_path: Path) -> dict[str, Any]:
+    payload = decode_lt_checkpoint(checkpoint_path, data_path)
+    print(f"Decoded LT checkpoint: {checkpoint_path}")
+    print("=" * 72)
+    print(
+        f"rules: {payload['rule_count']} | vocabulary: {payload['vocabulary_size']} "
+        f"| completed_epoch: {payload['completed_epoch']}"
+    )
+    print("Method: nearest-neighbour soft-feature approximation (not exact Horn-clause recovery)")
+    for row in payload["rules"]:
+        rule_name = f"lt_soft_rule_{row['rule']}"
+        print(f"- {_bold_yellow(rule_name)} [differentiable]")
+        for premise in row["premises"]:
+            nearest = premise["nearest_symbols"][0]
+            print(
+                f"  body[{premise['premise']}]: "
+                f"{_bright_blue(nearest['symbol'])} (distance={nearest['distance']})"
+            )
+            variables = premise["variable_dimensions"]
+            constants = premise["constant_dimensions"]
+            if variables:
+                print(f"  variable dims: {', '.join(variables)}")
+            if constants:
+                print(f"  constant dims: {', '.join(constants)}")
+        head = row["head"]
+        print(
+            f"  head projection: {_bright_blue(head['op_projection'])} "
+            f"(prob={head['op_probability']}, {head['qualifier']})"
+        )
+        print()
+    return payload
 
 
 def print_nl_rule_registry(path: Path) -> None:
@@ -429,14 +614,18 @@ def main() -> int:
     parser.add_argument("--snapshot", action="store_true", help="Print metarule/rule-learning snapshots in JSON reports.")
     parser.add_argument("--ltm", action="store_true", help="Print a summary of the LTM store.")
     parser.add_argument("--lt", action="store_true", help="Print saved LT rule summaries from logic_transformer/.")
+    parser.add_argument("--lt-checkpoint", default="", help="Decode soft LT rules from this checkpoint.")
+    parser.add_argument("--lt-data", default="", help="JSONL dataset used as the symbolic reverse vocabulary.")
+    parser.add_argument("--lt-output", default="", help="Optional JSON path for decoded LT rule output.")
     parser.add_argument("--experta", action="store_true", help="Print code-defined System-2 Experta @Rule methods.")
     parser.add_argument("--sys3", action="store_true", help="Print the current Sys-3 rule base status.")
     parser.add_argument("--all", action="store_true", help="Print all available persisted rule sources.")
     args = parser.parse_args()
 
-    if not any([args.sys2, args.defeasible, args.registry, args.nl, args.snapshot, args.ltm, args.lt, args.experta, args.sys3, args.all]):
+    if not any([args.sys2, args.defeasible, args.registry, args.nl, args.snapshot, args.ltm, args.lt, args.lt_checkpoint, args.experta, args.sys3, args.all]):
         args.all = True
 
+    decoded_lt = None
     print_rule_inventory_summary()
     if args.all or args.sys2:
         print_sys2_rules(SYS2_RULES)
@@ -458,6 +647,15 @@ def main() -> int:
         print()
     if args.all or args.lt:
         print_lt_rules(LT_RULE_CANDIDATES)
+    if args.lt_checkpoint:
+        if not args.lt_data:
+            parser.error("--lt-checkpoint requires --lt-data for symbolic reverse decoding")
+        decoded_lt = print_decoded_lt_rules(Path(args.lt_checkpoint), Path(args.lt_data))
+        if args.lt_output:
+            out = Path(args.lt_output)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(json.dumps(decoded_lt, indent=2), encoding="utf-8")
+            print(f"Saved decoded LT rules to {out}")
     if args.all or args.experta:
         print_sys2_experta_rules(SYS2_EXPERTA_FILE)
         print()

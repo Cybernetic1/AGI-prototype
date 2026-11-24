@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AGI Prototype Control Dashboard</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#151c2f; --line:#2b3653; --text:#e8edf8; --muted:#9aa7c2; --blue:#60a5fa; --green:#34d399; --red:#f87171; --yellow:#fbbf24; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 system-ui,sans-serif; }
+    header { padding:20px 24px 12px; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size:24px; }
+    h2 { margin-top:0; }
+    .subtitle,.muted { color:var(--muted); }
+    .statusline { display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; }
+    .pill { display:inline-block; padding:4px 9px; border:1px solid var(--line); border-radius:999px; background:#11182a; }
+    .pill.running { color:var(--green); border-color:var(--green); }
+    .pill.failed,.pill.stale { color:var(--red); border-color:var(--red); }
+    .pill.stopped,.pill.exited { color:var(--yellow); border-color:var(--yellow); }
+    .tabs { display:flex; gap:4px; overflow:auto; padding:10px 24px 0; border-bottom:1px solid var(--line); }
+    .tab { border:0; background:transparent; color:var(--muted); padding:10px 14px; cursor:pointer; border-bottom:2px solid transparent; }
+    .tab.active { color:var(--text); border-bottom-color:var(--blue); }
+    main { padding:20px 24px 40px; max-width:1500px; margin:auto; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; min-width:0; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+    .metric { background:#10172a; border:1px solid var(--line); border-radius:8px; padding:12px; }
+    .metric .value { font-size:24px; font-weight:700; }
+    .bar { height:9px; background:#26314a; border-radius:6px; overflow:hidden; margin:5px 0 2px; }
+    .bar span { display:block; height:100%; background:var(--blue); }
+    table { width:100%; border-collapse:collapse; }
+    th,td { text-align:left; vertical-align:top; border-bottom:1px solid var(--line); padding:8px; }
+    th { color:var(--muted); font-weight:600; }
+    code,pre { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+    pre { white-space:pre-wrap; word-break:break-word; background:#080d19; border:1px solid var(--line); border-radius:8px; padding:12px; max-height:70vh; overflow:auto; }
+    label { display:block; margin:10px 0 4px; color:var(--muted); }
+    input,select,button,textarea { font:inherit; }
+    input,select,textarea { width:100%; background:#0c1323; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:8px; }
+    button { background:#2563eb; color:white; border:0; border-radius:6px; padding:9px 13px; cursor:pointer; }
+    button.secondary { background:#334155; }
+    button.danger { background:#b91c1c; }
+    button:disabled { opacity:.55; cursor:not-allowed; }
+    .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .rule-name { color:#fde047; font-weight:700; }
+    .rule-body { color:#93c5fd; }
+    .error { color:#fca5a5; }
+    .success { color:#86efac; }
+    .scroll { max-height:62vh; overflow:auto; }
+    .mono { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AGI Prototype Dashboard</h1>
+    <div class="subtitle">One monitor and control surface for the cognitive loop, LT training, shared rules, and reports.</div>
+    <div class="statusline">
+      <span id="process-pill" class="pill">status: loading</span>
+      <span id="freshness" class="pill">report: loading</span>
+      <button id="refresh" class="secondary">Refresh snapshot</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Dashboard sections">
+    <button class="tab active" data-tab="overview">Overview / progress</button>
+    <button class="tab" data-tab="rules">Rules / rule pool</button>
+    <button class="tab" data-tab="launcher">Training launcher</button>
+    <button class="tab" data-tab="process">Live process / logs</button>
+    <button class="tab" data-tab="datasets">Datasets / artifacts</button>
+    <button class="tab" data-tab="memory">LTM / ontology</button>
+  </nav>
+
+  <main>
+    <section id="overview" class="panel active">
+      <div class="cards" id="metrics"></div>
+      <div class="card">
+        <h2>Category progress</h2>
+        <div id="category-progress"></div>
+      </div>
+      <div class="grid">
+        <div class="card"><h2>Background trend</h2><div id="background-trend"></div></div>
+        <div class="card"><h2>Rule learning</h2><div id="rule-learning"></div></div>
+      </div>
+    </section>
+
+    <section id="rules" class="panel">
+      <div class="card">
+        <h2>Shared rule inventory</h2>
+        <div id="rule-counts" class="cards"></div>
+        <p class="muted">Counts remain separated because code-defined Experta rules, soft LT rules, metarules, and proposal records are not equivalent executable objects.</p>
+      </div>
+      <div class="card">
+        <label for="rule-source">Source</label>
+        <select id="rule-source">
+          <option value="experta">Experta code-defined</option>
+          <option value="canonical_sys2">Canonical Sys2 YAML</option>
+          <option value="defeasible">Defeasible YAML</option>
+          <option value="registry">NL/ILP registry</option>
+          <option value="metarules">Metarule snapshot</option>
+        </select>
+        <div id="rule-list" class="scroll"></div>
+      </div>
+    </section>
+
+    <section id="launcher" class="panel">
+      <div class="card">
+        <h2>Launch a unified runtime job</h2>
+        <p class="muted">Commands are allowlisted and started from the repository root. Only one managed process runs at a time.</p>
+        <label for="mode">Mode</label>
+        <select id="mode">
+          <option value="lt_train">LT-only training</option>
+          <option value="cognitive_loop">Cognitive loop / benchmark</option>
+          <option value="bootstrap">Unified bootstrap / profile run</option>
+        </select>
+        <div id="launch-fields"></div>
+        <div class="actions">
+          <button id="launch">Launch</button>
+          <button id="stop" class="danger">Stop managed process</button>
+        </div>
+        <div id="launch-message"></div>
+        <pre id="command-preview" class="mono"></pre>
+      </div>
+    </section>
+
+    <section id="process" class="panel">
+      <div class="grid">
+        <div class="card"><h2>Process status</h2><pre id="process-state">loading…</pre></div>
+        <div class="card"><h2>Live log tail</h2><pre id="process-log">loading…</pre></div>
+      </div>
+    </section>
+
+    <section id="datasets" class="panel">
+      <div class="card">
+        <h2>Discovered JSONL datasets</h2>
+        <div id="dataset-list" class="scroll"></div>
+      </div>
+      <div class="card">
+        <h2>Artifacts</h2>
+        <ul class="muted">
+          <li><code>rules/reports/agi_progress_dashboard_v1.json</code></li>
+          <li><code>rules/reports/background_loop/metrics.jsonl</code></li>
+          <li><code>rules/reports/ilp_rule_utility_v1.json</code></li>
+          <li><code>logic_transformer/checkpoints/</code> or selected checkpoint path</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="memory" class="panel">
+      <div class="card"><h2>LTM and ontology state</h2><pre id="memory-state">loading…</pre></div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let dashboard = {};
+    let rules = {};
+    let datasets = [];
+    let timer = null;
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, options);
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+      return payload;
+    }
+    function input(name, label, value='', type='text') {
+      return `<label for="${name}">${label}</label><input id="${name}" type="${type}" value="${esc(value)}">`;
+    }
+    function checkbox(name, label, checked=false) {
+      return `<label><input id="${name}" type="checkbox" style="width:auto" ${checked?'checked':''}> ${label}</label>`;
+    }
+    function select(name, label, options) {
+      return `<label for="${name}">${label}</label><select id="${name}">${options.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select>`;
+    }
+
+    function renderOverview() {
+      const overall = Number(dashboard.overall_progress_pct || 0);
+      $('metrics').innerHTML = [
+        ['Overall progress', overall.toFixed(1)+'%'],
+        ['Rule pool tracked', dashboard.rule_learning?.tracked_rule_count || 0],
+        ['Utility updates', dashboard.rule_learning?.utility_total_updates || 0],
+        ['Registry rules', dashboard.rule_learning?.registry_rule_count || 0],
+        ['Background rows', dashboard.background_trend?.rows || 0]
+      ].map(([k,v])=>`<div class="metric"><div class="muted">${esc(k)}</div><div class="value">${esc(v)}</div></div>`).join('');
+      $('category-progress').innerHTML = (dashboard.categories || []).map(c => `
+        <div style="margin:10px 0">
+          <b>${esc(c.label)}</b> <span class="muted">(${Number(c.progress_pct||0).toFixed(1)}%, confidence ${Number(c.confidence_pct||0).toFixed(0)}%)</span>
+          <div class="bar"><span style="width:${Math.max(0,Math.min(100,Number(c.progress_pct||0)))}%"></span></div>
+          <small class="muted">${esc(c.description || c.notes || '')}</small>
+        </div>`).join('');
+      $('background-trend').innerHTML = `<pre>${esc(JSON.stringify(dashboard.background_trend || {}, null, 2))}</pre>`;
+      $('rule-learning').innerHTML = `<pre>${esc(JSON.stringify(dashboard.rule_learning || {}, null, 2))}</pre>`;
+      $('freshness').textContent = `report: ${dashboard.generated_at || 'missing'}`;
+    }
+
+    function ruleHtml(source, r) {
+      if (source === 'experta') {
+        return `<div class="card"><div class="rule-name">${esc(r.name)}</div>${(r.patterns||[]).map(x=>`<div class="rule-body">WHEN ${esc(x)}</div>`).join('')}${(r.actions||[]).map(x=>`<div class="rule-body">DO ${esc(x)}</div>`).join('')}<div class="muted">${esc(r.doc||'')}</div></div>`;
+      }
+      const name = r.name || r.rule_id || r.id || r.family || 'unnamed';
+      return `<div class="card"><div class="rule-name">${esc(name)}</div><pre class="rule-body">${esc(JSON.stringify(r,null,2))}</pre></div>`;
+    }
+    function renderRules() {
+      $('rule-counts').innerHTML = Object.entries(rules.counts || {}).map(([k,v])=>`<div class="metric"><div class="muted">${esc(k)}</div><div class="value">${v}</div></div>`).join('');
+      const source = $('rule-source').value;
+      $('rule-list').innerHTML = (rules[source] || []).map(r => ruleHtml(source,r)).join('') || '<div class="muted">No rules.</div>';
+    }
+
+    function renderLauncher() {
+      const mode = $('mode').value;
+      if (mode === 'lt_train') {
+        $('launch-fields').innerHTML = `
+          ${select('dataset','Dataset',datasets.map(d=>d.path))}
+          <div class="row">
+            <div>${input('epochs','Additional epochs','20','number')}</div>
+            <div>${input('holdout','Holdout ratio','0.2','number')}</div>
+            <div>${input('max_minutes','Maximum minutes (0=unlimited)','30','number')}</div>
+          </div>
+          <div class="row">
+            <div>${input('threads','CPU threads','4','number')}</div>
+            <div>${input('seed','Seed','0','number')}</div>
+            <div>${input('checkpoint','Checkpoint','checkpoints/lt_tinystories.pt')}</div>
+          </div>${checkbox('resume','Resume model + optimizer from checkpoint',true)}`;
+      } else if (mode === 'cognitive_loop') {
+        $('launch-fields').innerHTML = `
+          ${select('scenario','Scenario',['dataset','family','finality','template'])}
+          ${select('dataset','Dataset (for dataset mode)',datasets.map(d=>d.path))}
+          <div class="row"><div>${input('limit','Limit','5','number')}</div><div>${input('cycles','Cycles','4','number')}</div></div>
+          ${checkbox('sar_enabled','Enable Semantic-AR proposal shaping',false)}
+          ${checkbox('sar_emit_metadata','Emit SAR metadata',true)}
+          ${checkbox('quiet','Quiet mode',false)}`;
+      } else {
+        $('launch-fields').innerHTML = `
+          ${select('suite','Suite',['tinystories_state_tracking','mixed_narrative_symbolic','combined','combined_widening','finality_regression','template_generalization'])}
+          ${select('profile','Profile',['lt-heavy','hybrid','ilp-heavy'])}
+          <div class="row"><div>${input('limit','Limit (0=all)','0','number')}</div><div>${input('cycles','Cycles','2','number')}</div></div>
+          ${input('output','Output report','rules/reports/agi_dashboard_run.json')}
+          ${checkbox('sar_enabled','Enable Semantic-AR',false)}
+          ${checkbox('ilp_enabled','Enable ILP learning stage',false)}
+          ${checkbox('activate_pool','Activate generated pool rules',false)}
+          ${checkbox('quiet','Quiet mode',false)}`;
+      }
+    }
+    function launcherPayload() {
+      const mode = $('mode').value;
+      const payload = {mode};
+      const ids = ['dataset','epochs','holdout','max_minutes','threads','seed','checkpoint','scenario','limit','cycles','suite','profile','output'];
+      ids.forEach(id => { const el=$(id); if (el) payload[id] = el.value; });
+      ['resume','sar_enabled','sar_emit_metadata','quiet','ilp_enabled','activate_pool'].forEach(id => {
+        const el=$(id); if (el) payload[id] = el.checked;
+      });
+      return payload;
+    }
+    async function refreshAll() {
+      const [dash,status,ruleData,data,memory] = await Promise.all([
+        api('/api/dashboard'),api('/api/status'),api('/api/rules'),api('/api/datasets'),api('/api/memory')
+      ]);
+      dashboard=dash; rules=ruleData; datasets=data.datasets||[];
+      renderOverview(); renderRules(); renderLauncher();
+      $('memory-state').textContent=JSON.stringify(memory,null,2);
+      $('dataset-list').innerHTML=`<table><thead><tr><th>Path</th><th>Size</th><th>Modified</th></tr></thead><tbody>${datasets.map(d=>`<tr><td><code>${esc(d.path)}</code></td><td>${d.bytes}</td><td>${esc(d.modified_at)}</td></tr>`).join('')}</tbody></table>`;
+      updateStatus(status);
+      await refreshLive();
+    }
+    function updateStatus(state) {
+      $('process-pill').className=`pill ${state.status||''}`;
+      $('process-pill').textContent=`status: ${state.status||'idle'}${state.pid ? ' | pid '+state.pid : ''}${state.elapsed_sec!=null ? ' | '+state.elapsed_sec+'s' : ''}`;
+      $('process-state').textContent=JSON.stringify(state,null,2);
+      $('stop').disabled = !['running','stopping'].includes(state.status);
+    }
+    async function refreshLive() {
+      try {
+        const [status,log] = await Promise.all([api('/api/status'),api('/api/logs?limit=500')]);
+        updateStatus(status);
+        $('process-log').textContent=log.lines.join('\\n') || '(no log yet)';
+      } catch (e) { $('process-log').textContent='Error: '+e.message; }
+    }
+    document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active'); $(btn.dataset.tab).classList.add('active');
+    }));
+    $('mode').addEventListener('change',renderLauncher);
+    $('rule-source').addEventListener('change',renderRules);
+    $('refresh').addEventListener('click',async()=>{ $('refresh').disabled=true; try { dashboard=await api('/api/refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}); renderOverview(); } catch(e){ alert(e.message); } finally{$('refresh').disabled=false;} });
+    $('launch').addEventListener('click',async()=>{
+      const payload=launcherPayload(); $('launch-message').textContent='Launching…'; $('command-preview').textContent=JSON.stringify(payload,null,2);
+      try { const state=await api('/api/launch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); updateStatus(state); $('launch-message').className='success'; $('launch-message').textContent='Launched.'; }
+      catch(e){ $('launch-message').className='error'; $('launch-message').textContent=e.message; }
+    });
+    $('stop').addEventListener('click',async()=>{ try { updateStatus(await api('/api/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})); } catch(e){ alert(e.message); } });
+    refreshAll().catch(e=>alert(e.message));
+    timer=setInterval(refreshLive,1500);
+  </script>
+</body>
+</html>

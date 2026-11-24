@@ -5,7 +5,9 @@ This validates the proposition extraction and arithmetic supervision path.
 
 from pathlib import Path
 import argparse
+import hashlib
 import random
+import time
 
 import torch
 import torch.nn.functional as F
@@ -28,6 +30,33 @@ from preprocess_gsm8k import (
 DEFAULT_DATA_PATH = Path("data/gsm8k/main_train.jsonl")
 FALLBACK_DATA_PATH = Path("synthetic_gsm8k_demo.jsonl")
 CHECKPOINT_PATH = Path("checkpoints/lt_gsm8k_demo.pt")
+
+
+def _dataset_fingerprint(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _save_checkpoint(path: Path, model, optimizer, *, epoch: int, data_path: Path, metrics=None):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "state_dict": model.state_dict(),
+        "optimizer_state": optimizer.state_dict(),
+        "feature_dim": model.feature_dim,
+        "num_buckets": model.num_buckets,
+        "completed_epoch": int(epoch),
+        "data_path": str(data_path.resolve()),
+        "data_sha256": _dataset_fingerprint(data_path),
+        "last_metrics": metrics or {},
+        "saved_at": time.time(),
+    }
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, temporary)
+    temporary.replace(path)
+    print(f"Saved checkpoint to {path} (completed_epoch={epoch})", flush=True)
 
 
 def split_data(data, holdout_ratio=0.0):
@@ -204,10 +233,25 @@ def batch_metrics(model, data):
 def main():
     parser = argparse.ArgumentParser(description="Train a tiny LT bootstrap model")
     parser.add_argument("--data-path", default=None)
-    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--epochs", type=int, default=20, help="Number of additional epochs to run.")
     parser.add_argument("--value-loss-weight", type=float, default=0.05)
     parser.add_argument("--holdout-ratio", type=float, default=0.0)
+    parser.add_argument("--checkpoint", default=str(CHECKPOINT_PATH))
+    parser.add_argument("--resume", action="store_true", help="Resume model and optimizer from --checkpoint.")
+    parser.add_argument("--max-minutes", type=float, default=0.0, help="Stop after this many wall-clock minutes; 0 means unlimited.")
+    parser.add_argument("--threads", type=int, default=0, help="PyTorch CPU thread count; 0 uses PyTorch default.")
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--allow-data-change",
+        action="store_true",
+        help="Allow resume even when the dataset differs from the checkpoint dataset.",
+    )
     args = parser.parse_args()
+
+    if args.threads > 0:
+        torch.set_num_threads(int(args.threads))
+    random.seed(int(args.seed))
+    torch.manual_seed(int(args.seed))
 
     data_path = Path(args.data_path) if args.data_path else (
         DEFAULT_DATA_PATH if DEFAULT_DATA_PATH.exists() else FALLBACK_DATA_PATH
@@ -231,10 +275,46 @@ def main():
 
     model = LTArithmeticModel(feature_dim=32)
     optim = torch.optim.Adam(model.parameters(), lr=1e-3)
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"Model parameters: {total_params}")
+    completed_epoch = 0
+    checkpoint_path = Path(args.checkpoint)
+    if args.resume:
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(f"Cannot resume; missing checkpoint: {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location="cpu")
+        if (
+            int(checkpoint.get("feature_dim", model.feature_dim)) != model.feature_dim
+            or int(checkpoint.get("num_buckets", model.num_buckets)) != model.num_buckets
+        ):
+            raise ValueError("Checkpoint model shape does not match LTArithmeticModel.")
+        checkpoint_data_hash = str(checkpoint.get("data_sha256") or "")
+        current_data_hash = _dataset_fingerprint(data_path)
+        if checkpoint_data_hash and checkpoint_data_hash != current_data_hash and not args.allow_data_change:
+            raise ValueError(
+                "Dataset changed since checkpoint; rerun with --allow-data-change only if intentional."
+            )
+        model.load_state_dict(checkpoint["state_dict"])
+        optimizer_state = checkpoint.get("optimizer_state")
+        if optimizer_state is None:
+            raise ValueError("Checkpoint predates resumable training and has no optimizer_state.")
+        optim.load_state_dict(optimizer_state)
+        completed_epoch = int(checkpoint.get("completed_epoch", 0))
+        print(
+            f"Resumed {checkpoint_path} at completed_epoch={completed_epoch}",
+            flush=True,
+        )
 
-    for epoch in range(args.epochs):
+    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(
+        f"Model parameters: {total_params} | train={len(train_data)} | eval={len(eval_data)} "
+        f"| checkpoint={checkpoint_path}",
+        flush=True,
+    )
+    started_at = time.monotonic()
+
+    for epoch in range(completed_epoch, completed_epoch + args.epochs):
+        if args.max_minutes > 0 and (time.monotonic() - started_at) >= args.max_minutes * 60.0:
+            print("Reached --max-minutes before the next epoch; stopping cleanly.", flush=True)
+            break
         random.shuffle(train_data)
         model.train()
         train_losses = []
@@ -277,19 +357,29 @@ def main():
             f"Epoch {epoch + 1:02d} | train_loss={train_loss:.4f} "
             f"| eval_loss={eval_loss:.4f} | answer_acc={answer_acc:.3f} | bucket_acc={bucket_acc:.3f} | step1_acc={step1_acc:.3f} | step2_acc={step2_acc:.3f} | program_acc={program_acc:.3f} "
             f"| cot_acc={cot_acc:.3f} | op_acc={op_acc:.3f} "
-            f"| op1_acc={operand1_acc:.3f} | op2_acc={operand2_acc:.3f}"
+            f"| op1_acc={operand1_acc:.3f} | op2_acc={operand2_acc:.3f}",
+            flush=True,
         )
-
-    CHECKPOINT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(
-        {
-            "state_dict": model.state_dict(),
-            "feature_dim": model.feature_dim,
-            "num_buckets": model.num_buckets,
-        },
-        CHECKPOINT_PATH,
-    )
-    print(f"Saved checkpoint to {CHECKPOINT_PATH}")
+        _save_checkpoint(
+            checkpoint_path,
+            model,
+            optim,
+            epoch=epoch + 1,
+            data_path=data_path,
+            metrics={
+                "train_loss": train_loss,
+                "eval_loss": eval_loss,
+                "answer_acc": answer_acc,
+                "bucket_acc": bucket_acc,
+                "step1_acc": step1_acc,
+                "step2_acc": step2_acc,
+                "program_acc": program_acc,
+                "cot_acc": cot_acc,
+                "op_acc": op_acc,
+                "operand1_acc": operand1_acc,
+                "operand2_acc": operand2_acc,
+            },
+        )
 
 
 if __name__ == "__main__":

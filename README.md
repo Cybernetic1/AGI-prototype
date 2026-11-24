@@ -68,6 +68,33 @@ Contract metrics:
 - sample efficiency: valid solves per sample and samples per valid solve
 - compute cost: wall-clock total/per-case/per-valid-solve seconds
 
+## Live AGI dashboard
+
+Use the root-level dashboard as the common monitor and launcher for LT-only training,
+cognitive-loop evaluation, and unified bootstrap runs:
+
+```bash
+/home/yky/misc-programs/.venv/bin/python agi_dashboard_server.py
+```
+
+Open `http://127.0.0.1:8765/`. The server binds to localhost by default because its
+launcher can start and stop local training processes.
+
+For a remote GPU or training host, keep the server private and forward its port over SSH:
+
+```bash
+ssh -L 8765:127.0.0.1:8765 user@training-server
+```
+
+Then open `http://127.0.0.1:8765/` in the local browser. Do not expose the dashboard on
+`0.0.0.0` unless an authentication layer is added.
+
+The dashboard provides tabs for progress, rules, launches, live logs, datasets, and
+LTM/ontology state. LT checkpoints are written after every epoch and can be resumed from
+the launcher with the **Resume** option. The legacy generated snapshot remains under
+`rules/reports/agi_progress_dashboard_v1.html`; `agi_dashboard.html` is the canonical
+interactive UI.
+
 ### Semantic-AR (SAR) proposal shaping (A/B)
 
 SAR is an auxiliary **proposal/ranking shaper** in System 1. It does not replace symbolic truth checks:

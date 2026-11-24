@@ -1,6 +1,6 @@
 {
   "dashboard_id": "agi-progress-dashboard-v1",
-  "generated_at": "2026-11-13T22:29:02.502173+00:00",
+  "generated_at": "2026-11-24T21:04:45.545910+00:00",
   "sources": {
     "baseline_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_baseline_v1.json",
     "widening_report": "/home/yky/misc-programs/AGI-prototype/rules/reports/agi_bootstrap_curriculum_widening_v2.json",

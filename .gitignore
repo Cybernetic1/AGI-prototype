@@ -55,3 +55,6 @@ node_modules/
 
 # Local-only checkpoints (do not commit large .pt files)
 logic_transformer/local_checkpoints/
+
+# Live dashboard process state and logs
+runtime/dashboard/
