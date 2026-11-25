@@ -1,13 +1,16 @@
 \documentclass[14pt]{article}
 \usepackage[a4paper,margin=1in]{geometry}
-\usepackage{amsmath,amssymb}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{xcolor}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta, decorations, decorations.markings}
+\usepackage{tikz,ifthen}
+\usetikzlibrary{quotes,arrows,positioning,decorations.markings,shapes.multipart,shapes.geometric,shapes.arrows,tikzmark,calc,decorations.pathreplacing,arrows.meta}
+
+\newcommand\logic[1]{{\color{gray}\mathsf{#1}}}
 
 \setlength{\parindent}{0em}
 
@@ -284,7 +287,62 @@ with
   \item \texttt{target}: bound output variable.
 \end{itemize}
 
-\subsection{Parameterization of a differentiable LT rule}
+\subsection{Structure of a differentiable LT rule}
+
+This diagram illustrates the variable-moving mechanism in LT:
+% equation copied from: /latex/2026/AGI-2026/AGI-26.tex
+\begin{align}
+	\nonumber
+	& \qquad \qquad \tikzmark{Y1}
+	\setlength{\fboxrule}{3pt}
+	\fcolorbox{gray!50}{white}{$\hat{x}^1$}
+	\qquad
+	\tikzmark{Y2} \fcolorbox{gray!50}{white}{$\hat{x}^2$}
+	\qquad
+	\tikzmark{Y3} \fcolorbox{gray!50}{white}{$\hat{x}^3$}
+	\hspace{3.4cm}
+	\tikzmark{Z1} \fcolorbox{gray!30}{white}{} \quad
+	\tikzmark{Z2} \fcolorbox{gray!30}{white}{} \quad
+	\tikzmark{Z3} \fcolorbox{gray!30}{white}{}
+	\\
+	\label{eqn:differentiable-variable-slots}
+	& \hspace{-0.4cm} W^\uparrow = [ w_{ij}^{\uparrow k} ] \\
+	& \hspace{7.1cm} W^\downarrow = [ w^{\downarrow \ell}_{\;\; k} ] \nonumber \\
+	& \logic{father}(\tikzmark{X11} x_{11}, \tikzmark{X12} x_{12}, \tikzmark{X13} {-}_{13}) \wedge
+	\logic{father}(\tikzmark{X21} {-}_{21}, \tikzmark{X22} x_{22}, \tikzmark{X23} x_{23}) \rightarrow \logic{grand\hbox{-}father}(\tikzmark{X1} x_1, \tikzmark{X2} {-}_2, \tikzmark{X3} x_3) .
+	\nonumber
+	\begin{tikzpicture}[remember picture,overlay]
+		\draw (pic cs:Y1) +(10pt,-7pt) -- ($ (pic cs:X11) +(7pt,10pt) $);
+		\draw (pic cs:Y1) +(10pt,-7pt) -- ($ (pic cs:X12) +(7pt,10pt) $);
+		\draw (pic cs:Y1) +(10pt,-7pt) -- ($ (pic cs:X13) +(7pt,10pt) $);
+		\draw (pic cs:Y1) +(10pt,-7pt) -- ($ (pic cs:X21) +(7pt,10pt) $);
+		\draw (pic cs:Y1) +(10pt,-7pt) -- ($ (pic cs:X22) +(7pt,10pt) $);
+		\draw (pic cs:Y1) +(10pt,-7pt) -- ($ (pic cs:X23) +(7pt,10pt) $);
+		\draw (pic cs:Y2) +(10pt,-7pt) -- ($ (pic cs:X11) +(7pt,10pt) $);
+		\draw (pic cs:Y2) +(10pt,-7pt) -- ($ (pic cs:X12) +(7pt,10pt) $);
+		\draw (pic cs:Y2) +(10pt,-7pt) -- ($ (pic cs:X13) +(7pt,10pt) $);
+		\draw (pic cs:Y2) +(10pt,-7pt) -- ($ (pic cs:X21) +(7pt,10pt) $);
+		\draw (pic cs:Y2) +(10pt,-7pt) -- ($ (pic cs:X22) +(7pt,10pt) $);
+		\draw (pic cs:Y2) +(10pt,-7pt) -- ($ (pic cs:X23) +(7pt,10pt) $);
+		\draw (pic cs:Y3) +(10pt,-7pt) -- ($ (pic cs:X11) +(7pt,10pt) $);
+		\draw (pic cs:Y3) +(10pt,-7pt) -- ($ (pic cs:X12) +(7pt,10pt) $);
+		\draw (pic cs:Y3) +(10pt,-7pt) -- ($ (pic cs:X13) +(7pt,10pt) $);
+		\draw (pic cs:Y3) +(10pt,-7pt) -- ($ (pic cs:X21) +(7pt,10pt) $);
+		\draw (pic cs:Y3) +(10pt,-7pt) -- ($ (pic cs:X22) +(7pt,10pt) $);
+		\draw (pic cs:Y3) +(10pt,-7pt) -- ($ (pic cs:X23) +(7pt,10pt) $);
+		\draw (pic cs:Z1) +(6pt,-7pt) -- ($ (pic cs:X1) +(7pt,10pt) $);
+		\draw (pic cs:Z1) +(6pt,-7pt) -- ($ (pic cs:X2) +(7pt,10pt) $);
+		\draw (pic cs:Z1) +(6pt,-7pt) -- ($ (pic cs:X3) +(7pt,10pt) $);
+		\draw (pic cs:Z2) +(6pt,-7pt) -- ($ (pic cs:X1) +(7pt,10pt) $);
+		\draw (pic cs:Z2) +(6pt,-7pt) -- ($ (pic cs:X2) +(7pt,10pt) $);
+		\draw (pic cs:Z2) +(6pt,-7pt) -- ($ (pic cs:X3) +(7pt,10pt) $);
+		\draw (pic cs:Z3) +(6pt,-7pt) -- ($ (pic cs:X1) +(7pt,10pt) $);
+		\draw (pic cs:Z3) +(6pt,-7pt) -- ($ (pic cs:X2) +(7pt,10pt) $);
+		\draw (pic cs:Z3) +(6pt,-7pt) -- ($ (pic cs:X3) +(7pt,10pt) $);
+		\draw[->,dotted] (pic cs:Y3) +(27pt,5pt) to [midway,sloped,"move to"] ($ (pic cs:Z1) +(-3pt,0pt) $);
+	\end{tikzpicture}
+\end{align}
+
 The symbolic rule schema above is intentionally compact, but an LT soft rule is
 not stored as a fixed list of predicate names.  It is a differentiable matching
 and transformation program.  This permits gradient descent to select and
