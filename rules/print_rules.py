@@ -224,8 +224,8 @@ def decode_lt_checkpoint(
         lt_dir = REPO_ROOT / "logic_transformer"
         if str(lt_dir) not in sys.path:
             sys.path.insert(0, str(lt_dir))
-        from model import LTArithmeticModel
-        from preprocess_gsm8k import build_example_props
+        from model import LTArithmeticModel, LTSemanticContinuationModel
+        from preprocess_gsm8k import build_example_props, extract_propositions
     except ImportError as exc:
         raise RuntimeError(
             "LT checkpoint decoding requires the repository PyTorch environment "
@@ -249,10 +249,17 @@ def decode_lt_checkpoint(
         raise ValueError(f"No JSONL rows found in {data_path}")
 
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
-    model = LTArithmeticModel(
-        feature_dim=int(checkpoint.get("feature_dim", 32)),
-        num_buckets=int(checkpoint.get("num_buckets", 2048)),
-    )
+    task = str(checkpoint.get("task") or "arithmetic")
+    if task == "semantic-continuation":
+        model = LTSemanticContinuationModel(
+            feature_dim=int(checkpoint.get("feature_dim", 48)),
+            num_buckets=int(checkpoint.get("num_buckets", 2048)),
+        )
+    else:
+        model = LTArithmeticModel(
+            feature_dim=int(checkpoint.get("feature_dim", 32)),
+            num_buckets=int(checkpoint.get("num_buckets", 2048)),
+        )
     model.load_state_dict(checkpoint["state_dict"])
     model.eval()
 
@@ -280,7 +287,14 @@ def decode_lt_checkpoint(
     vocabulary: list[tuple[str, dict[str, Any], torch.Tensor]] = []
     seen: set[str] = set()
     for row in rows:
-        props = build_example_props(row.get("question", ""), row.get("cot", ""), row)
+        if task == "semantic-continuation":
+            props = (
+                extract_propositions(row.get("context", ""), source="question")
+                + extract_propositions(row.get("candidate_a", ""), source="cot")
+                + extract_propositions(row.get("candidate_b", ""), source="cot")
+            )
+        else:
+            props = build_example_props(row.get("question", ""), row.get("cot", ""), row)
         for prop in props:
             symbol = f"{prop.get('pred', '')}({', '.join(str(a) for a in prop.get('args', []))})"
             if symbol in seen:
@@ -331,18 +345,24 @@ def decode_lt_checkpoint(
                 }
             )
 
-        with torch.no_grad():
-            head_bias_logits = model.op_head(rule.head.bias.detach())
-            head_bias_probs = torch.softmax(head_bias_logits, dim=-1)
-        operation_names = ["add", "subtract", "multiply", "divide", "other"]
-        best_operation = int(torch.argmax(head_bias_probs).item())
+        if hasattr(model, "op_head"):
+            with torch.no_grad():
+                head_bias_logits = model.op_head(rule.head.bias.detach())
+                head_bias_probs = torch.softmax(head_bias_logits, dim=-1)
+            operation_names = ["add", "subtract", "multiply", "divide", "other"]
+            best_operation = int(torch.argmax(head_bias_probs).item())
+            head_projection = operation_names[best_operation]
+            head_probability = round(float(head_bias_probs[best_operation].item()), 4)
+        else:
+            head_projection = "continuation_compatibility"
+            head_probability = 0.0
         decoded_rules.append(
             {
                 "rule": rule_index,
                 "premises": decoded_premises,
                 "head": {
-                    "op_projection": operation_names[best_operation],
-                    "op_probability": round(float(head_bias_probs[best_operation].item()), 4),
+                    "op_projection": head_projection,
+                    "op_probability": head_probability,
                     "weight_norm": round(float(rule.head.weight.detach().norm().item()), 4),
                     "qualifier": "head-bias projection; not an exact decoded conclusion",
                 },

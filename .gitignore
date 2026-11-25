@@ -58,3 +58,4 @@ logic_transformer/local_checkpoints/
 
 # Live dashboard process state and logs
 runtime/dashboard/
+runtime/tinystories/

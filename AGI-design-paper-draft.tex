@@ -71,6 +71,127 @@ The architecture (Figure \ref{fig:architecture}) has three interacting systems s
   \item Feeds revised beliefs/rules back to WM and System 2.
 \end{itemize}
 
+\subsection{Core Python implementation map}
+The repository contains experiments, downloaders, benchmark drivers, and archived
+prototypes in addition to the AGI runtime.  The files below are the core
+implementation files that currently participate in the working tri-system
+architecture, its learning loop, or its live control surface.  Files named
+\texttt{test\_*}, dataset downloaders, one-off demonstrations, and the
+\texttt{gsm8k-tests-backup} directory are intentionally excluded.
+
+\begin{description}[style=nextline,leftmargin=1.5em]
+  \item[Orchestration and control.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{cognitive\_loop.py}: canonical cognitive-cycle orchestrator,
+            WM compilation, three-system dispatch, merge/decay, and benchmark
+            entrypoints.
+      \item \texttt{agi\_dashboard\_server.py}: live localhost/SSH-forwarded
+            control plane for monitoring, launching, stopping, and inspecting runs.
+    \end{itemize}
+
+  \item[Working Memory, representation, and memory.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{working\_memory/working\_memory.py}: \texttt{WMNode},
+            working-memory state, update/TTL behavior, graph solving, rule
+            injection, and teacher-ingestion integration.
+      \item \texttt{working\_memory/semantic\_schema.py}: semantic graph and
+            modal-context schema.
+      \item \texttt{working\_memory/predicate\_logic.py}: WME-to-predicate
+            translation for symbolic engines.
+      \item \texttt{working\_memory/symbolic\_validation.py}: semantic candidate
+            validation gates.
+      \item \texttt{working\_memory/ltm.py}: episodic, semantic, rule, and
+            ontology-associated long-term memory.
+      \item \texttt{working\_memory/rule\_registry.py}: proposal registry,
+            lifecycle, accounting, and provenance.
+      \item \texttt{working\_memory/nl\_rule\_injection.py}: narrow natural-language
+            rule compiler and validator.
+      \item \texttt{working\_memory/pot\_dsl.py}: typed program-of-thought
+            trace DSL, validation, and execution.
+    \end{itemize}
+
+  \item[Ontology and semantic grounding.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{working\_memory/ontology\_unifier.py}: normalized
+            WordNet/VerbNet/FrameNet-style ontology merge and export.
+      \item \texttt{working\_memory/ontology\_seed\_alignment.py}: alignment of
+            semantic-AR symbols to canonical ontology concepts.
+      \item \texttt{working\_memory/ontology\_hyperbolic\_prior.py}: hyperbolic
+            ontology-prior loading and scoring.
+      \item \texttt{working\_memory/basic\_english\_grounding.py}: Basic English
+            noun/verb grounding proposals.
+      \item \texttt{forward\_engine/ontology.py}: runtime event taxonomy,
+            lexical backoff, and ontology classification.
+    \end{itemize}
+
+  \item[System 1: Logic Transformer.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{logic\_transformer/spacy\_logical\_form.py}: natural-language
+            to neo-Davidsonian predicate clauses.
+      \item \texttt{logic\_transformer/neural\_logic\_core\_vectorized.py}: primary
+            vectorized differentiable logic core.
+      \item \texttt{logic\_transformer/train\_pot\_dln\_pointer.py}: vectorized
+            DLN pointer-decoder model and training path.
+      \item \texttt{logic\_transformer/train\_pot\_clause.py}: clause-aware
+            proposition data, encoding, and evaluation utilities.
+      \item \texttt{logic\_transformer/lorentz\_math.py}: hyperboloid geometry
+            used by vectorized soft matching.
+      \item \texttt{logic\_transformer/semantic\_ar.py}: semantic
+            autoregression scoring and symbolic-gate coupling.
+      \item \texttt{logic\_transformer/local\_proposal\_ranker.py}: optional
+            learned ranking of System-1 proposals.
+      \item \texttt{logic\_transformer/logic\_transformer.py}: alternative
+            vectorized LT implementation with soft rule attention.
+    \end{itemize}
+
+  \item[System 2: forward reasoning.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{forward\_engine/system2\_poc.py}: operational Experta
+            engine and code-defined runtime rules.
+      \item \texttt{forward\_engine/canonical\_system2.py}: file-backed
+            canonical predicate-rule engine.
+      \item \texttt{forward\_engine/defeasible\_logic.py}: strict/defeasible
+            conclusion production and priority resolution.
+      \item \texttt{forward\_engine/phase5\_agm.py}: contradiction handling
+            and AGM-style belief revision support.
+    \end{itemize}
+
+  \item[System 3 and rule learning.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{ilp\_learner/abductive\_ilp.py}: knowledge-base,
+            ontological reasoning, abduction, and goal-directed inference.
+      \item \texttt{ilp\_learner/metagol\_nds.py}: nDS-oriented metarule
+            learning and forward chaining.
+      \item \texttt{ilp\_learner/metarule\_loop.py}: ranked metarule proposal
+            and learning orchestration.
+      \item \texttt{ilp\_learner/value\_guided\_search.py}: value/utility-guided
+            ILP search.
+      \item \texttt{ilp\_learner/value\_model.py}: persisted linear search-value
+            model.
+      \item \texttt{ilp\_learner/lt\_numeric\_bridge.py}: LT-to-symbolic numeric
+            trace bridge.
+    \end{itemize}
+
+  \item[Shared rule-pool learning and inspection.]
+    \begin{itemize}[leftmargin=1.5em]
+      \item \texttt{rules/ilp\_candidate\_pipeline.py}: contextual candidate
+            generation, prescoring, optional validation, and utility shaping.
+      \item \texttt{rules/ilp\_rule\_utility.py}: persistent rule-signature
+            reward and exploration accounting.
+      \item \texttt{rules/contextual\_metarules.py}: WME-conditioned metarule
+            constraints for candidate search.
+      \item \texttt{rules/print\_rules.py}: unified inspection of file-backed,
+            Experta, registry, snapshot, and decoded LT rules.
+      \item \texttt{rules/generate\_agi\_progress\_dashboard.py}: shared progress,
+            rule-inventory, and category-accounting snapshot generator.
+    \end{itemize}
+\end{description}
+
+This list separates architectural implementation from support tooling.  In
+particular, compact arithmetic baselines, synthetic demos, downloader scripts,
+experiment sweepers, and historical copies are not treated as the canonical
+core system.
+
 \section{Working Memory and Knowledge Representation}
 
 \subsection{WME format}
@@ -162,6 +283,73 @@ with
   \item \texttt{calc}: optional arithmetic/functional expression,
   \item \texttt{target}: bound output variable.
 \end{itemize}
+
+\subsection{Parameterization of a differentiable LT rule}
+The symbolic rule schema above is intentionally compact, but an LT soft rule is
+not stored as a fixed list of predicate names.  It is a differentiable matching
+and transformation program.  This permits gradient descent to select and
+transform propositions while retaining a rule-like structural interpretation.
+
+In the TinyStories semantic-continuation pilot, one soft rule has:
+\begin{itemize}[leftmargin=1.5em]
+  \item a 16-dimensional proposition representation ($L=16$),
+  \item two premise patterns ($J=2$),
+  \item three captured-variable slots ($I=3$),
+  \item a 48-dimensional rule output ($D=48$).
+\end{itemize}
+
+The rule contains the following trainable components:
+\[
+\begin{array}{lll}
+\text{premise constants} & J \times L & 32 \\
+\text{cylindrification factors } \gamma & J \times L & 32 \\
+\text{body projections} & J \times (I L + I) & 102 \\
+\text{head projection} & D I + D & 192 \\
+\text{slot selectors} & J \times (L I) \times (L+1) & 1632
+\end{array}
+\]
+Thus each current continuation rule has
+\[
+32 + 32 + 102 + 192 + 1632 = 1990
+\]
+trainable scalars.  Six such rules account for \(6 \times 1990 = 11940\)
+parameters.  This explains the rule-core count of approximately \(12\)K
+parameters quoted in the CPU experiment report.
+
+The largest cost is the slot selector: for each premise it maps a 16-element
+proposition vector to a probability distribution over three variable slots for
+every one of the 16 proposition coordinates.  In the implementation this is a
+linear map with 48 outputs and 16 inputs:
+\[
+\texttt{nn.Linear}(16, 16 \times 3) .
+\]
+It therefore requires \(48 \times 16 + 48 = 816\) parameters for one premise,
+or 1632 parameters for the rule's two premises.
+
+These parameters implement different aspects of a soft rule:
+\begin{itemize}[leftmargin=1.5em]
+  \item the constants specify what a premise should approximately match;
+  \item the $\gamma$ values decide whether a coordinate behaves like a constant
+        match or a variable that may range over propositions;
+  \item the body projections extract three variable-like features from each
+        selected premise;
+  \item the slot selectors decide where proposition components are captured;
+  \item the head projects captured components to the rule's shared output state.
+\end{itemize}
+
+A classical Horn rule can often be described by only a handful of logical
+symbols.  An LT rule requires more parameters because it also learns soft
+matching, proposition selection, variable capture, and a continuous conclusion.
+The number is therefore not primarily a claim that the underlying symbolic
+rule has thousands of semantic components.  It is the cost of implementing a
+differentiable version of matching and unification.
+
+This distinction matters when interpreting LT capacity.  Six LT rules are not
+equivalent to six fully specified symbolic Horn clauses, nor are they
+automatically broad enough for narrative semantics.  The parameter count
+provides differentiable control capacity; whether those parameters acquire
+stable semantic interpretations remains an empirical training and decoding
+question.
 
 \subsection{Practical shape library for AGI training}
 To balance expressivity and batching efficiency, use a compact but category-complete template library:

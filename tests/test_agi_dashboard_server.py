@@ -29,6 +29,23 @@ class DashboardServerTest(unittest.TestCase):
         self.assertIn("--resume", command)
         self.assertNotIn("shell=True", command)
 
+    def test_semantic_continuation_launch_uses_unified_trainer(self):
+        dataset = REPO_ROOT / "runtime" / "tinystories" / "pairs.jsonl"
+        dataset.parent.mkdir(parents=True, exist_ok=True)
+        dataset.write_text("{}\n", encoding="utf-8")
+        command = dashboard.build_launch_command(
+            {
+                "mode": "lt_train",
+                "task": "semantic-continuation",
+                "dataset": str(dataset),
+                "epochs": 3,
+                "max_pairs": 1000,
+            }
+        )
+        self.assertIn("--task", command)
+        self.assertIn("semantic-continuation", command)
+        self.assertIn("--max-pairs", command)
+
     def test_launch_paths_cannot_escape_repository(self):
         with self.assertRaises(ValueError):
             dashboard.build_launch_command(

@@ -73,6 +73,9 @@ def build_launch_command(payload: dict[str, Any]) -> list[str]:
     if mode == "lt_train":
         dataset = _safe_repo_path(payload.get("dataset"), must_exist=True)
         checkpoint = _safe_repo_path(payload.get("checkpoint") or "checkpoints/lt_tinystories.pt")
+        task = str(payload.get("task") or "arithmetic")
+        if task not in {"arithmetic", "semantic-continuation"}:
+            raise ValueError("unsupported LT task")
         epochs = _as_int(payload.get("epochs"), "epochs", 20, 1)
         holdout = float(payload.get("holdout", 0.2) or 0.0)
         if not 0.0 <= holdout < 1.0:
@@ -95,7 +98,13 @@ def build_launch_command(payload: dict[str, Any]) -> list[str]:
             str(_as_int(payload.get("threads"), "threads", 4, 1, 64)),
             "--seed",
             str(_as_int(payload.get("seed"), "seed", 0, 0)),
+            "--task",
+            task,
         ]
+        if task == "semantic-continuation":
+            max_pairs = _as_int(payload.get("max_pairs"), "max_pairs", 0, 0)
+            if max_pairs > 0:
+                command += ["--max-pairs", str(max_pairs)]
         if max_minutes > 0:
             command += ["--max-minutes", str(max_minutes)]
         if _as_bool(payload.get("resume")):

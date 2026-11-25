@@ -213,6 +213,7 @@
       const mode = $('mode').value;
       if (mode === 'lt_train') {
         $('launch-fields').innerHTML = `
+          ${select('task','LT task',['arithmetic','semantic-continuation'])}
           ${select('dataset','Dataset',datasets.map(d=>d.path))}
           <div class="row">
             <div>${input('epochs','Additional epochs','20','number')}</div>
@@ -223,7 +224,9 @@
             <div>${input('threads','CPU threads','4','number')}</div>
             <div>${input('seed','Seed','0','number')}</div>
             <div>${input('checkpoint','Checkpoint','checkpoints/lt_tinystories.pt')}</div>
-          </div>${checkbox('resume','Resume model + optimizer from checkpoint',true)}`;
+          </div>
+          ${input('max_pairs','Continuation pair cap (0=all)','10000','number')}
+          ${checkbox('resume','Resume model + optimizer from checkpoint',true)}`;
       } else if (mode === 'cognitive_loop') {
         $('launch-fields').innerHTML = `
           ${select('scenario','Scenario',['dataset','family','finality','template'])}
@@ -247,7 +250,7 @@
     function launcherPayload() {
       const mode = $('mode').value;
       const payload = {mode};
-      const ids = ['dataset','epochs','holdout','max_minutes','threads','seed','checkpoint','scenario','limit','cycles','suite','profile','output'];
+      const ids = ['task','dataset','epochs','holdout','max_minutes','threads','seed','checkpoint','max_pairs','scenario','limit','cycles','suite','profile','output'];
       ids.forEach(id => { const el=$(id); if (el) payload[id] = el.value; });
       ['resume','sar_enabled','sar_emit_metadata','quiet','ilp_enabled','activate_pool'].forEach(id => {
         const el=$(id); if (el) payload[id] = el.checked;

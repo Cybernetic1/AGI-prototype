@@ -1,3 +1,19 @@
+"""
+ARCHIVED / FLAWED BASELINE NOTICE
+
+This file is a compact GSM8K proof-of-concept and must not be treated as the
+canonical Logic Transformer implementation.  In particular, its normalized
+hash-bucket proposition fields are not learned symbol embeddings and do not
+preserve semantic similarity.  LT success measured through this demo can also
+depend heavily on supervised operator/operand extraction, deterministic
+arithmetic, and the surrounding symbolic pipeline.
+
+Use logic_transformer/neural_logic_core_vectorized.py and the DLN pointer
+decoder path for the maintained vectorized LT core.  Keep this file only for
+historical comparison and explicitly label results derived from it as baseline
+results.
+"""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

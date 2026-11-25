@@ -7,6 +7,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import random
+import re
 import time
 
 import torch
@@ -14,6 +15,7 @@ import torch.nn.functional as F
 
 from model import (
     LTArithmeticModel,
+    LTSemanticContinuationModel,
     answer_to_int_string,
     is_pure_integer_answer,
     parse_numeric_answer,
@@ -24,6 +26,8 @@ from preprocess_gsm8k import (
     extract_gsm8k_arithmetic,
     extract_gsm8k_steps,
     extract_math_steps,
+    extract_propositions,
+    prepare_tinystories_continuation_file,
 )
 
 
@@ -40,7 +44,7 @@ def _dataset_fingerprint(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _save_checkpoint(path: Path, model, optimizer, *, epoch: int, data_path: Path, metrics=None):
+def _save_checkpoint(path: Path, model, optimizer, *, epoch: int, data_path: Path, task: str, metrics=None):
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "state_dict": model.state_dict(),
@@ -51,6 +55,7 @@ def _save_checkpoint(path: Path, model, optimizer, *, epoch: int, data_path: Pat
         "data_path": str(data_path.resolve()),
         "data_sha256": _dataset_fingerprint(data_path),
         "last_metrics": metrics or {},
+        "task": task,
         "saved_at": time.time(),
     }
     temporary = path.with_suffix(path.suffix + ".tmp")
@@ -230,9 +235,58 @@ def batch_metrics(model, data):
     )
 
 
+def _continuation_props(example: dict):
+    context = example.get("_context_props")
+    candidate_a = example.get("_candidate_a_props")
+    candidate_b = example.get("_candidate_b_props")
+    if context is None:
+        context = extract_propositions(example.get("context", ""), source="question")
+        candidate_a = extract_propositions(example.get("candidate_a", ""), source="question")
+        candidate_b = extract_propositions(example.get("candidate_b", ""), source="question")
+        example["_context_props"] = context
+        example["_candidate_a_props"] = candidate_a
+        example["_candidate_b_props"] = candidate_b
+    return context, candidate_a, candidate_b
+
+
+def continuation_metrics(model, data):
+    model.eval()
+    losses = []
+    correct = 0
+    with torch.no_grad():
+        for example in data:
+            context, candidate_a, candidate_b = _continuation_props(example)
+            logits = model(context, candidate_a, candidate_b)
+            target = torch.tensor(int(example["label"]), dtype=torch.long)
+            losses.append(F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0)).item())
+            correct += int(logits.argmax().item() == target.item())
+    count = max(1, len(data))
+    return sum(losses) / count, correct / count
+
+
+def lexical_continuation_baseline(data):
+    correct = 0
+    scored = 0
+    for example in data:
+        context_words = set(re.findall(r"[a-z]+", str(example.get("context", "")).lower()))
+        scores = []
+        for field in ("candidate_a", "candidate_b"):
+            words = set(re.findall(r"[a-z]+", str(example.get(field, "")).lower()))
+            scores.append(len(context_words & words) / max(1, len(context_words | words)))
+        if scores[0] != scores[1]:
+            correct += int(int(scores[0] < scores[1]) == int(example["label"]))
+            scored += 1
+    return correct / max(1, scored), scored
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train a tiny LT bootstrap model")
+    parser.add_argument("--task", choices=["arithmetic", "semantic-continuation"], default="arithmetic")
     parser.add_argument("--data-path", default=None)
+    parser.add_argument("--tinystories-source", default=None, help="Prepare semantic pairs from this raw TinyStories separator file.")
+    parser.add_argument("--prepared-output", default="runtime/tinystories/semantic_continuation_pairs.jsonl")
+    parser.add_argument("--max-stories", type=int, default=10_000)
+    parser.add_argument("--max-pairs", type=int, default=0, help="Optional bounded pilot cap; 0 keeps all prepared pairs.")
     parser.add_argument("--epochs", type=int, default=20, help="Number of additional epochs to run.")
     parser.add_argument("--value-loss-weight", type=float, default=0.05)
     parser.add_argument("--holdout-ratio", type=float, default=0.0)
@@ -253,9 +307,24 @@ def main():
     random.seed(int(args.seed))
     torch.manual_seed(int(args.seed))
 
-    data_path = Path(args.data_path) if args.data_path else (
-        DEFAULT_DATA_PATH if DEFAULT_DATA_PATH.exists() else FALLBACK_DATA_PATH
-    )
+    if args.task == "semantic-continuation" and args.tinystories_source:
+        data_path = Path(args.prepared_output)
+        pairs = prepare_tinystories_continuation_file(
+            args.tinystories_source,
+            data_path,
+            max_stories=max(1, int(args.max_stories)),
+            validation_ratio=max(0.01, min(0.5, args.holdout_ratio or 0.1)),
+            seed=int(args.seed),
+        )
+        print(
+            f"Prepared {len(pairs)} TinyStories continuation pairs from "
+            f"{args.tinystories_source} into {data_path}",
+            flush=True,
+        )
+    else:
+        data_path = Path(args.data_path) if args.data_path else (
+            DEFAULT_DATA_PATH if DEFAULT_DATA_PATH.exists() else FALLBACK_DATA_PATH
+        )
     if not data_path.exists():
         raise FileNotFoundError(f"Missing data file: {data_path}")
 
@@ -263,17 +332,26 @@ def main():
     if not data:
         raise ValueError(f"No examples found in {data_path}")
 
-    for ex in data:
-        ex["_props"] = build_example_props(ex["question"], ex.get("cot", ""), ex)
-
-    data, skipped = _filter_math_examples(data)
-    if skipped:
-        print(f"Filtered out {skipped} non-numeric MATH examples")
-
-    random.shuffle(data)
-    train_data, eval_data = split_data(data, args.holdout_ratio)
-
-    model = LTArithmeticModel(feature_dim=32)
+    if args.task == "semantic-continuation":
+        train_data = [row for row in data if row.get("split") == "train"]
+        eval_data = [row for row in data if row.get("split") == "validation"]
+        if not train_data or not eval_data:
+            raise ValueError("Semantic-continuation data must contain train and validation splits.")
+        if args.max_pairs > 0:
+            train_cap = max(1, int(args.max_pairs * 0.9))
+            eval_cap = max(1, int(args.max_pairs * 0.1))
+            train_data = train_data[:train_cap]
+            eval_data = eval_data[:eval_cap]
+        model = LTSemanticContinuationModel(feature_dim=48)
+    else:
+        for ex in data:
+            ex["_props"] = build_example_props(ex["question"], ex.get("cot", ""), ex)
+        data, skipped = _filter_math_examples(data)
+        if skipped:
+            print(f"Filtered out {skipped} non-numeric MATH examples")
+        random.shuffle(data)
+        train_data, eval_data = split_data(data, args.holdout_ratio)
+        model = LTArithmeticModel(feature_dim=32)
     optim = torch.optim.Adam(model.parameters(), lr=1e-3)
     completed_epoch = 0
     checkpoint_path = Path(args.checkpoint)
@@ -285,7 +363,12 @@ def main():
             int(checkpoint.get("feature_dim", model.feature_dim)) != model.feature_dim
             or int(checkpoint.get("num_buckets", model.num_buckets)) != model.num_buckets
         ):
-            raise ValueError("Checkpoint model shape does not match LTArithmeticModel.")
+            raise ValueError("Checkpoint model shape does not match the selected LT task model.")
+        checkpoint_task = str(checkpoint.get("task") or "arithmetic")
+        if checkpoint_task != args.task:
+            raise ValueError(
+                f"Checkpoint task {checkpoint_task!r} does not match requested task {args.task!r}."
+            )
         checkpoint_data_hash = str(checkpoint.get("data_sha256") or "")
         current_data_hash = _dataset_fingerprint(data_path)
         if checkpoint_data_hash and checkpoint_data_hash != current_data_hash and not args.allow_data_change:
@@ -305,10 +388,18 @@ def main():
 
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(
-        f"Model parameters: {total_params} | train={len(train_data)} | eval={len(eval_data)} "
+        f"Task: {args.task} | model parameters: {total_params} | "
+        f"train={len(train_data)} | eval={len(eval_data)} "
         f"| checkpoint={checkpoint_path}",
         flush=True,
     )
+    if args.task == "semantic-continuation":
+        lexical_accuracy, lexical_scored = lexical_continuation_baseline(eval_data)
+        print(
+            f"Random baseline=0.500 | lexical-overlap baseline={lexical_accuracy:.3f} "
+            f"({lexical_scored} non-tied pairs)",
+            flush=True,
+        )
     started_at = time.monotonic()
 
     for epoch in range(completed_epoch, completed_epoch + args.epochs):
@@ -318,55 +409,87 @@ def main():
         random.shuffle(train_data)
         model.train()
         train_losses = []
+        timed_out = False
 
-        for ex in train_data:
-            props = make_props(ex)
-            gold = _gold_arithmetic(ex)
-            gold_bucket = _answer_bucket(ex["answer"], model.answer_buckets)
-            gold_value = torch.tensor([_answer_value(ex["answer"])], dtype=torch.float32)
-            gold_step1_bucket, gold_step2_bucket = _step_buckets(ex, model.answer_buckets)
-            pred_value, info = model(props, return_info=True, step1_bucket_override=gold_step1_bucket)
-            answer_ce_weight = 0.05 if _is_math_example(ex) else 0.5
-            loss = answer_ce_weight * F.cross_entropy(info["answer_logits"].unsqueeze(0), torch.tensor([gold_bucket], dtype=torch.long))
-            loss = loss + max(args.value_loss_weight, 0.4 if _is_math_example(ex) else 0.0) * F.smooth_l1_loss(
-                _signed_log1p(pred_value.unsqueeze(0)),
-                _signed_log1p(gold_value),
-            )
-            if _has_arithmetic_gold(gold):
-                loss = loss + 0.2 * F.cross_entropy(info["op_logits"].unsqueeze(0), torch.tensor([_op_index(gold["op"])], dtype=torch.long))
-            if gold_step1_bucket is not None:
-                loss = loss + 0.3 * F.cross_entropy(info["step1_logits"].unsqueeze(0), torch.tensor([gold_step1_bucket], dtype=torch.long))
-            loss = loss + 0.3 * F.cross_entropy(info["step2_logits"].unsqueeze(0), torch.tensor([gold_step2_bucket], dtype=torch.long))
+        for example_index, ex in enumerate(train_data, start=1):
+            if args.max_minutes > 0 and (time.monotonic() - started_at) >= args.max_minutes * 60.0:
+                timed_out = True
+                print(
+                    f"Reached --max-minutes during epoch {epoch + 1}; "
+                    f"processed {example_index - 1}/{len(train_data)} examples without marking the epoch complete.",
+                    flush=True,
+                )
+                break
+            if args.task == "semantic-continuation":
+                context, candidate_a, candidate_b = _continuation_props(ex)
+                logits = model(context, candidate_a, candidate_b)
+                target = torch.tensor(int(ex["label"]), dtype=torch.long)
+                loss = F.cross_entropy(logits.unsqueeze(0), target.unsqueeze(0))
+            else:
+                props = make_props(ex)
+                gold = _gold_arithmetic(ex)
+                gold_bucket = _answer_bucket(ex["answer"], model.answer_buckets)
+                gold_value = torch.tensor([_answer_value(ex["answer"])], dtype=torch.float32)
+                gold_step1_bucket, gold_step2_bucket = _step_buckets(ex, model.answer_buckets)
+                pred_value, info = model(props, return_info=True, step1_bucket_override=gold_step1_bucket)
+                answer_ce_weight = 0.05 if _is_math_example(ex) else 0.5
+                loss = answer_ce_weight * F.cross_entropy(info["answer_logits"].unsqueeze(0), torch.tensor([gold_bucket], dtype=torch.long))
+                loss = loss + max(args.value_loss_weight, 0.4 if _is_math_example(ex) else 0.0) * F.smooth_l1_loss(
+                    _signed_log1p(pred_value.unsqueeze(0)),
+                    _signed_log1p(gold_value),
+                )
+                if _has_arithmetic_gold(gold):
+                    loss = loss + 0.2 * F.cross_entropy(info["op_logits"].unsqueeze(0), torch.tensor([_op_index(gold["op"])], dtype=torch.long))
+                if gold_step1_bucket is not None:
+                    loss = loss + 0.3 * F.cross_entropy(info["step1_logits"].unsqueeze(0), torch.tensor([gold_step1_bucket], dtype=torch.long))
+                loss = loss + 0.3 * F.cross_entropy(info["step2_logits"].unsqueeze(0), torch.tensor([gold_step2_bucket], dtype=torch.long))
 
-            if _has_arithmetic_gold(gold):
-                left_idx = _find_operand_index(props, gold["left"])
-                right_idx = _find_operand_index(props, gold["right"])
-                if left_idx is not None:
-                    loss = loss + 0.2 * F.cross_entropy(info["num1_logits"].unsqueeze(0), torch.tensor([left_idx], dtype=torch.long))
-                if right_idx is not None:
-                    loss = loss + 0.2 * F.cross_entropy(info["num2_logits"].unsqueeze(0), torch.tensor([right_idx], dtype=torch.long))
+                if _has_arithmetic_gold(gold):
+                    left_idx = _find_operand_index(props, gold["left"])
+                    right_idx = _find_operand_index(props, gold["right"])
+                    if left_idx is not None:
+                        loss = loss + 0.2 * F.cross_entropy(info["num1_logits"].unsqueeze(0), torch.tensor([left_idx], dtype=torch.long))
+                    if right_idx is not None:
+                        loss = loss + 0.2 * F.cross_entropy(info["num2_logits"].unsqueeze(0), torch.tensor([right_idx], dtype=torch.long))
 
             optim.zero_grad()
             loss.backward()
             optim.step()
             train_losses.append(loss.item())
+            if args.task == "semantic-continuation" and example_index % 250 == 0:
+                elapsed = max(1e-9, time.monotonic() - started_at)
+                running_loss = sum(train_losses) / max(1, len(train_losses))
+                print(
+                    f"Epoch {epoch + 1:02d} progress {example_index}/{len(train_data)} "
+                    f"| running_loss={running_loss:.4f} | examples/sec={example_index / elapsed:.2f}",
+                    flush=True,
+                )
 
+        if timed_out:
+            break
         train_loss = sum(train_losses) / max(1, len(train_losses))
-        eval_loss, answer_acc, bucket_acc, step1_acc, step2_acc, program_acc, cot_acc, op_acc, operand1_acc, operand2_acc = batch_metrics(model, eval_data)
-        print(
-            f"Epoch {epoch + 1:02d} | train_loss={train_loss:.4f} "
-            f"| eval_loss={eval_loss:.4f} | answer_acc={answer_acc:.3f} | bucket_acc={bucket_acc:.3f} | step1_acc={step1_acc:.3f} | step2_acc={step2_acc:.3f} | program_acc={program_acc:.3f} "
-            f"| cot_acc={cot_acc:.3f} | op_acc={op_acc:.3f} "
-            f"| op1_acc={operand1_acc:.3f} | op2_acc={operand2_acc:.3f}",
-            flush=True,
-        )
-        _save_checkpoint(
-            checkpoint_path,
-            model,
-            optim,
-            epoch=epoch + 1,
-            data_path=data_path,
-            metrics={
+        if args.task == "semantic-continuation":
+            eval_loss, pair_accuracy = continuation_metrics(model, eval_data)
+            print(
+                f"Epoch {epoch + 1:02d} | train_loss={train_loss:.4f} "
+                f"| eval_loss={eval_loss:.4f} | pair_acc={pair_accuracy:.3f}",
+                flush=True,
+            )
+            metrics = {
+                "train_loss": train_loss,
+                "eval_loss": eval_loss,
+                "pair_accuracy": pair_accuracy,
+            }
+        else:
+            eval_loss, answer_acc, bucket_acc, step1_acc, step2_acc, program_acc, cot_acc, op_acc, operand1_acc, operand2_acc = batch_metrics(model, eval_data)
+            print(
+                f"Epoch {epoch + 1:02d} | train_loss={train_loss:.4f} "
+                f"| eval_loss={eval_loss:.4f} | answer_acc={answer_acc:.3f} | bucket_acc={bucket_acc:.3f} | step1_acc={step1_acc:.3f} | step2_acc={step2_acc:.3f} | program_acc={program_acc:.3f} "
+                f"| cot_acc={cot_acc:.3f} | op_acc={op_acc:.3f} "
+                f"| op1_acc={operand1_acc:.3f} | op2_acc={operand2_acc:.3f}",
+                flush=True,
+            )
+            metrics = {
                 "train_loss": train_loss,
                 "eval_loss": eval_loss,
                 "answer_acc": answer_acc,
@@ -378,7 +501,15 @@ def main():
                 "op_acc": op_acc,
                 "operand1_acc": operand1_acc,
                 "operand2_acc": operand2_acc,
-            },
+            }
+        _save_checkpoint(
+            checkpoint_path,
+            model,
+            optim,
+            epoch=epoch + 1,
+            data_path=data_path,
+            task=args.task,
+            metrics=metrics,
         )
 
 

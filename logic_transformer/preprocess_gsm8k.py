@@ -3,7 +3,9 @@ Loader hook for GSM8K-like files. Expect JSONL with {id, question, answer, cot}.
 This script also provides a tiny proposition extractor for the LT bootstrap.
 """
 import json
+import random
 import re
+from pathlib import Path
 
 
 ADD_HINTS = {
@@ -127,6 +129,109 @@ def build_example_props(question: str, cot: str = "", meta=None):
     if problem_type:
         props.append({"pred": "meta:type", "args": [problem_type], "numeric_value": None})
     return props
+
+
+def load_tinystories_file(path: str | Path) -> list[str]:
+    stories = Path(path).read_text(encoding="utf-8").split("---STORY_SEPARATOR---")
+    return [story.strip() for story in stories if story.strip()]
+
+
+def split_story_sentences(story: str) -> list[str]:
+    normalized = re.sub(r"\s+", " ", str(story or "").strip())
+    return [
+        piece.strip()
+        for piece in re.split(r"(?<=[.!?])\s+", normalized)
+        if len(piece.strip()) >= 8
+    ]
+
+
+def build_continuation_pairs(
+    stories: list[str],
+    *,
+    validation_ratio: float = 0.1,
+    seed: int = 0,
+    context_sentences: int = 2,
+) -> list[dict]:
+    if not stories:
+        return []
+    story_ids = list(range(len(stories)))
+    rng = random.Random(seed)
+    rng.shuffle(story_ids)
+    validation_count = max(1, int(len(story_ids) * validation_ratio))
+    split_ids = {
+        "validation": set(story_ids[:validation_count]),
+        "train": set(story_ids[validation_count:]),
+    }
+    sentence_rows: dict[str, list[tuple[int, list[str]]]] = {"train": [], "validation": []}
+    for split, ids in split_ids.items():
+        for story_id in sorted(ids):
+            sentences = split_story_sentences(stories[story_id])
+            if len(sentences) >= 2:
+                sentence_rows[split].append((story_id, sentences))
+
+    pairs: list[dict] = []
+    for split in ("train", "validation"):
+        candidates = [
+            sentence
+            for _, sentences in sentence_rows[split]
+            for sentence in sentences[1:]
+        ]
+        for story_id, sentences in sentence_rows[split]:
+            for target_index in range(1, len(sentences)):
+                start = max(0, target_index - context_sentences)
+                context = " ".join(sentences[start:target_index])
+                true_next = sentences[target_index]
+                negative = true_next
+                local_negatives = [
+                    sentence
+                    for index, sentence in enumerate(sentences)
+                    if index != target_index and index > 0
+                ]
+                negative_pool = local_negatives if local_negatives and rng.random() < 0.8 else candidates
+                for _ in range(24):
+                    proposal = rng.choice(negative_pool)
+                    if proposal != true_next:
+                        negative = proposal
+                        break
+                true_is_a = rng.random() < 0.5
+                pairs.append(
+                    {
+                        "id": f"tiny-cont-{split}-{story_id}-{target_index}",
+                        "task": "semantic_continuation",
+                        "split": split,
+                        "story_id": story_id,
+                        "target_sentence_index": target_index,
+                        "context": context,
+                        "candidate_a": true_next if true_is_a else negative,
+                        "candidate_b": negative if true_is_a else true_next,
+                        "label": 0 if true_is_a else 1,
+                    }
+                )
+    return pairs
+
+
+def prepare_tinystories_continuation_file(
+    source_path: str | Path,
+    output_path: str | Path,
+    *,
+    max_stories: int = 10_000,
+    validation_ratio: float = 0.1,
+    seed: int = 0,
+) -> list[dict]:
+    stories = load_tinystories_file(source_path)
+    if max_stories > 0:
+        stories = stories[:max_stories]
+    pairs = build_continuation_pairs(
+        stories,
+        validation_ratio=validation_ratio,
+        seed=seed,
+    )
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as handle:
+        for pair in pairs:
+            handle.write(json.dumps(pair, ensure_ascii=False) + "\n")
+    return pairs
 
 
 def extract_gsm8k_arithmetic(cot: str):

@@ -482,3 +482,103 @@ class LTArithmeticModel(nn.Module):
     def decode_step2_bucket(self, info):
         bucket = int(info["step2_logits"].argmax().item())
         return float(bucket)
+
+
+class LTSemanticContinuationModel(nn.Module):
+    """LT rule core for choosing the compatible continuation from two candidates."""
+
+    def __init__(self, feature_dim: int = 48, num_buckets: int = 2048):
+        super().__init__()
+        self.feature_dim = feature_dim
+        self.num_buckets = num_buckets
+        self.prop_length = 16
+        self.num_props = 36
+        self.logic_core = LogicNetwork(
+            prop_length=self.prop_length,
+            num_props=self.num_props,
+            output_dim=feature_dim,
+            num_rules=6,
+            num_premises=2,
+            var_slots=3,
+        )
+        self.prop_proj = nn.Sequential(
+            nn.Linear(self.prop_length, feature_dim),
+            nn.ReLU(),
+        )
+        self.prop_attn = nn.Linear(feature_dim, 1)
+        self.pair_head = nn.Sequential(
+            nn.Linear(feature_dim * 4, 96),
+            nn.ReLU(),
+            nn.Linear(96, 1),
+        )
+
+    def _bucket(self, token: str) -> int:
+        return _stable_hash(str(token).lower()) % self.num_buckets
+
+    def encode_prop_features(self, prop) -> torch.Tensor:
+        pred = str(prop.get("pred", "")).lower()
+        args = [str(a).lower() for a in prop.get("args", [])]
+        value = 0.0
+        if str(pred).endswith(":number") and len(args) >= 2:
+            try:
+                value = parse_numeric_answer(args[1])
+            except ValueError:
+                value = 0.0
+        source = 0.0 if pred.startswith("question:") else 1.0 if pred.startswith("cot:") else 0.5
+        arg_hashes = [self._bucket(a) / float(self.num_buckets) for a in args[:3]]
+        while len(arg_hashes) < 3:
+            arg_hashes.append(0.0)
+        return torch.tensor(
+            [
+                self._bucket(pred) / float(self.num_buckets),
+                *arg_hashes,
+                value / 100.0,
+                torch.log1p(torch.tensor(abs(value), dtype=torch.float32)).item() / 10.0,
+                1.0 if value >= 0 else -1.0,
+                1.0 if pred.endswith(":number") else 0.0,
+                source,
+                len(args) / 5.0,
+                1.0 if "add" in pred or "add" in args else 0.0,
+                1.0 if "sub" in pred or "sub" in args else 0.0,
+                1.0 if "mul" in pred or "mul" in args else 0.0,
+                1.0 if "div" in pred or "div" in args else 0.0,
+                1.0,
+                0.0,
+            ],
+            dtype=torch.float32,
+        )
+
+    def _encode_side(self, props, *, prefix: str) -> tuple[torch.Tensor, torch.Tensor]:
+        tagged = []
+        for prop in props[: self.num_props // 2]:
+            copied = dict(prop)
+            copied["pred"] = str(prop.get("pred", "")).replace("question:", f"{prefix}:", 1)
+            tagged.append(copied)
+        while len(tagged) < self.num_props // 2:
+            tagged.append({"pred": f"{prefix}:padding", "args": ["<pad>"]})
+        features = torch.stack([self.encode_prop_features(prop) for prop in tagged], dim=0)
+        projected = self.prop_proj(features)
+        weights = torch.softmax(self.prop_attn(projected).squeeze(-1), dim=0)
+        pooled = torch.sum(weights.unsqueeze(-1) * projected, dim=0)
+        return features, pooled
+
+    def _score_pair(self, context_props, candidate_props):
+        context_features, context_pooled = self._encode_side(context_props, prefix="question")
+        candidate_features, candidate_pooled = self._encode_side(candidate_props, prefix="cot")
+        working_memory = torch.cat([context_features, candidate_features], dim=0).unsqueeze(0)
+        logic_state, details = self.logic_core(working_memory, return_details=True)
+        logic_state = logic_state.squeeze(0)
+        return self.pair_head(
+            torch.cat(
+                [logic_state, context_pooled, candidate_pooled, context_pooled - candidate_pooled],
+                dim=-1,
+            )
+        ).squeeze(-1), details
+
+    def forward(self, context_props, candidate_a_props, candidate_b_props, return_info=False):
+        score_a, details_a = self._score_pair(context_props, candidate_a_props)
+        score_b, details_b = self._score_pair(context_props, candidate_b_props)
+        logits = torch.stack([score_a, score_b], dim=0)
+        if return_info:
+            return logits, {"logic_details_a": details_a, "logic_details_b": details_b}
+        return logits
