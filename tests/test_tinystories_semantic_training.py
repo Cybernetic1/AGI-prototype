@@ -13,7 +13,7 @@ if str(LT_DIR) not in sys.path:
     sys.path.insert(0, str(LT_DIR))
 
 from model import LTSemanticContinuationModel
-from preprocess_gsm8k import build_continuation_pairs, extract_propositions
+from preprocess_gsm8k import build_continuation_pairs
 
 
 class TinyStoriesSemanticTrainingTest(unittest.TestCase):
@@ -31,12 +31,12 @@ class TinyStoriesSemanticTrainingTest(unittest.TestCase):
         self.assertTrue(all(row["label"] in {0, 1} for row in pairs))
 
     def test_continuation_model_emits_two_candidate_logits(self):
-        model = LTSemanticContinuationModel(feature_dim=16)
-        context = extract_propositions("The rabbit entered the garden.", source="question")
-        candidate_a = extract_propositions("It looked at the flowers.", source="question")
-        candidate_b = extract_propositions("The moon floated over the sea.", source="question")
+        model = LTSemanticContinuationModel(32, symbol_dim=16, num_rules=4, max_sentence_tokens=8)
+        context = torch.randint(0, 32, (3, 8))
+        candidate_a = torch.randint(0, 32, (3, 8))
+        candidate_b = torch.randint(0, 32, (3, 8))
         logits = model(context, candidate_a, candidate_b)
-        self.assertEqual(tuple(logits.shape), (2,))
+        self.assertEqual(tuple(logits.shape), (3, 2))
         self.assertTrue(torch.isfinite(logits).all())
 
 

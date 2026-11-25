@@ -72,9 +72,11 @@ def build_launch_command(payload: dict[str, Any]) -> list[str]:
     mode = str(payload.get("mode") or "").strip()
     if mode == "lt_train":
         dataset = _safe_repo_path(payload.get("dataset"), must_exist=True)
-        checkpoint = _safe_repo_path(payload.get("checkpoint") or "checkpoints/lt_tinystories.pt")
-        task = str(payload.get("task") or "arithmetic")
-        if task not in {"arithmetic", "semantic-continuation"}:
+        checkpoint = _safe_repo_path(
+            payload.get("checkpoint") or "checkpoints/lt_semantic_continuation.pt"
+        )
+        task = str(payload.get("task") or "semantic-continuation")
+        if task != "semantic-continuation":
             raise ValueError("unsupported LT task")
         epochs = _as_int(payload.get("epochs"), "epochs", 20, 1)
         holdout = float(payload.get("holdout", 0.2) or 0.0)
@@ -101,10 +103,17 @@ def build_launch_command(payload: dict[str, Any]) -> list[str]:
             "--task",
             task,
         ]
-        if task == "semantic-continuation":
-            max_pairs = _as_int(payload.get("max_pairs"), "max_pairs", 0, 0)
-            if max_pairs > 0:
-                command += ["--max-pairs", str(max_pairs)]
+        max_pairs = _as_int(payload.get("max_pairs"), "max_pairs", 0, 0)
+        if max_pairs > 0:
+            command += ["--max-pairs", str(max_pairs)]
+        command += [
+            "--batch-size",
+            str(_as_int(payload.get("batch_size"), "batch_size", 32, 1)),
+            "--num-rules",
+            str(_as_int(payload.get("num_rules"), "num_rules", 16, 1)),
+            "--symbol-dim",
+            str(_as_int(payload.get("symbol_dim"), "symbol_dim", 64, 1)),
+        ]
         if max_minutes > 0:
             command += ["--max-minutes", str(max_minutes)]
         if _as_bool(payload.get("resume")):

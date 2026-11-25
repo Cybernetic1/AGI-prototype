@@ -1,89 +1,51 @@
-# Logic Transformer (LT) compact demo
+# Logic Transformer (LT)
 
-This directory contains a compact LT/DLN-style demo for arithmetic reasoning on GSM8K and MATH.
+This directory contains the maintained neural-symbolic LT implementation.
 
-The current setup is intentionally small and classification-first. It uses:
+## Canonical models
 
-- proposition extraction from the input text
-- a compact LT working-memory core
-- bucketed answer prediction
-- explicit step heads for GSM8K-style supervision
+- `neural_logic_core_vectorized.py`: primary vectorized differentiable logic core.
+- `train_pot_dln_pointer.py`: DLN pointer decoder used by the cognitive-loop/LT
+  proposition-copy path.
+- `train.py`: resumable batched semantic-continuation trainer for real TinyStories
+  sentence pairs.
+- `model.py`: learned-symbol embedding model for semantic continuation, built on
+  the vectorized logic core.
 
-## What this demo is for
+The semantic-continuation model uses trainable symbol, source, and position
+embeddings. Predicate/word identity is not encoded as a normalized arbitrary hash
+number.
 
-The goal is to show that a small LT-style model can learn a nontrivial arithmetic reasoning path from structured examples.
+## TinyStories semantic-continuation training
 
-The model is currently best understood as a compact baseline rather than the final LT architecture. It is useful for:
-
-- GSM8K multi-step arithmetic
-- a numeric-only MATH subset
-- checking whether the LT path is learning program structure at all
-
-## Setup
-
-```bash
-cd gsm8k-dln-demo
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-## GSM8K workflow
-
-Download a local slice, train, and evaluate:
+Prepare data from an existing separator-delimited 10,000-story file and train:
 
 ```bash
-python download_gsm8k.py --config main --limit-train 200 --limit-test 50
-python train.py --data-path data/gsm8k/main_train.jsonl
-python eval.py --data-path data/gsm8k/main_test.jsonl
+/home/yky/misc-programs/.venv/bin/python logic_transformer/train.py \
+  --tinystories-source ../AGI-experiments/data/tinystories/stories_10000.txt \
+  --prepared-output runtime/tinystories/semantic_continuation_10k.jsonl \
+  --max-stories 10000 \
+  --epochs 20 \
+  --batch-size 32 \
+  --num-rules 16 \
+  --symbol-dim 64 \
+  --checkpoint checkpoints/lt_semantic_continuation.pt
 ```
 
-If you want a quick smoke test, you can also use:
+Resume with the same prepared data and `--resume`.
 
-```bash
-./run_demo.sh
-```
+## Existing LT pointer-decoder path
 
-## MATH workflow
+`train_pot_dln_pointer.py` is the established proposition-copy trainer used by the
+integrated cognitive-loop architecture. The older compact GSM arithmetic baseline
+is retained only under `gsm8k-tests-backup/` and is explicitly not canonical LT.
 
-The MATH path uses the accessible mirror and filters to integer answers so it matches the current compact LT answer bucket head:
+## Supporting modules
 
-```bash
-python download_math.py --numeric-only --integers-only --subjects algebra,prealgebra --limit-train 50 --limit-test 10
-python train.py --data-path data/math/train.jsonl
-python eval.py --data-path data/math/test.jsonl
-```
+- `spacy_logical_form.py`: Neo-Davidsonian parsing
+- `semantic_ar.py`: semantic autoregressive scoring
+- `lorentz_math.py`: hyperbolic matching geometry
+- `local_proposal_ranker.py`: optional proposal ranking
+- `train_pot_clause.py`: proposition/clause encoding utilities
 
-You can also switch mirrors if needed:
-
-```bash
-python download_math.py --dataset nlile/hendrycks-MATH-benchmark
-python download_math.py --dataset rasbt/math_full_minus_math500
-python download_math.py --dataset qwedsacf/competition_math
-```
-
-## Notes on current scope
-
-This demo currently handles integer-answer MATH examples best. That is enough for a compact proof-of-concept, but it does not yet fully cover symbolic answers or a dedicated MATH step parser.
-
-For GSM8K, the step supervision is richer because the dataset includes annotated arithmetic traces. For MATH, the current code mainly learns from the final answer and the worked solution text.
-
-## Files
-
-- `model.py` - compact LT-style model
-- `preprocess_gsm8k.py` - proposition and arithmetic extraction
-- `download_gsm8k.py` - GSM8K downloader and JSONL converter
-- `download_math.py` - MATH mirror downloader and numeric filtering
-- `train.py` - training loop
-- `eval.py` - evaluation script
-- `run_demo.sh` - GSM8K smoke test wrapper
-
-## Practical guidance
-
-If you are deciding whether to improve the code further or just train longer:
-
-- More training/data will help the current compact model.
-- Additional code changes will help most if they target MATH normalization, better step supervision, or a stronger decoder state.
-- For the current stage, the biggest wins are likely better data coverage and more training, not a full rewrite.
-
-GPU support becomes more useful as you scale up the data or run more sweeps. For the current small slices, CPU is usually sufficient; a GPU mainly helps with faster iteration and larger experiments.
+Demo, download, and sweep scripts are support tooling rather than the core model.

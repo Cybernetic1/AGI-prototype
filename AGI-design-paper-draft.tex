@@ -290,51 +290,39 @@ not stored as a fixed list of predicate names.  It is a differentiable matching
 and transformation program.  This permits gradient descent to select and
 transform propositions while retaining a rule-like structural interpretation.
 
-In the TinyStories semantic-continuation pilot, one soft rule has:
+The canonical semantic-continuation model uses the vectorized core with:
 \begin{itemize}[leftmargin=1.5em]
-  \item a 16-dimensional proposition representation ($L=16$),
+  \item a 64-dimensional learned symbol representation ($L=64$),
   \item two premise patterns ($J=2$),
   \item three captured-variable slots ($I=3$),
-  \item a 48-dimensional rule output ($D=48$).
+  \item a 48-position working memory ($W=48$),
+  \item a 64-dimensional rule output ($D=64$).
 \end{itemize}
 
-The rule contains the following trainable components:
+For one soft rule, the vectorized core contains:
 \[
 \begin{array}{lll}
-\text{premise constants} & J \times L & 32 \\
-\text{cylindrification factors } \gamma & J \times L & 32 \\
-\text{body projections} & J \times (I L + I) & 102 \\
-\text{head projection} & D I + D & 192 \\
-\text{slot selectors} & J \times (L I) \times (L+1) & 1632
+\text{premise constants} & J \times L & 128 \\
+\text{slot selectors} & J \times I \times W & 288 \\
+\text{rule weights} & J \times L \times D & 8192 \\
+\text{rule bias} & D & 64
 \end{array}
 \]
-Thus each current continuation rule has
+Thus each current vectorized rule has
 \[
-32 + 32 + 102 + 192 + 1632 = 1990
+128 + 288 + 8192 + 64 = 8672
 \]
-trainable scalars.  Six such rules account for \(6 \times 1990 = 11940\)
-parameters.  This explains the rule-core count of approximately \(12\)K
-parameters quoted in the CPU experiment report.
-
-The largest cost is the slot selector: for each premise it maps a 16-element
-proposition vector to a probability distribution over three variable slots for
-every one of the 16 proposition coordinates.  In the implementation this is a
-linear map with 48 outputs and 16 inputs:
-\[
-\texttt{nn.Linear}(16, 16 \times 3) .
-\]
-It therefore requires \(48 \times 16 + 48 = 816\) parameters for one premise,
-or 1632 parameters for the rule's two premises.
+trainable scalars.  A 16-rule default core therefore accounts for
+\(16 \times 8672 = 138752\) parameters, excluding the learned symbol
+embeddings, position/source embeddings, and pair-classification head.
 
 These parameters implement different aspects of a soft rule:
 \begin{itemize}[leftmargin=1.5em]
   \item the constants specify what a premise should approximately match;
-  \item the $\gamma$ values decide whether a coordinate behaves like a constant
-        match or a variable that may range over propositions;
-  \item the body projections extract three variable-like features from each
-        selected premise;
-  \item the slot selectors decide where proposition components are captured;
-  \item the head projects captured components to the rule's shared output state.
+  \item slot selectors choose soft proposition bindings from working memory;
+  \item rule weights transform matched premise content into the shared rule
+        output state;
+  \item the output states of all rules are combined by the vectorized core.
 \end{itemize}
 
 A classical Horn rule can often be described by only a handful of logical
@@ -344,8 +332,8 @@ The number is therefore not primarily a claim that the underlying symbolic
 rule has thousands of semantic components.  It is the cost of implementing a
 differentiable version of matching and unification.
 
-This distinction matters when interpreting LT capacity.  Six LT rules are not
-equivalent to six fully specified symbolic Horn clauses, nor are they
+This distinction matters when interpreting LT capacity.  A collection of LT
+rules is not equivalent to the same count of fully specified symbolic Horn clauses, nor are they
 automatically broad enough for narrative semantics.  The parameter count
 provides differentiable control capacity; whether those parameters acquire
 stable semantic interpretations remains an empirical training and decoding

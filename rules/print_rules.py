@@ -216,7 +216,7 @@ def decode_lt_checkpoint(
     *,
     nearest_per_premise: int = 3,
 ) -> dict[str, Any]:
-    """Approximate soft LT rule patterns with nearest observed symbolic propositions."""
+    """Inspect vectorized LT soft rules by nearest learned symbol embedding."""
     try:
         import torch
         if str(REPO_ROOT) not in sys.path:
@@ -224,8 +224,7 @@ def decode_lt_checkpoint(
         lt_dir = REPO_ROOT / "logic_transformer"
         if str(lt_dir) not in sys.path:
             sys.path.insert(0, str(lt_dir))
-        from model import LTArithmeticModel, LTSemanticContinuationModel
-        from preprocess_gsm8k import build_example_props, extract_propositions
+        from model import LTSemanticContinuationModel
     except ImportError as exc:
         raise RuntimeError(
             "LT checkpoint decoding requires the repository PyTorch environment "
@@ -237,134 +236,62 @@ def decode_lt_checkpoint(
     if not data_path.exists():
         raise FileNotFoundError(f"LT decode vocabulary dataset not found: {data_path}")
 
-    rows: list[dict[str, Any]] = []
-    with data_path.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if line:
-                payload = json.loads(line)
-                if isinstance(payload, dict):
-                    rows.append(payload)
-    if not rows:
-        raise ValueError(f"No JSONL rows found in {data_path}")
-
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
-    task = str(checkpoint.get("task") or "arithmetic")
-    if task == "semantic-continuation":
-        model = LTSemanticContinuationModel(
-            feature_dim=int(checkpoint.get("feature_dim", 48)),
-            num_buckets=int(checkpoint.get("num_buckets", 2048)),
+    if checkpoint.get("model") != "LTSemanticContinuationModel":
+        raise ValueError(
+            "decoder now supports only canonical vectorized LT semantic-continuation checkpoints"
         )
-    else:
-        model = LTArithmeticModel(
-            feature_dim=int(checkpoint.get("feature_dim", 32)),
-            num_buckets=int(checkpoint.get("num_buckets", 2048)),
-        )
+    vocabulary_map = checkpoint.get("vocabulary") or {}
+    if not vocabulary_map:
+        raise ValueError("checkpoint does not contain its learned symbol vocabulary")
+    vocabulary = sorted(
+        ((str(symbol), int(index)) for symbol, index in vocabulary_map.items()),
+        key=lambda item: item[1],
+    )
+    model = LTSemanticContinuationModel(
+        len(vocabulary),
+        symbol_dim=int(checkpoint.get("symbol_dim", 64)),
+        num_rules=int(checkpoint.get("num_rules", 16)),
+        max_sentence_tokens=int(checkpoint.get("max_sentence_tokens", 24)),
+    )
     model.load_state_dict(checkpoint["state_dict"])
     model.eval()
 
-    # The feature tensor has 16 named coordinates. A rule constant lives in this
-    # space, so nearest-neighbour decoding is a transparent approximation rather
-    # than a claim that the soft rule is an exact Horn clause.
-    feature_names = [
-        "predicate_hash",
-        "arg1_hash",
-        "arg2_hash",
-        "arg3_hash",
-        "numeric_value",
-        "numeric_magnitude",
-        "numeric_sign",
-        "number_predicate",
-        "source",
-        "argument_count",
-        "add_op",
-        "sub_op",
-        "mul_op",
-        "div_op",
-        "bias",
-        "padding",
-    ]
-    vocabulary: list[tuple[str, dict[str, Any], torch.Tensor]] = []
-    seen: set[str] = set()
-    for row in rows:
-        if task == "semantic-continuation":
-            props = (
-                extract_propositions(row.get("context", ""), source="question")
-                + extract_propositions(row.get("candidate_a", ""), source="cot")
-                + extract_propositions(row.get("candidate_b", ""), source="cot")
-            )
-        else:
-            props = build_example_props(row.get("question", ""), row.get("cot", ""), row)
-        for prop in props:
-            symbol = f"{prop.get('pred', '')}({', '.join(str(a) for a in prop.get('args', []))})"
-            if symbol in seen:
-                continue
-            seen.add(symbol)
-            features = model.encode_prop_features(prop).detach()
-            vocabulary.append((symbol, prop, features))
-    if not vocabulary:
-        raise ValueError("Dataset did not produce proposition vocabulary.")
-
+    embeddings = model.symbol_embed.weight.detach()
     decoded_rules = []
-    for rule_index, rule in enumerate(model.logic_core.rules, start=1):
-        gamma = torch.clamp(rule.γs.detach(), 0.0, 1.0)
-        constants = rule.constants.detach()
+    for rule_index in range(model.logic_core.M):
         decoded_premises = []
-        for premise_index in range(rule.J):
-            g = gamma[premise_index]
-            constant = constants[premise_index]
+        for premise_index in range(model.logic_core.J):
+            constant = model.logic_core.premise_constants[rule_index, premise_index].detach()
             ranked = []
-            for symbol, prop, features in vocabulary:
-                weights = (1.0 - g)
-                denominator = float(weights.sum().item()) or 1.0
-                distance = float(
-                    (weights * (constant - features).pow(2)).sum().div(denominator).sqrt().item()
-                )
-                ranked.append((distance, symbol, prop))
+            for symbol, index in vocabulary:
+                if index <= 0:
+                    continue
+                distance = float((constant - embeddings[index]).norm().item())
+                ranked.append((distance, symbol))
             ranked.sort(key=lambda item: item[0])
-            variable_dims = [
-                feature_names[index]
-                for index, value in enumerate(g.tolist())
-                if value >= 0.7
-            ]
-            constant_dims = [
-                feature_names[index]
-                for index, value in enumerate(g.tolist())
-                if value <= 0.3
-            ]
             decoded_premises.append(
                 {
                     "premise": premise_index + 1,
                     "nearest_symbols": [
                         {"symbol": symbol, "distance": round(distance, 6)}
-                        for distance, symbol, _ in ranked[:nearest_per_premise]
+                        for distance, symbol in ranked[:nearest_per_premise]
                     ],
-                    "variable_dimensions": variable_dims,
-                    "constant_dimensions": constant_dims,
-                    "average_gamma": round(float(g.mean().item()), 4),
+                    "representation": "learned symbol embedding nearest neighbour",
                 }
             )
-
-        if hasattr(model, "op_head"):
-            with torch.no_grad():
-                head_bias_logits = model.op_head(rule.head.bias.detach())
-                head_bias_probs = torch.softmax(head_bias_logits, dim=-1)
-            operation_names = ["add", "subtract", "multiply", "divide", "other"]
-            best_operation = int(torch.argmax(head_bias_probs).item())
-            head_projection = operation_names[best_operation]
-            head_probability = round(float(head_bias_probs[best_operation].item()), 4)
-        else:
-            head_projection = "continuation_compatibility"
-            head_probability = 0.0
         decoded_rules.append(
             {
-                "rule": rule_index,
+                "rule": rule_index + 1,
                 "premises": decoded_premises,
                 "head": {
-                    "op_projection": head_projection,
-                    "op_probability": head_probability,
-                    "weight_norm": round(float(rule.head.weight.detach().norm().item()), 4),
-                    "qualifier": "head-bias projection; not an exact decoded conclusion",
+                    "op_projection": "continuation_compatibility",
+                    "op_probability": 0.0,
+                    "weight_norm": round(
+                        float(model.logic_core.rule_weights[rule_index].detach().norm().item()),
+                        4,
+                    ),
+                    "qualifier": "vectorized soft-rule head; not an exact decoded clause",
                 },
             }
         )
@@ -373,9 +300,9 @@ def decode_lt_checkpoint(
         "checkpoint": str(checkpoint_path),
         "data": str(data_path),
         "completed_epoch": int(checkpoint.get("completed_epoch", 0)),
-        "vocabulary_size": len(vocabulary),
+        "vocabulary_size": len(vocabulary_map),
         "rule_count": len(decoded_rules),
-        "decoding": "nearest-neighbour soft-feature approximation",
+        "decoding": "nearest learned-symbol embeddings; not exact clause recovery",
         "rules": decoded_rules,
     }
 
@@ -388,7 +315,7 @@ def print_decoded_lt_rules(checkpoint_path: Path, data_path: Path) -> dict[str, 
         f"rules: {payload['rule_count']} | vocabulary: {payload['vocabulary_size']} "
         f"| completed_epoch: {payload['completed_epoch']}"
     )
-    print("Method: nearest-neighbour soft-feature approximation (not exact Horn-clause recovery)")
+    print("Method: nearest learned-symbol embeddings (not exact Horn-clause recovery)")
     for row in payload["rules"]:
         rule_name = f"lt_soft_rule_{row['rule']}"
         print(f"- {_bold_yellow(rule_name)} [differentiable]")
@@ -398,12 +325,7 @@ def print_decoded_lt_rules(checkpoint_path: Path, data_path: Path) -> dict[str, 
                 f"  body[{premise['premise']}]: "
                 f"{_bright_blue(nearest['symbol'])} (distance={nearest['distance']})"
             )
-            variables = premise["variable_dimensions"]
-            constants = premise["constant_dimensions"]
-            if variables:
-                print(f"  variable dims: {', '.join(variables)}")
-            if constants:
-                print(f"  constant dims: {', '.join(constants)}")
+            print(f"  representation: {premise['representation']}")
         head = row["head"]
         print(
             f"  head projection: {_bright_blue(head['op_projection'])} "
